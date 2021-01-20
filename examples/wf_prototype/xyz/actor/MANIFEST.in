@@ -1,0 +1,2 @@
+include distance_wrapper/libdistancewrapper.dylib
+include distance_wrapper/libdistancewrapper.so
