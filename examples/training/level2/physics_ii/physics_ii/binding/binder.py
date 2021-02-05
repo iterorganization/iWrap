@@ -1,7 +1,6 @@
 import ctypes
 import os
 import logging
-from pathlib import Path
 
 import imas
 
@@ -34,8 +33,6 @@ class PhysicsIIBinder:
         :param codeparams: code parameters, None implies default parameters
         :param result: equilibrium1,
         """
-        #mds_dir = Path.home().joinpath('/public/')
-        #mds_dir.mkdir( parents=True, exist_ok = True )
 
         db_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND, 'tmp', 11, 22)
         db_entry.create()
