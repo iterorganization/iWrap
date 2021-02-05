@@ -4,7 +4,7 @@ setenv PYTHONPATH ""
 module purge
 module load cineca
 module load itm-python/3.6
-module load IMAS/3.29.0
+module load IMAS/3.31.0
 module load xmllib/3.3.1/intel/17.0
 module load pycharm
 
