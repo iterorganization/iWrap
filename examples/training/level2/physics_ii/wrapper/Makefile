@@ -58,6 +58,7 @@ build/fortrantools.o: src/fortrantools.f90
 	
 lib/libphysics_ii.so: build/FortranWrap.o  build/fortrantools.o 
 	@echo "   * $^ -> $@"
+	@mkdir -p ./lib
 	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(MAIN_LIB_DEF) $(CUSTOM_LIBS_DEF) $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/FortranWrap.o: src/FortranWrap.f90 build/fortrantools.o 
