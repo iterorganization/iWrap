@@ -24,7 +24,7 @@ class ExampleWorkflowManager:
         # INPUT/OUTPUT CONFIGURATION
         shot                = 131024
         run_in              = 1
-        input_user_or_path  = 'g2bpalak'
+        input_user_or_path  = 'public'
         input_database      = 'iter'
         run_out             = 10
         output_user_or_path = os.getenv('USER')
