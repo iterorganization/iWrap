@@ -67,8 +67,8 @@ class ExampleWorkflowManager:
         self.actor_physics_ii.finalize() 
         
         #other finalizastion actions
-        self.input_entry.open()
-        self.output_entry.create()
+        self.input_entry.close()
+        self.output_entry.close()
 
 
 
