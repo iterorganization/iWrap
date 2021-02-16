@@ -9,4 +9,4 @@ endif
 
 setenv PYTHONPATH $PWD/abcd/actor:$PYTHONPATH
 setenv PYTHONPATH $PWD/xyz/actor:$PYTHONPATH
-setenv PYTHONPATH $PWD/common/python:$PYTHONPATH
+setenv PYTHONPATH $PWD/../common/python:$PYTHONPATH
