@@ -1,1 +1,6 @@
 *~
+__pycache__/
+*.py[cod]
+bin/
+build/
+lib/
