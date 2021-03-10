@@ -9,11 +9,10 @@ class Argument( Dictionarizable ):
     IN = 'IN'
     OUT = 'OUT'
 
-    def __init__(self, **kwargs):
-        self.name = kwargs['name']  # (INT, DOUBLE, STRING, COMPLEX, IDS) READ ONLY
-        self.type = kwargs['type']  # (INT, DOUBLE, STRING, COMPLEX, IDS) READ ONLY
-        self.sub_type = kwargs['sub_type']  # 'equilibrium'  for IDSes only READ ONLY
-        self.intent = kwargs['intent']  # (IN/OUT) READ ONLY
+    def __init__(self, dictionary: dict):
+        self.name = dictionary['name']
+        self.type = dictionary['type']
+        self.sub_type = dictionary['sub_type']
 
     def __str__(self):
         str_ = 'Name : ' + self.name + '\n' \
@@ -32,9 +31,19 @@ class CodeDescription( Dictionarizable ):
 
         def from_dict(self, dictionary: dict):
             super().from_dict(dictionary)
-            self.input = [Argument( **item ) for item in dictionary['input']]
-            self.output = [Argument( **item ) for item in dictionary['output']]
-            pass
+            self.input = []
+            for item in dictionary['input']:
+                arg = Argument( item )
+                arg.intent = Argument.IN
+                self.input.append(arg)
+
+            self.output = []
+            for item in dictionary['output']:
+                arg = Argument( item )
+                arg.intent = Argument.OUT
+                self.input.append( arg )
+
+
 
     # type hints
     arguments: Arguments
@@ -42,10 +51,9 @@ class CodeDescription( Dictionarizable ):
     def __init__(self):
         self.programming_language: str = None
         self.code_name: str = None
-        self.code_version: str = None
         self.data_type: str = None
         self.arguments = self.Arguments()
-        self.code_path: List[str] = None
+        self.code_path: str = None
         self.documentation: str = None
         self.language_specific: dict = None
 
