@@ -1,9 +1,10 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List
 
 
 class Dictionarizable( ABC ):
 
+    @abstractmethod
     def from_dict(self, dictionary: dict):
         for name, value in dictionary.items():
             if hasattr( self, name ):
@@ -12,14 +13,14 @@ class Dictionarizable( ABC ):
                     attr.from_dict( value )
                 else:
                     setattr( self, name, value )
-
+    @abstractmethod
     def to_dict(self):
         dict_ = vars( self )
         for key, value in dict_.items():
             if isinstance( value, Dictionarizable ):
                 dict_[key] = value.to_dict()
             if isinstance( value, List ):
-                dict_[key] = [item.to_dict() for item in value if isinstance( item, Dictionarizable )]
+                dict_[key] = [item.to_dict() if isinstance( item, Dictionarizable )  else item for item in value ]
 
         return dict_
 
