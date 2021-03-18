@@ -28,12 +28,23 @@ class Argument( Dictionarizable ):
         return str_
 
 class CodeParameters( Dictionarizable ):
+    """The data class containing information about files defining code parameters.
+    """
 
     def __init__(self):
+
+        #: A path to XML file containing native code parameters
         self.parameters: str
+
+        #: A path to XSD file containing schema that allows to validate code parameters XML description
         self.schema: str
 
-    def from_dict(self, dictionary: dict):
+    def from_dict(self, dictionary: dict) -> None:
+        """Method restores object status based on passed dictionary.
+
+           Args:
+               dictionary: The parameter that stores values to be used to restore object state.
+           """
         super().from_dict( dictionary )
 
     def to_dict(self):
@@ -60,6 +71,7 @@ class Arguments( Dictionarizable ):
             arg = Argument( item )
             arg.intent = Argument.OUT
             self.input.append( arg )
+
 
     def to_dict(self):
         return super().to_dict()
