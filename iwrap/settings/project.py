@@ -6,7 +6,7 @@ from iwrap.settings.serialization import IWrapSerializer
 class ProjectSettings( Dictionarizable ):
     _settings = None
 
-    @classproperty
+    @classmethod
     def settings(cls):
         if cls._settings is None:
             cls._settings = ProjectSettings()
@@ -14,8 +14,9 @@ class ProjectSettings( Dictionarizable ):
         return cls._settings
 
     def __init__(self):
-        self.name: str
-        self.data_type: str
+        self.name: str = ''
+        self.data_type: str = ''
+        self.actor_type = ''
         self.code_description = CodeDescription()
 
     def from_dict(self, dictionary: dict) -> None:
@@ -25,9 +26,7 @@ class ProjectSettings( Dictionarizable ):
         return super().to_dict()
 
     def clear(self):
-        self.name = ''
-        self.data_type = ''
-        self.code_description = CodeDescription()
+        self.__init__()
 
     def save(self, serializer: IWrapSerializer):
         dictionary = self.to_dict()
