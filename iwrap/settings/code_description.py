@@ -95,13 +95,4 @@ class CodeDescription( Dictionarizable ):
     def to_dict(self):
         return super().to_dict()
 
-    def save(self, stream):
-        obj = self.to_dict()
-        print( obj )
-        yaml.dump( obj, stream=stream, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True )
-        pass
 
-    def load(self, stream):
-        dict = yaml.load( stream, Loader=yaml.Loader )
-        self.from_dict( dict )
-        pass
