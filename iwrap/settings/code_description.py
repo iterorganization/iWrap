@@ -3,6 +3,7 @@ from typing import List
 import yaml
 
 from iwrap.common.misc import Dictionarizable
+from iwrap.settings.serialization import IWrapSerializer
 
 
 class Argument( Dictionarizable ):
@@ -18,7 +19,7 @@ class Argument( Dictionarizable ):
         super().from_dict( dictionary )
 
     def to_dict(self):
-        super().to_dict()
+        return super().to_dict()
 
     def __str__(self):
         str_ = 'Name : ' + self.name + '\n' \
@@ -96,3 +97,10 @@ class CodeDescription( Dictionarizable ):
         return super().to_dict()
 
 
+    def save(self, serializer: IWrapSerializer):
+        dictionary = self.to_dict()
+        serializer.save( dictionary )
+
+    def load(self, serializer: IWrapSerializer):
+        dictionary = serializer.load()
+        self.from_dict( dictionary )
