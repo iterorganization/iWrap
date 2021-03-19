@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
+from iwrap.gui.generics import IWrapPane
 
-class ActorDescriptionPane(ttk.LabelFrame):
+
+class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
 
     def __init__(self, master: ttk.Widget):
         super().__init__(master, text='Actor:', borderwidth=2, relief="groove", height = 100)
@@ -25,3 +27,6 @@ class ActorDescriptionPane(ttk.LabelFrame):
         data__type_combo.current( 0 )
 
         self.columnconfigure( 1, weight=3 )
+
+    def reload(self):
+        pass
