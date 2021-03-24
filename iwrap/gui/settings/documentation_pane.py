@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from iwrap.gui.generics import IWrapPane
+
 
 class DocumentationPane( ttk.Frame, IWrapPane ):
     def __init__(self, master=None):
