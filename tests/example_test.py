@@ -1,5 +1,6 @@
 from tests.example import example, another_example, last_example
 
+#junit_logging = all
 
 def test_example() -> None:
     """Testing example method"""
@@ -22,4 +23,12 @@ def test_always_passes():
 
 
 def test_always_fails():
+    assert False
+
+
+def test_another_fails():
+    assert False
+
+
+def test_third_fails():
     assert False
