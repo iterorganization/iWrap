@@ -1,4 +1,4 @@
-from tests.example import example, another_example
+from tests.example import example, another_example, last_example
 
 
 def test_example() -> None:
@@ -9,6 +9,11 @@ def test_example() -> None:
 def test_another_example() -> None:
     """Testing another example method"""
     assert another_example() == "Test"
+
+
+def test_last_example() -> None:
+    """Testing last example"""
+    assert last_example() == "1Test"
 
 
 def test_always_passes():

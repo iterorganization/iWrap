@@ -8,3 +8,8 @@ def example():
 def another_example():
     """Return string 'Test'"""
     return "Test"
+
+
+def last_example():
+    """Return concatenation"""
+    return str(example())+another_example()
