@@ -1,4 +1,5 @@
 clear
+set -a
 # Prepare tests
 echo "---Prepare For Tests---"
 #ONBAMBOO=1
@@ -7,13 +8,13 @@ then
   echo "NOTBAMBOO"
 else
   echo "ONBAMBOO"
-  #./set_test_env.sh
+  . ./set_test_env.sh
 fi
 # Run Pytests
 pip list
 echo "---Run Tests---"
 python --version
-pytest --version
+python -m pytest --version
 python -m pytest example_test.py --junitxml=test_results.xml -v
 
 
