@@ -1,8 +1,7 @@
 #!/bin/sh
 # Set up ITER modules environment
 echo "--------------Set up ITER modules environment--------------"
-#set -e
-set -a
+set -e -a
 # Set up environment
 . /usr/share/Modules/init/sh
 module use /work/imas/etc/modulefiles
