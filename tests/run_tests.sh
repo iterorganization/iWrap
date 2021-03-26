@@ -1,0 +1,13 @@
+clear
+# Prepare tests
+echo "---Prepare For Tests---"
+#ONBAMBOO=1
+if [ -z "${ONBAMBOO+x}" ]
+then
+  echo "NOTBAMBOO"
+else
+  echo "ONBAMBOO"
+fi
+# Run Pytests
+echo "---Run Tests---"
+python -m pytest example_test.py --junitxml=test_results.xml -v

@@ -13,3 +13,7 @@ def another_example():
 def last_example():
     """Return concatenation"""
     return str(example())+another_example()
+
+
+if __name__ == '__main__':
+    print(last_example())
