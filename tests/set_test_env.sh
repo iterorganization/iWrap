@@ -10,9 +10,10 @@ module purge
 echo "--------------Module load Python/3.6.4-intel-2018a--------------"
 module load Python/3.6.4-intel-2018a
 python --version
-pytest --version
-echo "--------------pip install pytest--------------:"
+echo "--------------pip install pytest--------------"
 python -m pip install pytest --user --ignore-installed
+echo "--------------Python and pytest version--------------"
 python --version
 pytest --version
 echo "--------------------------------------------------------"
+pip list

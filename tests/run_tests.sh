@@ -10,6 +10,7 @@ else
   #./set_test_env.sh
 fi
 # Run Pytests
+pip list
 echo "---Run Tests---"
 python --version
 pytest --version
