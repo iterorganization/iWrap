@@ -10,7 +10,8 @@ Welcome to iWrap's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   /documentation_files/modules.rst
+   
 
 Indices and tables
 ==================
