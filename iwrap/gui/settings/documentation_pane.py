@@ -30,5 +30,8 @@ class TextEditor(IWrapPane):
         # Configure scrollbar for text box scrolling
         self.scrollbar.config(command=self.text_editor.yview)
 
+        # Configure callback from text box for scrollbar widget
+        self.text_editor['yscrollcommand'] = self.scrollbar.set
+
     def reload(self):
         pass

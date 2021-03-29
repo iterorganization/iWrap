@@ -23,7 +23,7 @@ class MainWindow( tk.Tk ):
 
         self.title( "iWrap" )
         self.minsize( 600, 300 )
-        self.geometry( '600x650' )
+        self.geometry( '600x450' )
 
         self.config( menu=MenuBar( self ) )
 
