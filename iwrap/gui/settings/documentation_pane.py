@@ -21,7 +21,7 @@ class TextEditor(IWrapPane):
         # Text Box for the text editor
         self.text_editor = tk.Text(master)
         # Pack text box
-        self.text_editor.pack()
+        self.text_editor.pack(side=tk.LEFT, fill=tk.BOTH)
 
         # Scrollbar for the text box widget
         self.scrollbar = tk.Scrollbar(master)
