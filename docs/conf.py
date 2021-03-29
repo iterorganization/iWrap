@@ -14,19 +14,22 @@
 #
 import os
 import sys
+import yaml
 sys.path.insert(0, os.path.abspath('..'))
-
 
 # -- Project information -----------------------------------------------------
 
-project = 'iWrap'
-copyright = '2021, xyz'
-author = 'xyz'
+stream = open("project_informations.yaml", 'r')
+project_info = yaml.safe_load(stream)
+
+project = project_info['project']
+copyright = '2021, ' + str(project_info['project'])
+author = project_info['author']
 
 # The short X.Y version
-version = ''
+version = str(project_info['version'])
 # The full version, including alpha/beta/rc tags
-release = ''
+release = str(project_info['release'])
 
 
 # -- General configuration ---------------------------------------------------
@@ -114,7 +117,7 @@ html_theme = 'sphinx_rtd_theme'
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'iWrapdoc'
+htmlhelp_basename = project+'doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -141,8 +144,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'iWrap.tex', 'iWrap Documentation',
-     'xyz', 'manual'),
+    (master_doc, project+'.tex', project + ' Documentation',
+     author, 'manual'),
 ]
 
 
@@ -151,7 +154,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'iwrap', 'iWrap Documentation',
+    (master_doc, project, project + ' Documentation',
      [author], 1)
 ]
 
@@ -162,8 +165,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'iWrap', 'iWrap Documentation',
-     author, 'iWrap', 'One line description of project.',
+    (master_doc, project, project + ' Documentation',
+     author, project, 'One line description of project.',
      'Miscellaneous'),
 ]
 
