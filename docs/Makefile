@@ -7,7 +7,6 @@ SOURCEDIR     = .
 BUILDDIR      = _build
 GENERATEDDIR  = documentation_files
 PROJECT_PATH  = ../
-THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 YAML_FILE = project_informations.yaml
 AUTHOR_KEY = "author"
@@ -18,7 +17,7 @@ VERSION_KEY = "version"
 # Set project informations
 AUTHOR = ""
 PROJECT = "iWrap"
-RELEASE = "1"
+RELEASE = $(shell git describe --always --dirty)
 VERSION = $(shell git describe --always --dirty)
 
 # Put it first so that "make" without argument is like "make help".
@@ -42,11 +41,7 @@ setconfig:
 	sed -r "s/^(\s*${RELEASE_KEY}\s*:\s*).*/\1${RELEASE}/" -i "$(YAML_FILE)"
 	sed -r "s/^(\s*${VERSION_KEY}\s*:\s*).*/\1${VERSION}/" -i "$(YAML_FILE)"
 
-realclean:
+clean:
 	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/
 
-docs:
-	@$(MAKE) -f $(THIS_FILE) realclean
-	@$(MAKE) -f $(THIS_FILE) setconfig
-	@$(MAKE) -f $(THIS_FILE) apidocs
-	@$(MAKE) -f $(THIS_FILE) html
+docs: clean setconfig apidocs html
