@@ -7,7 +7,6 @@ from iwrap.gui.generics import IWrapPane
 class DocumentationPane(ttk.Frame, IWrapPane):
     def __init__(self, master=None):
         super().__init__(master)
-        #ttk.Label(self, text='Place for DOCUMENTATION', borderwidth=1, relief="solid").pack(fill=tk.BOTH, expand=1)
         self.documentation_editor = TextEditor(self)
 
     def reload(self):
@@ -18,15 +17,20 @@ class TextEditor(IWrapPane):
     def __init__(self, master=None):
         super().__init__()
 
-        # Text Box for the text editor
-        self.text_editor = tk.Text(master)
-        # Pack text box
-        self.text_editor.pack(side=tk.LEFT, fill=tk.BOTH)
-
         # Scrollbar for the text box widget
         self.scrollbar = tk.Scrollbar(master)
         # Pack scrollbar
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
+
+        # Text Box for the text editor
+        self.text_editor = tk.Text(master)
+        # Pack text box
+        self.text_editor.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
+
+        # Status label
+        self.status = tk.Label(master, text="Ready", height=1, borderwidth=1, relief="ridge", anchor="e")
+        self.status.pack(side=tk.BOTTOM, expand=False, fill=tk.X, padx=5, pady=(1, 2))
+
         # Configure scrollbar for text box scrolling
         self.scrollbar.config(command=self.text_editor.yview)
 
