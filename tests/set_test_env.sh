@@ -9,6 +9,8 @@ module use /work/imas/etc/modules/all
 module purge
 echo "--------------Module load Python/3.6.4-intel-2018a--------------"
 module load Python/3.6.4-intel-2018a
+echo "--------------Module load PyYAML/5.3.1-GCCcore-10.2.0--------------"
+module load PyYAML/5.3.1-GCCcore-10.2.0
 echo "--------------pip install pytest--------------"
 python -m pip install pytest --user --ignore-installed
 echo "--------------Python and pytest version--------------"
