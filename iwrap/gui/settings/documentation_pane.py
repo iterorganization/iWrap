@@ -13,6 +13,8 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self.documentation_frame)
 
+        #self.doc = code_description.documentation
+
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -25,7 +27,7 @@ class TextEditor(IWrapPane):
         super().__init__()
 
         # Scrollbar for the text box widget
-        self.scrollbar = tk.Scrollbar(master)
+        self.scrollbar = ttk.Scrollbar(master)
         # Pack scrollbar
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
 
