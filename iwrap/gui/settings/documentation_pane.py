@@ -7,7 +7,14 @@ from iwrap.gui.generics import IWrapPane
 class DocumentationPane(ttk.Frame, IWrapPane):
     def __init__(self, master=None):
         super().__init__(master)
-        self.documentation_editor = TextEditor(self)
+        # Label Frame for Actor documentation
+        self.documentation_frame = tk.LabelFrame(self, text="Actor documentation")
+
+        # Text Editor for Actor documentation
+        self.documentation_editor = TextEditor(self.documentation_frame)
+
+        # Pack the documentation frame
+        self.documentation_frame.pack(fill=tk.BOTH, expand=True)
 
     def reload(self):
         pass
