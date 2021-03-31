@@ -33,11 +33,11 @@ class MainWindow( tk.Tk ):
         actor_description = ActorDescriptionPane( main_pane )
         actor_description.pack( fill=tk.BOTH, side=tk.TOP,  padx=5, pady=5 )
 
+        button_pane = ButtonPane(main_pane)
+        button_pane.pack(fill=tk.X, side=tk.BOTTOM)
+
         settings_pane = SettingsMainPane( main_pane )
         settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
-
-        button_pane = ButtonPane( main_pane )
-        button_pane.pack( fill=tk.X, side=tk.BOTTOM )
 
         self.center()
 
