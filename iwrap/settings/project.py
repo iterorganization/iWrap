@@ -1,4 +1,4 @@
-from iwrap.common.misc import Dictionarizable, classproperty
+from iwrap.common.misc import Dictionarizable
 from iwrap.settings.code_description import CodeDescription
 from iwrap.settings.serialization import IWrapSerializer
 
@@ -7,7 +7,7 @@ class ProjectSettings( Dictionarizable ):
     _settings = None
 
     @classmethod
-    def settings(cls):
+    def get_settings(cls):
         if cls._settings is None:
             cls._settings = ProjectSettings()
 

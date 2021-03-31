@@ -5,7 +5,7 @@ from iwrap.settings.language_specific.fortran_settings import FortranSpecificSet
 from iwrap.settings.project import ProjectSettings
 from iwrap.settings.serialization import YAMLSerializer
 
-project_settings = ProjectSettings.settings()
+project_settings = ProjectSettings.get_settings()
 
 project_settings.name = 'test actor'
 project_settings.actor_type = 'Python actor'
