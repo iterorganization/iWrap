@@ -53,8 +53,9 @@ class TextEditor(IWrapPane):
 
     def appearance(self, in_focus):
         if in_focus:
-            return self.text_editor.config(bg='#ffffff')
-        return self.text_editor.config(bg='#CBD2D0')
+            return self.text_editor.config(bg='#ffffff', fg='#000', selectbackground='#0099FF', selectforeground='#FFFFFF')
+        self.text_editor.selection_clear()
+        return self.text_editor.config(bg='#EDEDED', fg='#404040')
 
     def reload(self):
         pass
