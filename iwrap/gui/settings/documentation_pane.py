@@ -22,14 +22,15 @@ class TextEditor(IWrapPane):
         # Pack scrollbar
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
 
+        # Status label
+        self.status = tk.Label(master, text="Ready", height=1, borderwidth=1, relief="ridge", anchor="e")
+        # Pack the status label
+        self.status.pack(side=tk.BOTTOM, expand=False, fill=tk.X, padx=5, pady=(1, 2))
+
         # Text Box for the text editor
         self.text_editor = tk.Text(master)
         # Pack text box
         self.text_editor.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
-
-        # Status label
-        self.status = tk.Label(master, text="Ready", height=1, borderwidth=1, relief="ridge", anchor="e")
-        self.status.pack(side=tk.BOTTOM, expand=False, fill=tk.X, padx=5, pady=(1, 2))
 
         # Configure scrollbar for text box scrolling
         self.scrollbar.config(command=self.text_editor.yview)
