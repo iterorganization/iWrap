@@ -37,12 +37,24 @@ class TextEditor(IWrapPane):
         # Configure callback from text box for scrollbar widget
         self.text_editor['yscrollcommand'] = self.scrollbar.set
 
-        master.bind_all("<Button-1>", lambda e: self.focus(e))
+        # Configure the test editor event bindings
+        self.text_editor.bind("<FocusIn>", self.focus)
+        self.text_editor.bind("<FocusOut>", self.focus)
+
+        # Configure the text editor default style
+        self.appearance(in_focus=False)
 
     def focus(self, event):
-        if self.text_editor.focus_get():
+        if str(event) == "<FocusIn event>":
+            self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
+        self.appearance(in_focus=False)
         return self.status.config(text="Ready")
+
+    def appearance(self, in_focus):
+        if in_focus:
+            return self.text_editor.config(bg='#ffffff')
+        return self.text_editor.config(bg='#CBD2D0')
 
     def reload(self):
         pass
