@@ -16,6 +16,7 @@ class DocumentationPane(ttk.Frame, IWrapPane):
 
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
+        self.documentation_editor.text = code_description
 
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
@@ -61,14 +62,17 @@ class TextEditor(IWrapPane):
 
     @property
     def text(self):
-        print("-GET-")
+        # Pull content from the text editor out of first line from zero-position character
+        # to the end and delete newline character at final position.
+        self._text = self.text_editor.get("1.0", tk.END+"-1c")
         return self._text
 
     @text.setter
     def text(self, new_text):
-        print("-SET-")
+        # Set new content for the text editor
         self._text = new_text
-        print(self.text)
+        # Insert content into the text editor at first line form zero-position character
+        self.text_editor.insert("1.0", self._text)
 
     def focus(self, event):
         if str(event) == "<FocusIn event>":
@@ -76,7 +80,6 @@ class TextEditor(IWrapPane):
             self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
         self.appearance(in_focus=False)
-        self.text = self.text_editor.get("1.0",'end-1c')
         return self.status.config(text="Ready")
 
     def appearance(self, in_focus):
