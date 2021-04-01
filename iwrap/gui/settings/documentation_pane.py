@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.settings.project import ProjectSettings
 
 
 class DocumentationPane(ttk.Frame, IWrapPane):
@@ -13,7 +14,8 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self.documentation_frame)
 
-        #self.doc = code_description.documentation
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
 
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
@@ -25,6 +27,9 @@ class DocumentationPane(ttk.Frame, IWrapPane):
 class TextEditor(IWrapPane):
     def __init__(self, master=None):
         super().__init__()
+
+        # Text content of a text editor
+        self._text: str = None
 
         # Scrollbar for the text box widget
         self.scrollbar = ttk.Scrollbar(master)
@@ -54,11 +59,24 @@ class TextEditor(IWrapPane):
         # Configure the text editor default style
         self.appearance(in_focus=False)
 
+    @property
+    def text(self):
+        print("-GET-")
+        return self._text
+
+    @text.setter
+    def text(self, new_text):
+        print("-SET-")
+        self._text = new_text
+        print(self.text)
+
     def focus(self, event):
         if str(event) == "<FocusIn event>":
+            print(self.text)
             self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
         self.appearance(in_focus=False)
+        self.text = self.text_editor.get("1.0",'end-1c')
         return self.status.config(text="Ready")
 
     def appearance(self, in_focus):
