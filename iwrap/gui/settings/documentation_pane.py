@@ -16,16 +16,21 @@ class DocumentationPane(ttk.Frame, IWrapPane):
 
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
-        self.documentation_editor.text = code_description
+        documentation = code_description.documentation
+        self.documentation_editor.text = documentation
 
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
 
         # Disable editor to prevent unwanted changes
-        self.documentation_editor.text_editor.config(state="disable")
+        #self.documentation_editor.text_editor.config(state="disable")
 
     def reload(self):
-        pass
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
+        documentation = code_description.documentation
+        self.documentation_editor.text = documentation
+        print("TEST RELOAD")
 
 
 class TextEditor(IWrapPane):
@@ -72,6 +77,8 @@ class TextEditor(IWrapPane):
 
     @text.setter
     def text(self, new_text):
+        if not isinstance(new_text, str):
+            new_text=str(new_text)
         # Set new content for the text editor
         self._text = new_text
         # Insert content into the text editor at first line form zero-position character
@@ -79,6 +86,7 @@ class TextEditor(IWrapPane):
 
     def focus(self, event):
         if str(event) == "<FocusIn event>":
+            self.reload()
             print(self.text)
             self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
