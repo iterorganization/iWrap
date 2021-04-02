@@ -18,14 +18,24 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         notebook = ttk.Notebook( self )
         notebook.pack( expand=True, fill=tk.BOTH )
 
-        notebook.add( ArgumentsPane( notebook ), text='Arguments' )
-        notebook.add( CodeSettingsPane( notebook ), text='Code settings' )
-        notebook.add( CodeParametersPane( notebook ), text='Code parameters' )
-        notebook.add( DocumentationPane( notebook ), text='Documentation' )
-        notebook.add( SignaturePane( notebook ), text='Signature' )
+        self.arguments_pane = ArgumentsPane( notebook )
+        self.code_settings_pane = CodeSettingsPane( notebook )
+        self.code_parameters_pane = CodeParametersPane( notebook )
+        self.documentation_pane = DocumentationPane( notebook )
+        self.signature_pane = SignaturePane( notebook )
+
+        notebook.add( self.arguments_pane, text='Arguments' )
+        notebook.add( self.code_settings_pane, text='Code settings' )
+        notebook.add( self.code_parameters_pane, text='Code parameters' )
+        notebook.add( self.documentation_pane, text='Documentation' )
+        notebook.add( self.signature_pane, text='Signature' )
 
         notebook.select( None )
         notebook.enable_traversal()
 
     def reload(self):
-        pass
+        self.arguments_pane.reload()
+        self.code_settings_pane.reload()
+        self.code_parameters_pane.reload()
+        self.documentation_pane.reload()
+        self.signature_pane.reload()
