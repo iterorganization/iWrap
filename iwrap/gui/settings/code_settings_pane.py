@@ -3,11 +3,16 @@ from tkinter import ttk
 import tkinter.filedialog
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
     def __init__(self, master=None):
         super().__init__(master)
+
+        language_pane = LanguagePanesManager.get_language_pane('Python')
+        pane = language_pane(self)
+        pane.pack(fill=tk.BOTH, expand=1)
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="User code settings")
