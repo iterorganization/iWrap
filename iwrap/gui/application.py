@@ -2,8 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.actor_description import ActorDescriptionPane
+from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar
+
 from iwrap.gui.settings.main_pane import SettingsMainPane
+
 
 class ButtonPane( ttk.Frame ):
     def __init__(self, master: ttk.Widget):
@@ -16,7 +19,7 @@ class ButtonPane( ttk.Frame ):
         generate_button.pack( side=tk.RIGHT, padx=10, pady=5 )
 
 
-class MainWindow( tk.Tk ):
+class MainWindow( tk.Tk, IWrapPane ):
     def __init__(self):
         super().__init__()
 
@@ -29,16 +32,20 @@ class MainWindow( tk.Tk ):
         main_pane = ttk.Frame( self )
         main_pane.pack( fill=tk.BOTH, expand=True )
 
-        actor_description = ActorDescriptionPane( main_pane )
-        actor_description.pack( fill=tk.BOTH, side=tk.TOP,  padx=5, pady=5 )
+        self.actor_description = ActorDescriptionPane( main_pane )
+        self.actor_description.pack( fill=tk.BOTH, side=tk.TOP, padx=5, pady=5 )
 
-        settings_pane = SettingsMainPane( main_pane )
-        settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
+        self.settings_pane = SettingsMainPane( main_pane )
+        self.settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
 
         button_pane = ButtonPane( main_pane )
         button_pane.pack( fill=tk.X, side=tk.BOTTOM )
 
         self.center()
+
+    def reload(self):
+        self.actor_description.reload()
+        self.settings_pane.reload()
 
     def center(self):
         self.update_idletasks()
