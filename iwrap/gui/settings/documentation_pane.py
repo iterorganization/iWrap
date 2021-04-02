@@ -21,6 +21,9 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
 
+        # Disable editor to prevent unwanted changes
+        self.documentation_editor.text_editor.config(state="disable")
+
     def reload(self):
         pass
 
