@@ -6,3 +6,6 @@ build/
 lib/
 .idea
 *.yaml
+.vscode/
+*.code-workspace
+.env

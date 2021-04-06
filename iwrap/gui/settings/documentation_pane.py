@@ -12,34 +12,40 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         self.documentation_frame = tk.LabelFrame(self, text="Actor documentation")
 
         # Text Editor for Actor documentation
-        self.documentation_editor = TextEditor(self.documentation_frame)
-
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        documentation = code_description.documentation
-        self.documentation_editor.text = documentation
+        self.documentation_editor = TextEditor(self.documentation_frame, self.update_documentation)
 
         # Pack the documentation frame
         self.documentation_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Disable editor to prevent unwanted changes
-        #self.documentation_editor.text_editor.config(state="disable")
+        # Execute initial reload
+        self.reload()
 
-    def reload(self):
+    def update_documentation(self, new_value) -> None:
+        self.documentation = new_value
+
+    # Documentation getter
+    @property
+    def documentation(self):
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
-        documentation = code_description.documentation
-        self.documentation_editor.text = documentation
-        print("TEST RELOAD")
-        self.documentation_editor.reload()
+        return code_description.documentation
+
+    @documentation.setter
+    def documentation(self, new_documentation):
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
+        code_description.documentation = new_documentation
+
+    def reload(self):
+        self.documentation_editor.text = self.documentation
 
 
 class TextEditor(IWrapPane):
     def __init__(self, master=None, command=None):
         super().__init__()
 
-        # Reference to external command
-        _external_command = command
+        # External command callback
+        self.command = command
 
         # Text content of a text editor
         self._text: str = None
@@ -65,12 +71,10 @@ class TextEditor(IWrapPane):
         # Configure callback from text box for scrollbar widget
         self.text_editor['yscrollcommand'] = self.scrollbar.set
 
-        # Configure the test editor event bindings
+        # Configure the text editor event callbacks
         self.text_editor.bind("<FocusIn>", self.focus)
         self.text_editor.bind("<FocusOut>", self.focus)
-
-        # Configure the text editor default style
-        self.appearance(in_focus=False)
+        self.text_editor.bind('<KeyRelease>', self.focus)
 
     @property
     def text(self):
@@ -81,32 +85,34 @@ class TextEditor(IWrapPane):
 
     @text.setter
     def text(self, new_text):
+        # In case of file import error
         if not isinstance(new_text, str):
-            new_text=str(new_text)
-        # Set new content for the text editor
+            # Fill with blank text
+            new_text=""
+
+        # Set new content to the text container
         self._text = new_text
-        # Insert content into the text editor at first line form zero-position character
+
+        # Insert content into the text editor at first line from zero-position character
+        # But clear the text widget from leftovers first
         self.clear_text_input()
         self.text_editor.insert("1.0", self._text)
 
     def focus(self, event):
+        # Focus in the text widget
         if str(event) == "<FocusIn event>":
-            #self.reload()
-            print(self.text)
-            self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
-        self.appearance(in_focus=False)
-        return self.status.config(text="Ready")
 
-    def appearance(self, in_focus):
-        if in_focus:
-            return self.text_editor.config(bg='#ffffff', fg='#000', selectbackground='#0099FF', selectforeground='#FFFFFF')
+        # Clear selected text if left        
         self.text_editor.selection_clear()
-        return self.text_editor.config(bg='#EDEDED', fg='#404040')
+
+        # Pass the text editor content to external command
+        self.command(self.text)
+
+        return self.status.config(text="Ready")
 
     def clear_text_input(self):
         self.text_editor.delete("1.0", "end")
 
     def reload(self):
-        print("Inside")
         pass
