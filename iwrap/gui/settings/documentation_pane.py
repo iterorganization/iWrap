@@ -31,11 +31,15 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         documentation = code_description.documentation
         self.documentation_editor.text = documentation
         print("TEST RELOAD")
+        self.documentation_editor.reload()
 
 
 class TextEditor(IWrapPane):
-    def __init__(self, master=None):
+    def __init__(self, master=None, command=None):
         super().__init__()
+
+        # Reference to external command
+        _external_command = command
 
         # Text content of a text editor
         self._text: str = None
@@ -82,11 +86,12 @@ class TextEditor(IWrapPane):
         # Set new content for the text editor
         self._text = new_text
         # Insert content into the text editor at first line form zero-position character
+        self.clear_text_input()
         self.text_editor.insert("1.0", self._text)
 
     def focus(self, event):
         if str(event) == "<FocusIn event>":
-            self.reload()
+            #self.reload()
             print(self.text)
             self.appearance(in_focus=True)
             return self.status.config(text="Edit mode")
@@ -99,5 +104,9 @@ class TextEditor(IWrapPane):
         self.text_editor.selection_clear()
         return self.text_editor.config(bg='#EDEDED', fg='#404040')
 
+    def clear_text_input(self):
+        self.text_editor.delete("1.0", "end")
+
     def reload(self):
+        print("Inside")
         pass
