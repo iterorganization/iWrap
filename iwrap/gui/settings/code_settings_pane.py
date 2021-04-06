@@ -48,7 +48,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
     def change_language_pane(self, eventObject=None):
         """Change specific language pane when programming language in combobox is changed
 
-        :param eventObject: combobox change value event object, default value is None
+        Args:
+            eventObject: combobox change value event object, default value is None
         """
         self.selected_programming_language = self.programming_language_combobox.get()
         self.pane.pack_forget()
