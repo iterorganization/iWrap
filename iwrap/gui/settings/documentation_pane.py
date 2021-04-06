@@ -55,11 +55,6 @@ class TextEditor(IWrapPane):
         # Pack scrollbar
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
 
-        # Status label
-        self.status = tk.Label(master, text="Ready", height=1, borderwidth=1, relief="ridge", anchor="e")
-        # Pack the status label
-        self.status.pack(side=tk.BOTTOM, expand=False, fill=tk.X, padx=5, pady=(1, 2))
-
         # Text Box for the text editor
         self.text_editor = tk.Text(master)
         # Pack text box
@@ -99,17 +94,13 @@ class TextEditor(IWrapPane):
         self.text_editor.insert("1.0", self._text)
 
     def focus(self, event):
-        # Focus in the text widget
-        if str(event) == "<FocusIn event>":
-            return self.status.config(text="Edit mode")
+        # Focus out of the text widget
+        if str(event) == "<FocusOut event>":
+            # Clear selected text if left        
+            self.text_editor.selection_clear()
 
-        # Clear selected text if left        
-        self.text_editor.selection_clear()
-
-        # Pass the text editor content to external command
-        self.command(self.text)
-
-        return self.status.config(text="Ready")
+        # Return the text editor content to external command
+        return self.command(self.text)
 
     def clear_text_input(self):
         self.text_editor.delete("1.0", "end")
