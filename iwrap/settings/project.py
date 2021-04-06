@@ -33,5 +33,6 @@ class ProjectSettings( Dictionarizable ):
         serializer.save( dictionary )
 
     def load(self, serializer: IWrapSerializer):
+        self.clear()
         dictionary = serializer.load()
         self.from_dict( dictionary )

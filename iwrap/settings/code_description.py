@@ -93,6 +93,10 @@ class CodeDescription( Dictionarizable ):
     def from_dict(self, dictionary: dict):
         super().from_dict( dictionary )
 
+
+    def clear(self):
+        self.__init__()
+
     def to_dict(self):
         return super().to_dict()
 
@@ -102,5 +106,6 @@ class CodeDescription( Dictionarizable ):
         serializer.save( dictionary )
 
     def load(self, serializer: IWrapSerializer):
+        self.clear()
         dictionary = serializer.load()
         self.from_dict( dictionary )
