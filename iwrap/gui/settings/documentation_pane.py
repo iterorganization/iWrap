@@ -6,13 +6,27 @@ from iwrap.settings.project import ProjectSettings
 
 
 class DocumentationPane(ttk.Frame, IWrapPane):
+    """The documentation pane tab class.
+
+    Attributes:
+        documentation_editor (TextEditor): Allows to access the text editor object outside the class.
+
+    Properties:
+        documentation (str): Documentation text.
+
+    Notes:
+        Creates a new documentation frame with a scrollable documentation text editor.
+        Additionally, it creates an instance of the ProjectSettings and loads the code description 
+        that can later be exported to a YAML file or imports documentation to the editor.
+    """
     def __init__(self, master=None):
-        """Initilize new documentation pane. It takes as nonobligatory argument
-         the parent widget from tkinter class. In return it creates a new documentation frame 
-         with a scrollable documentation text editor.
-         Additionally, it creates an instance of the project settings and loads the code description 
-         that can later be exported to a YAML file. 
-         Alternatively, it places the imported documentation in the editor."""
+        """Initialize the documentation pane tab.
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+        
+        Note:
+            Creates a template for a text editor from the TextEditor subclass
+        """
         super().__init__(master)
 
         # Documentation property instance
@@ -32,17 +46,18 @@ class DocumentationPane(ttk.Frame, IWrapPane):
 
     def update_documentation(self, new_value: str) -> None:
         """Callback method to update the documentation property.
-        Takes 1 positional argument
-            new_value: str
-        Then calls property to set new value.
+        Args:
+            new_value (str): New text to update documentation.
+        
+        Note:
+            Calls the documentation property setter to set new value.
         """
         self.documentation = new_value
 
     # Documentation getter
     @property
     def documentation(self):
-        """A property that allows you to store a sequence of documentation. Gets and sets
-         the value of the documentation stored in the ProjectSettings class.
+        """:obj: `str`: Get or set the current documentation text stored in ProjectSettings class.
         """
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
@@ -55,7 +70,7 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         code_description.documentation = new_documentation
     
     def reload(self):
-        """Reload method, when called it immediately refresh the documentation editor text content.
+        """Immediately refresh the documentation editor text content.
         """
         self.documentation_editor.text = self.documentation
 
