@@ -1,11 +1,12 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import LabelFrame, ttk
+from tkinter.constants import S
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 
 
-class DocumentationPane(ttk.Frame, IWrapPane):
+class DocumentationPane(ttk.LabelFrame, IWrapPane):
     """The documentation pane tab class.
 
     Attributes:
@@ -27,19 +28,13 @@ class DocumentationPane(ttk.Frame, IWrapPane):
         Note:
             Creates a template for a text editor from the TextEditor subclass
         """
-        super().__init__(master)
+        super().__init__(master, text="Actor documentation")
 
         # Documentation property instance
         self.documentation: str = ""
 
-        # Label Frame for Actor documentation
-        documentation_frame = tk.LabelFrame(self, text="Actor documentation")
-
         # Text Editor for Actor documentation
-        self.documentation_editor = TextEditor(documentation_frame, self.update_documentation)
-
-        # Pack the documentation frame
-        documentation_frame.pack(fill=tk.BOTH, expand=True)
+        self.documentation_editor = TextEditor(self, self.update_documentation)
 
         # Execute initial reload
         self.reload()
