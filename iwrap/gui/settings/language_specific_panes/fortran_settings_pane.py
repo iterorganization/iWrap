@@ -11,7 +11,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
-        labelframe.pack(fill=tk.BOTH, expand=1)
+        labelframe.pack(fill=tk.BOTH, expand=1, pady=15)
         labelframe.grid_columnconfigure(1, weight=1)
 
         # COMBOBOX
