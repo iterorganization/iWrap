@@ -76,19 +76,38 @@ class DocumentationPane(ttk.Frame, IWrapPane):
 
 
 class TextEditor(IWrapPane):
+    """Simple scrollable text editor.
+
+    Attributes:
+        command (optional): Reference to external method or function to be called after event occurs.
+        text_editor (tk.Text): A text widget which handles multiple line text and is complete text editor in a window.
+
+    Properties:
+        text (str): The text stored in text editor.
+
+    Notes:
+        Three types of events trigger the callback method: `FocusIn`, `FocusOut` and `KeyRelease`.
+    """
     def __init__(self, master=None, command=None):
+        """Initialize the scrollable text editor.
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+            command (optional): Reference to a callback method.
+        Note:
+            Preconfigures the text editor widget.
+        """
         super().__init__()
 
         # External command callback
         self.command = command
 
         # Text content of a text editor
-        self._text: str = None
+        self._text: str = ""
 
         # Scrollbar for the text box widget
-        self.scrollbar = ttk.Scrollbar(master)
+        scrollbar = ttk.Scrollbar(master)
         # Pack scrollbar
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
 
         # Text Box for the text editor
         self.text_editor = tk.Text(master)
@@ -96,18 +115,22 @@ class TextEditor(IWrapPane):
         self.text_editor.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
 
         # Configure scrollbar for text box scrolling
-        self.scrollbar.config(command=self.text_editor.yview)
+        scrollbar.config(command=self.text_editor.yview)
 
         # Configure callback from text box for scrollbar widget
-        self.text_editor['yscrollcommand'] = self.scrollbar.set
+        self.text_editor['yscrollcommand'] = scrollbar.set
 
         # Configure the text editor event callbacks
-        self.text_editor.bind("<FocusIn>", self.focus)
-        self.text_editor.bind("<FocusOut>", self.focus)
-        self.text_editor.bind('<KeyRelease>', self.focus)
+        self.text_editor.bind("<FocusIn>", self.__focus_event)
+        self.text_editor.bind("<FocusOut>", self.__focus_event)
+        self.text_editor.bind('<KeyRelease>', self.__focus_event)
 
     @property
     def text(self):
+        """:obj: `str`: stores the text content of the text editor. Sets and gets value from the text editor widget.
+        
+        Prevents from inserting non (str) type object to the widget.
+        """
         # Pull content from the text editor out of first line from zero-position character
         # to the end and delete newline character at final position.
         self._text = self.text_editor.get("1.0", tk.END+"-1c")
@@ -128,7 +151,15 @@ class TextEditor(IWrapPane):
         self.clear_text_input()
         self.text_editor.insert("1.0", self._text)
 
-    def focus(self, event):
+    def __focus_event(self, event):
+        """A private callback method triggered by the events binding.
+
+        Notes:
+            For losing focus clears any text selection.
+        
+        Returns:
+            Calls external command, every time it is triggered.
+        """
         # Focus out of the text widget
         if str(event) == "<FocusOut event>":
             # Clear selected text if left        
@@ -138,7 +169,11 @@ class TextEditor(IWrapPane):
         return self.command(self.text)
 
     def clear_text_input(self):
+        """Class method for clearing all content stored in the text editor widget.
+        """
         self.text_editor.delete("1.0", "end")
 
     def reload(self):
+        """Does nothing.
+        """
         pass
