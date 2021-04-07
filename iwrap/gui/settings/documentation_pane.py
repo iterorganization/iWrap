@@ -36,9 +36,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
 
-        # Pre-configure the documentation editor appearance
-        self.documentation_editor.text_editor.config(bg="#FFF", fg="#000", insertbackground="#000")
-
         # Execute initial reload
         self.reload()
 
@@ -108,7 +105,10 @@ class TextEditor:
         self.text_editor['yscrollcommand'] = scrollbar.set
 
         # Configure the text editor event callbacks
-        self.text_editor.bind("<FocusOut>", self.__focus_event)
+        self.text_editor.bind('<FocusOut>', self.focus_lost_event)
+
+        # Pre-configure the text editor appearance
+        self.text_editor.config(bg='#FFF', fg='#000', insertbackground='#000')
 
     @property
     def text(self):
@@ -118,7 +118,7 @@ class TextEditor:
         """
         # Pull content from the text editor out of first line from zero-position character
         # to the end and delete newline character at final position.
-        self._text = self.text_editor.get("1.0", tk.END+"-1c")
+        self._text = self.text_editor.get('1.0', tk.END+'-1c')
         return self._text
 
     @text.setter
@@ -134,9 +134,9 @@ class TextEditor:
         # Insert content into the text editor at first line from zero-position character
         # But clear the text widget from leftovers first
         self.clear_text_input()
-        self.text_editor.insert("1.0", self._text)
+        self.text_editor.insert('1.0', self._text)
 
-    def __focus_event(self, event):
+    def focus_lost_event(self, event):
         """A private callback method triggered by the event binding.
 
         Gets text property content and sets parent documentation property.
@@ -144,10 +144,8 @@ class TextEditor:
         Notes:
             For losing focus clears any text selection.
         """
-        # Focus out of the text widget
-        if str(event) == "<FocusOut event>":
-            # Clear selected text if left        
-            self.text_editor.selection_clear()
+        # Clear selected text    
+        self.text_editor.selection_clear()
 
         # Update the project documentation
         self._master.documentation = self.text
@@ -155,4 +153,4 @@ class TextEditor:
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
         """
-        self.text_editor.delete("1.0", "end")
+        self.text_editor.delete('1.0', tk.END)
