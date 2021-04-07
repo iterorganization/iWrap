@@ -34,23 +34,13 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         self.documentation: str = ""
 
         # Text Editor for Actor documentation
-        self.documentation_editor = TextEditor(self, self.update_documentation)
+        self.documentation_editor = TextEditor(self)
 
         # Pre-configure the documentation editor appearance
-        self.documentation_editor.text_editor.config(bg="#FFF", fg="#000")
+        self.documentation_editor.text_editor.config(bg="#FFF", fg="#000", insertbackground="#000")
 
         # Execute initial reload
         self.reload()
-
-    def update_documentation(self, new_value: str) -> None:
-        """Callback method to update the documentation property.
-        Args:
-            new_value (str): New text to update documentation.
-        
-        Note:
-            Calls the documentation property setter to set new value.
-        """
-        self.documentation = new_value
 
     # Documentation getter
     @property
@@ -73,31 +63,30 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         self.documentation_editor.text = self.documentation
 
 
-class TextEditor(IWrapPane):
+class TextEditor:
     """Simple scrollable text editor.
 
     Attributes:
-        command (optional): Reference to external method or function to be called after event occurs.
+        _master (optional): (Private) Reference to parent object.
         text_editor (tk.Text): A text widget which handles multiple line text and is complete text editor in a window.
 
     Properties:
         text (str): The text stored in text editor.
 
     Notes:
-        Three types of events trigger the callback method: `FocusIn`, `FocusOut` and `KeyRelease`.
+        One type of event triggers the callback method: `FocusOut`.
     """
-    def __init__(self, master=None, command=None):
+    def __init__(self, master=None):
         """Initialize the scrollable text editor.
         Args:
             master (ttk.Frame, optional): A parent widget.
-            command (optional): Reference to a callback method.
         Note:
             Preconfigures the text editor widget.
         """
         super().__init__()
 
-        # External command callback
-        self.command = command
+        # Parent attribute
+        self._master = master
 
         # Text content of a text editor
         self._text: str = ""
@@ -119,9 +108,7 @@ class TextEditor(IWrapPane):
         self.text_editor['yscrollcommand'] = scrollbar.set
 
         # Configure the text editor event callbacks
-        self.text_editor.bind("<FocusIn>", self.__focus_event)
         self.text_editor.bind("<FocusOut>", self.__focus_event)
-        self.text_editor.bind('<KeyRelease>', self.__focus_event)
 
     @property
     def text(self):
@@ -150,7 +137,7 @@ class TextEditor(IWrapPane):
         self.text_editor.insert("1.0", self._text)
 
     def __focus_event(self, event):
-        """A private callback method triggered by the events binding.
+        """A private callback method triggered by the event binding.
 
         Notes:
             For losing focus clears any text selection.
@@ -163,15 +150,10 @@ class TextEditor(IWrapPane):
             # Clear selected text if left        
             self.text_editor.selection_clear()
 
-        # Return the text editor content to external command
-        return self.command(self.text)
+        # Update the project documentation
+        self._master.documentation = self.text
 
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
         """
         self.text_editor.delete("1.0", "end")
-
-    def reload(self):
-        """Does nothing.
-        """
-        pass
