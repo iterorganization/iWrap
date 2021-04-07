@@ -139,11 +139,10 @@ class TextEditor:
     def __focus_event(self, event):
         """A private callback method triggered by the event binding.
 
+        Gets text property content and sets parent documentation property.
+
         Notes:
             For losing focus clears any text selection.
-        
-        Returns:
-            Calls external command, every time it is triggered.
         """
         # Focus out of the text widget
         if str(event) == "<FocusOut event>":
