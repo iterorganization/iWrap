@@ -46,7 +46,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.add_language_pane()
 
         # COMBOBOX
-        ttk.Label(labelframe, text="Programming language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
         self.programming_language_combobox['values'] = self.combobox_values
         self.programming_language_combobox.current(0)
@@ -54,7 +54,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
         # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(labelframe, text="Source Code:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Code path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.browse_text = tk.Entry(labelframe)
         self.browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse", command=self.on_click, width=10)\
