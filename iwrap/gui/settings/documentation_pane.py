@@ -36,6 +36,9 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self, self.update_documentation)
 
+        # Pre-configure the documentation editor appearance
+        self.documentation_editor.text_editor.config(bg="#FFF", fg="#000")
+
         # Execute initial reload
         self.reload()
 
