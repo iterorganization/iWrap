@@ -11,3 +11,6 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
     def reload(self):
         pass
+
+    def update_settings(self):
+        pass

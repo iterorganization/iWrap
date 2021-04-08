@@ -43,6 +43,10 @@ class MainWindow( tk.Tk, IWrapPane ):
 
         self.center()
 
+    def update_settings(self):
+        self.actor_description.update_settings()
+        self.settings_pane.update_settings()
+
     def reload(self):
         self.actor_description.reload()
         self.settings_pane.reload()
