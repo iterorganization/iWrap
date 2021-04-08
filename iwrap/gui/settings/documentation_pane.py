@@ -51,9 +51,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
     @documentation.setter
     def documentation(self, new_documentation):
         self.update_settings(new_documentation)
-        #project_settings = ProjectSettings.get_settings()
-        #code_description = project_settings.code_description
-        #code_description.documentation = new_documentation
     
     def update_settings(self, update_value : str =""):
         """Update documentation in ProjectSettings.
