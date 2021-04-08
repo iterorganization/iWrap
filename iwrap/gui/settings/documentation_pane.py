@@ -54,6 +54,9 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         code_description = project_settings.code_description
         code_description.documentation = new_documentation
     
+    def update_settings(self):
+        pass
+
     def reload(self):
         """Immediately refresh the documentation editor text content.
         """

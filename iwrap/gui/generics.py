@@ -7,3 +7,8 @@ class IWrapPane(ABC):
     def reload(self):
         ...
 
+
+    @abstractmethod
+    def update_settings(self):
+        ...
+

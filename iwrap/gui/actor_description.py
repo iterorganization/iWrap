@@ -29,6 +29,9 @@ class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
 
         self.columnconfigure( 1, weight=3 )
 
+    def update_settings(self):
+        pass
+
     def reload(self):
         self.actor_name.delete( 0, tk.END )
         self.actor_type_combo.current( 0 )
