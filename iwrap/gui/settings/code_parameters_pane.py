@@ -20,6 +20,9 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         self._any_browser = FileBrowser(self)
         
 
+    def update_settings(self):
+        pass
+
     def reload(self):
         pass
 

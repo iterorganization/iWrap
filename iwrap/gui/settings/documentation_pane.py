@@ -33,6 +33,7 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         # Documentation property instance
         self.documentation: str = ""
 
+<<<<<<< HEAD
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
 
@@ -54,6 +55,11 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         code_description = project_settings.code_description
         code_description.documentation = new_documentation
     
+=======
+    def update_settings(self):
+        pass
+
+>>>>>>> develop
     def reload(self):
         """Immediately refresh the documentation editor text content.
         """
