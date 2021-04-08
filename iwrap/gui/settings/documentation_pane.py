@@ -33,7 +33,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         # Documentation property instance
         self.documentation: str = ""
 
-<<<<<<< HEAD
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
 
@@ -51,15 +50,15 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
 
     @documentation.setter
     def documentation(self, new_documentation):
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        code_description.documentation = new_documentation
+        self.update_settings(new_documentation)
     
-=======
-    def update_settings(self):
-        pass
+    def update_settings(self, update_value : str =""):
+        """Update documentation in ProjectSettings.
+        Args:
+            update_value (str, optional): Text to update in ProjectSettings.
+        """
+        ProjectSettings.get_settings().code_description.documentation = update_value
 
->>>>>>> develop
     def reload(self):
         """Immediately refresh the documentation editor text content.
         """
@@ -79,7 +78,7 @@ class TextEditor:
     Notes:
         One type of event triggers the callback method: `FocusOut`.
     """
-    def __init__(self, master=None):
+    def __init__(self, master: ttk.Widget=None):
         """Initialize the scrollable text editor.
         Args:
             master (ttk.Frame, optional): A parent widget.
@@ -128,7 +127,7 @@ class TextEditor:
         return self._text
 
     @text.setter
-    def text(self, new_text):
+    def text(self, new_text: str):
         # In case of file import error
         if not isinstance(new_text, str):
             # Fill with blank text
@@ -154,7 +153,7 @@ class TextEditor:
         self.text_editor.selection_clear()
 
         # Update the project documentation
-        self._master.documentation = self.text
+        self._master.update_settings(self.text)
 
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
