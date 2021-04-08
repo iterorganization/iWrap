@@ -11,13 +11,13 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
 
         # XML file path browser dialog
-        self._xml_browser = FileBrowser(self, file_type='xml')
+        self._xml_browser = FileBrowser(self, file_type='xml').pack()
         
         # XSD file path browser dialog
-        self._xsd_browser = FileBrowser(self, file_type='xsd')
+        self._xsd_browser = FileBrowser(self, file_type='xsd').pack()
 
         # Any file path browser dialog
-        self._any_browser = FileBrowser(self)
+        self._any_browser = FileBrowser(self).pack()
         
 
     def update_settings(self):
@@ -27,14 +27,19 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         pass
 
 
-class FileBrowser:
+class FileBrowser(tk.Frame):
     def __init__(self, master=None, file_type=None) -> None:
-        
+        super().__init__(master, bg='white')
         self.file_type, self.file_type_title = self.__define_file_type(file_type)
         
         # A button to browse files
-        self.button = ttk.Button(master, text = f"Browse {self.file_type_title} File", command = self.action_open)
-        self.button.pack()
+        self.button = ttk.Button(self, text = f"Browse {self.file_type_title} File", command = self.action_open)
+        self.button.pack(side='right')
+
+        self.path_dialog = ttk.Entry(self, state='readonly')
+        self.path_dialog.pack(side='left', fill=tk.X, expand=True)
+
+        self.pack(expand=True, fill=tk.X, pady=10, ipady=5, padx=0, ipadx=15)
     
     def __define_file_type(self, file_type):
         # XML file type
