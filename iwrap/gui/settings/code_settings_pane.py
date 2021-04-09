@@ -24,7 +24,10 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             combobox_values(list): List contains programming languages that are visible in combobox.
             labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
             programming language combobox, code path entry, and browse button.
-            selected_programming_language(str): Value for programming language selected in combobox.
+            code_path(StringVar): Value for code path from filedialog or the YAML file. If value is changed
+            update_settings() method is calling.
+            selected_programming_language(StringVar): Value for programming language selected in combobox. If value
+            is changed update_settings() method is calling.
             language_pane(Frame): Frame dedicated for specific programming language pane selected in combobox.
             programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values.
             Enables user to select preferable programming language or value is selected automatically if the YAML file
@@ -82,6 +85,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane.pack(fill="both", expand="yes", pady=10)
 
     def update_settings(self, *args):
+        """Update code_path and programming_language values in ProjectSettings
+        """
         code_description = ProjectSettings.get_settings().code_description
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
