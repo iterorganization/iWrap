@@ -38,7 +38,7 @@ class FileBrowser(ttk.Frame):
 
         # A button to browse files
         self.button = ttk.Button(self, text = f"Browse {self.file_type_title} File", command = self.action_open)
-        self.button.pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=5)
+        self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string
         self.path = tk.StringVar(self)
