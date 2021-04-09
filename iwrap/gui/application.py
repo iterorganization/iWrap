@@ -10,7 +10,7 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 
 class ButtonPane( ttk.Frame ):
     def __init__(self, master: ttk.Widget):
-        super().__init__( master, borderwidth=1, relief="solid" )
+        super().__init__(master, borderwidth=1, relief="solid")
 
         close_button = ttk.Button( self, text='Close', command=self.winfo_toplevel().destroy )
         close_button.pack( side=tk.RIGHT, padx=10, pady=5 )
@@ -25,7 +25,7 @@ class MainWindow( tk.Tk, IWrapPane ):
 
         self.title( "iWrap" )
         self.minsize( 600, 300 )
-        self.geometry( '600x650' )
+        self.geometry( '600x600' )
 
         self.config( menu=MenuBar( self ) )
 
@@ -35,11 +35,11 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.actor_description = ActorDescriptionPane( main_pane )
         self.actor_description.pack( fill=tk.BOTH, side=tk.TOP, padx=5, pady=5 )
 
+        button_pane = ButtonPane(main_pane)
+        button_pane.pack(fill=tk.X, side=tk.BOTTOM)
+
         self.settings_pane = SettingsMainPane( main_pane )
         self.settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
-
-        button_pane = ButtonPane( main_pane )
-        button_pane.pack( fill=tk.X, side=tk.BOTTOM )
 
         self.center()
 
