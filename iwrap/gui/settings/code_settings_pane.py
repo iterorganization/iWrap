@@ -77,6 +77,10 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane = pane(self)
         self.language_pane.pack(fill="both", expand="yes", pady=10)
 
+
+    def update_settings(self):
+        pass
+
     def reload(self):
         """Reload entry and combobox values when the project settings are changed. If programming language from new
         project settings is not available in combobox warning message box will be shown and the default value of
