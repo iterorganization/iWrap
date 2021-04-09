@@ -16,10 +16,6 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         # XSD file path browser dialog
         self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:").pack()
 
-        # Any file path browser dialog
-        self._any_browser = FileBrowser(self).pack()
-        
-
     def update_settings(self):
         pass
 
@@ -30,6 +26,7 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
 class FileBrowser(ttk.Frame):
     def __init__(self, master=None, file_type=None, label_text="") -> None:
         super().__init__(master)
+        # Specify the file type
         self.file_type, self.file_type_title = self.__define_file_type(file_type)
         
         # A label above widget
@@ -39,9 +36,12 @@ class FileBrowser(ttk.Frame):
         # A button to browse files
         self.button = ttk.Button(self, text = f"Browse {self.file_type_title} File", command = self.action_open)
         self.button.pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=5)
+
+        # Tk's StringVar to store path string
+        self.path = tk.StringVar(self)
         
         # An entry to display path dialog
-        self.path_dialog = ttk.Entry(self, state='readonly')
+        self.path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
         self.path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
@@ -64,7 +64,7 @@ class FileBrowser(ttk.Frame):
                                                 filetypes=self.file_type )
         if filename is None:
             return
-        print(filename)
+        self.path.set(filename)
 
     class FileTypes:
         def __init__(self) -> None:
