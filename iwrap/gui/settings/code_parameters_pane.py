@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Frame, ttk
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
@@ -27,19 +27,19 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         pass
 
 
-class FileBrowser(tk.Frame):
+class FileBrowser(ttk.Frame):
     def __init__(self, master=None, file_type=None) -> None:
-        super().__init__(master, bg='white')
+        super().__init__(master)
         self.file_type, self.file_type_title = self.__define_file_type(file_type)
         
         # A button to browse files
         self.button = ttk.Button(self, text = f"Browse {self.file_type_title} File", command = self.action_open)
-        self.button.pack(side='right')
+        self.button.pack(side='right', expand=False, fill=tk.X, padx=5)
 
         self.path_dialog = ttk.Entry(self, state='readonly')
         self.path_dialog.pack(side='left', fill=tk.X, expand=True)
 
-        self.pack(expand=True, fill=tk.X, pady=10, ipady=5, padx=0, ipadx=15)
+        self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
     
     def __define_file_type(self, file_type):
         # XML file type
