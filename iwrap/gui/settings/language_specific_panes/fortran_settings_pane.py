@@ -24,6 +24,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_combobox['values'] = self.combobox_values
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
+    def update_settings(self):
+        pass
+
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
         self.settings.from_dict(dict_settings)

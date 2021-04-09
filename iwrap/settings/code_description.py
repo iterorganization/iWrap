@@ -35,10 +35,10 @@ class CodeParameters( Dictionarizable ):
     def __init__(self):
 
         #: A path to XML file containing native code parameters
-        self.parameters: str
+        self.parameters: str = ''
 
         #: A path to XSD file containing schema that allows to validate code parameters XML description
-        self.schema: str
+        self.schema: str = ''
 
     def from_dict(self, dictionary: dict) -> None:
         """Method restores object status based on passed dictionary.

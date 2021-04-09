@@ -13,5 +13,9 @@ class CodeSettingsPane( ttk.Frame, IWrapPane ):
         pane = language_pane(self)
         pane.pack( fill=tk.BOTH, expand=1 )
 
+
+    def update_settings(self):
+        pass
+
     def reload(self):
         pass
