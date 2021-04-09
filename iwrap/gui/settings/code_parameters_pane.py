@@ -16,6 +16,9 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         # XSD file path browser dialog
         self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:").pack()
 
+        # XML Validator object against XSD
+        self._validator = XmlValidator(self)
+
     def update_settings(self):
         pass
 
@@ -86,3 +89,17 @@ class FileBrowser(ttk.Frame):
         
         def __add__(self, other):
             return (self[0],other[0])
+
+    
+class XmlValidator(ttk.Frame):
+    def __init__(self, master=None) -> None:
+        super().__init__(master)
+        
+        self.button = ttk.Button(self, text='Validate', command=self._validate_against_xsd)
+        self.button.pack(side=tk.TOP)
+
+        self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
+    
+    def _validate_against_xsd(self):
+        print()
+        pass
