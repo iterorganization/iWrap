@@ -24,8 +24,7 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         pass
 
     def reload(self):
-        self._validator.update_validation_files()
-
+        pass
 
 class FileBrowser(ttk.Frame):
     def __init__(self, master=None, file_type=None, label_text="") -> None:
@@ -69,7 +68,6 @@ class FileBrowser(ttk.Frame):
         if filename is None:
             return
         self.path.set(filename)
-        self.master.reload()
 
     class FileTypes:
         def __init__(self) -> None:
@@ -96,25 +94,47 @@ class FileBrowser(ttk.Frame):
 class XmlValidator(ttk.Frame):
     def __init__(self, master=None) -> None:
         super().__init__(master)
+
+        # Validation result
+        self.result: bool = None
         
-        self.files_to_validate = (master._xml_browser.path.get(), master._xsd_browser.path.get())
+        # Object of files to process validation
+        self.files_to_validate = self.ValidationFiles(master)
         self.button = ttk.Button(self, text='Validate', command=self._validate_against_xsd)
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
     
     def _validate_against_xsd(self):
-
-        xmlschema_file = etree.parse(self.files_to_validate[1])
+        self.files_to_validate.update()
+        xmlschema_file = etree.parse(self.files_to_validate.xsd)
         xmlschema = etree.XMLSchema(xmlschema_file)
 
-        xml_file = etree.parse(self.files_to_validate[0])
+        xml_file = etree.parse(self.files_to_validate.xml)
         validation_pass = xmlschema.validate(xml_file)
+        
+        # Save validation result
+        self.result = validation_pass
 
         if not validation_pass:
             messagebox.showerror("Validation Error", f"Validation result:\n!!! {validation_pass} !!!")
             return
         messagebox.showerror("Validation Pass", f"Validation result: \n{validation_pass}")
 
-    def update_validation_files(self):
-        self.files_to_validate = (self.master._xml_browser.path.get(), self.master._xsd_browser.path.get())
+    class ValidationFiles:
+        def __init__(self, master) -> None:
+            self.master = master
+            self._xml: str = master._xml_browser.path.get()
+            self._xsd: str = master._xsd_browser.path.get()
+
+        @property
+        def xml(self):
+            return self._xml
+        
+        @property
+        def xsd(self):
+            return self._xsd
+        
+        def update(self):
+            self._xml = self.master._xml_browser.path.get()
+            self._xsd = self.master._xsd_browser.path.get()
