@@ -119,7 +119,7 @@ class XmlValidator(ttk.Frame):
         if not validation_pass:
             messagebox.showerror("Validation Error", f"Validation result:\n!!! {validation_pass} !!!")
             return
-        messagebox.showerror("Validation Pass", f"Validation result: \n{validation_pass}")
+        messagebox.showinfo("Validation Pass", f"Validation result: \n{validation_pass}")
 
     class ValidationFiles:
         def __init__(self, master) -> None:
