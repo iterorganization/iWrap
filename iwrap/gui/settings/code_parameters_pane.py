@@ -11,10 +11,10 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
 
         # XML file path browser dialog
-        self._xml_browser = FileBrowser(self, file_type='xml', label_text="Code parameters file:").pack()
+        self._xml_browser = FileBrowser(self, file_type='xml', label_text="Code parameters file:")
         
         # XSD file path browser dialog
-        self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:").pack()
+        self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:")
 
         # XML Validator object against XSD
         self._validator = XmlValidator(self)
@@ -23,7 +23,7 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         pass
 
     def reload(self):
-        pass
+        self._validator.update_validation_files()
 
 
 class FileBrowser(ttk.Frame):
@@ -42,13 +42,17 @@ class FileBrowser(ttk.Frame):
 
         # Tk's StringVar to store path string
         self.path = tk.StringVar(self)
-        
+        self.path.set('TST')
         # An entry to display path dialog
         self.path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
         self.path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
     
+    @property
+    def path_(self):
+        return self.path.get()
+
     def __define_file_type(self, file_type):
         # XML file type
         if file_type == 'xml':
@@ -68,6 +72,7 @@ class FileBrowser(ttk.Frame):
         if filename is None:
             return
         self.path.set(filename)
+        self.master.reload()
 
     class FileTypes:
         def __init__(self) -> None:
@@ -95,11 +100,15 @@ class XmlValidator(ttk.Frame):
     def __init__(self, master=None) -> None:
         super().__init__(master)
         
+        self.files_to_validate = (master._xml_browser.path.get(), master._xsd_browser.path.get())
         self.button = ttk.Button(self, text='Validate', command=self._validate_against_xsd)
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
     
     def _validate_against_xsd(self):
-        print()
+        print(self.files_to_validate)
         pass
+
+    def update_validation_files(self):
+        self.files_to_validate = (self.master._xml_browser.path.get(), self.master._xsd_browser.path.get())
