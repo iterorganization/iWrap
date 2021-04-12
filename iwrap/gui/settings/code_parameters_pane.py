@@ -107,12 +107,17 @@ class XmlValidator(ttk.Frame):
     
     def _validate_against_xsd(self):
         self.files_to_validate.update()
+        
+        # Check that the given path is correct for further processing
+        if not self.files_to_validate.correct_path():
+            messagebox.showwarning("WRONG PATH", "Given path file is not correct!")
+            return
         xmlschema_file = etree.parse(self.files_to_validate.xsd)
         xmlschema = etree.XMLSchema(xmlschema_file)
 
         xml_file = etree.parse(self.files_to_validate.xml)
         validation_pass = xmlschema.validate(xml_file)
-        
+    
         # Save validation result
         self.result = validation_pass
 
@@ -135,6 +140,11 @@ class XmlValidator(ttk.Frame):
         def xsd(self):
             return self._xsd
         
+        def correct_path(self):
+            if self.xml is '' or self.xsd is '':
+                return False
+            return True
+
         def update(self):
             self._xml = self.master._xml_browser.path.get()
             self._xsd = self.master._xsd_browser.path.get()
