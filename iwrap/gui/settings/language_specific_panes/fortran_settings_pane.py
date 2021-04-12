@@ -74,13 +74,41 @@ class SystemLibrariesPane( ttk.Frame ):
         buttons_center_frame = ttk.Frame(buttons_frame)
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
-        # LABEL
-        ttk.Label(tree_view_frame, text="Place for tree view", borderwidth=1, relief="solid").pack(fill=tk.BOTH)
+        # TREE VIEW
+        self.columns = ['Name', 'Info', 'Description']
+        self.tree_view_data = [
+            ('name1', 'info1', 'Description1'),
+            ('name2', 'info2', 'Description2'),
+            ('name3', 'info3', 'Description3'),
+            ('name4', 'info4', 'Description4'),
+            ('name5', 'info5', 'Description5')]
+        self.tree = ttk.Treeview(tree_view_frame, height=len(self.tree_view_data))
+        self.tree['show'] = 'headings'
+        self.tree["columns"] = list(range(0, len(self.columns)))
+        self.tree_view_insert_column()
+        self.tree_view_insert_data()
+        self.tree.pack(fill=tk.BOTH)
 
         # BUTTONS
         ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
+
+    def tree_view_insert_data(self):
+        for idx, data in enumerate(self.tree_view_data):
+            if idx % 2 == 0:
+                self.tree.insert("", "end", values=data, tag='gray')
+            else:
+                self.tree.insert("", "end", values=data)
+        self.tree.tag_configure('gray', background='#F1F2F2')
+
+    def tree_view_insert_column(self):
+        for idx, column in enumerate(self.columns):
+            if column == 'Description':
+                self.tree.column(idx, anchor="center")
+            else:
+                self.tree.column(idx, anchor="center", width=120, stretch=tk.NO)
+            self.tree.heading(idx, text=column)
 
 
 class CustomLibrariesPane( ttk.Frame ):
