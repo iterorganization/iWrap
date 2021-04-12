@@ -40,7 +40,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control.add(feature_tab, text="Features")
         tab_control.add(sys_lib_tab, text="System libraries")
         tab_control.add(cus_lib_tab, text="Custom libraries")
-        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
+        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         feature_pane = FeaturesPane(feature_tab)
         system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
