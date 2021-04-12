@@ -46,7 +46,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
         system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
         custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
 
-
     def update_settings(self):
         pass
 
@@ -65,8 +64,23 @@ class SystemLibrariesPane( ttk.Frame ):
     def __init__(self, master=None):
         super().__init__( master )
 
-        ttk.Label(master, text="Place for System Libraries Pane", borderwidth=1, relief="solid")\
-            .pack(fill=tk.BOTH, expand=1)
+        # TREE VIEW FRAME
+        tree_view_frame = ttk.Frame(master)
+        tree_view_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
+
+        # BUTTONS FRAMES
+        buttons_frame = ttk.Frame(master, width=100)
+        buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
+        buttons_center_frame = ttk.Frame(buttons_frame)
+        buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
+
+        # LABEL
+        ttk.Label(tree_view_frame, text="Place for tree view", borderwidth=1, relief="solid").pack(fill=tk.BOTH)
+
+        # BUTTONS
+        ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
 
 class CustomLibrariesPane( ttk.Frame ):
