@@ -1,9 +1,10 @@
 import tkinter as tk
-from tkinter import Frame, ttk
+from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
 from iwrap.gui.generics import IWrapPane
+from lxml import etree
 
 
 class CodeParametersPane( ttk.Frame, IWrapPane ):
@@ -42,16 +43,12 @@ class FileBrowser(ttk.Frame):
 
         # Tk's StringVar to store path string
         self.path = tk.StringVar(self)
-        self.path.set('TST')
+
         # An entry to display path dialog
         self.path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
         self.path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
-    
-    @property
-    def path_(self):
-        return self.path.get()
 
     def __define_file_type(self, file_type):
         # XML file type
@@ -107,8 +104,16 @@ class XmlValidator(ttk.Frame):
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
     
     def _validate_against_xsd(self):
-        print(self.files_to_validate)
-        pass
+
+        xmlschema_file = etree.parse(self.files_to_validate[1])
+        xmlschema = etree.XMLSchema(xmlschema_file)
+
+
+        xml_file = etree.parse(self.files_to_validate[0])
+        result = xmlschema.validate(xml_file)
+
+        print(result)
+        
 
     def update_validation_files(self):
         self.files_to_validate = (self.master._xml_browser.path.get(), self.master._xsd_browser.path.get())
