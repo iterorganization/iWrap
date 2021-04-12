@@ -108,12 +108,13 @@ class XmlValidator(ttk.Frame):
         xmlschema_file = etree.parse(self.files_to_validate[1])
         xmlschema = etree.XMLSchema(xmlschema_file)
 
-
         xml_file = etree.parse(self.files_to_validate[0])
-        result = xmlschema.validate(xml_file)
+        validation_pass = xmlschema.validate(xml_file)
 
-        print(result)
-        
+        if not validation_pass:
+            messagebox.showerror("Validation Error", f"Validation result:\n!!! {validation_pass} !!!")
+            return
+        messagebox.showerror("Validation Pass", f"Validation result: \n{validation_pass}")
 
     def update_validation_files(self):
         self.files_to_validate = (self.master._xml_browser.path.get(), self.master._xsd_browser.path.get())
