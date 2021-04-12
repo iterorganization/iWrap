@@ -44,7 +44,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         feature_pane = FeaturesPane(feature_tab)
         system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
-        custrom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
+        custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
 
 
     def update_settings(self):
