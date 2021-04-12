@@ -33,14 +33,19 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_frame.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
-        self.tab_control = ttk.Notebook(tab_frame)
-        self.feature_tab = ttk.Frame(self.tab_control)
-        self.sys_lib_tab = ttk.Frame(self.tab_control)
-        self.cus_lib_tab = ttk.Frame(self.tab_control)
-        self.tab_control.add(self.feature_tab, text="Features")
-        self.tab_control.add(self.sys_lib_tab, text="System libraries")
-        self.tab_control.add(self.cus_lib_tab, text="Custom libraries")
-        self.tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
+        tab_control = ttk.Notebook(tab_frame)
+        feature_tab = ttk.Frame(tab_control)
+        sys_lib_tab = ttk.Frame(tab_control)
+        cus_lib_tab = ttk.Frame(tab_control)
+        tab_control.add(feature_tab, text="Features")
+        tab_control.add(sys_lib_tab, text="System libraries")
+        tab_control.add(cus_lib_tab, text="Custom libraries")
+        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
+
+        feature_pane = FeaturesPane(feature_tab)
+        system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
+        custrom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
+
 
     def update_settings(self):
         pass
@@ -54,3 +59,27 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def update_settings(self):
         dict_settings = self.settings.to_dict( )
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
+
+
+class SystemLibrariesPane( ttk.Frame ):
+    def __init__(self, master=None):
+        super().__init__( master )
+
+        ttk.Label(master, text="Place for System Libraries Pane", borderwidth=1, relief="solid")\
+            .pack(fill=tk.BOTH, expand=1)
+
+
+class CustomLibrariesPane( ttk.Frame ):
+    def __init__(self, master=None):
+        super().__init__( master )
+
+        ttk.Label(master, text="Place for Custom Libraries Pane", borderwidth=1, relief="solid")\
+            .pack(fill=tk.BOTH, expand=1)
+
+
+class FeaturesPane( ttk.Frame ):
+    def __init__(self, master=None):
+        super().__init__( master )
+
+        ttk.Label(master, text="Place for Features Pane", borderwidth=1, relief="solid")\
+            .pack(fill=tk.BOTH, expand=1)
