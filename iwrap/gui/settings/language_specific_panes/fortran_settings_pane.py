@@ -116,8 +116,20 @@ class CustomLibrariesPane( ttk.Frame ):
     def __init__(self, master=None):
         super().__init__( master )
 
-        ttk.Label(master, text="Place for Custom Libraries Pane", borderwidth=1, relief="solid")\
-            .pack(fill=tk.BOTH, expand=1)
+        # LIBRARY PATH FRAME
+        library_path_frame = ttk.Frame(master)
+        library_path_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
+
+        # BUTTONS FRAMES
+        buttons_frame = ttk.Frame(master, width=100)
+        buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
+        buttons_center_frame = ttk.Frame(buttons_frame)
+        buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
+
+        # BUTTONS
+        ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
 
 class FeaturesPane( ttk.Frame ):
