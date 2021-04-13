@@ -153,24 +153,37 @@ class FileBrowser(ttk.Frame):
         self.path.set(filename)
 
     class FileTypes:
+        """Describes the types of files to search..
+        
+        A FileType object is a tuple that can describe one or more file types. 
+        Each item within a tuple is another tuple with a description 
+        in the first position and a search pattern in the second.
+        """
+
         def __init__(self) -> None:
+            """Initialize a FileType object."""
             self._xml = tuple(("xml files","*.xml"))
             self._xsd = tuple(("xsd files","*.xsd"))
             self._all = tuple(('All files', '*.*'))
 
         @property
         def xml(self):
+            """Get a XML file type description tuple."""
             return (self._xml,)
 
         @property
         def xsd(self):
+            """Get a XSD file type description tuple."""
             return (self._xsd,)
         
         @property
         def all(self):
+            """Get an any file type description tuple."""
             return (self._all,)
         
         def __add__(self, other):
+            """A simple way to combine two or more file type description tuples.
+            """
             return (self[0],other[0])
 
     
