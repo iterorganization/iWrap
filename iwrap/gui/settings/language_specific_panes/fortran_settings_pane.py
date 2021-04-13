@@ -26,6 +26,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ttk.Label(combobox_frame, text="Compiler:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
         self.compiler_combobox['values'] = self.combobox_values
+        self.compiler_combobox.current(0)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
