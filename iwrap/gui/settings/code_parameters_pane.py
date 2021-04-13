@@ -188,11 +188,37 @@ class FileBrowser(ttk.Frame):
 
     
 class XMLValidator(ttk.Frame):
+    """A XML validator against XSD - xml schema.
+
+    An object is a simple button widget which executes a validation process.
+    It access previously loaded xml and xsd files, more precisly its path.
+    It's able to parse both files using lxml package and run validation 
+    of an xml file against the schema.
+
+    Attributes:
+        result (bool): Stores the result of the validation.
+        files_to_validate (ValidationFiles): An object containing paths to validation files.
+        button (ttk.Label): Widget that allows to run validation.
+    
+    Notes:
+        The validation ends with a pop-up message with information, 
+        warning or an error depending on the validation run.
+    """
+
     def __init__(self, master=None) -> None:
+        """Initialize XMLValidator widget.
+
+        Initialize the button and all other necessary variables 
+        that will allow the XML file validation process to start. 
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+        """
+
         super().__init__(master)
 
         # Validation result
-        self.result: bool = None
+        self.result: bool = False
         
         # Object of files to process validation
         self.files_to_validate = self.ValidationFiles(master)
@@ -202,9 +228,10 @@ class XMLValidator(ttk.Frame):
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
     
     def _validate_against_xsd(self):
+        """Run validation process."""
         self.files_to_validate.update()
         
-        # Check that the given path is correct for further processing
+        #: Check that the given path is correct for further processing.
         if not self.files_to_validate.correct_path():
             messagebox.showwarning("WRONG PATH", "Given path file is not correct!")
             return
@@ -214,7 +241,7 @@ class XMLValidator(ttk.Frame):
         xml_file = etree.parse(self.files_to_validate.xml)
         validation_pass = xmlschema.validate(xml_file)
     
-        # Save validation result
+        #: Save validation result.
         self.result = validation_pass
 
         if not validation_pass:
@@ -223,24 +250,47 @@ class XMLValidator(ttk.Frame):
         messagebox.showinfo("Validation Pass", f"Validation result: \n{validation_pass}")
 
     class ValidationFiles:
+        """Stores validation files paths.
+
+        Provides an easy interface for storing and reading validation file paths.
+        It has a built-in mechanism to check if the given path is correct.
+
+        Attributes:
+            master (FileBrowser): The outside object that stores the paths.
+        """
         def __init__(self, master) -> None:
+            """Initialize the ValidationFiles object.
+            
+            Args:
+                master (FileBrowser): A reference to the object that gives the paths.
+            """
             self.master = master
             self._xml: str = master._xml_browser.path.get()
             self._xsd: str = master._xsd_browser.path.get()
 
         @property
         def xml(self):
+            """Gets the XML file path."""
             return self._xml
         
         @property
         def xsd(self):
+            """Gets the XSD file path."""
             return self._xsd
         
         def correct_path(self):
+            """Subprocess to check that paths are correct.
+            
+            Returns:
+                bool:   Returns False if any of path is incorrect. 
+                        Returns True if every path is correct.
+            """
+
             if self.xml == '' or self.xsd == '':
                 return False
             return True
 
         def update(self):
+            """Update all paths at once"""
             self._xml = self.master._xml_browser.path.get()
             self._xsd = self.master._xsd_browser.path.get()
