@@ -131,13 +131,14 @@ class CustomLibrariesPane( ttk.Frame ):
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
-        # LIBRARY PATHS
+        # LIBRARY PATH LABEL
         labelframe = ttk.Frame(library_path_frame, height=20)
         labelframe.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
-        ttk.Label(labelframe, text="Library path:", border=None, relief="flat") \
-            .pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Label(labelframe, text="Library path:", border=None, relief="flat").pack(side=tk.TOP, expand=1, pady=5)
 
-
+        # LIBRARY PATHS
+        paths_frame = ttk.Frame(library_path_frame, highlightbackground="black", highlightthickness=1)
+        paths_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=1)
 
 
 class FeaturesPane( ttk.Frame ):
