@@ -127,7 +127,8 @@ class CustomLibrariesPane( ttk.Frame ):
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # BUTTONS
-        ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Add", command=self.add_on_click, width=10)\
+            .pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
@@ -137,8 +138,15 @@ class CustomLibrariesPane( ttk.Frame ):
         ttk.Label(labelframe, text="Library path:", border=None, relief="flat").pack(side=tk.TOP, expand=1, pady=5)
 
         # LIBRARY PATHS
-        paths_frame = tk.Frame(library_path_frame, highlightbackground="black", highlightthickness=1)
-        paths_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=1)
+        self.paths_frame = tk.Frame(library_path_frame, highlightbackground="black", highlightthickness=1)
+        self.paths_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=1)
+
+    def add_on_click(self):
+        filename = tk.filedialog.askopenfilename()
+        entry_text = tk.StringVar()
+        tk.Entry(self.paths_frame, textvariable=entry_text, state='readonly')\
+            .pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
+        entry_text.set(filename)
 
 
 class FeaturesPane( ttk.Frame ):
