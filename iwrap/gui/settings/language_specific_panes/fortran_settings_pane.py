@@ -117,7 +117,7 @@ class CustomLibrariesPane( ttk.Frame ):
         super().__init__( master )
 
         # LIBRARY PATH FRAME
-        library_path_frame = ttk.Frame(master)
+        library_path_frame = tk.Frame(master)
         library_path_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
 
         # BUTTONS FRAMES
@@ -130,6 +130,14 @@ class CustomLibrariesPane( ttk.Frame ):
         ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
+
+        # LIBRARY PATHS
+        labelframe = ttk.Frame(library_path_frame, height=20)
+        labelframe.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
+        ttk.Label(labelframe, text="Library path:", border=None, relief="flat") \
+            .pack(side=tk.TOP, expand=1, pady=5)
+
+
 
 
 class FeaturesPane( ttk.Frame ):
