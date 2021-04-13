@@ -11,7 +11,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
 
         self.settings = FortranSpecificSettings()
-        self.combobox_values = ['compiler1', 'compiler2', 'compiler3']
+        self.combobox_values = ['Intel Fortran (ifort)', 'GNU Compiler Collection (gfortran)', 'Intel']
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
