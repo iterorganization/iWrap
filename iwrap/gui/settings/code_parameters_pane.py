@@ -3,12 +3,39 @@ from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
-from iwrap.gui.generics import IWrapPane
 from lxml import etree
+
+from iwrap.gui.generics import IWrapPane
 
 
 class CodeParametersPane( ttk.Frame, IWrapPane ):
+    """This pane is used to validate the XML file against the XSD schema file.
+
+    XML file browser entry is located at the top of the pane.
+    XSD file browser entry is located below the XML browse widget.
+    Below both there is a button that triggers validations.
+    After starting the validation process, a message box with information, 
+    warning or error with the result of the verification will be displayed.
+
+    Attributes:
+        _xml_browser (FileBrowser): Widget for browsing XML files.
+        _xsd_browser (FileBrowser): Widget for browsing XSD files.
+        _validator (FileBrowser): Widget for validation processing.
+    
+    Notes:
+        All CodeParametersPane attributes are considered protected 
+        and should not be called explicitly.
+    """
+
     def __init__(self, master=None):
+        """Initialize widgets of the pane.
+
+        There are three widgets to initialize, a two file browsers 
+        for XML and XSD files and third widget to execute validation.
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+        """
         super().__init__( master )
 
         # XML file path browser dialog
@@ -18,7 +45,7 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:")
 
         # XML Validator object against XSD
-        self._validator = XmlValidator(self)
+        self._validator = XMLValidator(self)
 
     def update_settings(self):
         pass
@@ -27,7 +54,41 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         pass
 
 class FileBrowser(ttk.Frame):
+    """A universal FileBrowser class.
+
+    Each FileBrowser object can search for a specific file extension, 
+    as well as combinations of some or all of them.
+    Acceptable file extensions are based on the internal FileTypes class.
+
+    Attributes:
+        file_type (tuple): Formatted parameter for filedialog filetype.
+        file_type_title (str): Formatted parameter for filedialog title.
+        label (ttk.Label): Label widget.
+        button (ttk.Button): Button widget.
+        path (tk.StringVar): Value holder for path string.
+        path_dialog (ttk.Entry): Dialog box to display the path string.
+    
+    Notes:
+        All FileBrowser attributes are preconfigured and packed. Therefore 
+        their specification is not obligatory, 
+        but it can be edited explicitly if necessary.
+    """
+
     def __init__(self, master=None, file_type=None, label_text="") -> None:
+        """Initialize FileBrowser widget.
+
+        Initialize an object composed of label, button, and dialog widgets. 
+        It is possible to universally search for file types only depending 
+        on the parameter specified by the file_type argument. The actual 
+        configuration is stored through an internal FileTypes object 
+        and does not need to be called explicitly.
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+            file_type (FileTypes, optional): Describes what type of files 
+                should be searched for. Default - any type.
+            label_text (ttk.Label, optional): Title of the widget.
+        """
         super().__init__(master)
         # Specify the file type
         self.file_type, self.file_type_title = self.__define_file_type(file_type)
@@ -37,7 +98,9 @@ class FileBrowser(ttk.Frame):
         self.label.pack(side=tk.TOP, anchor=tk.SW, expand=True)
 
         # A button to browse files
-        self.button = ttk.Button(self, text = f"Browse {self.file_type_title} File", command = self.action_open)
+        self.button = ttk.Button(self,
+                                 text = f"Browse {self.file_type_title} File",
+                                 command = self.action_open)
         self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string
@@ -50,6 +113,18 @@ class FileBrowser(ttk.Frame):
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
     def __define_file_type(self, file_type):
+        """Determines the file type.
+
+        Determines the file type from the file_type parameter 
+        to return a properly formatted object for the filedialog type.
+
+        Args:
+            file_type (str): String representation of the file type. 
+        
+        Returns:
+            tuple: The return tuple composed of FileTypes object 
+                and the string representing it.
+        """
         # XML file type
         if file_type == 'xml':
             return (self.FileTypes().xml, 'XML')
@@ -62,6 +137,14 @@ class FileBrowser(ttk.Frame):
         return (self.FileTypes().all, 'Any')
 
     def action_open(self):
+        """Open system file dialog to browse files.
+        
+        Open system file dialog to browse and select files.
+        The desired execution sets the path value based on the variable filename.
+
+        Note:
+            If no path is selected, exits immediately.
+        """
         filename = filedialog.askopenfilename(  initialdir=None, 
                                                 title=f"Select {self.file_type_title} file",
                                                 filetypes=self.file_type )
@@ -91,7 +174,7 @@ class FileBrowser(ttk.Frame):
             return (self[0],other[0])
 
     
-class XmlValidator(ttk.Frame):
+class XMLValidator(ttk.Frame):
     def __init__(self, master=None) -> None:
         super().__init__(master)
 
@@ -141,7 +224,7 @@ class XmlValidator(ttk.Frame):
             return self._xsd
         
         def correct_path(self):
-            if self.xml is '' or self.xsd is '':
+            if self.xml == '' or self.xsd == '':
                 return False
             return True
 
