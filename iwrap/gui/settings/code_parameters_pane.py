@@ -122,8 +122,7 @@ class FileBrowser(ttk.Frame):
             file_type (str): String representation of the file type. 
         
         Returns:
-            tuple: The return tuple composed of FileTypes object 
-                and the string representing it.
+            tuple: The return tuple composed of FileTypes object and the string representing it.
         """
         # XML file type
         if file_type == 'xml':
@@ -282,8 +281,7 @@ class XMLValidator(ttk.Frame):
             """Subprocess to check that paths are correct.
             
             Returns:
-                bool:   Returns False if any of path is incorrect. 
-                        Returns True if every path is correct.
+                bool:   Returns False if any of path is incorrect. Returns True if every path is correct.
             """
 
             if self.xml == '' or self.xsd == '':
