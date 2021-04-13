@@ -91,7 +91,7 @@ class FileBrowser(ttk.Frame):
         """
         super().__init__(master)
         # Specify the file type
-        self.file_type, self.file_type_title = self.__define_file_type(file_type)
+        self.file_type, self.file_type_title = self.define_file_type(file_type)
         
         # A label above widget
         self.label = ttk.Label(self, text=label_text)
@@ -112,7 +112,7 @@ class FileBrowser(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def __define_file_type(self, file_type):
+    def define_file_type(self, file_type):
         """Determines the file type.
 
         Determines the file type from the file_type parameter 
@@ -142,7 +142,7 @@ class FileBrowser(ttk.Frame):
         Open system file dialog to browse and select files.
         The desired execution sets the path value based on the variable filename.
 
-        Note:
+        Notes:
             If no path is selected, exits immediately.
         """
         filename = filedialog.askopenfilename(  initialdir=None, 
@@ -198,7 +198,7 @@ class XMLValidator(ttk.Frame):
     Attributes:
         result (bool): Stores the result of the validation.
         files_to_validate (ValidationFiles): An object containing paths to validation files.
-        button (ttk.Label): Widget that allows to run validation.
+        button (ttk.Button): Widget that allows to run validation.
     
     Notes:
         The validation ends with a pop-up message with information, 
@@ -222,12 +222,12 @@ class XMLValidator(ttk.Frame):
         
         # Object of files to process validation
         self.files_to_validate = self.ValidationFiles(master)
-        self.button = ttk.Button(self, text='Validate', command=self._validate_against_xsd)
+        self.button = ttk.Button(self, text='Validate', command=self.validate_against_xsd)
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
     
-    def _validate_against_xsd(self):
+    def validate_against_xsd(self):
         """Run validation process."""
         self.files_to_validate.update()
         
