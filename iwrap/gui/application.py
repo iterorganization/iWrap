@@ -42,6 +42,9 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
 
         self.center()
+        
+        # Sets application icon
+        self.__set_icon()
 
     def update_settings(self):
         self.actor_description.update_settings()
@@ -61,6 +64,10 @@ class MainWindow( tk.Tk, IWrapPane ):
         y = screen_height / 2 - size[1] / 2
 
         self.geometry( "+%d+%d" % (x, y) )
+    
+    def __set_icon(self) -> None:
+        icon = tk.PhotoImage(file='imas/resources/imas_transparent_logo.png')
+        self.iconphoto(True, icon)
 
 
 if __name__ == '__main__':
