@@ -63,6 +63,7 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.geometry( "+%d+%d" % (x, y) )
 
 
-window = MainWindow()
+if __name__ == '__main__':
+    window = MainWindow()
 
-window.mainloop()
+    window.mainloop()

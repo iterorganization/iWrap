@@ -47,12 +47,12 @@ code_description.language_specific = language_specific
 #Saving project settings to YAML file
 
 file = open( 'test.yaml', 'w' )
-project.ProjectSettings.settings().save( YAMLSerializer( file ) )
+project.ProjectSettings.get_settings().save( YAMLSerializer( file ) )
 
 #Loading project settings from file
 file = open( 'test.yaml', 'r' )
-project.ProjectSettings.settings().clear()
-project.ProjectSettings.settings().load( YAMLSerializer( file ) )
+project.ProjectSettings.get_settings().clear()
+project.ProjectSettings.get_settings().load( YAMLSerializer( file ) )
 
 #printing YAML content
 file = open( 'test.yaml', 'r' )
