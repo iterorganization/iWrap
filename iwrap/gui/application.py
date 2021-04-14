@@ -66,7 +66,7 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.geometry( "+%d+%d" % (x, y) )
     
     def __set_icon(self) -> None:
-        icon = tk.PhotoImage(file='imas/resources/imas_transparent_logo.png')
+        icon = tk.PhotoImage(file='imas/resources/imas_transparent_logo.gif')
         self.iconphoto(True, icon)
 
 
