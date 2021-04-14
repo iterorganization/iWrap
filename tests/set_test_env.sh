@@ -16,4 +16,6 @@ python -m pip install pytest --user --ignore-installed
 echo "--------------Python and pytest version--------------"
 python --version
 python -m pytest --version
+echo "--------------pip install pytest--------------"
+python -m pip install lxml --user --ignore-installed
 echo "--------------------------------------------------------"
