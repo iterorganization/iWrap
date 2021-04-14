@@ -34,7 +34,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 apidocs: Makefile
-	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)"
+	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate
 
 setconfig:
 	sed -r "s/^(\s*${AUTHOR_KEY}\s*:\s*).*/\1${AUTHOR}/" -i "$(YAML_FILE)"
