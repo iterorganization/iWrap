@@ -47,6 +47,9 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         # XML Validator object against XSD
         self._validator = XMLValidator(self)
 
+        #: The frame is set up with a padding 20 on the top
+        self.configure(padding=(0, 20, 0 ,0))
+
     def update_settings(self):
         pass
 
@@ -99,7 +102,7 @@ class FileBrowser(ttk.Frame):
 
         # A button to browse files
         self.button = ttk.Button(self,
-                                 text = f"Browse {self.file_type_title} File",
+                                 text = "Browse...",
                                  command = self.action_open)
         self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
