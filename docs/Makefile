@@ -6,7 +6,7 @@ SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
 GENERATEDDIR  = documentation_files
-PROJECT_PATH  = ../
+PROJECT_PATH  = ../iwrap
 
 YAML_FILE = project_informations.yaml
 AUTHOR_KEY = "author"
