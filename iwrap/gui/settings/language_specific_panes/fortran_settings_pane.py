@@ -137,16 +137,37 @@ class CustomLibrariesPane( ttk.Frame ):
         labelframe.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         ttk.Label(labelframe, text="Library path:", border=None, relief="flat").pack(side=tk.TOP, expand=1, pady=5)
 
-        # LIBRARY PATHS
-        self.paths_frame = tk.Frame(library_path_frame, highlightbackground="black", highlightthickness=1)
-        self.paths_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=1)
+        # CANVAS
+        self.canvas = tk.Canvas(library_path_frame, highlightbackground="black", highlightthickness=1)
+        #self.canvas.bind("<Configure>", self.onCanvasConfigure)
+        scrollbar = ttk.Scrollbar(library_path_frame, orient="vertical", command=self.canvas.yview)
+
+        # PATHS FRAME
+        self.paths_frame = ttk.Frame(self.canvas)
+        self.paths_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+
+        # SCROLLBAR SETTINGS
+        self.canvas.create_window((0, 0), window=self.paths_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+        self.canvas.pack(side="left", fill="both", expand=1)
+        scrollbar.pack(side="right", fill="y")
 
     def add_on_click(self):
         filename = tk.filedialog.askopenfilename()
         entry_text = tk.StringVar()
-        tk.Entry(self.paths_frame, textvariable=entry_text, state='readonly')\
+        tk.Entry(self.paths_frame, textvariable=entry_text, state='readonly', width=55)\
             .pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         entry_text.set(filename)
+
+    # def onCanvasConfigure(self, event):
+    #     # width is tweaked to account for window borders
+    #     width = event.width - 4
+    #     self.canvas.itemconfigure("self.paths_frame", width=width)
 
 
 class FeaturesPane( ttk.Frame ):
