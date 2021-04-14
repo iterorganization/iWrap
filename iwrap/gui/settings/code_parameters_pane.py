@@ -179,6 +179,10 @@ class FileBrowser(ttk.Frame):
         def all(self):
             """Get an any file type description tuple."""
             return (self._all,)
+
+        def __getitem__(self, item):
+            """Attribute getter."""
+            return getattr(self, item)
         
         def __add__(self, other):
             """A simple way to combine two or more file type description tuples.
