@@ -39,13 +39,13 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
 
         # XML file path browser dialog
-        self._xml_browser = FileBrowser(self, file_type='xml', label_text="Code parameters file:")
+        self._xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:")
         
         # XSD file path browser dialog
-        self._xsd_browser = FileBrowser(self, file_type='xsd', label_text="Schema file:")
+        self._xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:")
 
         # XML Validator object against XSD
-        self._validator = XMLValidator(self)
+        self._validator = XMLValidatorPane(self)
 
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0 ,0))
@@ -56,7 +56,7 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
     def reload(self):
         pass
 
-class FileBrowser(ttk.Frame):
+class FileBrowserPane(ttk.Frame):
     """A universal FileBrowser class.
 
     Each FileBrowser object can search for a specific file extension, 
@@ -193,7 +193,7 @@ class FileBrowser(ttk.Frame):
             return (self[0],other[0])
 
     
-class XMLValidator(ttk.Frame):
+class XMLValidatorPane(ttk.Frame):
     """A XML validator against XSD - xml schema.
 
     An object is a simple button widget which executes a validation process.
