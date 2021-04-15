@@ -43,22 +43,23 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control.add(cus_lib_tab, text="Custom libraries")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
-        feature_pane = FeaturesPane(feature_tab)
-        system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
-        custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
-
-    def update_settings(self):
-        pass
+        self.feature_pane = FeaturesPane(feature_tab)
+        self.system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
+        self.custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
         self.settings.from_dict(dict_settings)
-        # TO DO: GUI REFRESH
-        pass
+        self.feature_pane.reload()
+        self.system_libraries_pane.reload()
+        self.custom_libraries_pane.reload()
 
     def update_settings(self):
-        dict_settings = self.settings.to_dict( )
+        dict_settings = self.settings.to_dict()
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
+        self.feature_pane.update_settings()
+        self.system_libraries_pane.update_settings()
+        self.custom_libraries_pane.update_settings()
 
 
 class SystemLibrariesPane( ttk.Frame ):
@@ -94,6 +95,12 @@ class SystemLibrariesPane( ttk.Frame ):
         ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
+
+    def reload(self):
+        pass
+
+    def update_settings(self):
+        pass
 
     def tree_view_insert_data(self):
         for idx, data in enumerate(self.tree_view_data):
@@ -151,6 +158,12 @@ class CustomLibrariesPane( ttk.Frame ):
         for index in selected_paths[::-1]:
             self.listbox.delete(index)
 
+    def reload(self):
+        pass
+
+    def update_settings(self):
+        pass
+
 
 class FeaturesPane( ttk.Frame ):
     def __init__(self, master=None):
@@ -158,3 +171,10 @@ class FeaturesPane( ttk.Frame ):
 
         ttk.Label(master, text="Place for Features Pane", borderwidth=1, relief="solid")\
             .pack(fill=tk.BOTH, expand=1)
+
+    def reload(self):
+        pass
+
+    def update_settings(self):
+        pass
+
