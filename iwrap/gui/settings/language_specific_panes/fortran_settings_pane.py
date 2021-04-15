@@ -142,8 +142,8 @@ class CustomLibrariesPane( ttk.Frame ):
         self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw')
 
     def add_on_click(self):
-        filename = tk.filedialog.askopenfilename()
-        self.listbox.insert(tk.END, filename)
+        path = tk.filedialog.askopenfilename()
+        self.listbox.insert(tk.END, path)
 
 
 class FeaturesPane( ttk.Frame ):
