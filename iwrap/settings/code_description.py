@@ -17,7 +17,6 @@ class Argument( Dictionarizable ):
     def __init__(self, dictionary: dict):
         self.name = dictionary['name']
         self.type = dictionary['type']
-        self.sub_type = dictionary['sub_type']
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -39,7 +38,6 @@ class Argument( Dictionarizable ):
     def __str__(self):
         str_ = 'Name : ' + self.name + '\n' \
                + 'Type : ' + self.type + '\n' \
-               + 'Sub-type : ' + self.sub_type + '\n' \
                + 'Intent : ' + self.intent + '\n'
         return str_
 
