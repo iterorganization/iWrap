@@ -143,10 +143,7 @@ class CustomLibrariesPane( ttk.Frame ):
 
     def add_on_click(self):
         filename = tk.filedialog.askopenfilename()
-        entry_text = tk.StringVar()
-        tk.Entry(self.paths_frame, textvariable=entry_text, state='readonly')\
-            .pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
-        entry_text.set(filename)
+        self.listbox.insert(tk.END, filename)
 
 
 class FeaturesPane( ttk.Frame ):
