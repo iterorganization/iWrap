@@ -147,8 +147,8 @@ class CustomLibrariesPane( ttk.Frame ):
         self.listbox.insert(tk.END, path)
 
     def remomve_on_click(self):
-        sel = self.listbox.curselection()
-        for index in sel[::-1]:
+        selected_paths = self.listbox.curselection()
+        for index in selected_paths[::-1]:
             self.listbox.delete(index)
 
 
