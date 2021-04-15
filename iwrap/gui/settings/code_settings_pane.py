@@ -9,31 +9,32 @@ from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import Langu
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
+    """Code setting pane contains a combobox with programming languages, entry for code path, and browse button
+    for searching user files in the file dialog. If the YAML file is imported values in combobox and entry will be
+    added automatically.
+
+    Attributes:
+        default_programming_language(str): Value for default programming language. Default to Fortran.
+        combobox_values(list): List contains programming languages that are visible in combobox.
+        labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
+         programming language combobox, code path entry, and browse button.
+        code_path(StringVar): Value for code path from filedialog or the YAML file. If value is changed
+         update_settings() method is calling.
+        selected_programming_language(StringVar): Value for programming language selected in combobox. If value is
+         changed update_settings() method is calling.
+        language_pane(Frame): Frame dedicated for specific programming language pane selected in combobox.
+        programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values. Enables
+         user to select preferable programming language or value is selected automatically if the YAML file is imported.
+        browse_text(Entry): A place for code path value. Users can search their filedialog and select code path using
+         the browse button or the code path is added automatically if the YAML file is imported.
+    """
     default_programming_language = 'Fortran'
 
     def __init__(self, master=None):
-        """Code setting pane contains combobox with programming languages, entry for code path, and browse button
-        for searching user files in the filedialog. If the YAML file is imported values in combobox and entry will be
-        added automatically.
+        """Initialize the code settings pane.
 
         Args:
-            master: Parent widget from tkinter class. Default to None.
-
-        Attributes:
-            default_programming_language(str): Value for default programming language. Default to Fortran.
-            combobox_values(list): List contains programming languages that are visible in combobox.
-            labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
-            programming language combobox, code path entry, and browse button.
-            code_path(StringVar): Value for code path from filedialog or the YAML file. If value is changed
-            update_settings() method is calling.
-            selected_programming_language(StringVar): Value for programming language selected in combobox. If value
-            is changed update_settings() method is calling.
-            language_pane(Frame): Frame dedicated for specific programming language pane selected in combobox.
-            programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values.
-            Enables user to select preferable programming language or value is selected automatically if the YAML file
-            is imported.
-            browse_text(Entry): A place for code path value. Users can search their filedialog and select code path
-            using the browse button or code path is added automatically if the YAML file is imported.
+            master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
         self.combobox_values = ['Fortran', 'CPP', 'Python']
@@ -121,7 +122,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane.reload()
 
     def on_click(self):
-        """Open the filedialog when browse button is clicked and insert selected path to the browse_text entry.
+        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
         filename = tk.filedialog.askopenfilename()
         self.code_path.set(filename)
