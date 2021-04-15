@@ -68,10 +68,10 @@ class MainWindow( tk.Tk, IWrapPane ):
     def __set_icon(self) -> None:
         # Try to access icon image path relatively
         try:
-            icon = tk.PhotoImage(file=r"imas/resources/imas_transparent_logo.gif")
+            icon = tk.PhotoImage(file=r"imas/resources/IMAS_logo_round.gif")
         # Access icon image from working directory
         except (ValueError, Exception):
-            icon = tk.PhotoImage(file=r"../../imas/resources/imas_transparent_logo.gif")
+            icon = tk.PhotoImage(file=r"../../imas/resources/IMAS_logo_round.gif")
             pass
 
         # Set icon as application icon and for all top-level windows (True)

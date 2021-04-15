@@ -10,3 +10,4 @@ lib/
 *.code-workspace
 .env
 *.xml
+*.xsd
