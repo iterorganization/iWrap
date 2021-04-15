@@ -7,8 +7,8 @@ set -e -a
 module use /work/imas/etc/modulefiles
 module use /work/imas/etc/modules/all
 module purge
-echo "--------------Module load Python/3.6.4-foss-2018a--------------"
-module load Python/3.6.4-foss-2018a
+echo "--------------Module load Python/3.8.2-GCCcore-9.3.0--------------"
+module load Python/3.8.2-GCCcore-9.3.0
 echo "--------------Module load PyYAML--------------"
 module load PyYAML
 echo "--------------pip install pytest--------------"
