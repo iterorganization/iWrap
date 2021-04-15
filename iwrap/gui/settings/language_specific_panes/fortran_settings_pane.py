@@ -136,27 +136,6 @@ class CustomLibrariesPane( ttk.Frame ):
         labelframe.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         ttk.Label(labelframe, text="Library path:", border=None, relief="flat").pack(side=tk.TOP, expand=1, pady=5)
 
-        # CANVAS
-        self.canvas = tk.Canvas(library_path_frame, highlightbackground="black", highlightthickness=1)
-        self.canvas.bind('<Configure>', self.set_frame_width)
-
-        # SCROLLBAR
-        scrollbar = ttk.Scrollbar(library_path_frame, orient="vertical", command=self.canvas.yview)
-        scrollbar.pack(fill=tk.Y, side=tk.RIGHT)
-
-        # PATHS FRAME
-        self.paths_frame = tk.Frame(self.canvas)
-        self.paths_frame.bind(
-            "<Configure>",
-            lambda e: self.canvas.configure(
-                scrollregion=self.canvas.bbox("all")
-            )
-        )
-
-        # SCROLLBAR SETTINGS
-        self.canvas_frame = self.canvas.create_window((0, 0), window=self.paths_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=scrollbar.set)
-        self.canvas.pack(fill=tk.BOTH, side=tk.LEFT, expand=1)
 
     def add_on_click(self):
         filename = tk.filedialog.askopenfilename()
