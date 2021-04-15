@@ -129,7 +129,6 @@ class CustomLibrariesPane( ttk.Frame ):
         # BUTTONS
         ttk.Button(buttons_center_frame, text="Add", command=self.add_on_click, width=10)\
             .pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
         # LIBRARY PATH LABEL
