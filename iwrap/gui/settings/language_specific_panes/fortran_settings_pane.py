@@ -144,10 +144,6 @@ class CustomLibrariesPane( ttk.Frame ):
             .pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         entry_text.set(filename)
 
-    def set_frame_width(self, event):
-        canvas_width = event.width
-        self.canvas.itemconfig(self.canvas_frame, width=canvas_width)
-
 
 class FeaturesPane( ttk.Frame ):
     def __init__(self, master=None):
