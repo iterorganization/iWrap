@@ -127,7 +127,7 @@ class CustomLibrariesPane( ttk.Frame ):
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # BUTTONS
-        ttk.Button(buttons_center_frame, text="Add", command=self.add_on_click, width=10)\
+        ttk.Button(buttons_center_frame, text="Add...", command=self.add_on_click, width=10)\
             .pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
