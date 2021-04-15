@@ -6,7 +6,7 @@ SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
 GENERATEDDIR  = documentation_files
-PROJECT_PATH  = ../
+PROJECT_PATH  = ../iwrap
 
 YAML_FILE = project_informations.yaml
 AUTHOR_KEY = "author"
@@ -34,7 +34,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 apidocs: Makefile
-	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)"
+	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate
 
 setconfig:
 	sed -r "s/^(\s*${AUTHOR_KEY}\s*:\s*).*/\1${AUTHOR}/" -i "$(YAML_FILE)"
