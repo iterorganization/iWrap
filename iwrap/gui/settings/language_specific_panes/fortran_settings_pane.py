@@ -129,7 +129,7 @@ class CustomLibrariesPane( ttk.Frame ):
         # BUTTONS
         ttk.Button(buttons_center_frame, text="Add...", command=self.add_on_click, width=10)\
             .pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Remove", command=self.remomve_on_click, width=10)\
+        ttk.Button(buttons_center_frame, text="Remove", command=self.remove_on_click, width=10)\
             .pack(side=tk.TOP, expand=1, pady=5)
 
         # LIBRARY PATH LABEL
@@ -146,7 +146,7 @@ class CustomLibrariesPane( ttk.Frame ):
         path = tk.filedialog.askopenfilename()
         self.listbox.insert(tk.END, path)
 
-    def remomve_on_click(self):
+    def remove_on_click(self):
         selected_paths = self.listbox.curselection()
         for index in selected_paths[::-1]:
             self.listbox.delete(index)
