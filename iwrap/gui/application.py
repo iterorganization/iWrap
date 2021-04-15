@@ -1,5 +1,8 @@
+from importlib import resources
 import tkinter as tk
 from tkinter import ttk
+import importlib
+from tkinter.constants import S
 
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
@@ -66,16 +69,14 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.geometry( "+%d+%d" % (x, y) )
     
     def __set_icon(self) -> None:
-        # Try to access icon image path relatively
+        # Try to access icon path using importlib.resource module
         try:
-            icon = tk.PhotoImage(file=r"imas/resources/IMAS_logo_round.gif")
-        # Access icon image from working directory
-        except (ValueError, Exception):
-            icon = tk.PhotoImage(file=r"../../imas/resources/IMAS_logo_round.gif")
+            with importlib.resources.path("iwrap.resources", "imas_logo_round.gif") as icon_path:
+                icon = tk.PhotoImage(file=icon_path)
+                self.iconphoto(True, icon)
+        # Rise Import Error
+        except ImportError:
             pass
-
-        # Set icon as application icon and for all top-level windows (True)
-        self.iconphoto(True, icon)
 
 
 if __name__ == '__main__':
