@@ -1,8 +1,9 @@
-from importlib import resources
 import tkinter as tk
 from tkinter import ttk
 import importlib
-from tkinter.constants import S
+from importlib import resources
+from tkinter.constants import NO, S
+from typing import cast
 
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
@@ -47,7 +48,7 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.center()
         
         # Sets application icon
-        self.__set_icon()
+        self._icon = self.__set_icon()
 
     def update_settings(self):
         self.actor_description.update_settings()
@@ -68,15 +69,18 @@ class MainWindow( tk.Tk, IWrapPane ):
 
         self.geometry( "+%d+%d" % (x, y) )
     
-    def __set_icon(self) -> None:
+    def __set_icon(self) -> tk.PhotoImage:
+        package = "iwrap.resources"
+        resource = "imas_logo_round.gif"
         # Try to access icon path using importlib.resource module
         try:
-            with importlib.resources.path("iwrap.resources", "imas_logo_round.gif") as icon_path:
+            with importlib.resources.path(package, resource) as icon_path:
                 icon = tk.PhotoImage(file=icon_path)
                 self.iconphoto(True, icon)
+                return icon
         # Rise Import Error
         except ImportError:
-            pass
+            return None
 
 
 if __name__ == '__main__':

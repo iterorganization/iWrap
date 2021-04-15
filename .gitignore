@@ -11,3 +11,4 @@ lib/
 .env
 *.xml
 *.xsd
+*.python-version
