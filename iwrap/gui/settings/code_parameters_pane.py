@@ -197,7 +197,7 @@ class XMLValidatorPane(ttk.Frame):
     """A XML validator against XSD - xml schema.
 
     An object is a simple button widget which executes a validation process.
-    It access previously loaded xml and xsd files, more precisly its path.
+    It access previously loaded xml and xsd files, more precisely its path.
     It's able to parse both files using lxml package and run validation 
     of an xml file against the schema.
 
@@ -232,28 +232,24 @@ class XMLValidatorPane(ttk.Frame):
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
-    
-    def validate_against_xsd(self):
-        """Run validation process."""
-        self.files_to_validate.update()
-        
-        #: Check that the given path is correct for further processing.
-        if not self.files_to_validate.correct_path():
-            messagebox.showwarning("WRONG PATH", "Given path file is not correct!")
-            return
-        xmlschema_file = etree.parse(self.files_to_validate.xsd)
+
+    def validate_against_xsd(self, xml, xsd) -> bool:
+        """Run xml validation process against given xsd."""
+
+        # Parse xsd file:
+        xmlschema_file = etree.parse(xsd)
         xmlschema = etree.XMLSchema(xmlschema_file)
 
-        xml_file = etree.parse(self.files_to_validate.xml)
-        validation_pass = xmlschema.validate(xml_file)
-    
-        #: Save validation result.
-        self.result = validation_pass
+        # Parse xml file:
+        xml_file = etree.parse(xml)
 
-        if not validation_pass:
-            messagebox.showerror("Validation Error", f"Validation result:\n!!! {validation_pass} !!!")
-            return
-        messagebox.showinfo("Validation Pass", f"Validation result: \n{validation_pass}")
+        # Perform validation:
+        try:
+            validation_result = xmlschema.validate(xml_file)
+        except (TypeError, Exception):
+            messagebox.showerror("Validation Error", "The process encountered an error. Verify the input files!")
+            return False
+        return validation_result
 
     class ValidationFiles:
         """Stores validation files paths.
