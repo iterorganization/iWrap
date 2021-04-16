@@ -29,25 +29,23 @@ class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.data_type_combo.current( 0 )
 
-        # Put IMAS logo next to the ActorDescriptionPane
-        #imageFrame= ttk.Frame(self)
-        canvas = tk.Canvas(self,width=100, height=100, bd=0, bg=None)
-        canvas.grid(column=11,row=0,rowspan=3, sticky=(tk.E, tk.W, tk.N, tk.S))
-        self.img=None
-        self.__load()
-        canvas.create_image((50, 50), anchor=tk.CENTER, image=self.img)
-        self.columnconfigure( 1, weight=3 )
+        # Load IMAS logo next to the ActorDescriptionPane
+        self.img: tk.PhotoImage = tk.PhotoImage()
+        self.__load_logo()
+        # Put logo as label into ActorDescriptionPane grid
+        ttk.Label(self, image=self.img).grid(column=11, row=0, rowspan=3, pady=5, padx=(0, 5))
 
-    def __load(self):
+        self.columnconfigure(1, weight=3)
+
+    def __load_logo(self):
         package = "iwrap.resources"
-        resource = "imas_transparent_logo_small.gif"
+        resource = "imas_transparent_logo.gif"
         # Try to access icon path using importlib.resource module
         try:
-            print('sa')
             with importlib.resources.path(package, resource) as icon_path:
-                print('adsg')
-                i= tk.PhotoImage(file=icon_path)
-                self.img=i
+                img = tk.PhotoImage(file=icon_path)
+                img = img.subsample(6, 6)
+                self.img = img
         # Rise Import Error
         except ImportError:
             pass
