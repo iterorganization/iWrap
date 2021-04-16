@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+import importlib
+from importlib import resources
 
 from iwrap.gui.generics import IWrapPane
 
@@ -27,7 +29,28 @@ class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.data_type_combo.current( 0 )
 
+        # Put IMAS logo next to the ActorDescriptionPane
+        #imageFrame= ttk.Frame(self)
+        canvas = tk.Canvas(self,width=100, height=100, bd=0, bg=None)
+        canvas.grid(column=11,row=0,rowspan=3, sticky=(tk.E, tk.W, tk.N, tk.S))
+        self.img=None
+        self.__load()
+        canvas.create_image((50, 50), anchor=tk.CENTER, image=self.img)
         self.columnconfigure( 1, weight=3 )
+
+    def __load(self):
+        package = "iwrap.resources"
+        resource = "imas_transparent_logo_small.gif"
+        # Try to access icon path using importlib.resource module
+        try:
+            print('sa')
+            with importlib.resources.path(package, resource) as icon_path:
+                print('adsg')
+                i= tk.PhotoImage(file=icon_path)
+                self.img=i
+        # Rise Import Error
+        except ImportError:
+            pass
 
     def update_settings(self):
         pass

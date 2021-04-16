@@ -30,6 +30,8 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.title( "iWrap" )
         self.minsize( 600, 300 )
         self.geometry( '600x600' )
+        # Sets application icon
+        self._icon = self.__set_icon()
 
         self.config( menu=MenuBar( self ) )
 
@@ -46,9 +48,6 @@ class MainWindow( tk.Tk, IWrapPane ):
         self.settings_pane.pack( fill=tk.BOTH, side=tk.TOP, expand=True )
 
         self.center()
-        
-        # Sets application icon
-        self._icon = self.__set_icon()
 
     def update_settings(self):
         self.actor_description.update_settings()
