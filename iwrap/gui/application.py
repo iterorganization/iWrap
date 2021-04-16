@@ -3,7 +3,7 @@ from tkinter import ttk
 import importlib
 from importlib import resources
 from tkinter.constants import NO, S
-from typing import cast
+from typing import cast, Tuple
 
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
@@ -62,7 +62,7 @@ class MainWindow(tk.Tk, IWrapPane):
     def __load_image(self,
                      package: str = "iwrap.resources",
                      resource: str = "",
-                     resize: tuple[bool, tuple[int, int]] = (False,)) -> tk.PhotoImage:
+                     resize: Tuple[bool, Tuple[int, int]] = (False,)) -> tk.PhotoImage:
         # Try to access image path using importlib.resource module
         try:
             with importlib.resources.path(package, resource) as img_path:
