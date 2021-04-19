@@ -175,11 +175,13 @@ class CustomLibrariesPane( FortranPane ):
     def add_on_click(self):
         path = tk.filedialog.askopenfilename()
         self.listbox.insert(tk.END, path)
+        self.settings.custom_libraries.append(path)
 
     def remove_on_click(self):
         selected_paths = self.listbox.curselection()
         for index in selected_paths[::-1]:
             self.listbox.delete(index)
+            self.settings.custom_libraries.pop(index)
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
