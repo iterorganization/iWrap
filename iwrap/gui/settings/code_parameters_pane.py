@@ -9,7 +9,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 
 
-class CodeParametersPane( ttk.Frame, IWrapPane ):
+class CodeParametersPane(ttk.Frame, IWrapPane):
     """This pane is used to validate the XML file against the XSD schema file.
 
     XML file browser entry is located at the top of the pane.
@@ -19,8 +19,8 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
     warning or error with the result of the verification will be displayed.
 
     Attributes:
-        _xml_browser (FileBrowser): Widget for browsing XML files.
-        _xsd_browser (FileBrowser): Widget for browsing XSD files.
+        xml_browser (FileBrowser): Widget for browsing XML files.
+        xsd_browser (FileBrowser): Widget for browsing XSD files.
         _validator (FileBrowser): Widget for validation processing.
     
     Notes:
@@ -37,13 +37,13 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
         Args:
             master (ttk.Frame, optional): A parent widget.
         """
-        super().__init__( master )
+        super().__init__(master)
 
         # XML file path browser dialog
-        self._xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:")
+        self.xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:")
         
         # XSD file path browser dialog
-        self._xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:")
+        self.xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:")
 
         # XML Validator object against XSD
         self._validator = XMLValidatorPane(self)
@@ -80,12 +80,12 @@ class CodeParametersPane( ttk.Frame, IWrapPane ):
     def reload(self):
         pass
 
+
 class FileBrowserPane(ttk.Frame):
     """A universal FileBrowser class.
 
     Each FileBrowser object can search for a specific file extension, 
     as well as combinations of some or all of them.
-    Acceptable file extensions are based on the internal FileTypes class.
 
     Attributes:
         file_type (tuple): Formatted parameter for filedialog filetype.
@@ -101,33 +101,31 @@ class FileBrowserPane(ttk.Frame):
         but it can be edited explicitly if necessary.
     """
 
-    def __init__(self, master=None, file_type=None, label_text="") -> None:
+    def __init__(self, master=None, file_type="", label_text="") -> None:
         """Initialize FileBrowser widget.
 
         Initialize an object composed of label, button, and dialog widgets. 
         It is possible to universally search for file types only depending 
-        on the parameter specified by the file_type argument. The actual 
-        configuration is stored through an internal FileTypes object 
-        and does not need to be called explicitly.
+        on the parameter specified by the file_type argument.
 
         Args:
             master (ttk.Frame, optional): A parent widget.
-            file_type (FileTypes, optional): Describes what type of files 
+            file_type (str, optional): Describes what type of files
                 should be searched for. Default - any type.
-            label_text (ttk.Label, optional): Title of the widget.
+            label_text (str, optional): Title of the widget.
         """
         super().__init__(master)
         # Specify the file type
         self.file_type, self.file_type_title = self.define_file_type(file_type)
-        
+
         # A label above widget
         self.label = ttk.Label(self, text=label_text)
         self.label.pack(side=tk.TOP, anchor=tk.SW, expand=True)
 
         # A button to browse files
         self.button = ttk.Button(self,
-                                 text = "Browse...",
-                                 command = self.action_open)
+                                 text="Browse...",
+                                 command=self.action_open)
         self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string
@@ -139,7 +137,8 @@ class FileBrowserPane(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def define_file_type(self, file_type):
+    @staticmethod
+    def define_file_type(file_type: str = ""):
         """Determines the file type.
 
         Determines the file type from the file_type parameter 
@@ -149,18 +148,23 @@ class FileBrowserPane(ttk.Frame):
             file_type (str): String representation of the file type. 
         
         Returns:
-            tuple: The return tuple composed of FileTypes object and the string representing it.
+            tuple: The return tuple composed of file extension object and the string representing it.
         """
+
+        xml_extension = (("xml files", "*.xml"),)
+        xsd_extension = (("xsd files", "*.xsd"),)
+        any_extension = (('All files', '*.*'),)
+
         # XML file type
         if file_type == 'xml':
-            return (self.FileTypes().xml, 'XML')
+            return tuple((xml_extension, 'XML'))
         
         # XSD file type
         if file_type == 'xsd':
-            return (self.FileTypes().xsd, 'XSD')
+            return tuple((xsd_extension, 'XSD'))
         
         # Default file type
-        return (self.FileTypes().all, 'Any')
+        return tuple((any_extension, 'Any'))
 
     def action_open(self):
         """Open system file dialog to browse files.
@@ -171,50 +175,13 @@ class FileBrowserPane(ttk.Frame):
         Notes:
             If no path is selected, exits immediately.
         """
-        filename = filedialog.askopenfilename(  initialdir=None, 
-                                                title=f"Select {self.file_type_title} file",
-                                                filetypes=self.file_type )
+        filename = filedialog.askopenfilename(
+                                            initialdir=None,
+                                            title=f"Select {self.file_type_title} file",
+                                            filetypes=self.file_type)
         if filename is None:
             return
         self.path.set(filename)
-
-    class FileTypes:
-        """Describes the types of files to search..
-        
-        A FileType object is a tuple that can describe one or more file types. 
-        Each item within a tuple is another tuple with a description 
-        in the first position and a search pattern in the second.
-        """
-
-        def __init__(self) -> None:
-            """Initialize a FileType object."""
-            self._xml = tuple(("xml files","*.xml"))
-            self._xsd = tuple(("xsd files","*.xsd"))
-            self._all = tuple(('All files', '*.*'))
-
-        @property
-        def xml(self):
-            """Get a XML file type description tuple."""
-            return (self._xml,)
-
-        @property
-        def xsd(self):
-            """Get a XSD file type description tuple."""
-            return (self._xsd,)
-        
-        @property
-        def all(self):
-            """Get an any file type description tuple."""
-            return (self._all,)
-
-        def __getitem__(self, item):
-            """Attribute getter."""
-            return getattr(self, item)
-        
-        def __add__(self, other):
-            """A simple way to combine two or more file type description tuples.
-            """
-            return (self[0],other[0])
 
     
 class XMLValidatorPane(ttk.Frame):
@@ -227,7 +194,6 @@ class XMLValidatorPane(ttk.Frame):
 
     Attributes:
         result (bool): Stores the result of the validation.
-        files_to_validate (ValidationFiles): An object containing paths to validation files.
         button (ttk.Button): Widget that allows to run validation.
     
     Notes:
@@ -250,9 +216,11 @@ class XMLValidatorPane(ttk.Frame):
         # Validation result
         self.result: bool = False
 
+        # Button widget with the command to perform the validation.
         self.button = ttk.Button(self, text='Validate', command=self.validation_callback)
         self.button.pack(side=tk.TOP)
 
+        # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
     @staticmethod
@@ -269,12 +237,12 @@ class XMLValidatorPane(ttk.Frame):
 
     def validation_callback(self):
         """Callback method to perform the complete validation process."""
-        xml = self.master._xml_browser.path.get()
-        xsd = self.master._xsd_browser.path.get()
+        xml = self.master.xml_browser.path.get()
+        xsd = self.master.xsd_browser.path.get()
 
         # Check that the specified file paths are correct.
         if not self.correct_paths(xml, xsd):
-            messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT FILE-")
+            messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
             return
 
         # The validation process itself.
@@ -290,7 +258,8 @@ class XMLValidatorPane(ttk.Frame):
             xsd (str): XML schema file path.
 
         Returns:
-            bool: True if the validation was performed correctly and the result is positive. False when validation fails.
+            bool: True if the validation was performed correctly and the result is positive.
+            False when validation fails.
         """
 
         # Parse xsd file:
