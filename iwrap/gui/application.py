@@ -32,7 +32,7 @@ class MainWindow(tk.Tk, IWrapPane):
         self.geometry('600x600')
 
         # Sets application icon
-        _icon = self.__load_image(resource="imas_logo_round.gif")
+        _icon = self._load_image(resource="imas_logo_round.gif")
         self.iconphoto(True, _icon)
 
         self.config(menu=MenuBar(self))
@@ -48,8 +48,8 @@ class MainWindow(tk.Tk, IWrapPane):
         self.actor_description.pack(fill=tk.BOTH, side=tk.LEFT, padx=5, pady=5, expand=True)
 
         # Load the IMAS logo next to the ActorDescriptionPane, use the themed Label for transparency
-        self._logo_img: tk.PhotoImage = self.__load_image(resource="imas_transparent_logo.gif", resize=(True, (6, 6)))
-        ttk.Label(top_pane, image=self._logo_img).pack(side=tk.RIGHT, padx=(0, 5), pady=(10, 0))
+        self._logo_img: tk.PhotoImage = self._load_image(resource="imas_transparent_logo.gif", resize=(True, (6, 6)))
+        ttk.Label(top_pane, image=self._logo_img).pack(side=tk.RIGHT, padx=(15, 20), pady=(10, 0))
 
         button_pane = ButtonPane(main_pane)
         button_pane.pack(fill=tk.X, side=tk.BOTTOM)
@@ -59,7 +59,7 @@ class MainWindow(tk.Tk, IWrapPane):
 
         self.center()
 
-    def __load_image(self,
+    def _load_image(self,
                      package: str = "iwrap.resources",
                      resource: str = "",
                      resize: Tuple[bool, Tuple[int, int]] = (False,)) -> tk.PhotoImage:
