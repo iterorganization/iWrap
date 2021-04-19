@@ -128,14 +128,30 @@ class FileBrowserPane(ttk.Frame):
                                  command=self.action_open)
         self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
-        # Tk's StringVar to store path string
-        self.path = tk.StringVar(self)
+        # Tk's StringVar to store path string. Get initial path from ProjectSettings().
+        self.path = tk.StringVar(self, value=self.get_path_from_project(file_type))
 
         # An entry to display path dialog
         self.path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
         self.path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
+
+    def get_path_from_project(self, file_type=""):
+        """Get file path from master parameters stored in ProjectSettings ()"""
+
+        parameters_file, schema_file = self.master.parameters
+
+        # XML file type
+        if file_type == 'xml':
+            return parameters_file
+
+        # XSD file type
+        if file_type == 'xsd':
+            return schema_file
+
+        # Default file type
+        return ""
 
     @staticmethod
     def define_file_type(file_type: str = ""):
@@ -247,8 +263,12 @@ class XMLValidatorPane(ttk.Frame):
 
         # The validation process itself.
         self.result = self.validate_against_xsd(xml, xsd)
+
         # A message box with information about the validation result.
         messagebox.showinfo("Verification done", f"Validation result: \n{str(self.result).upper()}")
+
+        # Overwrite master parameters stored in ProjectSettings().
+        self.master.parameters = (xml, xsd)
 
     def validate_against_xsd(self, xml, xsd) -> bool:
         """Run xml validation process against given xsd.
