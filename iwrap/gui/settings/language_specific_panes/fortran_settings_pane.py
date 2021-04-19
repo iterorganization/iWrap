@@ -50,6 +50,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
         self.settings.from_dict(dict_settings)
+        self.compiler_combobox.set(self.settings.compiler)
+
         self.feature_pane.reload()
         self.system_libraries_pane.reload()
         self.custom_libraries_pane.reload()
@@ -57,9 +59,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def update_settings(self):
         dict_settings = self.settings.to_dict()
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
-        self.feature_pane.update_settings()
-        self.system_libraries_pane.update_settings()
-        self.custom_libraries_pane.update_settings()
 
 
 class SystemLibrariesPane( ttk.Frame ):
