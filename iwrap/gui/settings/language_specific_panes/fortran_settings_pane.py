@@ -147,7 +147,7 @@ class CustomLibrariesPane( ttk.Frame ):
         # LISTBOX WITH SCROLLBAR
         scrollbar = tk.Scrollbar(library_path_frame, orient=tk.VERTICAL)
         self.listbox = tk.Listbox(library_path_frame, yscrollcommand=scrollbar.set, selectmode=tk.MULTIPLE)
-        self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw')
+        self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw', expand=1)
 
     def add_on_click(self):
         path = tk.filedialog.askopenfilename()
