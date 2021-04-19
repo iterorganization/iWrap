@@ -27,7 +27,7 @@ class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.data_type_combo.current( 0 )
 
-        self.columnconfigure( 1, weight=3 )
+        self.columnconfigure(1, weight=3)
 
     def update_settings(self):
         pass
