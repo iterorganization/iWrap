@@ -37,15 +37,15 @@ class FortranPane( ttk.Frame, IWrapPane ):
         # NOTEBOOK WITH TABS
         tab_control = ttk.Notebook(tab_frame)
         feature_tab = ttk.Frame(tab_control)
-        sys_lib_tab = ttk.Frame(tab_control)
+        self.sys_lib_tab = ttk.Frame(tab_control)
         cus_lib_tab = ttk.Frame(tab_control)
         tab_control.add(feature_tab, text="Features")
-        tab_control.add(sys_lib_tab, text="System libraries")
+        tab_control.add(self.sys_lib_tab, text="System libraries")
         tab_control.add(cus_lib_tab, text="Custom libraries")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         self.feature_pane = FeaturesPane(feature_tab)
-        self.system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
+        self.system_libraries_pane = SystemLibrariesPane(self)
         self.custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
 
     def update_compiler(self, eventObject=None):
@@ -69,45 +69,56 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
 
-class SystemLibrariesPane( ttk.Frame ):
+class SystemLibrariesPane(FortranPane):
     def __init__(self, master=None):
-        super().__init__( master )
+        self.settings = master.settings
+        master_frame = master.sys_lib_tab
 
         # TREE VIEW FRAME
-        tree_view_frame = ttk.Frame(master)
-        tree_view_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
+        self.tree_view_frame = ttk.Frame(master_frame)
+        self.tree_view_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
 
         # BUTTONS FRAMES
-        buttons_frame = ttk.Frame(master, width=100)
+        buttons_frame = ttk.Frame(master_frame, width=100)
         buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
         buttons_center_frame = ttk.Frame(buttons_frame)
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TREE VIEW
         self.columns = ['Name', 'Info', 'Description']
-        self.tree_view_data = [
-            ('name1', 'info1', 'Description1'),
-            ('name2', 'info2', 'Description2'),
-            ('name3', 'info3', 'Description3'),
-            ('name4', 'info4', 'Description4'),
-            ('name5', 'info5', 'Description5')]
-        self.tree = ttk.Treeview(tree_view_frame, height=len(self.tree_view_data))
+        self.tree_view_data = []
+        self.tree = ttk.Treeview(self.tree_view_frame)
         self.tree['show'] = 'headings'
         self.tree["columns"] = list(range(0, len(self.columns)))
         self.tree_view_insert_column()
-        self.tree_view_insert_data()
-        self.tree.pack(fill=tk.BOTH)
+        self.add_tree_view_data()
 
         # BUTTONS
         ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
 
+    def prepare_tree_view_data(self):
+        for sys_lib in self.settings.system_libraries:
+            self.tree_view_data.append((sys_lib, 'example_info', 'example_description'))
+
+    def add_tree_view_data(self):
+        self.prepare_tree_view_data()
+        self.tree_view_insert_data()
+        self.tree.pack(fill=tk.BOTH)
+
     def reload(self):
-        pass
+        dict_settings = ProjectSettings.get_settings().code_description.language_specific
+        if dict_settings is None:
+            self.settings.clear()
+        else:
+            self.settings.from_dict(dict_settings)
+
+        self.add_tree_view_data()
 
     def update_settings(self):
-        pass
+        dict_settings = self.settings.to_dict()
+        ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
     def tree_view_insert_data(self):
         for idx, data in enumerate(self.tree_view_data):
