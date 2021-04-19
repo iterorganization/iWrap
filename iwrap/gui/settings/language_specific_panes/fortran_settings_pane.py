@@ -11,7 +11,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
 
         self.settings = FortranSpecificSettings()
-        self.combobox_values = ['Intel Fortran (ifort)', 'GNU Compiler Collection (gfortran)', 'Intel']
+        self.combobox_values = ['Intel Fortran (ifort)', 'GNU Compiler Collection (fortran)', 'Intel']
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
@@ -27,6 +27,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
         self.compiler_combobox['values'] = self.combobox_values
         self.compiler_combobox.current(0)
+        self.compiler_combobox.bind("<<ComboboxSelected>>", self.update_compiler)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
@@ -46,6 +47,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.feature_pane = FeaturesPane(feature_tab)
         self.system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
         self.custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
+
+    def update_compiler(self, eventObject=None):
+        self.settings.compiler = self.compiler_combobox.get()
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
