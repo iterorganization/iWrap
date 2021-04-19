@@ -11,6 +11,15 @@ class Dictionarizable( ABC ):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
+        for name, value in dictionary.items():
+            if not hasattr( self, name ):
+                error_msg = f'ERROR: Unknown field "{name}". Configuration seems to be not a valid iWrap file!'
+                raise ValueError(error_msg)
+            attr = getattr( self, name )
+            if isinstance( attr, Dictionarizable ):
+                attr.from_dict( value )
+            else:
+                setattr( self, name, value )
 
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
