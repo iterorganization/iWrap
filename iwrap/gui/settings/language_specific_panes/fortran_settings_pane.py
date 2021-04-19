@@ -38,15 +38,15 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control = ttk.Notebook(tab_frame)
         feature_tab = ttk.Frame(tab_control)
         self.sys_lib_tab = ttk.Frame(tab_control)
-        cus_lib_tab = ttk.Frame(tab_control)
+        self.cus_lib_tab = ttk.Frame(tab_control)
         tab_control.add(feature_tab, text="Features")
         tab_control.add(self.sys_lib_tab, text="System libraries")
-        tab_control.add(cus_lib_tab, text="Custom libraries")
+        tab_control.add(self.cus_lib_tab, text="Custom libraries")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         self.feature_pane = FeaturesPane(feature_tab)
         self.system_libraries_pane = SystemLibrariesPane(self)
-        self.custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
+        self.custom_libraries_pane = CustomLibrariesPane(self)
 
     def update_compiler(self, eventObject=None):
         self.settings.compiler = self.compiler_combobox.get()
@@ -137,16 +137,17 @@ class SystemLibrariesPane(FortranPane):
             self.tree.heading(idx, text=column)
 
 
-class CustomLibrariesPane( ttk.Frame ):
+class CustomLibrariesPane( FortranPane ):
     def __init__(self, master=None):
-        super().__init__( master )
+        self.settings = master.settings
+        master_frame = master.cus_lib_tab
 
         # LIBRARY PATH FRAME
-        library_path_frame = tk.Frame(master)
+        library_path_frame = tk.Frame(master_frame)
         library_path_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
 
         # BUTTONS FRAMES
-        buttons_frame = ttk.Frame(master, width=100)
+        buttons_frame = ttk.Frame(master_frame, width=100)
         buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
         buttons_center_frame = ttk.Frame(buttons_frame)
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
@@ -167,6 +168,10 @@ class CustomLibrariesPane( ttk.Frame ):
         self.listbox = tk.Listbox(library_path_frame, yscrollcommand=scrollbar.set, selectmode=tk.MULTIPLE)
         self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw', expand=1)
 
+    def add_custom_lib_from_settings(self):
+        for cus_lib in self.settings.custom_libraries:
+            self.listbox.insert(tk.END, cus_lib)
+
     def add_on_click(self):
         path = tk.filedialog.askopenfilename()
         self.listbox.insert(tk.END, path)
@@ -177,10 +182,17 @@ class CustomLibrariesPane( ttk.Frame ):
             self.listbox.delete(index)
 
     def reload(self):
-        pass
+        dict_settings = ProjectSettings.get_settings().code_description.language_specific
+        if dict_settings is None:
+            self.settings.clear()
+        else:
+            self.settings.from_dict(dict_settings)
+
+        self.add_custom_lib_from_settings()
 
     def update_settings(self):
-        pass
+        dict_settings = self.settings.to_dict()
+        ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
 
 class FeaturesPane( ttk.Frame ):
