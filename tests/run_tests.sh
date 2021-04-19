@@ -9,13 +9,16 @@ then
   echo "--------------------!!!--------------NOTBAMBOO--------------!!!--------------------"
 else
   echo "++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
-  # Source and run script with environment vars for CI server
-  . ./set_test_env.sh
+  # Source and run scripts with environment vars for CI server
+  set -e
+  my_dir=$(dirname $0)
+  envs_dir=$(dirname $0)/../envs/iter-bamboo
+  . $envs_dir/00_load_imas_env.sh
+  . $envs_dir/10_python_set_env.sh
+  . $envs_dir/03_report_module_list.sh
 fi
 # Run Pytests
 echo "====================|--------------Run Tests--------------|===================="
-python --version
-python -m pytest --version
 # Runs python pytest and logs results to junit xml file
 python -m pytest example_test.py --junitxml=test_results.xml -v
 
