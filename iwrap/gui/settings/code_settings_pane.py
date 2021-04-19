@@ -94,7 +94,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
 
-        self.language_pane.update_settings()
 
     def reload(self):
         """Reload entry and combobox values when the project settings are changed. If programming language from new
