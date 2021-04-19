@@ -249,9 +249,7 @@ class XMLValidatorPane(ttk.Frame):
 
         # Validation result
         self.result: bool = False
-        
-        # Object of files to process validation
-        self.files_to_validate = self.ValidationFiles(master)
+
         self.button = ttk.Button(self, text='Validate', command=self.validation_callback)
         self.button.pack(side=tk.TOP)
 
@@ -271,9 +269,8 @@ class XMLValidatorPane(ttk.Frame):
 
     def validation_callback(self):
         """Callback method to perform the complete validation process."""
-        self.files_to_validate.update()
-        xml = self.files_to_validate.xml
-        xsd = self.files_to_validate.xsd
+        xml = self.master._xml_browser.path.get()
+        xsd = self.master._xsd_browser.path.get()
 
         # Check that the specified file paths are correct.
         if not self.correct_paths(xml, xsd):
@@ -310,37 +307,3 @@ class XMLValidatorPane(ttk.Frame):
             messagebox.showerror("Validation Error", "The process encountered an error. Verify the input files!")
             return False
         return validation_result
-
-    class ValidationFiles:
-        """Stores validation files paths.
-
-        Provides an easy interface for storing and reading validation file paths.
-        It has a built-in mechanism to check if the given path is correct.
-
-        Attributes:
-            master (FileBrowser): The outside object that stores the paths.
-        """
-        def __init__(self, master) -> None:
-            """Initialize the ValidationFiles object.
-            
-            Args:
-                master (FileBrowser): A reference to the object that gives the paths.
-            """
-            self.master = master
-            self._xml: str = ""
-            self._xsd: str = ""
-
-        @property
-        def xml(self):
-            """Gets the XML file path."""
-            return self._xml
-        
-        @property
-        def xsd(self):
-            """Gets the XSD file path."""
-            return self._xsd
-
-        def update(self):
-            """Update all paths at once"""
-            self._xml = self.master._xml_browser.path.get()
-            self._xsd = self.master._xsd_browser.path.get()
