@@ -252,19 +252,49 @@ class XMLValidatorPane(ttk.Frame):
         
         # Object of files to process validation
         self.files_to_validate = self.ValidationFiles(master)
-        self.button = ttk.Button(self, text='Validate', command=self.callback)
+        self.button = ttk.Button(self, text='Validate', command=self.validation_callback)
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def callback(self):
+    @staticmethod
+    def correct_paths(file_1, file_2):
+        """Subprocess to check that paths are correct.
+
+        Returns:
+            bool:   Returns False if any of path is incorrect. Returns True if every path is correct.
+        """
+
+        if file_1 == '' or file_2 == '':
+            return False
+        return True
+
+    def validation_callback(self):
+        """Callback method to perform the complete validation process."""
         self.files_to_validate.update()
         xml = self.files_to_validate.xml
         xsd = self.files_to_validate.xsd
+
+        # Check that the specified file paths are correct.
+        if not self.correct_paths(xml, xsd):
+            messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT FILE-")
+            return
+
+        # The validation process itself.
         self.result = self.validate_against_xsd(xml, xsd)
+        # A message box with information about the validation result.
+        messagebox.showinfo("Verification done", f"Validation result: \n{str(self.result).upper()}")
 
     def validate_against_xsd(self, xml, xsd) -> bool:
-        """Run xml validation process against given xsd."""
+        """Run xml validation process against given xsd.
+
+        Args:
+            xml (str): XML file path.
+            xsd (str): XML schema file path.
+
+        Returns:
+            bool: True if the validation was performed correctly and the result is positive. False when validation fails.
+        """
 
         # Parse xsd file:
         xmlschema_file = etree.parse(xsd)
@@ -309,17 +339,6 @@ class XMLValidatorPane(ttk.Frame):
         def xsd(self):
             """Gets the XSD file path."""
             return self._xsd
-        
-        def correct_path(self):
-            """Subprocess to check that paths are correct.
-            
-            Returns:
-                bool:   Returns False if any of path is incorrect. Returns True if every path is correct.
-            """
-
-            if self.xml == '' or self.xsd == '':
-                return False
-            return True
 
         def update(self):
             """Update all paths at once"""
