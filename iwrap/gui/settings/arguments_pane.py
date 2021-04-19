@@ -7,7 +7,19 @@ from iwrap.gui.generics import IWrapPane
 class ArgumentsPane( ttk.Frame, IWrapPane ):
     def __init__(self, master=None):
         super().__init__( master )
-        ttk.Label( self, text='Place for code arguments', borderwidth=1, relief="solid" ).pack(fill=tk.BOTH, expand=1)
+
+        # LABEL FRAME
+        labelframe = ttk.LabelFrame(self, text="Arguments", borderwidth=2, relief="groove")
+        labelframe.pack(fill=tk.BOTH, pady=10, expand=1)
+        labelframe.grid_columnconfigure(1, weight=1)
+
+        # COMBOBOX
+        self.combobox_values = ['IDS', 'HDC']
+        ttk.Label(labelframe, text="Data type:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.data_type_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.data_type_combobox['values'] = self.combobox_values
+        self.data_type_combobox.current(0)
+        self.data_type_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
         pass
