@@ -252,10 +252,16 @@ class XMLValidatorPane(ttk.Frame):
         
         # Object of files to process validation
         self.files_to_validate = self.ValidationFiles(master)
-        self.button = ttk.Button(self, text='Validate', command=self.validate_against_xsd)
+        self.button = ttk.Button(self, text='Validate', command=self.callback)
         self.button.pack(side=tk.TOP)
 
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
+
+    def callback(self):
+        self.files_to_validate.update()
+        xml = self.files_to_validate.xml
+        xsd = self.files_to_validate.xsd
+        self.result = self.validate_against_xsd(xml, xsd)
 
     def validate_against_xsd(self, xml, xsd) -> bool:
         """Run xml validation process against given xsd."""
@@ -291,8 +297,8 @@ class XMLValidatorPane(ttk.Frame):
                 master (FileBrowser): A reference to the object that gives the paths.
             """
             self.master = master
-            self._xml: str = master._xml_browser.path.get()
-            self._xsd: str = master._xsd_browser.path.get()
+            self._xml: str = ""
+            self._xsd: str = ""
 
         @property
         def xml(self):
