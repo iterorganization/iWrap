@@ -11,13 +11,4 @@ envs_dir=$(dirname $0)/../envs/iter-bamboo
 
 # Run pylint code check
 echo "~~~~~====================PYLINT CODE CHECK====================~~~~~"
-echo $my_dir
-echo $wrk_dir
-echo $envs_dir
-echo "__--=="
-pwd
-echo "__--=="
-ls
 python -m pylint -E --output-format=pylint_junit.JUnitReporter iwrap > pylint.xml
-echo "__--=="
-ls
