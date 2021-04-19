@@ -9,4 +9,4 @@ tests:
 	./run_tests.sh
 
 code_check:
-    ./run_code_check.sh
+	./run_code_check.sh
