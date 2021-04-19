@@ -53,7 +53,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        self.settings.from_dict(dict_settings)
+        if dict_settings is None:
+            self.settings.clear()
+        else:
+            self.settings.from_dict(dict_settings)
+
         self.compiler_combobox.set(self.settings.compiler)
 
         self.feature_pane.reload()

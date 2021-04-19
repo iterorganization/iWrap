@@ -10,6 +10,9 @@ class FortranSpecificSettings(Dictionarizable):
         self.system_libraries = []
         self.custom_libraries = []
 
+    def clear(self):
+        self.__init__()
+
     def from_dict(self, dictionary: dict):
         super().from_dict( dictionary )
 
