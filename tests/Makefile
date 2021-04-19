@@ -8,5 +8,5 @@ all: tests code_check
 tests:
 	./run_tests.sh
 
-code_check
+code_check:
     ./run_code_check.sh
