@@ -43,6 +43,7 @@ class MenuBar( tk.Menu ):
             return
 
         self.code_description.save( YAMLSerializer( file ) )
+        file.close()
 
     def action_import(self):
         file = filedialog.askopenfile( initialdir=None,
@@ -56,4 +57,5 @@ class MenuBar( tk.Menu ):
 
         # Loading project settings from file
         self.code_description.load( YAMLSerializer( file ) )
+        file.close()
         self.main_window.reload()
