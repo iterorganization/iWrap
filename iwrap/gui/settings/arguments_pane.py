@@ -38,6 +38,12 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center = ttk.Frame(buttons_frame)
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
+        # BUTTONS
+        ttk.Button(buttons_frame_center, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=10)
+        ttk.Button(buttons_frame_center, text="Up", width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Down", width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=10)
+
     def reload(self):
         pass
 
