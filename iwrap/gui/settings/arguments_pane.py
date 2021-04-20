@@ -13,8 +13,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         labelframe.pack(fill=tk.BOTH, pady=10, expand=1)
 
         # COMBOBOX FRAME
-        combobox_frame = tk.Frame(labelframe, pady=5)
-        combobox_frame.pack(fill=tk.X, side=tk.TOP)
+        combobox_frame = ttk.Frame(labelframe)
+        combobox_frame.pack(fill=tk.X, side=tk.TOP, pady=5)
 
         # COMBOBOX
         self.combobox_values = ['IDS', 'HDC']
@@ -23,6 +23,20 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         self.data_type_combobox['values'] = self.combobox_values
         self.data_type_combobox.current(0)
         self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
+
+        # MAIN CONTENT FRAME
+        main_content_frame = ttk.Frame(labelframe)
+        main_content_frame.pack(fill=tk.BOTH, expand=1, padx=3, pady=3)
+
+        # TABLE FRAME
+        table_frame = ttk.Frame(main_content_frame)
+        table_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, padx=3, pady=3)
+
+        # BUTTONS FRAME
+        buttons_frame = ttk.Frame(main_content_frame, width=100)
+        buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, padx=3, pady=3)
+        buttons_frame_center = ttk.Frame(buttons_frame)
+        buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
     def reload(self):
         pass
