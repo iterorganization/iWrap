@@ -44,6 +44,12 @@ class TextBox(ttk.Frame):
         # Pre-configure the text box appearance
         self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
 
+    def refresh(self):
+        self._text.set("TEST\n")
+
+    def clear(self):
+        self.text_box.delete('1.0', tk.END)
+
 
 class ButtonBarPane(ttk.Frame):
     def __init__(self, master: ttk.Widget = None) -> None:
