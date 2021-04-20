@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 
 
 class SignaturePane(ttk.Frame, IWrapPane):
@@ -42,8 +43,8 @@ class TextBox(ttk.Frame):
         self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
 
     def refresh(self):
-        text = "TEST "
-        self.text_box.insert("1.0",text)
+        text = FortranWrapperGenerator.get_code_signature(None)
+        self.text_box.insert("1.0", text)
 
     def clear(self):
         self.text_box.delete('1.0', tk.END)

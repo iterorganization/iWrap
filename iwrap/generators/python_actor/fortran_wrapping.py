@@ -40,4 +40,4 @@ class FortranWrapperGenerator( ActorGenerator ):
         pass
 
     def get_code_signature(self) -> str:
-        return 'To be Defined : [ ' + str(datetime.datetime.now().time()) + ' ]'
+        return 'To be Defined : [ ' + str(datetime.now().time()) + ' ]'
