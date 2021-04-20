@@ -51,7 +51,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
 
-    # Documentation getter
+    # Parameters getter
     @property
     def parameters(self):
         """:obj: `str`: Get or set the current documentation text stored in ProjectSettings class.
@@ -139,10 +139,23 @@ class FileBrowserPane(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
+    # Parameters getter
+    @property
+    def parameters(self):
+        """:obj: `str`: Get the current code parameters paths stored in ProjectSettings class.
+        """
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
+        code_parameters = code_description.code_parameters
+        parameters_file = code_parameters.parameters
+        schema_file = code_parameters.schema
+
+        return parameters_file, schema_file
+
     def get_path_from_project(self, file_type=""):
         """Get file path from master parameters stored in ProjectSettings ()"""
 
-        parameters_file, schema_file = self.master.parameters
+        parameters_file, schema_file = self.parameters
 
         # XML file type
         if file_type == 'xml':
