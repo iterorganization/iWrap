@@ -9,21 +9,18 @@ class SignaturePane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         ButtonBarPane(self)
-        TextBox(self)
+        self._text_box: TextBox = TextBox(self)
 
     def update_settings(self):
         pass
 
     def reload(self):
-        pass
+        self._text_box.refresh()
 
 
 class TextBox(ttk.Frame):
     def __init__(self, master=None) -> None:
         super().__init__(master)
-
-        # Text content of a text box
-        self._text: tk.StringVar = tk.StringVar()
 
         # Scrollbar for the text box widget
         scrollbar = ttk.Scrollbar(master)
@@ -45,7 +42,8 @@ class TextBox(ttk.Frame):
         self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
 
     def refresh(self):
-        self._text.set("TEST\n")
+        text = "TEST "
+        self.text_box.insert("1.0",text)
 
     def clear(self):
         self.text_box.delete('1.0', tk.END)
@@ -55,6 +53,6 @@ class ButtonBarPane(ttk.Frame):
     def __init__(self, master: ttk.Widget = None) -> None:
         super().__init__(master)
 
-        ttk.Button(self, text="Copy to clipboard").pack(side=tk.LEFT)
+        ttk.Button(self, text="Copy to clipboard", command=self.master.reload).pack(side=tk.LEFT)
 
         self.pack(expand=False, fill=tk.X, padx=5)
