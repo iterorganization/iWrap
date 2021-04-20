@@ -190,9 +190,17 @@ class FileBrowserPane(ttk.Frame):
                                             filetypes=self.file_type)
         if filename is None:
             return
+
+        # Save loaded path.
         self.path.set(filename)
 
+        # Update ProjectSettings() with code parameters.
+        self.update_settings()
+
     def update_settings(self):
+        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
+        """
+
         # XML file type
         if self.file_type_title.lower() == 'xml':
             ProjectSettings.get_settings().code_description.code_parameters.parameters = self.path.get()
