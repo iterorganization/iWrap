@@ -51,28 +51,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
 
-    # Parameters getter
-    @property
-    def parameters(self):
-        """:obj: `str`: Get or set the current documentation text stored in ProjectSettings class.
-        """
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        code_parameters = code_description.code_parameters
-        parameters_file = code_parameters.parameters
-        schema_file = code_parameters.schema
-
-        return parameters_file, schema_file
-
-    @parameters.setter
-    def parameters(self, new_parameters: tuple[str, str] = ("", "")):
-        try:
-            parameters_file, schema_file = new_parameters
-        except ValueError:
-            raise ValueError("Pass an iterable with two items")
-        else:
-            self.update_settings(parameters_file, schema_file)
-
     def update_settings(self):
         self.xml_browser.update_settings()
         self.xsd_browser.update_settings()
