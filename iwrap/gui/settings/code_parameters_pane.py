@@ -73,9 +73,9 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         else:
             self.update_settings(parameters_file, schema_file)
 
-    def update_settings(self, update_parameters: str = "", update_schema: str = ""):
-        ProjectSettings.get_settings().code_description.code_parameters.parameters = update_parameters
-        ProjectSettings.get_settings().code_description.code_parameters.schema = update_schema
+    def update_settings(self):
+        self.xml_browser.update_settings()
+        self.xsd_browser.update_settings()
 
     def reload(self):
         pass
