@@ -116,6 +116,8 @@ class FileBrowserPane(ttk.Frame):
         """
         super().__init__(master)
         # Specify the file type
+        self.file_type: tuple
+        self.file_type_title: str
         self.file_type, self.file_type_title = self.define_file_type(file_type)
 
         # A label above widget
@@ -198,6 +200,16 @@ class FileBrowserPane(ttk.Frame):
         if filename is None:
             return
         self.path.set(filename)
+
+    def update_settings(self):
+        # XML file type
+        if self.file_type_title.lower() == 'xml':
+            ProjectSettings.get_settings().code_description.code_parameters.parameters = self.path.get()
+
+        # XSD file type
+        if self.file_type_title.lower() == 'xsd':
+            ProjectSettings.get_settings().code_description.code_parameters.schema = self.path.get()
+
 
     
 class XMLValidatorPane(ttk.Frame):
