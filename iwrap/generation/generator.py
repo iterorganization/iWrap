@@ -1,17 +1,34 @@
 from abc import ABC, abstractmethod
-
-from iwrap.settings.code_description import CodeDescription
-
-
-class AbstractGenerator(ABC):
+from typing import List
 
 
+class ActorGenerator( ABC ):
+
+    @classmethod
     @abstractmethod
-    def generate(self, actor_settings: dict, code_description:CodeDescription):
+    def get_handled_actor_data_types(cls) -> List[str]:
         ...
 
-    @property
     @abstractmethod
-    def code_signature(self) -> str:
+    def init(self):
         ...
 
+    @abstractmethod
+    def generate(self):
+        ...
+
+    @abstractmethod
+    def build(self):
+        ...
+
+    @abstractmethod
+    def install(self):
+        ...
+
+    @abstractmethod
+    def cleanup(self):
+        ...
+
+    @abstractmethod
+    def get_code_signature(self) -> str:
+        ...
