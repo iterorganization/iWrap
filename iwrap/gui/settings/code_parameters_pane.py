@@ -21,11 +21,12 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     Attributes:
         xml_browser (FileBrowser): Widget for browsing XML files.
         xsd_browser (FileBrowser): Widget for browsing XSD files.
-        _validator (FileBrowser): Widget for validation processing.
     
     Notes:
-        All CodeParametersPane attributes are considered protected 
-        and should not be called explicitly.
+        An explicitly declared protected variable containing a validator widget:
+        _validator (FileBrowser): Widget for validation processing.
+
+
     """
 
     def __init__(self, master=None):
@@ -69,7 +70,6 @@ class FileBrowserPane(ttk.Frame):
         file_type (tuple): Formatted parameter for filedialog filetype.
         file_type_title (str): Formatted parameter for filedialog title.
         label (ttk.Label): Label widget.
-        button (ttk.Button): Button widget.
         path (tk.StringVar): Value holder for path string.
         path_dialog (ttk.Entry): Dialog box to display the path string.
     
@@ -104,8 +104,8 @@ class FileBrowserPane(ttk.Frame):
 
         # A button to browse files
         button = ttk.Button(self,
-                                 text="Browse...",
-                                 command=self.action_open)
+                            text="Browse...",
+                            command=self.action_open)
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string. Get initial path from ProjectSettings().
@@ -209,7 +209,6 @@ class FileBrowserPane(ttk.Frame):
         if self.file_type_title.lower() == 'xsd':
             ProjectSettings.get_settings().code_description.code_parameters.schema = self.path.get()
 
-
     
 class XMLValidatorPane(ttk.Frame):
     """A XML validator against XSD - xml schema.
@@ -221,7 +220,6 @@ class XMLValidatorPane(ttk.Frame):
 
     Attributes:
         result (bool): Stores the result of the validation.
-        button (ttk.Button): Widget that allows to run validation.
     
     Notes:
         The validation ends with a pop-up message with information, 
