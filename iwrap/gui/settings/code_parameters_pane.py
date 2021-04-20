@@ -103,10 +103,10 @@ class FileBrowserPane(ttk.Frame):
         self.label.pack(side=tk.TOP, anchor=tk.SW, expand=True)
 
         # A button to browse files
-        self.button = ttk.Button(self,
+        button = ttk.Button(self,
                                  text="Browse...",
                                  command=self.action_open)
-        self.button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
+        button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string. Get initial path from ProjectSettings().
         self.path = tk.StringVar(self, value=self.get_path_from_project(file_type))
@@ -236,8 +236,8 @@ class XMLValidatorPane(ttk.Frame):
         self.result: bool = False
 
         # Button widget with the command to perform the validation.
-        self.button = ttk.Button(self, text='Validate', command=self.validation_callback)
-        self.button.pack(side=tk.TOP)
+        button = ttk.Button(self, text='Validate', command=self.validation_callback)
+        button.pack(side=tk.TOP)
 
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
