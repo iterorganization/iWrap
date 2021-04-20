@@ -17,14 +17,11 @@ code_description.programming_language = 'Fortran'
 code_description.code_name = 'demo_code'
 code_description.data_type = 'IDS'
 
-code_description.arguments.input = [
-    Argument( {'name': 'equilibrium00', 'type': 'IDS', 'sub_type': "equilibrium", 'intent': Argument.IN} ),
-    Argument( {'name': 'equilibrium01', 'type': 'IDS', 'sub_type': "equilibrium", 'intent': Argument.IN} )]
-
-code_description.arguments.output = [
-    Argument( {'name': 'equilibrium10', 'type': 'IDS', 'sub_type': "equilibrium", 'intent': Argument.OUT} ),
-    Argument( {'name': 'equilibrium11', 'type': 'IDS', 'sub_type': "equilibrium",
-               'intent': Argument.OUT} ), ]
+code_description.arguments = [
+    Argument( {'name': 'equilibrium00', 'type': "equilibrium", 'intent': Argument.IN} ),
+    Argument( {'name': 'equilibrium01', 'type': "equilibrium", 'intent': Argument.IN} ),
+    Argument( {'name': 'equilibrium10', 'type': "equilibrium", 'intent': Argument.OUT} ),
+    Argument( {'name': 'equilibrium11', 'type': "equilibrium", 'intent': Argument.OUT} ), ]
 
 code_description.code_path = './lib/libdemo.a'
 code_description.code_parameters.parameters = './code_paramneters/parameters.xml'
