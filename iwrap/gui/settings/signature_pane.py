@@ -4,10 +4,11 @@ from tkinter import ttk
 from iwrap.gui.generics import IWrapPane
 
 
-class SignaturePane( ttk.Frame, IWrapPane ):
+class SignaturePane(ttk.Frame, IWrapPane):
     def __init__(self, master=None):
-        super().__init__( master )
+        super().__init__(master)
 
+        ButtonBarPane(self)
         TextBox(self)
 
     def update_settings(self):
@@ -42,3 +43,12 @@ class TextBox(ttk.Frame):
 
         # Pre-configure the text box appearance
         self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
+
+
+class ButtonBarPane(ttk.Frame):
+    def __init__(self, master: ttk.Widget = None) -> None:
+        super().__init__(master)
+
+        ttk.Button(self, text="Copy to clipboard").pack(side=tk.LEFT)
+
+        self.pack(expand=False, fill=tk.X, padx=5)
