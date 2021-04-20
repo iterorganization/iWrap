@@ -46,7 +46,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         self.xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:")
 
         # XML Validator object against XSD
-        self._validator = XMLValidatorPane(self)
+        _validator = XMLValidatorPane(self)
 
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
