@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.gui.widgets.table import Table
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
@@ -29,8 +30,12 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         main_content_frame.pack(fill=tk.BOTH, expand=1, padx=3, pady=3)
 
         # TABLE FRAME
-        table_frame = ttk.Frame(main_content_frame)
+        table_frame = tk.Frame(main_content_frame, highlightbackground="black", highlightthickness=1)
         table_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, padx=3, pady=3)
+        table_frame.columnconfigure(0, weight=1)
+        #table_frame.columnconfigure(1, weight=1)
+        #table_frame.columnconfigure(2, weight=1)
+        table_frame.columnconfigure(3, weight=1)
 
         # BUTTONS FRAME
         buttons_frame = ttk.Frame(main_content_frame, width=100)
@@ -43,6 +48,16 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         ttk.Button(buttons_frame_center, text="Up", width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Down", width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=10)
+
+        # TABLE
+        data = [
+            ['type_example', 'a', 'a', "Label_example"],
+            ['type_example', 'b', 'b', "Label_example"],
+            ['type_example', 'c', 'c', "Label_example"],
+            ['type_example', 'd', 'd', "Label_example"],
+        ]
+        columns = ["Type", "Input", "Output", "Label"]
+        self.table = Table(data, columns, table_frame)
 
     def reload(self):
         pass
