@@ -1,21 +1,25 @@
 clear
 set -a
 # Prepare tests
-echo "|--------------Prepare For Tests--------------|"
+echo "....................|--------------Prepare For Tests--------------|...................."
 # Verify whether script is running on CI server
 # Checks if $ONBAMBOO exists in environment
 if [ -z "${ONBAMBOO+x}" ]
 then
-  echo "!!!--------------NOTBAMBOO--------------!!!"
+  echo "--------------------!!!--------------NOTBAMBOO--------------!!!--------------------"
 else
-  echo "!!!--------------ONBAMBOO--------------!!!"
-  # Source and run script with environment vars for CI server
-  . ./set_test_env.sh
+  echo "++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
+  # Source and run scripts with environment vars for CI server
+  set -e
+  my_dir=$(dirname $0)
+  envs_dir=$(dirname $0)/../envs/iter-bamboo
+  . $envs_dir/00_load_imas_env.sh
+  . $envs_dir/10_python_set_env.sh
+  . $envs_dir/03_report_module_list.sh
+  cd tests/
 fi
 # Run Pytests
-echo "|--------------Run Tests--------------|"
-python --version
-python -m pytest --version
+echo "====================|--------------Run Tests--------------|===================="
 # Runs python pytest and logs results to junit xml file
 python -m pytest example_test.py --junitxml=test_results.xml -v
 
