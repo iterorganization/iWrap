@@ -31,7 +31,7 @@ class SignaturePane(ttk.Frame, IWrapPane):
         self.text_box.refresh()
 
 
-class TextBox(ttk.Frame):
+class TextBox(ttk.LabelFrame):
     """Widget consisting of a text field with read-only mode and two scroll bars (X and Y).
 
         Attributes:
@@ -45,17 +45,17 @@ class TextBox(ttk.Frame):
             Preconfigures the appearance of the text box widget.
         """
 
-        super().__init__(master)
+        super().__init__(master, text="Wrapped code expected signature:")
 
         # Scrollbars for the text box widget
-        vertical_scroll = ttk.Scrollbar(master)
-        horizontal_scroll = ttk.Scrollbar(master)
+        vertical_scroll = ttk.Scrollbar(self)
+        horizontal_scroll = ttk.Scrollbar(self)
         # Pack vertical_scroll and horizontal_scroll
         vertical_scroll.pack(side=tk.RIGHT, fill=tk.Y, pady=(5, 2), padx=2)
         horizontal_scroll.pack(side=tk.BOTTOM, fill=tk.X, pady=(5, 2), padx=5)
 
         # Text Box for the text box
-        self.text_box = tk.Text(master)
+        self.text_box = tk.Text(self)
         # Configure to none wrapping text & disable editing.
         self.text_box.config(wrap=tk.NONE, state=tk.DISABLED)
         # Pack text box
@@ -72,7 +72,10 @@ class TextBox(ttk.Frame):
         self.text_box['xscrollcommand'] = horizontal_scroll.set
 
         # Pre-configure the text box appearance
-        self.text_box.config(bg='#C5C5C5', fg='#000', insertbackground='#000')
+        #self.text_box.config(bg='#C5C5C5', fg='#000', insertbackground='#000')
+
+        # Pack TextBox.
+        self.pack()
 
     def refresh(self) -> None:
         """Clears the contents of the text box and inserts new text data."""
