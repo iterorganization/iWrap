@@ -10,13 +10,13 @@ class SignaturePane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         ButtonBarPane(self)
-        self._text_box: TextBox = TextBox(self)
+        self.text_box: TextBox = TextBox(self)
 
     def update_settings(self):
         pass
 
     def reload(self):
-        self._text_box.refresh()
+        self.text_box.refresh()
 
 
 class TextBox(ttk.Frame):
@@ -51,12 +51,20 @@ class TextBox(ttk.Frame):
     def clear(self):
         self.text_box.delete('1.0', tk.END)
 
+    def get_text(self) -> str:
+        return self.text_box.get("1.0", tk.END)
+
 
 class ButtonBarPane(ttk.Frame):
     def __init__(self, master: ttk.Widget = None) -> None:
         super().__init__(master)
 
-        ttk.Button(self, text="Copy to clipboard").pack(side=tk.LEFT)
+        ttk.Button(self, text="Copy to clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT)
         ttk.Button(self, text="Refresh", command=self.master.reload).pack(side=tk.LEFT)
 
         self.pack(expand=False, fill=tk.X, padx=5)
+
+    def copy_to_clipboard(self):
+        content = self.master.text_box.get_text()
+        self.clipboard_clear()
+        self.clipboard_append(content)
