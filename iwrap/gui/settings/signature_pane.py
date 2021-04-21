@@ -72,7 +72,7 @@ class TextBox(ttk.Frame):
         self.text_box['xscrollcommand'] = horizontal_scroll.set
 
         # Pre-configure the text box appearance
-        self.text_box.config(bg='#EFEFEF', fg='#000', insertbackground='#000')
+        self.text_box.config(bg='#C5C5C5', fg='#000', insertbackground='#000')
 
     def refresh(self) -> None:
         """Clears the contents of the text box and inserts new text data."""
@@ -116,7 +116,7 @@ class ButtonsBarPane(ttk.Frame):
         ttk.Button(self, text="Refresh", command=self.master.reload).pack(side=tk.LEFT, padx=5)
 
         # ButtonBarPane object pack configuration.
-        self.pack(expand=False, fill=tk.X, padx=5, pady=(5, 0))
+        self.pack(expand=False, fill=tk.X, padx=5, pady=(10, 5))
 
     def copy_to_clipboard(self):
         """Executes 'Copy to clipboard' action."""
