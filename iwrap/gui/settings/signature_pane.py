@@ -50,7 +50,7 @@ class TextBox(ttk.Frame):
         self.text_box['xscrollcommand'] = horizontal_scroll.set
 
         # Pre-configure the text box appearance
-        self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
+        self.text_box.config(bg='#EFEFEF', fg='#000', insertbackground='#000')
 
     def refresh(self):
         GeneratorManager.init_generator(None, None)
@@ -77,7 +77,7 @@ class ButtonBarPane(ttk.Frame):
         ttk.Button(self, text="Copy to clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT)
         ttk.Button(self, text="Refresh", command=self.master.reload).pack(side=tk.LEFT, padx=5)
 
-        self.pack(expand=False, fill=tk.X, padx=5)
+        self.pack(expand=False, fill=tk.X, padx=5, pady=(5, 0))
 
     def copy_to_clipboard(self):
         content = self.master.text_box.get_text()
