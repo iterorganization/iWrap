@@ -43,6 +43,7 @@ class TextBox(ttk.Frame):
         self.text_box.config(bg='#FFF', fg='#000', insertbackground='#000')
 
     def refresh(self):
+        self.clear()
         GeneratorManager.init_generator(None, None)
         text = GeneratorManager.get_code_signature()
         self.text_box.insert("1.0", text)
@@ -55,6 +56,7 @@ class ButtonBarPane(ttk.Frame):
     def __init__(self, master: ttk.Widget = None) -> None:
         super().__init__(master)
 
-        ttk.Button(self, text="Copy to clipboard", command=self.master.reload).pack(side=tk.LEFT)
+        ttk.Button(self, text="Copy to clipboard").pack(side=tk.LEFT)
+        ttk.Button(self, text="Refresh", command=self.master.reload).pack(side=tk.LEFT)
 
         self.pack(expand=False, fill=tk.X, padx=5)
