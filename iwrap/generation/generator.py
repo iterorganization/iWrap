@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, ABCMeta
 from typing import List
 
 
-class ActorGenerator( ABC ):
+class ActorGenerator( ):
 
     @classmethod
     @abstractmethod
