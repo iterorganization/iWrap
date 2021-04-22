@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from typing import Union
+
 from iwrap.gui.generics import IWrapPane
 from iwrap.generation.generators_mgmt import GeneratorManager
 
@@ -18,10 +20,25 @@ class SignaturePane(ttk.Frame, IWrapPane):
         """
         super().__init__(master)
 
+        # SignaturePane index in the parent notebook
+        self._index: Union[int, None] = None
+
+        # Text box declaration
+        self.text_box: TextBox
+
         # Buttons bar to control pane's content
         ButtonsBarPane(self)
-        # Text box widget
-        self.text_box: TextBox = TextBox(self)
+        # Text box widget initialization
+        self.text_box = TextBox(self)
+
+    @property
+    def tab_index(self):
+        """Get/Set the SignaturePane index of the parent notebook."""
+        return self._index
+
+    @tab_index.setter
+    def tab_index(self, value):
+        self._index = value
 
     def update_settings(self):
         pass
@@ -70,9 +87,6 @@ class TextBox(ttk.LabelFrame):
         # Configure callback from text box for Scrollbars widgets
         self.text_box['yscrollcommand'] = vertical_scroll.set
         self.text_box['xscrollcommand'] = horizontal_scroll.set
-
-        # Pre-configure the text box appearance
-        #self.text_box.config(bg='#C5C5C5', fg='#000', insertbackground='#000')
 
         # Pack TextBox.
         self.pack()
