@@ -4,7 +4,7 @@ from datetime import datetime
 
 import jinja2
 
-from iwrap.generation.generator import ActorGenerator
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.settings.project import ProjectSettings
 
 

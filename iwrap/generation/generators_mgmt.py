@@ -1,4 +1,4 @@
-from iwrap.generation.generator import ActorGenerator
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.generators.python_actor import generator
 
 
