@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, Any
 
 from iwrap.common.misc import Dictionarizable
@@ -5,9 +6,11 @@ from iwrap.settings.serialization import IWrapSerializer
 
 
 class PlatformSettings(Dictionarizable):
+    """ TO DO: Read a proper content from config file
+    """
 
     def __init__(self):
-        self.installation_dir = None
+        self.installation_dir = Path.home() + '/IWRAP_ACTORS'
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
