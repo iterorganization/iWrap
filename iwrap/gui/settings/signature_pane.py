@@ -175,8 +175,6 @@ class ButtonsBarPane(ttk.Frame):
 
         # First button to execute copy to clipboard action.
         ttk.Button(self, text="Copy to clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT)
-        # Temporary button to execute reload method of the parent widget.
-        ttk.Button(self, text="Refresh", command=self.master.reload).pack(side=tk.LEFT, padx=5)
 
         # ButtonBarPane object pack configuration.
         self.pack(expand=False, fill=tk.X, padx=5, pady=(10, 5))
