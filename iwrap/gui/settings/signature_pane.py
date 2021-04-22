@@ -95,7 +95,7 @@ class TextBox(ttk.LabelFrame):
         self.text_box.bind("<Button-2>", popup_menu.popup_rise)
 
         # Pack TextBox.
-        self.pack()
+        self.pack(expand=True, fill=tk.BOTH)
 
     class PopUpPane(tk.Menu):
         def __init__(self, master: tk.Widget = None) -> None:
