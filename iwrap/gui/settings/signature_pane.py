@@ -91,6 +91,26 @@ class TextBox(ttk.LabelFrame):
         # Pack TextBox.
         self.pack()
 
+        # Pop-up menu:
+        popup_menu = self.PopUpPane(self.text_box)
+        self.text_box.bind("<Button-2>", popup_menu.popup_rise)
+
+    class PopUpPane(tk.Menu):
+        def __init__(self, master=None) -> None:
+            super().__init__(master)
+            self.add_command(label="Copy")
+            self.add_command(label="Paste")
+            self.add_separator()
+            self.add_command(label="Select All")
+            self.config(tearoff=False)
+
+        def popup_rise(self, event=None):
+            """Handles popup rising."""
+            try:
+                self.tk_popup(event.x_root, event.y_root)
+            finally:
+                self.grab_release()
+
     def refresh(self) -> None:
         """Clears the contents of the text box and inserts new text data."""
 
