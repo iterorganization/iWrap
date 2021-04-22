@@ -75,6 +75,8 @@ class TextBox(ttk.LabelFrame):
         self.text_box = tk.Text(self)
         # Configure to none wrapping text & disable editing.
         self.text_box.config(wrap=tk.NONE, state=tk.DISABLED)
+        # Configure selection color
+        self.text_box.config(selectbackground="#D3E2FC", inactiveselectbackground="#E6EFFD")
         # Pack text box
         self.text_box.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
 
@@ -88,28 +90,52 @@ class TextBox(ttk.LabelFrame):
         self.text_box['yscrollcommand'] = vertical_scroll.set
         self.text_box['xscrollcommand'] = horizontal_scroll.set
 
-        # Pack TextBox.
-        self.pack()
-
         # Pop-up menu:
         popup_menu = self.PopUpPane(self.text_box)
         self.text_box.bind("<Button-2>", popup_menu.popup_rise)
 
+        # Pack TextBox.
+        self.pack()
+
     class PopUpPane(tk.Menu):
-        def __init__(self, master=None) -> None:
+        def __init__(self, master: tk.Widget = None) -> None:
+            """Initialize the popup menu widget.
+            Args:
+                master (tk.Widget, optional): A parent widget.
+            """
             super().__init__(master)
-            self.add_command(label="Copy")
-            self.add_command(label="Paste")
+
+            # Configure the menu commands.
+            self.add_command(label="Copy", command=self.copy)
             self.add_separator()
-            self.add_command(label="Select All")
+            self.add_command(label="Refresh...", command=self.refresh)
+            self.add_command(label="Select All", command=self.select_all)
+
+            # Configure: turn off the tear off option.
             self.config(tearoff=False)
 
-        def popup_rise(self, event=None):
+        def popup_rise(self, event=None) -> None:
             """Handles popup rising."""
+            # Make sure the widget is in focus
+            event.widget.focus_set()
             try:
+                # Pop the menu at given coordinates.
                 self.tk_popup(event.x_root, event.y_root)
             finally:
                 self.grab_release()
+
+        def copy(self) -> None:
+            """Copies the selection."""
+            self.master.event_generate("<<Copy>>")
+            print()
+
+        def refresh(self) -> None:
+            """Calls external refresh method."""
+            self.master.master.refresh()
+
+        def select_all(self) -> None:
+            """Selects all text."""
+            self.master.tag_add(tk.SEL, "1.0", tk.END)
 
     def refresh(self) -> None:
         """Clears the contents of the text box and inserts new text data."""
