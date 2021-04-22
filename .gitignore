@@ -9,6 +9,9 @@ lib/
 .vscode/
 *.code-workspace
 .env
+venv/
+_build/
 *.xml
 *.xsd
 *.python-version
+documentation_files/
