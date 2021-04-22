@@ -14,8 +14,4 @@ _build/
 *.xml
 *.xsd
 *.python-version
-<<<<<<< HEAD
 documentation_files/
-=======
-documentation_files/
->>>>>>> develop
