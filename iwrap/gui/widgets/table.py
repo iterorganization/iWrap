@@ -4,34 +4,42 @@ from tkinter import ttk
 
 class Table( ttk.Frame ):
     def __init__(self, data, columns, master=None):
+        self.selected_row = None
 
         # ADD COLUMNS
         for idx, column in enumerate(columns):
             Column(idx, column, master)
 
         # ADD ROWS
-        row_number = 1
         self.rows = []
-
-        for row in data:
-            for idx, elem in enumerate(row):
-                row_entry = RowEntry(row_number, idx, elem, master)
-                row_entry.entry.bind("<1>", lambda event, row_num=row_entry.row_number: self.select_row(row_num))
-                self.rows.append(row_entry)
-            row_number += 1
+        for row_number, row in enumerate(data):
+            table_row = Row(row_number + 1, row, master)
+            self.rows.append(table_row)
+            for entry in table_row.row_entries:
+                entry.entry.bind("<1>", lambda event, row_num=table_row.row_number: self.select_row(row_num))
 
     def select_row(self, selected_row):
+        self.selected_row = selected_row
         for row in self.rows:
-            if row.row_number == selected_row:
-                row.entry.config(bg="lightgray")
-            else:
-                row.entry.config(bg="white")
+            for entry in row.row_entries:
+                if entry.row_number == selected_row:
+                    entry.entry.config(bg="lightgray")
+                else:
+                    entry.entry.config(bg="white")
 
     def delete_row(self):
         pass
 
     def add_row(self):
         pass
+
+
+class Row( ttk.Frame ):
+    def __init__(self, row, data, master=None):
+        self.row_number = row
+        self.row_entries = []
+        for idx, elem in enumerate(data):
+            self.row_entries.append(RowEntry(row, idx, elem, master))
 
 
 class RowEntry( ttk.Frame ):
