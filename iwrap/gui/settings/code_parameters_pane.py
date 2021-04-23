@@ -4,6 +4,7 @@ from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
 from lxml import etree
+from typing import Union, Tuple
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
@@ -305,3 +306,38 @@ class XMLValidatorPane(ttk.Frame):
             messagebox.showerror("Validation Error", "The process encountered an error. Verify the input files!")
             return False
         return validation_result
+
+
+class File:
+    EXTENSION = (("All files", "*.*"),)
+    TITLE = "ANY"
+
+    @classmethod
+    def info(cls) -> Tuple:
+        return tuple((cls.EXTENSION, cls.TITLE))
+
+    @classmethod
+    def get_title(cls):
+        print(cls.TITLE)
+
+    @classmethod
+    def update_settings(cls):
+        pass
+
+
+class XMLFile(File):
+    EXTENSION = (("XML Files", "*.xml"),)
+    TITLE = "XML"
+
+    @classmethod
+    def update_settings(cls):
+        print("Update")
+
+
+class XSDFile(File):
+    EXTENSION = (("XSD Files", "*.xsd"),)
+    TITLE = "XSD"
+
+    @classmethod
+    def update_settings(cls):
+        print("Update")
