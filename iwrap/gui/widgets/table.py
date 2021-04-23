@@ -43,6 +43,20 @@ class Table( ttk.Frame ):
                 entry.row_number = row_number + 1
             row.row_number = row_number + 1
 
+    def row_up(self):
+        for row in self.rows:
+            if row.row_number == self.selected_row - 1:
+                for entry in row.row_entries:
+                    entry.row_number = row.row_number + 1
+                    entry.entry.grid(row=row.row_number + 1, column=entry.column_number, sticky="ew")
+                row.row_number = row.row_number + 1
+
+            if row.row_number == self.selected_row:
+                for entry in row.row_entries:
+                    entry.row_number = row.row_number - 1
+                    entry.entry.grid(row=row.row_number - 1, column=entry.column_number, sticky="ew")
+                row.row_number = row.row_number - 1
+
     def add_row(self):
         pass
 
@@ -58,6 +72,7 @@ class Row( ttk.Frame ):
 class RowEntry( ttk.Frame ):
     def __init__(self, row, column, text, master=None):
         self.row_number = row
+        self.column_number = column
         row_text = tk.StringVar()
         row_text.set(text)
         self.entry = tk.Entry(master, textvariable=row_text, state='readonly', readonlybackground="white", width=6)
