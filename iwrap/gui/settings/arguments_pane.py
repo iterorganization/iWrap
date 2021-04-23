@@ -45,17 +45,21 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         data = [
-            ['type_example', 'a', 'a', "Label_example"],
-            ['type_example', 'b', 'b', "Label_example"],
-            ['type_example', 'c', 'c', "Label_example"],
-            ['type_example', 'd', 'd', "Label_example"],
+            ['type_example1', 'a', 'a', "Label_example"],
+            ['type_example2', 'b', 'b', "Label_example"],
+            ['type_example3', 'c', 'c', "Label_example"],
+            ['type_example4', 'd', 'd', "Label_example"],
+            ['type_example5', 'a', 'a', "Label_example"],
+            ['type_example6', 'b', 'b', "Label_example"],
+            ['type_example7', 'c', 'c', "Label_example"],
+            ['type_example8', 'd', 'd', "Label_example"],
         ]
         columns = ["Type", "Input", "Output", "Label"]
         self.table = Table(data, columns, table_frame)
 
         # BUTTONS
         ttk.Button(buttons_frame_center, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=10)
-        ttk.Button(buttons_frame_center, text="Up", width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up, width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Down", width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Remove", command=self.table.delete_row, width=10)\
             .pack(side=tk.TOP, expand=1, pady=10)
