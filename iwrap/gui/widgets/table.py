@@ -16,13 +16,13 @@ class Table( ttk.Frame ):
             table_row = Row(row_number + 1, row, master)
             self.rows.append(table_row)
             for entry in table_row.row_entries:
-                entry.entry.bind("<1>", lambda event, row_num=table_row.row_number: self.select_row(row_num))
+                entry.entry.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
 
-    def select_row(self, selected_row):
-        self.selected_row = selected_row
+    def select_row(self, parent_row):
+        self.selected_row = parent_row.row_number
         for row in self.rows:
             for entry in row.row_entries:
-                if entry.row_number == selected_row:
+                if entry.row_number == self.selected_row:
                     entry.entry.config(readonlybackground="lightgray")
                 else:
                     entry.entry.config(readonlybackground="white")
@@ -35,6 +35,13 @@ class Table( ttk.Frame ):
                     del entry
                 self.rows.remove(row)
                 del row
+        self.update_rows()
+
+    def update_rows(self):
+        for row_number, row in enumerate(self.rows):
+            for entry in row.row_entries:
+                entry.row_number = row_number + 1
+            row.row_number = row_number + 1
 
     def add_row(self):
         pass
