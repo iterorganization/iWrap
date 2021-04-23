@@ -309,8 +309,9 @@ class XMLValidatorPane(ttk.Frame):
 
 
 class File:
-    EXTENSION = (("All files", "*.*"),)
-    TITLE = "ANY"
+    EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    TITLE: str = "ANY"
+    PATH: str = ""
 
     @classmethod
     def info(cls) -> Tuple:
@@ -321,13 +322,17 @@ class File:
         print(cls.TITLE)
 
     @classmethod
+    def save_path(cls, path: str = ""):
+        cls.PATH = path
+
+    @classmethod
     def update_settings(cls):
         pass
 
 
 class XMLFile(File):
-    EXTENSION = (("XML Files", "*.xml"),)
-    TITLE = "XML"
+    EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    TITLE: str = "XML"
 
     @classmethod
     def update_settings(cls):
@@ -335,8 +340,8 @@ class XMLFile(File):
 
 
 class XSDFile(File):
-    EXTENSION = (("XSD Files", "*.xsd"),)
-    TITLE = "XSD"
+    EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
+    TITLE: str = "XSD"
 
     @classmethod
     def update_settings(cls):
