@@ -28,7 +28,13 @@ class Table( ttk.Frame ):
                     entry.entry.config(readonlybackground="white")
 
     def delete_row(self):
-        pass
+        for row in self.rows:
+            if row.row_number == self.selected_row:
+                for entry in row.row_entries:
+                    entry.entry.destroy()
+                    del entry
+                self.rows.remove(row)
+                del row
 
     def add_row(self):
         pass
