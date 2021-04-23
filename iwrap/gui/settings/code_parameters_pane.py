@@ -336,7 +336,7 @@ class XMLFile(File):
 
     @classmethod
     def update_settings(cls):
-        print("Update")
+        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls.PATH
 
 
 class XSDFile(File):
@@ -345,4 +345,4 @@ class XSDFile(File):
 
     @classmethod
     def update_settings(cls):
-        print("Update")
+        ProjectSettings.get_settings().code_description.code_parameters.schema = cls.PATH
