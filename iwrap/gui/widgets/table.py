@@ -23,9 +23,9 @@ class Table( ttk.Frame ):
         for row in self.rows:
             for entry in row.row_entries:
                 if entry.row_number == selected_row:
-                    entry.entry.config(bg="lightgray")
+                    entry.entry.config(readonlybackground="lightgray")
                 else:
-                    entry.entry.config(bg="white")
+                    entry.entry.config(readonlybackground="white")
 
     def delete_row(self):
         pass
@@ -45,8 +45,9 @@ class Row( ttk.Frame ):
 class RowEntry( ttk.Frame ):
     def __init__(self, row, column, text, master=None):
         self.row_number = row
-        self.entry = tk.Entry(master, bg="white", width=6)
-        self.entry.insert(0, text)
+        row_text = tk.StringVar()
+        row_text.set(text)
+        self.entry = tk.Entry(master, textvariable=row_text, state='readonly', readonlybackground="white", width=6)
         self.entry.grid(row=row, column=column, sticky="ew")
 
 
