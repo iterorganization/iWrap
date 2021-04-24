@@ -267,14 +267,11 @@ class XMLValidatorPane(ttk.Frame):
 
     def validation_callback(self):
         """Callback method to perform the complete validation process."""
-        xml = self.master.xml_browser.path.get()
-        xsd = self.master.xsd_browser.path.get()
-
-        print(f"Is Path correct? - {XMLFile.PATH_VALID}")
-        print(f"Path: {XMLFile.get_path()}")
+        xml = XMLFile.get_path()
+        xsd = XSDFile.get_path()
 
         # Check that the specified file paths are correct.
-        if not self.correct_paths(xml, xsd):
+        if not (XMLFile.PATH_VALID and XSDFile.PATH_VALID):
             messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
             return
 
