@@ -42,10 +42,10 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # XML file path browser dialog
-        self.xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:")
+        self.xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:", file_class=XMLFile)
         
         # XSD file path browser dialog
-        self.xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:")
+        self.xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:", file_class=XSDFile)
 
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self)
@@ -80,7 +80,7 @@ class FileBrowserPane(ttk.Frame):
         but it can be edited explicitly if necessary.
     """
 
-    def __init__(self, master=None, file_type="", label_text="") -> None:
+    def __init__(self, master=None, file_type="", label_text="", file_class=None) -> None:
         """Initialize FileBrowser widget.
 
         Initialize an object composed of label, button, and dialog widgets. 
@@ -93,6 +93,8 @@ class FileBrowserPane(ttk.Frame):
                 should be searched for. Default - any type.
             label_text (str, optional): Title of the widget.
         """
+        self.file_class = file_class
+
         super().__init__(master)
         # Specify the file type
         self.file_type: tuple
@@ -192,6 +194,8 @@ class FileBrowserPane(ttk.Frame):
         if filename is None:
             return
 
+        self.file_class.save_path(filename)
+
         # Save loaded path.
         self.path.set(filename)
 
@@ -266,6 +270,9 @@ class XMLValidatorPane(ttk.Frame):
         xml = self.master.xml_browser.path.get()
         xsd = self.master.xsd_browser.path.get()
 
+        print(f"Is Path correct? - {XMLFile.PATH_VALID}")
+        print(f"Path: {XMLFile.get_path()}")
+
         # Check that the specified file paths are correct.
         if not self.correct_paths(xml, xsd):
             messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
@@ -309,21 +316,30 @@ class XMLValidatorPane(ttk.Frame):
 
 
 class File:
-    EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
-    TITLE: str = "ANY"
-    PATH: str = ""
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    _TITLE: str = "ANY"
+    _PATH: str = ""
+    PATH_VALID: bool = False
 
     @classmethod
     def info(cls) -> Tuple:
-        return tuple((cls.EXTENSION, cls.TITLE))
+        return tuple((cls._EXTENSION, cls._TITLE))
 
     @classmethod
     def get_title(cls):
-        print(cls.TITLE)
+        print(cls._TITLE)
 
     @classmethod
     def save_path(cls, path: str = ""):
-        cls.PATH = path
+        cls._PATH = path
+        if path == "" or not isinstance(path, str):
+            cls.PATH_VALID = False
+            return
+        cls.PATH_VALID = True
+
+    @classmethod
+    def get_path(cls):
+        return cls._PATH
 
     @classmethod
     def update_settings(cls):
@@ -331,12 +347,12 @@ class File:
 
 
 class XMLFile(File):
-    EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
-    TITLE: str = "XML"
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    _TITLE: str = "XML"
 
     @classmethod
     def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls.PATH
+        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls._PATH
 
 
 class XSDFile(File):
@@ -345,4 +361,4 @@ class XSDFile(File):
 
     @classmethod
     def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.schema = cls.PATH
+        ProjectSettings.get_settings().code_description.code_parameters.schema = cls._PATH
