@@ -53,9 +53,15 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
 
+        # TEST #
+        def f():
+            print(f"Project settings parameters file: {ProjectSettings.get_settings().code_description.code_parameters.parameters}")
+            print(f"Project settings schema file: {ProjectSettings.get_settings().code_description.code_parameters.schema}")
+        ttk.Button(self, text="PRINT PROJECT SETTINGS", command=f).pack()
+        # TEST #
+
     def update_settings(self):
-        self.xml_browser.update_settings()
-        self.xsd_browser.update_settings()
+        pass
 
     def reload(self):
         pass
@@ -194,25 +200,14 @@ class FileBrowserPane(ttk.Frame):
         if filename is None:
             return
 
+        # Save loaded path.
         self.file_class.save_path(filename)
 
-        # Save loaded path.
-        self.path.set(filename)
+        # Update the text in the path dialog widget.
+        self.path.set(self.file_class.get_path())
 
         # Update ProjectSettings() with code parameters.
-        self.update_settings()
-
-    def update_settings(self):
-        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
-        """
-
-        # XML file type
-        if self.file_type_title.lower() == 'xml':
-            ProjectSettings.get_settings().code_description.code_parameters.parameters = self.path.get()
-
-        # XSD file type
-        if self.file_type_title.lower() == 'xsd':
-            ProjectSettings.get_settings().code_description.code_parameters.schema = self.path.get()
+        self.file_class.update_settings()
 
     
 class XMLValidatorPane(ttk.Frame):
@@ -340,6 +335,8 @@ class File:
 
     @classmethod
     def update_settings(cls):
+        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
+        """
         pass
 
 
