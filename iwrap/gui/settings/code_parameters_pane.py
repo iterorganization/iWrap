@@ -42,10 +42,10 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # XML file path browser dialog
-        self.xml_browser = FileBrowserPane(self, file_type='xml', label_text="Code parameters file:", file_class=XMLFile)
+        self.xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
         
         # XSD file path browser dialog
-        self.xsd_browser = FileBrowserPane(self, file_type='xsd', label_text="Schema file:", file_class=XSDFile)
+        self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
 
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self)
@@ -67,6 +67,57 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         pass
 
 
+class File:
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    _TITLE: str = "ANY"
+    _PATH: str = ""
+    PATH_VALID: bool = False
+
+    @classmethod
+    def info(cls) -> Tuple:
+        return tuple((cls._EXTENSION, cls._TITLE))
+
+    @classmethod
+    def get_title(cls):
+        print(cls._TITLE)
+
+    @classmethod
+    def save_path(cls, path: str = ""):
+        cls._PATH = path
+        if path == "" or not isinstance(path, str):
+            cls.PATH_VALID = False
+            return
+        cls.PATH_VALID = True
+
+    @classmethod
+    def get_path(cls):
+        return cls._PATH
+
+    @classmethod
+    def update_settings(cls):
+        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
+        """
+        pass
+
+
+class XMLFile(File):
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    _TITLE: str = "XML"
+
+    @classmethod
+    def update_settings(cls):
+        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls._PATH
+
+
+class XSDFile(File):
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
+    _TITLE: str = "XSD"
+
+    @classmethod
+    def update_settings(cls):
+        ProjectSettings.get_settings().code_description.code_parameters.schema = cls._PATH
+
+
 class FileBrowserPane(ttk.Frame):
     """A universal FileBrowser class.
 
@@ -86,7 +137,7 @@ class FileBrowserPane(ttk.Frame):
         but it can be edited explicitly if necessary.
     """
 
-    def __init__(self, master=None, file_type="", label_text="", file_class=None) -> None:
+    def __init__(self, master=None, label_text="", file_class=File) -> None:
         """Initialize FileBrowser widget.
 
         Initialize an object composed of label, button, and dialog widgets. 
@@ -95,21 +146,21 @@ class FileBrowserPane(ttk.Frame):
 
         Args:
             master (ttk.Frame, optional): A parent widget.
-            file_type (str, optional): Describes what type of files
-                should be searched for. Default - any type.
             label_text (str, optional): Title of the widget.
+            file_class (File, optional): Describes class of files reference.
         """
+
+        # Reference to a file class
         self.file_class = file_class
 
         super().__init__(master)
         # Specify the file type
         self.file_type: tuple
         self.file_type_title: str
-        self.file_type, self.file_type_title = self.define_file_type(file_type)
+        self.file_type, self.file_type_title = self.file_class.info()
 
         # A label above widget
-        self.label = ttk.Label(self, text=label_text)
-        self.label.pack(side=tk.TOP, anchor=tk.SW, expand=True)
+        ttk.Label(self, text=label_text).pack(side=tk.TOP, anchor=tk.SW, expand=True)
 
         # A button to browse files
         button = ttk.Button(self,
@@ -118,71 +169,13 @@ class FileBrowserPane(ttk.Frame):
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string. Get initial path from ProjectSettings().
-        self.path = tk.StringVar(self, value=self.get_path_from_project(file_type))
+        self.path = tk.StringVar(self, value="self.get_path_from_project(file_type)")
 
         # An entry to display path dialog
-        self.path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
-        self.path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
+        path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
+        path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
-
-    # Parameters getter
-    @property
-    def parameters(self):
-        """:obj: `str`: Get the current code parameters paths stored in ProjectSettings class.
-        """
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        code_parameters = code_description.code_parameters
-        parameters_file = code_parameters.parameters
-        schema_file = code_parameters.schema
-
-        return parameters_file, schema_file
-
-    def get_path_from_project(self, file_type=""):
-        """Get file path from master parameters stored in ProjectSettings ()"""
-
-        parameters_file, schema_file = self.parameters
-
-        # XML file type
-        if file_type == 'xml':
-            return parameters_file
-
-        # XSD file type
-        if file_type == 'xsd':
-            return schema_file
-
-        # Default file type
-        return ""
-
-    @staticmethod
-    def define_file_type(file_type: str = ""):
-        """Determines the file type.
-
-        Determines the file type from the file_type parameter 
-        to return a properly formatted object for the filedialog type.
-
-        Args:
-            file_type (str): String representation of the file type. 
-        
-        Returns:
-            tuple: The return tuple composed of file extension object and the string representing it.
-        """
-
-        xml_extension = (("xml files", "*.xml"),)
-        xsd_extension = (("xsd files", "*.xsd"),)
-        any_extension = (('All files', '*.*'),)
-
-        # XML file type
-        if file_type == 'xml':
-            return tuple((xml_extension, 'XML'))
-        
-        # XSD file type
-        if file_type == 'xsd':
-            return tuple((xsd_extension, 'XSD'))
-        
-        # Default file type
-        return tuple((any_extension, 'Any'))
 
     def action_open(self):
         """Open system file dialog to browse files.
@@ -276,9 +269,6 @@ class XMLValidatorPane(ttk.Frame):
         # A message box with information about the validation result.
         messagebox.showinfo("Verification done", f"Validation result: \n{str(self.result).upper()}")
 
-        # Overwrite master parameters stored in ProjectSettings().
-        self.master.parameters = (xml, xsd)
-
     def validate_against_xsd(self, xml, xsd) -> bool:
         """Run xml validation process against given xsd.
 
@@ -305,54 +295,3 @@ class XMLValidatorPane(ttk.Frame):
             messagebox.showerror("Validation Error", "The process encountered an error. Verify the input files!")
             return False
         return validation_result
-
-
-class File:
-    _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
-    _TITLE: str = "ANY"
-    _PATH: str = ""
-    PATH_VALID: bool = False
-
-    @classmethod
-    def info(cls) -> Tuple:
-        return tuple((cls._EXTENSION, cls._TITLE))
-
-    @classmethod
-    def get_title(cls):
-        print(cls._TITLE)
-
-    @classmethod
-    def save_path(cls, path: str = ""):
-        cls._PATH = path
-        if path == "" or not isinstance(path, str):
-            cls.PATH_VALID = False
-            return
-        cls.PATH_VALID = True
-
-    @classmethod
-    def get_path(cls):
-        return cls._PATH
-
-    @classmethod
-    def update_settings(cls):
-        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
-        """
-        pass
-
-
-class XMLFile(File):
-    _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
-    _TITLE: str = "XML"
-
-    @classmethod
-    def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls._PATH
-
-
-class XSDFile(File):
-    EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
-    TITLE: str = "XSD"
-
-    @classmethod
-    def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.schema = cls._PATH
