@@ -26,8 +26,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     Notes:
         An explicitly declared protected variable containing a validator widget:
         _validator (FileBrowser): Widget for validation processing.
-
-
     """
 
     def __init__(self, master=None):
@@ -53,36 +51,47 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
 
-        # TEST #
-        def f():
-            print(f"Project settings parameters file: {ProjectSettings.get_settings().code_description.code_parameters.parameters}")
-            print(f"Project settings schema file: {ProjectSettings.get_settings().code_description.code_parameters.schema}")
-        ttk.Button(self, text="PRINT PROJECT SETTINGS", command=f).pack()
-        # TEST #
-
     def update_settings(self):
-        pass
+        XMLFile.update_settings()
+        XSDFile.update_settings()
 
     def reload(self):
         pass
 
 
 class File:
+    """General file type class for not specified file extension.
+
+        Variables:
+            PATH_VALID (bool): Path correctness info.
+
+        """
     _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
     _TITLE: str = "ANY"
     _PATH: str = ""
     PATH_VALID: bool = False
+    _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
 
     @classmethod
     def info(cls) -> Tuple:
+        """Returns a tuple with file extension matching browser format and file title."""
         return tuple((cls._EXTENSION, cls._TITLE))
 
     @classmethod
     def get_title(cls):
-        print(cls._TITLE)
+        """Returns file title."""
+        return cls._TITLE
 
     @classmethod
     def save_path(cls, path: str = ""):
+        """Checks that paths are correct, if yes stores it in class variable.
+
+        Args:
+            path (str, optional): A path string to be stored.
+
+        Note:
+            Sets PATH_VALID (boolean) with check result.
+        """
         cls._PATH = path
         if path == "" or not isinstance(path, str):
             cls.PATH_VALID = False
@@ -91,31 +100,50 @@ class File:
 
     @classmethod
     def get_path(cls):
+        """Returns stored file path string."""
         return cls._PATH
 
     @classmethod
     def update_settings(cls):
-        """Updates the code parameters fields in ProjectSettings (). Applies to the parameters file and the schema file.
+        """Updates the code parameters fields in ProjectSettings().
+        Applies to the parameters file and the schema file.
+        """
+        pass
+
+    @classmethod
+    def load_settings(cls):
+        """Loads the code parameters fields from ProjectSettings() to PATH variable.
+        Applies to the parameters file and the schema file.
         """
         pass
 
 
 class XMLFile(File):
+    """XML file type subclass."""
     _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
     _TITLE: str = "XML"
 
     @classmethod
     def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.parameters = cls._PATH
+        cls._PROJECT_SETTINGS.parameters = cls._PATH
+
+    @classmethod
+    def load_settings(cls):
+        return str(cls._PROJECT_SETTINGS.parameters)
 
 
 class XSDFile(File):
+    """XSD file type subclass."""
     _EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
     _TITLE: str = "XSD"
 
     @classmethod
     def update_settings(cls):
-        ProjectSettings.get_settings().code_description.code_parameters.schema = cls._PATH
+        cls._PROJECT_SETTINGS.schema = cls._PATH
+
+    @classmethod
+    def load_settings(cls):
+        return str(cls._PROJECT_SETTINGS.schema)
 
 
 class FileBrowserPane(ttk.Frame):
@@ -125,11 +153,10 @@ class FileBrowserPane(ttk.Frame):
     as well as combinations of some or all of them.
 
     Attributes:
+        file_class (File): File type class reference.
         file_type (tuple): Formatted parameter for filedialog filetype.
         file_type_title (str): Formatted parameter for filedialog title.
-        label (ttk.Label): Label widget.
         path (tk.StringVar): Value holder for path string.
-        path_dialog (ttk.Entry): Dialog box to display the path string.
     
     Notes:
         All FileBrowser attributes are preconfigured and packed. Therefore 
@@ -169,7 +196,7 @@ class FileBrowserPane(ttk.Frame):
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string. Get initial path from ProjectSettings().
-        self.path = tk.StringVar(self, value="self.get_path_from_project(file_type)")
+        self.path = tk.StringVar(self, value=self.file_class.load_settings())
 
         # An entry to display path dialog
         path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
@@ -240,18 +267,6 @@ class XMLValidatorPane(ttk.Frame):
 
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
-
-    @staticmethod
-    def correct_paths(file_1, file_2):
-        """Subprocess to check that paths are correct.
-
-        Returns:
-            bool:   Returns False if any of path is incorrect. Returns True if every path is correct.
-        """
-
-        if file_1 == '' or file_2 == '':
-            return False
-        return True
 
     def validation_callback(self):
         """Callback method to perform the complete validation process."""
