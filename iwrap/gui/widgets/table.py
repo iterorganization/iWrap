@@ -4,19 +4,32 @@ from tkinter import ttk
 
 class Table( ttk.Frame ):
     def __init__(self, data, columns, master=None):
-        self.selected_row = None
 
+        # CANVAS, FRAME AND SCROLLBAR
+        self.canvas = tk.Canvas(master, borderwidth=0)
+        self.frame = tk.Frame(self.canvas)
+        vsb = tk.Scrollbar(master, orient=tk.VERTICAL, command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=vsb.set)
+        vsb.pack(side=tk.RIGHT, fill=tk.Y)
+        self.canvas.pack(fill=tk.BOTH, expand=1)
+        self.canvas.create_window((4, 4), window=self.frame, anchor="nw")
+        self.frame.bind("<Configure>", self.on_frame_configure)
+
+        self.selected_row = None
         # ADD COLUMNS
         for idx, column in enumerate(columns):
-            Column(idx, column, master)
+            Column(idx, column, self.frame)
 
         # ADD ROWS
         self.rows = []
         for row_number, row in enumerate(data):
-            table_row = Row(row_number + 1, row, master)
+            table_row = Row(row_number + 1, row, self.frame)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
+
+    def on_frame_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def select_row(self, parent_row):
         self.selected_row = parent_row.row_number
@@ -143,5 +156,5 @@ class Column( ttk.Frame ):
     def __init__(self, column, text, master=None):
         type_text = tk.StringVar()
         type_text.set(text)
-        tk.Entry(master, textvariable=type_text, state='readonly', width=15, justify='center')\
+        tk.Entry(master, textvariable=type_text, state='readonly', width=14, justify='center')\
             .grid(row=0, column=column, sticky="ew")
