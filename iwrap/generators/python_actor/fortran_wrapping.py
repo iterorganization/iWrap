@@ -8,7 +8,7 @@ from iwrap.generation.base_classes import ActorGenerator
 from iwrap.settings.project import ProjectSettings
 
 
-class FortranWrapperGenerator( ActorGenerator ):
+class FortranWrapperGenerator(  ):
 
     TEMPLATE_SUBDIR = 'fortran_wrapper'
     FILES_TO_BE_COPIED = ('src/','','')
