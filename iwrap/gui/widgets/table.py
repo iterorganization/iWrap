@@ -42,29 +42,40 @@ class Table( ttk.Frame ):
             for entry in row.row_entries:
                 entry.row_number = row_number + 1
             row.row_number = row_number + 1
+        self.selected_row = None
 
-    def row_up(self):
-        if self.selected_row != 1:
-            for row in self.rows:
-                if row.row_number == self.selected_row - 1:
-                    row_down = row
-                    break
+    @staticmethod
+    def move_row_up(row_to_move):
+        for entry in row_to_move.row_entries:
+            entry.row_number = row_to_move.row_number - 1
+            entry.entry.grid(row=row_to_move.row_number - 1, column=entry.column_number, sticky="ew")
+        row_to_move.row_number = row_to_move.row_number - 1
 
-            for row in self.rows:
-                if row.row_number == self.selected_row:
-                    for entry in row.row_entries:
-                        entry.row_number = row.row_number - 1
-                        entry.entry.grid(row=row.row_number - 1, column=entry.column_number, sticky="ew")
-                    row.row_number = row.row_number - 1
-                    self.selected_row = row.row_number
+    @staticmethod
+    def move_row_down(row_to_move):
+        for entry in row_to_move.row_entries:
+            entry.row_number = row_to_move.row_number + 1
+            entry.entry.grid(row=row_to_move.row_number + 1, column=entry.column_number, sticky="ew")
+        row_to_move.row_number = row_to_move.row_number + 1
 
-            for row in self.rows:
-                if row == row_down:
-                    for entry in row.row_entries:
-                        entry.row_number = row.row_number + 1
-                        entry.entry.grid(row=row.row_number + 1, column=entry.column_number, sticky="ew")
-                    row.row_number = row.row_number + 1
+    def row_up_feature(self):
+        if self.selected_row not in [1, None]:
+            top_row = [row for row in self.rows if row.row_number == self.selected_row - 1][0]
+            current_row = [row for row in self.rows if row.row_number == self.selected_row][0]
 
+            self.move_row_up(current_row)
+            self.selected_row = self.selected_row - 1
+            self.move_row_down(top_row)
+            self.rows.sort(key=lambda x: x.row_number, reverse=False)
+
+    def row_down_feature(self):
+        if self.selected_row not in [len(self.rows), None]:
+            bottom_row = [row for row in self.rows if row.row_number == self.selected_row + 1][0]
+            current_row = [row for row in self.rows if row.row_number == self.selected_row][0]
+
+            self.move_row_down(current_row)
+            self.selected_row = self.selected_row + 1
+            self.move_row_up(bottom_row)
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
     def add_row(self):
@@ -83,6 +94,7 @@ class RowEntry( ttk.Frame ):
     def __init__(self, row, column, text, master=None):
         self.row_number = row
         self.column_number = column
+        self.text = text
         row_text = tk.StringVar()
         row_text.set(text)
         self.entry = tk.Entry(master, textvariable=row_text, state='readonly', readonlybackground="white", width=6)
