@@ -59,8 +59,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # BUTTONS
         ttk.Button(buttons_frame_center, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=10)
-        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up, width=10).pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Down", width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up_feature, width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Down", command=self.table.row_down_feature, width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Remove", command=self.table.delete_row, width=10)\
             .pack(side=tk.TOP, expand=1, pady=10)
 
