@@ -33,8 +33,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         table_frame = tk.Frame(main_content_frame, highlightbackground="black", highlightthickness=1)
         table_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, padx=3, pady=3)
         table_frame.columnconfigure(0, weight=1)
-        #table_frame.columnconfigure(1, weight=1)
-        #table_frame.columnconfigure(2, weight=1)
+        # table_frame.columnconfigure(1, weight=1)
+        # table_frame.columnconfigure(2, weight=1)
         table_frame.columnconfigure(3, weight=1)
 
         # BUTTONS FRAME
@@ -45,15 +45,35 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         data = [
-            ['type_example1', 'a', 'a', "Label_example"],
-            ['type_example2', 'b', 'b', "Label_example"],
-            ['type_example3', 'c', 'c', "Label_example"],
-            ['type_example4', 'd', 'd', "Label_example"],
-            ['type_example5', 'a', 'a', "Label_example"],
-            ['type_example6', 'b', 'b', "Label_example"],
-            ['type_example7', 'c', 'c', "Label_example"],
-            ['type_example8', 'd', 'd', "Label_example"],
+            ['type_example1', True, False, "Label_example"],
+            ['type_example2', False, True, "Label_example"],
+            ['type_example3', True, False, "Label_example"],
+            ['type_example4', True, False, "Label_example"],
+            ['type_example5', True, False, "Label_example"],
+            ['type_example6', True, False, "Label_example"],
+            ['type_example7', False, True, "Label_example"],
+            ['type_example8', True, False, "Label_example"],
         ]
+        # data = [
+        #     ['type_example1', True, "Label_example"],
+        #     ['type_example2', False, "Label_example"],
+        #     ['type_example3', True, "Label_example"],
+        #     ['type_example4', True, "Label_example"],
+        #     ['type_example5', True, "Label_example"],
+        #     ['type_example6', True, "Label_example"],
+        #     ['type_example7', False, "Label_example"],
+        #     ['type_example8', True, "Label_example"],
+        # ]
+        # data = [
+        #     ['type_example1', 'a', "Label_example"],
+        #     ['type_example2', 'b', "Label_example"],
+        #     ['type_example3', 'c', "Label_example"],
+        #     ['type_example4', 'd', "Label_example"],
+        #     ['type_example5', 'a', "Label_example"],
+        #     ['type_example6', 'b', "Label_example"],
+        #     ['type_example7', 'c', "Label_example"],
+        #     ['type_example8', 'd', "Label_example"],
+        # ]
         columns = ["Type", "Input", "Output", "Label"]
         self.table = Table(data, columns, table_frame)
 
