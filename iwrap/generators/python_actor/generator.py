@@ -19,15 +19,15 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def actor_data_types(self) -> Set[str]:
-        return ('Legacy IDS', 'HDC IDS')
+        return {'Legacy IDS', 'HDC IDS'}
 
     @property
     def code_data_types(self) -> Set[str]:
-        return ('Legacy IDS', 'HDC IDS')
+        return {'Legacy IDS', 'HDC IDS'}
 
     @property
     def code_languages(self) -> Set[str]:
-        return ('Fortran', 'CPP')
+        return {'Fortran', 'CPP'}
 
     def __init__(self):
         self.install_dir: str = None
@@ -60,7 +60,7 @@ class PythonActorGenerator(ActorGenerator):
         pass
 
     def cleanup(self):
-        self.temp_dir.clenaup()
+        self.temp_dir.cleanup()
 
     def get_code_signature(self) -> str:
         return self.wrapper_generator.get_code_signature()
