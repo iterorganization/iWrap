@@ -1,12 +1,27 @@
-from abc import ABC, abstractmethod, ABCMeta
-from typing import List
+from abc import ABC, abstractmethod
+from typing import Set
 
 
 class ActorGenerator( ):
 
-    @classmethod
+    @property
     @abstractmethod
-    def get_handled_actor_data_types(cls) -> List[str]:
+    def name(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
+    def actor_data_types(self) -> Set[str]:
+        ...
+
+    @property
+    @abstractmethod
+    def code_data_types(self) -> Set[str]:
+        ...
+
+    @property
+    @abstractmethod
+    def code_languages(self) -> Set[str]:
         ...
 
     @abstractmethod

@@ -4,11 +4,11 @@ from datetime import datetime
 
 import jinja2
 
-from iwrap.generation.generator import ActorGenerator
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.settings.project import ProjectSettings
 
 
-class FortranWrapperGenerator( ActorGenerator ):
+class FortranWrapperGenerator(  ):
 
     TEMPLATE_SUBDIR = 'fortran_wrapper'
     FILES_TO_BE_COPIED = ('src/','','')

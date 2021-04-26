@@ -1,9 +1,30 @@
-from iwrap.generation.generator import ActorGenerator
+from typing import Set
+
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.generators.python_actor import generator
 
 
+class GeneratorRegistry():
+    __registry_instance = None
+
+    def __new__(cls):
+        if cls.__registry_instance is None:
+            cls.__registry_instance = object.__new__(cls)
+        return cls.__registry_instance
+
+    def __init__(self):
+        self._registered_generators: Set[ActorGenerator] = set()
+
+    @property
+    def registered_generators(self) -> Set[ActorGenerator]:
+        return self._registered_generators
+
+    def discover_generators(self) -> None:
+        self._registered_generators.add(generator.PythonActorGenerator())
+
+
 class GeneratorManager():
-    _registered_generators = ('iwrap.generators.python_actor.generator')
+    _registry: GeneratorRegistry = GeneratorRegistry()
     _active_generator: ActorGenerator = None
 
     @classmethod
@@ -15,7 +36,14 @@ class GeneratorManager():
         return cls._active_generator
 
     @classmethod
+    def init(cls):
+        GeneratorManager._registry.discover_generators()
+        bla = [generator.name for generator in GeneratorManager._registry.registered_generators]
+        return cls._active_generator
+
+    @classmethod
     def init_generator(cls, actor_id, actor_data_type_id):
+        GeneratorManager.init()
         cls._active_generator = generator.PythonActorGenerator()
         cls._active_generator.init()
         pass

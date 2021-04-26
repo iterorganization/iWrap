@@ -1,0 +1,81 @@
+<FC2KSystemSettings>
+  <environment>
+    <python>
+  		<actorDir>$ITMWORK/PYTHON_ACTORS</actorDir>
+  	</python>
+  </environment>
+  <sandbox>
+  	<root>$ITMSCRATCH/KEPLER_SANDBOX</root>
+  </sandbox>
+  <languages>
+    <language>
+      <name>Fortran</name>
+      <compilers>
+        <compiler>
+          <name>Intel Fortran</name>
+          <cmd>ifort</cmd>
+          <compilerFlags>Compiler flags1</compilerFlags>
+          <linkerFlags>Linker flags1</linkerFlags>
+          <openMPFlags>-qopenmp</openMPFlags>
+          <mpiCmd>mpiifort</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>GNU Fortran</name>
+          <cmd>gfortran</cmd>
+          <compilerFlags>Compiler flags2</compilerFlags>
+          <linkerFlags>Linker flags2</linkerFlags>
+          <openMPFlags>-fopenmp</openMPFlags>
+          <mpiCmd>mpif90</mpiCmd>
+        </compiler>
+      </compilers>
+    </language>
+    <language>
+      <name>C++</name>
+      <compilers>
+        <compiler>
+          <name>GNU C++</name>
+          <cmd>g++</cmd>
+          <compilerFlags>Compiler flags3</compilerFlags>
+          <linkerFlags>Linker flags3</linkerFlags>
+          <openMPFlags>-fopenmp</openMPFlags>
+          <mpiCmd>mpigxx</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>Intel C++</name>
+          <cmd>icc</cmd>
+          <compilerFlags>Compiler flags4</compilerFlags>
+          <linkerFlags>Linker flags4</linkerFlags>
+          <openMPFlags>OpenMP Flags4</openMPFlags>
+          <mpiCmd>mpiicpc</mpiCmd>
+        </compiler>
+      </compilers>
+    </language>
+  </languages>
+  <batchJobs>   
+  	<batchExec>sbatch</batchExec>
+  	<batchExecFlags></batchExecFlags>
+    <batch>#!/bin/sh\n#SBATCH --job-name=KEP_ACTOR\n#SBATCH --nodes=1\n#SBATCH --ntasks-per-node=KEP_NBPROC\n#SBATCH --time=30:00\n#SBATCH --partition=gwdbg\n#SBATCH --wait\n\n./bin/KEP_ACTOR.exe</batch>
+    <batchOMP>#!/bin/sh\n#SBATCH --job-name=KEP_ACTOR\n#SBATCH --nodes=1\n#SBATCH --ntasks-per-node=KEP_NBPROC\n#SBATCH --time=30:00\n#SBATCH --partition=gwdbg\n#SBATCH --wait\n\n./bin/KEP_ACTOR.exe</batchOMP>
+    <batchMPI>#!/bin/sh\n#SBATCH --job-name=KEP_ACTOR\n#SBATCH --nodes=1\n#SBATCH --ntasks-per-node=KEP_NBPROC\n#SBATCH --time=30:00\n#SBATCH --partition=gwdbg\n#SBATCH --wait\nKEP_MPI_EXEC KEP_MPI_FLAGS ./bin/KEP_ACTOR.exe</batchMPI>
+    <batchOMPMPI>#!/bin/sh\n#SBATCH --job-name=KEP_ACTOR\n#SBATCH --nodes=1\n#SBATCH --ntasks-per-node=KEP_NBPROC\n#SBATCH --time=30:00\n#SBATCH --partition=gwdbg\n#SBATCH --wait\n\nKEP_MPI_EXEC KEP_MPI_FLAGS ./bin/KEP_ACTOR.exe</batchOMPMPI>
+  </batchJobs>
+  <runTime>
+    <mpi>
+        <mpiExecCmd>mpirun</mpiExecCmd>
+        <mpiExecFlags>-np KEP_NBPROC</mpiExecFlags>
+        <mpiExecOpenMPFlags>-perhost 1 -l -np KEP_NBPROC</mpiExecOpenMPFlags>
+    </mpi>    
+  </runTime>
+  <debuggers>
+    <debugger>
+      <name>Totalview</name>
+      <cmd>totalview</cmd>
+      <cmd2attach>totalview -e 'dset VERBOSE warning' -e 'dset TV::dll_read_loader_symbols_only *' -e 'dset TV::GUI::pop_at_breakpoint true' -e 'dattach java #PID#' -e 'dbreak -pending #ACTOR_SBRT#' -shm 'Resend=SIGSEGV' -e 'puts  \"\\n\\n\\nNOW YOU CAN PRESS OK BUTTON\\n\\n\\n\"'</cmd2attach>
+    </debugger>
+    <debugger>
+      <name>GNU Debugger</name>
+      <cmd>gdb</cmd>
+      <cmd2attach>gdb -ex 'set confirm off' -ex 'set auto-solib-add off' -ex 'handle SIGSEGV nostop noprint pass'  -ex 'attach #PID#' -ex 'echo \\n\\n\\nPLEASE WAIT UNTILL DEBUGGER STARTS\\n\\n\\n' -ex 'share UAL' -ex 'share #ACTOR_LIB#' -ex 'break #ACTOR_SBRT#' -ex 'echo \\n\\n\\nNOW YOU CAN PRESS OK BUTTON\\n\\n\\n' -ex 'continue'</cmd2attach>
+    </debugger>
+  </debuggers>
+</FC2KSystemSettings>
