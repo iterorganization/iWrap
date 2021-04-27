@@ -279,10 +279,15 @@ class XMLValidatorPane(ttk.Frame):
             return
 
         # The validation process itself.
-        self.validate_against_xsd(xml, xsd)
-
-        # A message box with information about the validation result.
-        messagebox.showinfo("Verification done", f"Validation result: \n{str(self.result).upper()}")
+        try:
+            self.validate_against_xsd(xml, xsd)
+        except Exception as error:
+            messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
+                                                     f"{error}")
+            pass
+        else:
+            # A message box with information about the validation result.
+            messagebox.showinfo("Verification done", f"Validation passed")
 
     @staticmethod
     def validate_against_xsd(xml: str, xsd: str) -> None:
