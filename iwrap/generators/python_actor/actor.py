@@ -1,6 +1,6 @@
 import tempfile
 
-from iwrap.generation.generator import ActorGenerator
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 from iwrap.settings.code_description import CodeDescription
 
@@ -28,7 +28,7 @@ class ActorScriptGenerator( ActorGenerator ):
         pass
 
     def cleanup(self):
-        self.temp_dir.clenaup()
+        pass
 
     def get_code_signature(self) -> str:
         pass

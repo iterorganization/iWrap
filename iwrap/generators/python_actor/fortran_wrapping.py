@@ -4,11 +4,11 @@ from datetime import datetime
 
 import jinja2
 
-from iwrap.generation.generator import ActorGenerator
+from iwrap.generation.base_classes import ActorGenerator
 from iwrap.settings.project import ProjectSettings
 
 
-class FortranWrapperGenerator( ActorGenerator ):
+class FortranWrapperGenerator(  ):
 
     TEMPLATE_SUBDIR = 'fortran_wrapper'
     FILES_TO_BE_COPIED = ('src/','','')
@@ -25,8 +25,10 @@ class FortranWrapperGenerator( ActorGenerator ):
         self.jinja_env = generation_env['jinja_env']
 
     def generate(self):
-        dictionary = self.actor_settings.code_description.to_dict()
+        actor_settings_dict = self.actor_settings.to_dict()
+
         template = self.jinja_env.get_template( 'fortran_wrapper/Makefile.jinja2' )
+        dictionary = {'actor_settings':actor_settings_dict}
         print( template.stream( dictionary).dump(sys.stdout) )
         pass
 
