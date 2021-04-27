@@ -293,6 +293,12 @@ class XMLValidatorPane(ttk.Frame):
     def validate_against_xsd(xml: str, xsd: str) -> None:
         """Run xml validation process against given xsd.
 
+        Can be run as a static method without initializing the class object.
+        Providing the appropriate file paths for the validation process will
+        cause the method to run without errors. If the validation process fails
+        or an error is encountered, an exception will be raised and, presumably,
+        the specified files are corrupted.
+
         Args:
             xml (str): XML file path.
             xsd (str): XML schema file path.
@@ -306,4 +312,4 @@ class XMLValidatorPane(ttk.Frame):
         xml_file = etree.parse(xml)
 
         # Perform validation:
-        xmlschema.validate(xml_file)
+        xmlschema.assertValid(xml_file)
