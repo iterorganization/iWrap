@@ -6,23 +6,27 @@ class Table( ttk.Frame ):
     def __init__(self, data, columns, master=None):
         super().__init__(master)
         self.frame = ScrollableFrame(master)
+        self.columns_type = ['text', 'radiobutton', 'radiobutton', 'text']
         self.data = data
         self.columns = columns
         self.selected_row = None
-        self._add_data()
-        self.frame.update()
-
-    def _add_data(self):
-        for idx, column in enumerate(self.columns):
-            self.frame.columnconfigure(idx, weight=1)
-            Column(idx, column, self.frame)
-
         self.rows = []
-        for row_number, row in enumerate(self.data):
-            table_row = Row(row_number + 1, row, self.frame)
+        self._add_columns()
+        self.add_data(self.data)
+
+    def add_data(self, data):
+        for row in data:
+            row_number = len(self.rows) + 1
+            table_row = Row(row_number, row, self.frame)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self._select_row(parent_row))
+        self.frame.update()
+
+    def _add_columns(self):
+        for idx, column in enumerate(self.columns):
+            self.frame.columnconfigure(idx, weight=1)
+            Column(idx, column, self.frame)
 
     def _select_row(self, parent_row):
         self.selected_row = parent_row.row_number
@@ -85,7 +89,65 @@ class Table( ttk.Frame ):
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
     def add_row(self):
-        pass
+        AddDataWindow(self)
+
+
+class AddDataWindow(Table):
+    def __init__(self, master=None):
+        self.window = tk.Toplevel(master)
+        self.window.geometry('600x300')
+
+        self.dataFrame = ttk.Frame(self.window)
+        self.dataFrame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        self.footer = ttk.Frame(self.window)
+        self.footer.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=0, pady=5)
+
+        self.labelframe = ttk.LabelFrame(self.dataFrame, text="Add new row")
+        self.labelframe.pack(fill=tk.BOTH, expand=1, padx=3, pady=3)
+        self.labelframe.columnconfigure(1, weight=1)
+        self.master = master
+        self.columns = self.master.columns
+        self.columns_type = self.master.columns_type
+        self.new_cells = []
+        self._add_content()
+
+        tk.Button(self.footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
+        tk.Button(self.footer, text='Add', command=self._add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
+
+    def _add_content(self):
+        for idx, column in enumerate(self.columns):
+            type = self.columns_type[idx]
+            column_label = tk.Label(self.labelframe, text=f"{column}:")
+            column_label.grid(row=idx, column=0, sticky="ew", padx=10, pady=5)
+            if type == 'text':
+                cell_value = tk.StringVar()
+                new_cell = tk.Entry(self.labelframe, textvariable=cell_value)
+                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
+                self.new_cells.append(cell_value)
+
+            elif type == 'radiobutton':
+                cell_value = tk.StringVar()
+                self.is_selected = tk.BooleanVar()
+                new_cell = tk.Radiobutton(self.labelframe, variable=cell_value, value=column,
+                                          command=self._set_selected, bg="white")
+                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
+                self.new_cells.append(self.is_selected)
+
+    def _set_selected(self):
+        if self.is_selected.get():
+            self.is_selected.set(False)
+        else:
+            self.is_selected.set(True)
+
+    def _add_new_row(self):
+        new_row_data = []
+        for cell in self.new_cells:
+            new_row_data.append(cell.get())
+        self.master.add_data([new_row_data])
+        self._close_add_window()
+
+    def _close_add_window(self):
+        self.window.destroy()
 
 
 class Row:
