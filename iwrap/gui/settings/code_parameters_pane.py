@@ -279,21 +279,18 @@ class XMLValidatorPane(ttk.Frame):
             return
 
         # The validation process itself.
-        self.result = self.validate_against_xsd(xml, xsd)
+        self.validate_against_xsd(xml, xsd)
 
         # A message box with information about the validation result.
         messagebox.showinfo("Verification done", f"Validation result: \n{str(self.result).upper()}")
 
-    def validate_against_xsd(self, xml, xsd) -> bool:
+    @staticmethod
+    def validate_against_xsd(xml: str, xsd: str) -> None:
         """Run xml validation process against given xsd.
 
         Args:
             xml (str): XML file path.
             xsd (str): XML schema file path.
-
-        Returns:
-            bool: True if the validation was performed correctly and the result is positive.
-            False when validation fails.
         """
 
         # Parse xsd file:
@@ -304,9 +301,4 @@ class XMLValidatorPane(ttk.Frame):
         xml_file = etree.parse(xml)
 
         # Perform validation:
-        try:
-            validation_result = xmlschema.validate(xml_file)
-        except (TypeError, Exception):
-            messagebox.showerror("Validation Error", "The process encountered an error. Verify the input files!")
-            return False
-        return validation_result
+        xmlschema.validate(xml_file)
