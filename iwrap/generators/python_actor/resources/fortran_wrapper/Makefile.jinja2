@@ -1,14 +1,11 @@
 # actor name
-ACTOR={{code_name}}
+ACTOR_NAME={{actor_settings.actor_name}}
 
 FF=ifort
 FC=ifort
 CC=gcc
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-
-JAVA_HOME=/cineca/prod/opt/tools/jdk/1.8.0_111/binary
-CFLAG=-g -D_REENTRANT -fPIC -I$(JAVA_HOME)/include   -I$(JAVA_HOME)/include/linux
 
 FLAGS=-g -fPIC
 OPENMP=NO
@@ -17,32 +14,34 @@ OPENMPFLAG=
 MOD_DIR=./build/
 
 # Compiler options for gfortran
-ifeq ($(FC),gfortran)
-   FLAGS=-g -fPIC -fno-second-underscore -ffree-line-length-none -J$(MOD_DIR)
-endif
-# Compiler options for ifort
-ifeq ($(FC),ifort)
-    FLAGS=-g -fPIC -module $(MOD_DIR)
-endif
-
-ifeq ($(OPENMP),YES)
-     OPENMPFLAG=-qopenmp
-endif
+XFLAGS=-g -fPIC -fno-second-underscore -ffree-line-length-none -J$(MOD_DIR)
 
 FFLAGS=$(FLAGS) $(OPENMPFLAG)
+CODE_LIB_FILE=$(notdir {{actor_settings.code_description.code_path}})
+CODE_LIB_DEF=../native/lib/$(CODE_LIB_FILE)
 
-MAIN_LIB_DEF=../native/lib/libphysics_ii.a
+# main IMAS libs to be used
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-ifort xmllib)
+CORE_LIBS=$(shell pkg-config --libs imas-ifort xmllib)
 
-INCLUDES=-I./include $(shell pkg-config  --cflags imas-ifort)
-LIBS=$(shell pkg-config  --libs imas-ifort)
+# required 'platform' libs (i.e. published using pkg-config mechanism)
+PLATFORM_LIBS_NAMES={{actor_settings.code_description.language_specific.system_libraries | join(' ')}}
+PLATFORM_LIBS_FLAGS=$(shell pkg-config --cflags $(PLATFORM_LIBS_NAMES))
+PLATFORM_LIBS=$(shell pkg-config --libs $(PLATFORM_LIBS_NAMES))
+
+# required 'custom' libs (i.e. provided by user as a pth to library)
+CUSTOM_LIBS={{actor_settings.code_description.language_specific.custom_libraries | join(' ')}}
 
 
-all: bin/physics_ii.exe   lib/libphysics_ii.so
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
+LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS)
 
-bin/physics_ii.exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/FortranWrap.o
+all: bin/$(ACTOR_NAME).exe   lib/lib$(ACTOR_NAME).so
+
+bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/FortranWrap.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./bin
-	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(MAIN_LIB_DEF)  $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 
 build/RWTools.o: src/RWTools.f90 build/FortranWrap.o
@@ -54,14 +53,14 @@ build/fortrantools.o: src/fortrantools.f90
 	@mkdir -p ./build
 	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-lib/libphysics_ii.so: build/FortranWrap.o  build/fortrantools.o
+lib/$(ACTOR_NAME).so: build/FortranWrap.o  build/fortrantools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./lib
-	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(MAIN_LIB_DEF) $(CUSTOM_LIBS_DEF) $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/FortranWrap.o: src/FortranWrap.f90 build/fortrantools.o
 	@echo "   * $< -> $@"
 	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 clean:
-	-rm -f *.o build/* lib/*.so bin/* src/ual_info.c
+	-rm -f *.o build/* lib/*.so bin/*

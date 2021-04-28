@@ -25,8 +25,10 @@ class FortranWrapperGenerator(  ):
         self.jinja_env = generation_env['jinja_env']
 
     def generate(self):
-        dictionary = self.actor_settings.code_description.to_dict()
+        actor_settings_dict = self.actor_settings.to_dict()
+
         template = self.jinja_env.get_template( 'fortran_wrapper/Makefile.jinja2' )
+        dictionary = {'actor_settings':actor_settings_dict}
         print( template.stream( dictionary).dump(sys.stdout) )
         pass
 
