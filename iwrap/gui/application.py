@@ -5,7 +5,7 @@ from importlib import resources
 from tkinter.constants import NO, S
 from typing import cast, Tuple
 
-from iwrap.generation.generators_mgmt import GeneratorManager
+from iwrap.engine.generators_mgmt import GeneratorManager
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar

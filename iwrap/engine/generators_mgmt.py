@@ -1,6 +1,6 @@
 from typing import Set
 
-from iwrap.generation.base_classes import ActorGenerator
+from iwrap.engine.base_classes import ActorGenerator
 from iwrap.generators.python_actor import generator
 
 

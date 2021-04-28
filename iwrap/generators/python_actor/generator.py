@@ -1,7 +1,7 @@
 import tempfile
 from typing import Set
 
-from iwrap.generation.base_classes import ActorGenerator
+from iwrap.engine.base_classes import ActorGenerator
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 from iwrap.settings.code_description import CodeDescription
 

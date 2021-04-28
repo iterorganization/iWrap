@@ -4,7 +4,7 @@ from tkinter import ttk
 from typing import Union
 
 from iwrap.gui.generics import IWrapPane
-from iwrap.generation.generators_mgmt import GeneratorManager
+from iwrap.engine.generators_mgmt import GeneratorManager
 
 
 class SignaturePane(ttk.Frame, IWrapPane):
