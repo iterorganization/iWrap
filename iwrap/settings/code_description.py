@@ -78,10 +78,10 @@ class CodeParameters(Dictionarizable):
     def validate(self) -> None:
         """Self validation of XML file against given schema file (XSD).
 
-        Providing the appropriate file paths for the validation process will be
-        make the method work without errors. If the verification process fails
-        or an error occurs, an exception will be thrown and possibly
-        stored files or file paths are damaged.
+        Correct file paths for the validation process will cause the method to run without errors.
+        If the verification process fails or an error occurs, an exception is thrown,
+        and possibly there is a mismatch between the file and its schema
+        or stored files or file paths are damaged.
         """
 
         # Parse XSD file:
