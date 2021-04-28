@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict
 
 from iwrap.common.misc import Dictionarizable
@@ -34,6 +35,7 @@ class ProjectSettings( Dictionarizable ):
         self.name: str = ''
         self.data_type: str = ''
         self.actor_type: str  = ''
+        self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
         self.code_description = CodeDescription()
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
