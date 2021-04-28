@@ -3,8 +3,7 @@ from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
-from lxml import etree
-from typing import Union, Tuple
+from typing import Tuple
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
@@ -291,28 +290,3 @@ class XMLValidatorPane(ttk.Frame):
         else:
             # A message box with information about the validation result.
             messagebox.showinfo("Verification done", f"Validation passed")
-
-    @staticmethod
-    def validate_against_xsd(xml: str, xsd: str) -> None:
-        """Run xml validation process against given xsd.
-
-        Can be run as a static method without initializing the class object.
-        Providing the appropriate file paths for the validation process will
-        cause the method to run without errors. If the validation process fails
-        or an error is encountered, an exception will be raised and, presumably,
-        the specified files are corrupted.
-
-        Args:
-            xml (str): XML file path.
-            xsd (str): XML schema file path.
-        """
-
-        # Parse xsd file:
-        xmlschema_file = etree.parse(xsd)
-        xmlschema = etree.XMLSchema(xmlschema_file)
-
-        # Parse xml file:
-        xml_file = etree.parse(xml)
-
-        # Perform validation:
-        xmlschema.assertValid(xml_file)
