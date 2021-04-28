@@ -131,6 +131,10 @@ class XMLFile(File):
     def load_settings(cls):
         return str(cls._PROJECT_SETTINGS.parameters)
 
+    @classmethod
+    def validate(cls):
+        cls._PROJECT_SETTINGS.validate()
+
 
 class XSDFile(File):
     """XSD file type subclass."""
@@ -268,10 +272,9 @@ class XMLValidatorPane(ttk.Frame):
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def validation_callback(self):
+    @staticmethod
+    def validation_callback():
         """Callback method to perform the complete validation process."""
-        xml = XMLFile.get_path()
-        xsd = XSDFile.get_path()
 
         # Check that the specified file paths are correct.
         if not (XMLFile.PATH_VALID and XSDFile.PATH_VALID):
@@ -280,7 +283,7 @@ class XMLValidatorPane(ttk.Frame):
 
         # The validation process itself.
         try:
-            self.validate_against_xsd(xml, xsd)
+            XMLFile.validate()
         except Exception as error:
             messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
                                                      f"{error}")
