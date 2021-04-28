@@ -15,6 +15,7 @@ class Table( ttk.Frame ):
         self.add_data(self.data)
 
     def add_data(self, data):
+        print(data)
         for row in data:
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, self.frame)
@@ -95,15 +96,17 @@ class Table( ttk.Frame ):
 class AddDataWindow(Table):
     def __init__(self, master=None):
         self.window = tk.Toplevel(master)
-        self.window.geometry('600x300')
+        self.window.minsize(500, 100)
+        self.window.geometry('500x200')
 
-        self.dataFrame = ttk.Frame(self.window)
-        self.dataFrame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        self.footer = ttk.Frame(self.window)
-        self.footer.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=0, pady=5)
+        content_frame = tk.Frame(self.window, height=300)
+        footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
+        footer.pack(side=tk.BOTTOM, fill=tk.X)
+        content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        scrollable_frame = ScrollableFrame(content_frame)
 
-        self.labelframe = ttk.LabelFrame(self.dataFrame, text="Add new row")
-        self.labelframe.pack(fill=tk.BOTH, expand=1, padx=3, pady=3)
+        self.labelframe = ttk.LabelFrame(scrollable_frame, text="Add new row")
+        self.labelframe.pack(fill=tk.BOTH, expand=0, padx=3, pady=3)
         self.labelframe.columnconfigure(1, weight=1)
         self.master = master
         self.columns = self.master.columns
@@ -111,33 +114,36 @@ class AddDataWindow(Table):
         self.new_cells = []
         self._add_content()
 
-        tk.Button(self.footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
-        tk.Button(self.footer, text='Add', command=self._add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
+        tk.Button(footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
+        tk.Button(footer, text='Add', command=self._add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
+        scrollable_frame.update()
 
     def _add_content(self):
+        self.bool_cell_value = tk.StringVar()
+        self.bool_cell_value.set("  ")
         for idx, column in enumerate(self.columns):
-            type = self.columns_type[idx]
+            column_type = self.columns_type[idx]
             column_label = tk.Label(self.labelframe, text=f"{column}:")
             column_label.grid(row=idx, column=0, sticky="ew", padx=10, pady=5)
-            if type == 'text':
-                cell_value = tk.StringVar()
-                new_cell = tk.Entry(self.labelframe, textvariable=cell_value)
-                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
-                self.new_cells.append(cell_value)
 
-            elif type == 'radiobutton':
-                cell_value = tk.StringVar()
-                self.is_selected = tk.BooleanVar()
-                new_cell = tk.Radiobutton(self.labelframe, variable=cell_value, value=column,
-                                          command=self._set_selected, bg="white")
+            if column_type == 'text':
+                text_cell_value = tk.StringVar()
+                new_cell = tk.Entry(self.labelframe, textvariable=text_cell_value)
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
-                self.new_cells.append(self.is_selected)
+                self.new_cells.append(text_cell_value)
 
-    def _set_selected(self):
-        if self.is_selected.get():
-            self.is_selected.set(False)
+            elif column_type == 'radiobutton':
+                is_selected = tk.BooleanVar()
+                new_cell = tk.Radiobutton(self.labelframe, variable=self.bool_cell_value, value=column,
+                                          command=lambda: self._set_selected(is_selected), bg="white")
+                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
+                self.new_cells.append(self.bool_cell_value)
+
+    def _set_selected(self, is_selected):
+        if is_selected.get():
+            is_selected.set(False)
         else:
-            self.is_selected.set(True)
+            is_selected.set(True)
 
     def _add_new_row(self):
         new_row_data = []
@@ -215,10 +221,10 @@ class Column:
 class ScrollableFrame( ttk.Frame ):
     def __init__(self, master):
         scrollbar = tk.Scrollbar(master)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y, expand=False)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y, expand=0)
 
         self.canvas = tk.Canvas(master, yscrollcommand=scrollbar.set)
-        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         scrollbar.config(command=self.canvas.yview)
         self.canvas.bind('<Configure>', self._fill_canvas)
 
