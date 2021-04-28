@@ -14,17 +14,9 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 
     XML file browser entry is located at the top of the pane.
     XSD file browser entry is located below the XML browse widget.
-    Below both there is a button that triggers validations.
+    Below both there is a button that triggers validation.
     After starting the validation process, a message box with information, 
     warning or error with the result of the verification will be displayed.
-
-    Attributes:
-        xml_browser (FileBrowser): Widget for browsing XML files.
-        xsd_browser (FileBrowser): Widget for browsing XSD files.
-    
-    Notes:
-        An explicitly declared protected variable containing a validator widget:
-        _validator (FileBrowser): Widget for validation processing.
     """
 
     def __init__(self, master=None):
@@ -39,10 +31,10 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # XML file path browser dialog
-        self.xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
+        xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
         
         # XSD file path browser dialog
-        self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
+        xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
 
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self)
@@ -234,16 +226,10 @@ class FileBrowserPane(ttk.Frame):
 
     
 class XMLValidatorPane(ttk.Frame):
-    """A XML validator against XSD - xml schema.
+    """A pane that contains an XML validator against an XSD - xml schema.
 
-    An object is a simple button widget which executes a validation process.
-    It access previously loaded xml and xsd files, more precisely its path.
-    It's able to parse both files using lxml package and run validation 
-    of an xml file against the schema.
+    Initializes a new widget as a button that invokes an external validation method.
 
-    Attributes:
-        result (bool): Stores the result of the validation.
-    
     Notes:
         The validation ends with a pop-up message with information, 
         warning or an error depending on the validation run.
@@ -258,11 +244,7 @@ class XMLValidatorPane(ttk.Frame):
         Args:
             master (ttk.Frame, optional): A parent widget.
         """
-
         super().__init__(master)
-
-        # Validation result
-        self.result: bool = False
 
         # Button widget with the command to perform the validation.
         button = ttk.Button(self, text='Validate', command=self.validation_callback)
