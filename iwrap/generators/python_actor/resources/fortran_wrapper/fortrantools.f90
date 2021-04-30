@@ -1,5 +1,3 @@
-! Generated with FC2K version 4.13.0
-
 
 !--------------------------------------------------
 module codeparam_module
@@ -7,8 +5,6 @@ use iso_c_binding
     type, BIND(C)::code_parameters_t
         type(C_PTR) :: params 
         integer     :: params_size
-        type(C_PTR) :: def_params 
-        integer     :: def_params_size
         type(C_PTR) :: schema 
         integer     :: schema_size
     end type
@@ -51,7 +47,7 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     character(kind=C_CHAR), dimension(:), pointer :: f_char_arr 
 
     
-    integer     :: iloopmax, string_size, sizexml,sizexsd,sizedefaultxml
+    integer     :: iloopmax, string_size, sizexml,sizexsd
     
     !  xml parameters
     c_str_ptr = code_params.params
@@ -70,22 +66,6 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     endif
     
     !get xsd
-    c_str_ptr = code_params.def_params
-    string_size = code_params.def_params_size
-    iloopmax=string_size/132
-    if (mod(string_size,132)/=0) then
-    iloopmax = iloopmax + 1
-    endif
-    allocate(xmllib_code_params%schema(iloopmax))
-    
-    call C_F_POINTER(c_str_ptr, f_char_arr, (/string_size/))
-    xmllib_code_params%schema = transfer(f_char_arr, xmllib_code_params%schema)
-    
-    if (mod(string_size,132)/=0) then
-    xmllib_code_params%schema(iloopmax)(mod(string_size,132)+1:132) = ' '
-    endif
-    
-    !get default xml
     c_str_ptr = code_params.schema
     string_size = code_params.schema_size
     iloopmax=string_size/132

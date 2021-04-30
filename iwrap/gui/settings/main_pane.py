@@ -30,8 +30,18 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         notebook.add( self.documentation_pane, text='Documentation' )
         notebook.add( self.signature_pane, text='Signature' )
 
+        # Set tab index property with notebook's index
+        self.signature_pane.tab_index = notebook.index(self.signature_pane)
+
         notebook.select( None )
         notebook.enable_traversal()
+        # When tab is changed execute event handler.
+        notebook.bind("<<NotebookTabChanged>>", self.event_handler)
+
+    def event_handler(self, event) -> None:
+        """Conditions events."""
+        if event.widget.index("current") == self.signature_pane.tab_index:
+            self.signature_pane.reload()
 
     def update_settings(self):
         self.arguments_pane.update_settings()

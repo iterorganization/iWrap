@@ -5,6 +5,7 @@ from importlib import resources
 from tkinter.constants import NO, S
 from typing import cast, Tuple
 
+from iwrap.engine.generators_mgmt import GeneratorManager
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar
@@ -19,9 +20,12 @@ class ButtonPane(ttk.Frame):
         close_button = ttk.Button(self, text='Close', command=self.winfo_toplevel().destroy)
         close_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
-        generate_button = ttk.Button(self, text='Generate', command=None)
+        generate_button = ttk.Button(self, text='Generate', command=self.generate_action)
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
+    def generate_action(self):
+        GeneratorManager.init_generator(None, None)
+        GeneratorManager.get_active_generator().generate()
 
 class MainWindow(tk.Tk, IWrapPane):
     def __init__(self):
