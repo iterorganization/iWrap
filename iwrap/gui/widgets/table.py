@@ -15,10 +15,9 @@ class Table( ttk.Frame ):
         self.add_data(self.data)
 
     def add_data(self, data):
-        print(data)
         for row in data:
             row_number = len(self.rows) + 1
-            table_row = Row(row_number, row, self.frame)
+            table_row = Row(row_number, row, self.frame, self.columns)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self._select_row(parent_row))
@@ -133,22 +132,17 @@ class AddDataWindow(Table):
                 self.new_cells.append(text_cell_value)
 
             elif column_type == 'radiobutton':
-                is_selected = tk.BooleanVar()
-                new_cell = tk.Radiobutton(self.labelframe, variable=self.bool_cell_value, value=column,
-                                          command=lambda: self._set_selected(is_selected), bg="white")
+                new_cell = tk.Radiobutton(self.labelframe, variable=self.bool_cell_value, value=column, bg="white")
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(self.bool_cell_value)
 
-    def _set_selected(self, is_selected):
-        if is_selected.get():
-            is_selected.set(False)
-        else:
-            is_selected.set(True)
-
     def _add_new_row(self):
         new_row_data = []
-        for cell in self.new_cells:
-            new_row_data.append(cell.get())
+        for idx, cell in enumerate(self.new_cells):
+            if self.columns_type[idx] == 'radiobutton':
+                new_row_data.append(cell.get() == self.columns[idx])
+            else:
+                new_row_data.append(cell.get())
         self.master.add_data([new_row_data])
         self._close_add_window()
 
@@ -157,7 +151,8 @@ class AddDataWindow(Table):
 
 
 class Row:
-    def __init__(self, row, data, master=None):
+    def __init__(self, row, data, master=None, columns_labels=None):
+        self.columns_labels = columns_labels
         self.row_number = row
         self.row_cells = []
         self.v = tk.BooleanVar()
@@ -171,11 +166,13 @@ class Row:
         self._make_radio_buttons_pairs()
 
     def _make_radio_buttons_pairs(self):
-        self.v = tk.BooleanVar()
-        self.v.set(True)
-        for row_cell in self.row_cells:
+        checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells) if idx][0]
+        checked_column_label = self.columns_labels[checked_column_label_id]
+        self.column_label = tk.StringVar()
+        self.column_label.set(checked_column_label)
+        for idx, row_cell in enumerate(self.row_cells):
             if isinstance(row_cell, RowRadioButton):
-                row_cell.cell.config(variable=self.v, value=row_cell.value)
+                row_cell.cell.config(variable=self.column_label, value=self.columns_labels[idx])
 
 
 class RowRadioButton:
