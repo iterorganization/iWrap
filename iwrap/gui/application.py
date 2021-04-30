@@ -5,7 +5,7 @@ from importlib import resources
 from tkinter.constants import NO, S
 from typing import cast, Tuple
 
-from iwrap.engine.generators_mgmt import GeneratorManager
+from iwrap.generation_engine.generators_mgmt import GeneratorManager
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar
@@ -63,6 +63,7 @@ class MainWindow(tk.Tk, IWrapPane):
 
         self.center()
 
+
     def _load_image(self,
                      package: str = "iwrap.resources",
                      resource: str = "",
@@ -98,7 +99,11 @@ class MainWindow(tk.Tk, IWrapPane):
         self.geometry("+%d+%d" % (x, y))
 
 
-if __name__ == '__main__':
+def launch_gui():
     window = MainWindow()
-
+    window.reload()
     window.mainloop()
+
+
+if __name__ == '__main__':
+    launch_gui()

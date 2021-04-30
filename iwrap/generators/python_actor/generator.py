@@ -1,7 +1,7 @@
 import tempfile
 from typing import Set
 
-from iwrap.engine.base_classes import ActorGenerator
+from iwrap.generation_engine.base_classes import ActorGenerator
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 from iwrap.settings.code_description import CodeDescription
 
@@ -16,6 +16,10 @@ class PythonActorGenerator(ActorGenerator):
     @property
     def name(self) -> str:
         return 'Python actor'
+
+    @property
+    def description(self) -> str:
+        return 'Simple Python actor'
 
     @property
     def actor_data_types(self) -> Set[str]:
