@@ -41,23 +41,23 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         data = [
-            ['type_example1', True, False, "Label_example"],
-            ['type_example2', False, True, "Label_example"],
+            ['type_example1', False, True, "Label_example"],
+            ['type_example2', True, False, "Label_example"],
             ['type_example3', True, False, "Label_example"],
             ['type_example4', True, False, "Label_example"],
             ['type_example5', True, False, "Label_example"],
             ['type_example6', True, False, "Label_example"],
             ['type_example7', False, True, "Label_example"],
-            ['type_example8', True, False, "Label_example"],
-            ['type_example1', True, False, "Label_example"],
-            ['type_example2', False, True, "Label_example"],
-            ['type_example3', True, False, "Label_example"],
-            ['type_example4', True, False, "Label_example"],
-            ['type_example5', True, False, "Label_example"],
-            ['type_example6', True, False, "Label_example"],
-            ['type_example7', False, True, "Label_example"],
-            ['type_example8', True, False, "Label_example"],
-        ]
+            ['type_example8', True, False, "Label_example"],]
+        #     ['type_example1', True, False, "Label_example"],
+        #     ['type_example2', False, True, "Label_example"],
+        #     ['type_example3', True, False, "Label_example"],
+        #     ['type_example4', True, False, "Label_example"],
+        #     ['type_example5', True, False, "Label_example"],
+        #     ['type_example6', True, False, "Label_example"],
+        #     ['type_example7', False, True, "Label_example"],
+        #     ['type_example8', True, False, "Label_example"],
+        # ]
         # data = [
         #     ['type_example1', True, "Label_example"],
         #     ['type_example2', False, "Label_example"],
@@ -82,7 +82,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         self.table = Table(data, columns, table_frame)
 
         # BUTTONS
-        ttk.Button(buttons_frame_center, text="Add", command=self.table.add_row, width=10).pack(side=tk.TOP, expand=1, pady=10)
+        ttk.Button(buttons_frame_center, text="Add...", command=self.table.add_row, width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Edit...", command=self.table.edit_row, width=10).pack(side=tk.TOP, expand=1, pady=10)
         ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up_feature, width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Down", command=self.table.row_down_feature, width=10).pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Remove", command=self.table.delete_row, width=10)\
