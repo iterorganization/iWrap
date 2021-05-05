@@ -70,6 +70,7 @@ class Table( ttk.Frame ):
                     del row_cell
                 self.rows.remove(row)
                 del row
+                break
         self._update_rows()
 
     def _update_rows(self):
