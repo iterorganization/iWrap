@@ -8,14 +8,38 @@ class Table( ttk.Frame ):
     def __init__(self, data, columns, master=None):
         super().__init__(master)
         self.frame = ScrollableFrame(master)
-        self.data = data
-        self.columns = columns
+        self.data = None
+        self.columns = None
         self.selected_row = None
         self.rows = []
-        self._add_columns()
-        self.add_data(self.data)
 
-    def add_data(self, data):
+        self.add_new_table(data, columns)
+
+    def add_new_table(self, data, columns):
+        self.delete_data_from_table()
+        self.data = data
+        self.columns = columns
+        self._add_columns()
+        self.add_rows(self.data)
+
+    def delete_data_from_table(self):
+        for row in self.rows:
+            for row_cell in row.row_cells:
+                row_cell.cell.destroy()
+                del row_cell
+            del row
+        self.rows = []
+        self.selected_row = None
+
+    def get_data_from_table(self):
+        data = []
+        for row in self.rows:
+            rows_values = row.get_row_values()
+            data.append(rows_values)
+
+        return data
+
+    def add_rows(self, data):
         for row in data:
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, self.frame, self.columns)
@@ -106,7 +130,7 @@ class Table( ttk.Frame ):
             RowDataWindow(self, selected_row_data)
 
 
-class RowDataWindow(Table):
+class RowDataWindow:
     def __init__(self, master=None, data=None):
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
@@ -168,7 +192,7 @@ class RowDataWindow(Table):
                 new_row_data.append(cell.get() == self.columns[idx].label_var.get())
             else:
                 new_row_data.append(cell.get())
-        self.master.add_data([new_row_data])
+        self.master.add_rows([new_row_data])
         self._close_add_window()
 
     def _edit_row(self):
@@ -190,17 +214,15 @@ class Row:
         self.columns = columns
         self.row_number = row
         self.row_cells = []
-        self.v = tk.BooleanVar()
-        self.v.set(True)
         for idx, elem in enumerate(data):
             if isinstance(elem, str):
                 self.row_cells.append(RowEntry(row, idx, elem, master))
             if isinstance(elem, bool):
                 self.row_cells.append(RowRadioButton(row, idx, elem, master))
 
-        self._make_radio_buttons_pairs()
+        self._set_radiobuttons_values()
 
-    def _make_radio_buttons_pairs(self):
+    def _set_radiobuttons_values(self):
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells) if cell.value is True][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
         self.selected_column_label = tk.StringVar()
@@ -208,6 +230,17 @@ class Row:
         for idx, row_cell in enumerate(self.row_cells):
             if isinstance(row_cell, RowRadioButton):
                 row_cell.cell.config(variable=self.selected_column_label, value=self.columns[idx].label_var.get())
+
+    def get_row_values(self):
+        row_values = {}
+        for idx, cell in enumerate(self.row_cells):
+            column_label = self.columns[idx].label_var.get()
+            if isinstance(cell, RowRadioButton):
+                row_values.update({column_label: self.selected_column_label.get() == column_label})
+            elif isinstance(cell, RowEntry):
+                row_values.update({column_label: cell.row_text.get()})
+
+        return row_values
 
 
 class RowRadioButton:
