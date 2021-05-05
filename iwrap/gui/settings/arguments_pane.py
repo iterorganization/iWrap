@@ -3,11 +3,15 @@ from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
+from iwrap.gui.widgets.table import Column
+from iwrap.settings.project import ProjectSettings # nowe
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
     def __init__(self, master=None):
         super().__init__( master )
+
+        self.arguments_settings = None
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Arguments", borderwidth=2, relief="groove")
@@ -40,57 +44,47 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TABLE
-        data = [
-            ['type_example1', False, True, "Label_example"],
-            ['type_example2', True, False, "Label_example"],
-            ['type_example3', True, False, "Label_example"],
-            ['type_example4', True, False, "Label_example"],
-            ['type_example5', True, False, "Label_example"],
-            ['type_example6', True, False, "Label_example"],
-            ['type_example7', False, True, "Label_example"],
-            ['type_example8', True, False, "Label_example"],]
-        #     ['type_example1', True, False, "Label_example"],
-        #     ['type_example2', False, True, "Label_example"],
-        #     ['type_example3', True, False, "Label_example"],
-        #     ['type_example4', True, False, "Label_example"],
-        #     ['type_example5', True, False, "Label_example"],
-        #     ['type_example6', True, False, "Label_example"],
-        #     ['type_example7', False, True, "Label_example"],
-        #     ['type_example8', True, False, "Label_example"],
-        # ]
-        # data = [
-        #     ['type_example1', True, "Label_example"],
-        #     ['type_example2', False, "Label_example"],
-        #     ['type_example3', True, "Label_example"],
-        #     ['type_example4', True, "Label_example"],
-        #     ['type_example5', True, "Label_example"],
-        #     ['type_example6', True, "Label_example"],
-        #     ['type_example7', False, "Label_example"],
-        #     ['type_example8', True, "Label_example"],
-        # ]
-        # data = [
-        #     ['type_example1', 'a', "Label_example"],
-        #     ['type_example2', 'b', "Label_example"],
-        #     ['type_example3', 'c', "Label_example"],
-        #     ['type_example4', 'd', "Label_example"],
-        #     ['type_example5', 'a', "Label_example"],
-        #     ['type_example6', 'b', "Label_example"],
-        #     ['type_example7', 'c', "Label_example"],
-        #     ['type_example8', 'd', "Label_example"],
-        # ]
-        columns = ["Type", "Input", "Output", "Label"]
-        self.table = Table(data, columns, table_frame)
+        self.columns = [Column(Column.TEXT, "Type"),
+                        Column(Column.RADIOBUTTON, "Input"),
+                        Column(Column.RADIOBUTTON, "Output"),
+                        Column(Column.TEXT, "Label")]
+
+        self.table = Table([], self.columns, table_frame)
 
         # BUTTONS
-        ttk.Button(buttons_frame_center, text="Add...", command=self.table.add_row, width=10).pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Edit...", command=self.table.edit_row, width=10).pack(side=tk.TOP, expand=1, pady=10)
-        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up_feature, width=10).pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Down", command=self.table.row_down_feature, width=10).pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Add...", command=self.table.add_row, width=10)\
+            .pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Edit...", command=self.table.edit_row, width=10)\
+            .pack(side=tk.TOP, expand=1, pady=10)
+        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up_feature, width=10)\
+            .pack(side=tk.TOP, expand=1)
+        ttk.Button(buttons_frame_center, text="Down", command=self.table.row_down_feature, width=10)\
+            .pack(side=tk.TOP, expand=1)
         ttk.Button(buttons_frame_center, text="Remove", command=self.table.delete_row, width=10)\
             .pack(side=tk.TOP, expand=1, pady=10)
 
     def reload(self):
-        pass
+        self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
+        self.set_data_to_table()
 
     def update_settings(self):
-        pass
+        arguments = self.get_data_from_table()
+        ProjectSettings.get_settings().code_description.arguments = arguments
+
+    def set_data_to_table(self):
+        table_data = []
+        for argument in self.arguments_settings:
+            table_data.append([argument['name'], argument['intent'] == 'IN', argument['intent'] == 'OUT', argument['type']])
+
+        self.table.add_new_table(table_data, self.columns)
+
+    def get_data_from_table(self):
+        table_data = self.table.get_data_from_table()
+        arguments = []
+        for row in table_data:
+            name = row['Type']
+            row_type = row['Label']
+            indent = ['IN' if row['Input'] is True else 'OUT'][0]
+            arguments.append({'name': name, 'type': row_type, 'indent': indent})
+
+        return arguments
