@@ -44,6 +44,7 @@ class Table( ttk.Frame ):
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self._select_row(parent_row))
+
         self.frame.update()
 
     def _add_columns(self):
@@ -64,19 +65,22 @@ class Table( ttk.Frame ):
         for row in self.rows:
             if row.row_number == self.selected_row:
                 for row_cell in row.row_cells:
+                    row_cell.cell.grid_forget()
                     row_cell.cell.destroy()
                     del row_cell
                 self.rows.remove(row)
                 del row
                 break
+
         self._update_rows()
 
     def _update_rows(self):
+        self.selected_row = None
         for row_number, row in enumerate(self.rows):
             for row_cell in row.row_cells:
                 row_cell.row_number = row_number + 1
+                row_cell.cell.grid(row=row_number + 1, column=row_cell.cell.grid_info()['column'])
             row.row_number = row_number + 1
-        self.selected_row = None
 
     @staticmethod
     def _move_row_up(row_to_move):
@@ -209,7 +213,7 @@ class RowDataWindow:
 
 
 class Row:
-    def __init__(self, row, data, master=None, columns=None):
+    def __init__(self, row, data, master, columns):
         self.columns = columns
         self.row_number = row
         self.row_cells = []
@@ -243,7 +247,7 @@ class Row:
 
 
 class RowRadioButton:
-    def __init__(self, row, column, value, master=None):
+    def __init__(self, row, column, value, master):
         self.row_number = row
         self.column_number = column
         self.value = value
@@ -258,7 +262,7 @@ class RowRadioButton:
 
 
 class RowEntry:
-    def __init__(self, row, column, text, master=None):
+    def __init__(self, row, column, text, master):
         self.row_number = row
         self.column_number = column
         self.value = text
