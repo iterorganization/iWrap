@@ -3,11 +3,11 @@ from tkinter import ttk
 
 from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 
+
 class Table( ttk.Frame ):
     def __init__(self, data, columns, master=None):
         super().__init__(master)
         self.frame = ScrollableFrame(master)
-        self.columns_type = ['text', 'radiobutton', 'radiobutton', 'text']
         self.data = data
         self.columns = columns
         self.selected_row = None
@@ -27,7 +27,7 @@ class Table( ttk.Frame ):
     def _add_columns(self):
         for idx, column in enumerate(self.columns):
             self.frame.columnconfigure(idx, weight=1)
-            Column(idx, column, self.frame)
+            column.add_column_to_grid(idx, self.frame)
 
     def _select_row(self, parent_row):
         self.selected_row = parent_row.row_number
@@ -123,7 +123,6 @@ class RowDataWindow(Table):
         self.labelframe.columnconfigure(1, weight=1)
         self.master = master
         self.columns = self.master.columns
-        self.columns_type = self.master.columns_type
         self.data = data
         self.new_cells = []
         self._add_content()
@@ -141,19 +140,20 @@ class RowDataWindow(Table):
     def _add_content(self):
         self.radiobutton_cell_value = tk.StringVar()
         for idx, column in enumerate(self.columns):
-            column_type = self.columns_type[idx]
-            column_label = tk.Label(self.labelframe, text=f"{column}:")
+            column_label_var = column.label_var.get()
+            column_label = tk.Label(self.labelframe, text=f"{column_label_var}:")
             column_label.grid(row=idx, column=0, sticky="ew", padx=10, pady=5)
 
-            if column_type == 'text':
+            if column.column_type == 'text':
                 text_cell_value = tk.StringVar()
                 new_cell = tk.Entry(self.labelframe, textvariable=text_cell_value)
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(text_cell_value)
 
-            elif column_type == 'radiobutton':
+            elif column.column_type == 'radiobutton':
                 self.radiobutton_cell_value.set(" ")
-                new_cell = tk.Radiobutton(self.labelframe, variable=self.radiobutton_cell_value, value=column, bg="white")
+                new_cell = tk.Radiobutton(self.labelframe, variable=self.radiobutton_cell_value,
+                                          value=column_label_var, bg="white")
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(self.radiobutton_cell_value)
 
@@ -164,8 +164,8 @@ class RowDataWindow(Table):
     def _add_new_row(self):
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
-            if self.columns_type[idx] == 'radiobutton':
-                new_row_data.append(cell.get() == self.columns[idx])
+            if self.columns[idx].column_type == 'radiobutton':
+                new_row_data.append(cell.get() == self.columns[idx].label_var.get())
             else:
                 new_row_data.append(cell.get())
         self.master.add_data([new_row_data])
@@ -186,8 +186,8 @@ class RowDataWindow(Table):
 
 
 class Row:
-    def __init__(self, row, data, master=None, columns_labels=None):
-        self.columns_labels = columns_labels
+    def __init__(self, row, data, master=None, columns=None):
+        self.columns = columns
         self.row_number = row
         self.row_cells = []
         self.v = tk.BooleanVar()
@@ -198,16 +198,16 @@ class Row:
             if isinstance(elem, bool):
                 self.row_cells.append(RowRadioButton(row, idx, elem, master))
 
-        self._make_radio_buttons_pairs() #nie pary bo moga byc 3
+        self._make_radio_buttons_pairs()
 
     def _make_radio_buttons_pairs(self):
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells) if cell.value is True][0]
-        checked_column_label = self.columns_labels[checked_column_label_id]
+        checked_column_label = self.columns[checked_column_label_id].label_var.get()
         self.selected_column_label = tk.StringVar()
         self.selected_column_label.set(checked_column_label)
         for idx, row_cell in enumerate(self.row_cells):
             if isinstance(row_cell, RowRadioButton):
-                row_cell.cell.config(variable=self.selected_column_label, value=self.columns_labels[idx])
+                row_cell.cell.config(variable=self.selected_column_label, value=self.columns[idx].label_var.get())
 
 
 class RowRadioButton:
@@ -243,8 +243,15 @@ class RowEntry:
 
 
 class Column:
-    def __init__(self, column, text, master=None):
-        type_text = tk.StringVar()
-        type_text.set(text)
-        tk.Entry(master, textvariable=type_text, state='readonly', width=14, justify='center')\
-            .grid(row=0, column=column, sticky="ew")
+    TEXT = 'text'
+    RADIOBUTTON = 'radiobutton'
+
+    def __init__(self, column_type, label):
+        self.label_var = tk.StringVar()
+        self.label_var.set(label)
+        self.column_type = column_type
+        self.label = label
+
+    def add_column_to_grid(self, position, master):
+        tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
+            .grid(row=0, column=position, sticky="ew")
