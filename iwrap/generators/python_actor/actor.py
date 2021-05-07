@@ -1,6 +1,6 @@
 import tempfile
 
-from iwrap.engine.base_classes import ActorGenerator
+from iwrap.generation_engine.base_classes import ActorGenerator
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 from iwrap.settings.code_description import CodeDescription
 
