@@ -1,5 +1,5 @@
 import tempfile
-from typing import Set
+from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
@@ -15,19 +15,19 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def name(self) -> str:
-        return 'Python actor'
+        return 'python'
 
     @property
     def description(self) -> str:
         return 'Simple Python actor'
 
     @property
-    def actor_data_types(self) -> Set[str]:
-        return {'Legacy IDS', 'HDC IDS'}
+    def actor_data_types(self) -> List[str]:
+        return ['legacy', 'hdc']
 
     @property
-    def code_data_types(self) -> Set[str]:
-        return {'Legacy IDS', 'HDC IDS'}
+    def code_data_types(self) -> List[str]:
+        return ['legacy', 'hdc']
 
     @property
     def code_languages(self) -> Set[str]:
