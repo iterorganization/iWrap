@@ -15,7 +15,7 @@ arguments:
 -   name: equilibrium11
     type: equilibrium
     intent: OUT
-code_path: null
+code_path: ./lib/libtest.so
 code_parameters:
     parameters: ./code_parameters/parameters.xml
     schema: ./code_paramneters/parameters.xsd

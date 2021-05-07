@@ -8,9 +8,19 @@ from iwrap.settings.serialization import IWrapSerializer
 class PlatformSettings(Dictionarizable):
     """ TO DO: Read a proper content from config file
     """
+    __class_instance = None
+
+    def __new__(cls):
+        if cls.__class_instance is None:
+            cls.__class_instance = object.__new__(cls)
+        return cls.__class_instance
 
     def __init__(self):
-        self.installation_dir = Path.home() + '/IWRAP_ACTORS'
+        self.installation_dir = str(Path.home()) + '/IWRAP_ACTORS'
+
+    def initialize(self):
+        #TODO: Load platform settings from file
+        pass
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
