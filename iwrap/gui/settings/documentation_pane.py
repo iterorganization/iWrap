@@ -136,9 +136,6 @@ class TextEditor:
         # Clear selected text    
         self.text_editor.selection_clear()
 
-        # Update the project documentation
-        self._master.update_settings()
-
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
         """
