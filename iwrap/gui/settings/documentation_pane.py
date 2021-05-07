@@ -30,27 +30,11 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         """
         super().__init__(master, text="Actor documentation")
 
-        # Documentation property instance
-        self.documentation: str = ""
-
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
 
         # Execute initial reload
         self.reload()
-
-    # Documentation getter
-    @property
-    def documentation(self):
-        """:obj: `str`: Get or set the current documentation text stored in ProjectSettings class.
-        """
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        return code_description.documentation
-
-    @documentation.setter
-    def documentation(self, new_documentation):
-        pass
     
     def update_settings(self):
         """Update documentation in ProjectSettings.
@@ -161,4 +145,6 @@ class TextEditor:
         self.text_editor.delete('1.0', tk.END)
 
     def reload(self) -> None:
-        pass
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
+        self.text = code_description.documentation
