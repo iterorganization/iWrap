@@ -39,12 +39,13 @@ class FortranPane( ttk.Frame, IWrapPane ):
         feature_tab = ttk.Frame(tab_control)
         self.sys_lib_tab = ttk.Frame(tab_control)
         self.cus_lib_tab = ttk.Frame(tab_control)
-        tab_control.add(feature_tab, text="Features")
+        self.feature_lib_tab = ttk.Frame(tab_control)
+        tab_control.add(self.feature_lib_tab, text="Features")
         tab_control.add(self.sys_lib_tab, text="System libraries")
         tab_control.add(self.cus_lib_tab, text="Custom libraries")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
-        self.feature_pane = FeaturesPane(feature_tab)
+        self.feature_pane = FeaturesPane(self)
         self.system_libraries_pane = SystemLibrariesPane(self)
         self.custom_libraries_pane = CustomLibrariesPane(self)
 
@@ -197,30 +198,33 @@ class CustomLibrariesPane( FortranPane ):
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
 
-class FeaturesPane( ttk.Frame ):
+class FeaturesPane(FortranPane):
     def __init__(self, master=None):
-        super().__init__( master )
+        self.settings = master.settings
+        master_frame = master.feature_lib_tab
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(master_frame, text="Computation", borderwidth=2, relief="groove")
         labelframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=5)
 
         # COMBOBOX MPI Flavour
         ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.compiler_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.compiler_combobox['values'] = ["MPICH", "OpenMPI"]
-        self.compiler_combobox.current(0)
-        self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.mpi_flavour_combobox['values'] = ["MPICH", "OpenMPI"]
+        self.mpi_flavour_combobox.current(0)
+        self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # COMBOBOX OpenMPI
         ttk.Label(labelframe, text="OpenMPI:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.compiler_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.compiler_combobox['values'] = ["Yes", "No"]
-        self.compiler_combobox.current(0)
-        self.compiler_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.open_mpi_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.open_mpi_combobox['values'] = ["Yes", "No"]
+        self.open_mpi_combobox.current(0)
+        self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
-        pass
+        self.settings = FortranSpecificSettings()
+        self.mpi_flavour_combobox.set(self.settings.mpi)
+        self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
 
     def update_settings(self):
         pass
