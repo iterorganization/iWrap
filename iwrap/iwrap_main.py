@@ -3,6 +3,7 @@ import os
 import sys
 from typing import List
 
+from iwrap.generation_engine.engine import Engine
 from iwrap.settings.project import ProjectSettings
 from iwrap.settings.serialization import YAMLSerializer
 
@@ -22,17 +23,21 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                       formatter_class=argparse.ArgumentDefaultsHelpFormatter
                                       )
 
-    parser.add_argument( '-a', '--actor-name', type=str, required=is_commandline_mode,
+    parser.add_argument( '-a', '--actor-name' , type=str, #required=is_commandline_mode,
                          help="user defined name of the actor" )
 
     parser.add_argument( '-t', '--actor-type', type=str,
                          choices=['python', 'kepler'],
-                         default = 'python',
+                         default='python',
                          help="type of an actor to be generated" )
+
+    parser.add_argument( '--list-actor-types',
+                         action='store_true',
+                         help="lists registered actor types that can be generated" )
 
     parser.add_argument( '-d', '--data-type', type=str,
                          choices=['legacy', 'hdc'],
-                         default = 'legacy',
+                         default='legacy',
                          help="type of data to be used by the actor" )
 
     parser.add_argument( '-f', '--file', type=argparse.FileType( 'r' ),
@@ -57,11 +62,23 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
     args = parser.parse_args( argv )
     args.gui = not is_commandline_mode
 
-    print( 'GUI :', args.gui )
-    print( 'CD ', os.getcwd() )
-    print( args )
+    Engine().startup()
 
-    if args.file is not None:
+    if args.list_actor_types:
+        for generator in Engine().registered_generators:
+            print(  )
+            print( 'Actor type:', '\t' ,'ID' , '\t' * 3,'Description')
+            print( '-' * 70 )
+            print('\t' * 4, generator.name, '\t:\t', generator.description)
+        return 0
+
+    if args.actor_name:
+        ProjectSettings.get_settings().name = args.actor_name
+
+    if args.actor_type:
+        Engine().active_generator = args.actor_type
+
+    if args.file:
         with args.file as file:
             load_code_description( file )
 
@@ -73,10 +90,18 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
     if args.file is None:
         print( 'No code description file to proceed with. Nothing to do... Booooring...' )
         return 0
+
+    Engine().generate_actor()
+
     return 0
 
 
 if __name__ == "__main__":
-    #main(['-f', '../tests/code_description-01.yaml' ], is_commandline_mode=False)
+    # GUI
+    main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'], is_commandline_mode=False )
+
+    # commandline
+    #main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'] )
     #main( ['-h'] )
-    main(is_commandline_mode = False)
+    #main(['--list-actor-types'])
+    # main(is_commandline_mode = False)
