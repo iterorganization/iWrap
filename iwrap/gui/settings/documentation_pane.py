@@ -38,7 +38,7 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         Args:
             update_value (str, optional): Text to update in ProjectSettings.
         """
-        ProjectSettings.get_settings().code_description.documentation = None
+        self.documentation_editor.update_settings()
 
     def reload(self):
         """Immediately refresh the documentation editor text content.
@@ -59,7 +59,7 @@ class TextEditor:
     Notes:
         One type of event triggers the callback method: `FocusOut`.
     """
-    def __init__(self, master: ttk.Widget=None):
+    def __init__(self, master: ttk.Widget = None):
         """Initialize the scrollable text editor.
         Args:
             master (ttk.Frame, optional): A parent widget.
@@ -115,7 +115,7 @@ class TextEditor:
         # In case of file import error
         if not isinstance(new_text, str):
             # Fill with blank text
-            new_text=""
+            new_text = ""
 
         # Set new content to the text container
         self._text = new_text
@@ -136,10 +136,16 @@ class TextEditor:
         # Clear selected text    
         self.text_editor.selection_clear()
 
+        # Update Project Settings
+        self.update_settings()
+
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
         """
         self.text_editor.delete('1.0', tk.END)
+
+    def update_settings(self):
+        ProjectSettings.get_settings().code_description.documentation = self.text
 
     def reload(self) -> None:
         project_settings = ProjectSettings.get_settings()
