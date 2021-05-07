@@ -32,9 +32,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
 
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
-
-        # Execute initial reload
-        self.reload()
     
     def update_settings(self):
         """Update documentation in ProjectSettings.
@@ -98,6 +95,9 @@ class TextEditor:
 
         # Pre-configure the text editor appearance
         self.text_editor.config(bg='#FFF', fg='#000', insertbackground='#000')
+
+        # Initial reload of an text editor
+        self.reload()
 
     @property
     def text(self):
