@@ -50,19 +50,19 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
 
     @documentation.setter
     def documentation(self, new_documentation):
-        self.update_settings(new_documentation)
+        pass
     
-    def update_settings(self, update_value : str =""):
+    def update_settings(self):
         """Update documentation in ProjectSettings.
         Args:
             update_value (str, optional): Text to update in ProjectSettings.
         """
-        ProjectSettings.get_settings().code_description.documentation = update_value
+        ProjectSettings.get_settings().code_description.documentation = None
 
     def reload(self):
         """Immediately refresh the documentation editor text content.
         """
-        self.documentation_editor.text = self.documentation
+        self.documentation_editor.reload()
 
 
 class TextEditor:
@@ -153,9 +153,12 @@ class TextEditor:
         self.text_editor.selection_clear()
 
         # Update the project documentation
-        self._master.update_settings(self.text)
+        self._master.update_settings()
 
     def clear_text_input(self):
         """Class method for clearing all content stored in the text editor widget.
         """
         self.text_editor.delete('1.0', tk.END)
+
+    def reload(self) -> None:
+        pass
