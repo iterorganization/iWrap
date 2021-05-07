@@ -12,9 +12,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
     Attributes:
         documentation_editor (TextEditor): Allows to access the text editor object outside the class.
 
-    Properties:
-        documentation (str): Documentation text.
-
     Notes:
         Creates a new documentation frame with a scrollable documentation text editor.
         Additionally, it creates an instance of the ProjectSettings and loads the code description 
@@ -35,8 +32,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
     
     def update_settings(self):
         """Update documentation in ProjectSettings.
-        Args:
-            update_value (str, optional): Text to update in ProjectSettings.
         """
         self.documentation_editor.update_settings()
 
@@ -50,7 +45,6 @@ class TextEditor:
     """Simple scrollable text editor.
 
     Attributes:
-        _master (optional): (Private) Reference to parent object.
         text_editor (tk.Text): A text widget which handles multiple line text and is complete text editor in a window.
 
     Properties:
@@ -67,9 +61,6 @@ class TextEditor:
             Preconfigures the text editor widget.
         """
         super().__init__()
-
-        # Parent attribute
-        self._master = master
 
         # Text content of a text editor
         self._text: str = ""
