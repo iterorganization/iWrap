@@ -201,8 +201,23 @@ class FeaturesPane( ttk.Frame ):
     def __init__(self, master=None):
         super().__init__( master )
 
-        ttk.Label(master, text="Place for Features Pane", borderwidth=1, relief="solid")\
-            .pack(fill=tk.BOTH, expand=1)
+        # LABEL FRAME
+        labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
+        labelframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=5)
+
+        # COMBOBOX MPI Flavour
+        ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.compiler_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.compiler_combobox['values'] = ["MPICH", "OpenMPI"]
+        self.compiler_combobox.current(0)
+        self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # COMBOBOX OpenMPI
+        ttk.Label(labelframe, text="OpenMPI:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.compiler_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.compiler_combobox['values'] = ["Yes", "No"]
+        self.compiler_combobox.current(0)
+        self.compiler_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
         pass
