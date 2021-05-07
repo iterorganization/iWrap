@@ -16,7 +16,7 @@ class PlatformSettings(Dictionarizable):
         return cls.__class_instance
 
     def __init__(self):
-        self.installation_dir = Path.home() + '/IWRAP_ACTORS'
+        self.installation_dir = str(Path.home()) + '/IWRAP_ACTORS'
 
     def initialize(self):
         #TODO: Load platform settings from file
