@@ -1,17 +1,315 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import Frame, ttk, messagebox
+from tkinter import filedialog
+from tkinter.constants import S, SEL_FIRST
+
+from lxml import etree
+from typing import Union, Tuple
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.settings.project import ProjectSettings
 
 
-class CodeParametersPane( ttk.Frame, IWrapPane ):
+class CodeParametersPane(ttk.Frame, IWrapPane):
+    """This pane is used to validate the XML file against the XSD schema file.
+
+    XML file browser entry is located at the top of the pane.
+    XSD file browser entry is located below the XML browse widget.
+    Below both there is a button that triggers validations.
+    After starting the validation process, a message box with information, 
+    warning or error with the result of the verification will be displayed.
+
+    Attributes:
+        xml_browser (FileBrowser): Widget for browsing XML files.
+        xsd_browser (FileBrowser): Widget for browsing XSD files.
+    
+    Notes:
+        An explicitly declared protected variable containing a validator widget:
+        _validator (FileBrowser): Widget for validation processing.
+    """
+
     def __init__(self, master=None):
-        super().__init__( master )
-        ttk.Label( self, text='Place for CODE PARAMETERS', borderwidth=1, relief="solid" ).pack( fill=tk.BOTH,
-                                                                                                 expand=1 )
+        """Initialize widgets of the pane.
+
+        There are three widgets to initialize, a two file browsers 
+        for XML and XSD files and third widget to execute validation.
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+        """
+        super().__init__(master)
+
+        # XML file path browser dialog
+        self.xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
+        
+        # XSD file path browser dialog
+        self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
+
+        # XML Validator object against XSD
+        _validator = XMLValidatorPane(self)
+
+        #: The frame is set up with a padding 20 on the top
+        self.configure(padding=(0, 20, 0, 0))
 
     def update_settings(self):
-        pass
+        XMLFile.update_settings()
+        XSDFile.update_settings()
 
     def reload(self):
         pass
+
+
+class File:
+    """General file type class for not specified file extension.
+
+        Variables:
+            PATH_VALID (bool): Path correctness info.
+
+        """
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    _TITLE: str = "ANY"
+    _PATH: str = ""
+    PATH_VALID: bool = False
+    _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
+
+    @classmethod
+    def info(cls) -> Tuple:
+        """Returns a tuple with file extension matching browser format and file title."""
+        return tuple((cls._EXTENSION, cls._TITLE))
+
+    @classmethod
+    def get_title(cls):
+        """Returns file title."""
+        return cls._TITLE
+
+    @classmethod
+    def save_path(cls, path: str = ""):
+        """Checks that paths are correct, if yes stores it in class variable.
+
+        Args:
+            path (str, optional): A path string to be stored.
+
+        Note:
+            Sets PATH_VALID (boolean) with check result.
+        """
+        cls._PATH = path
+        if path == "" or not isinstance(path, str):
+            cls.PATH_VALID = False
+            return
+        cls.PATH_VALID = True
+
+    @classmethod
+    def get_path(cls):
+        """Returns stored file path string."""
+        return cls._PATH
+
+    @classmethod
+    def update_settings(cls):
+        """Updates the code parameters fields in ProjectSettings().
+        Applies to the parameters file and the schema file.
+        """
+        pass
+
+    @classmethod
+    def load_settings(cls):
+        """Loads the code parameters fields from ProjectSettings() to PATH variable.
+        Applies to the parameters file and the schema file.
+        """
+        pass
+
+
+class XMLFile(File):
+    """XML file type subclass."""
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    _TITLE: str = "XML"
+
+    @classmethod
+    def update_settings(cls):
+        cls._PROJECT_SETTINGS.parameters = cls._PATH
+
+    @classmethod
+    def load_settings(cls):
+        return str(cls._PROJECT_SETTINGS.parameters)
+
+
+class XSDFile(File):
+    """XSD file type subclass."""
+    _EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
+    _TITLE: str = "XSD"
+
+    @classmethod
+    def update_settings(cls):
+        cls._PROJECT_SETTINGS.schema = cls._PATH
+
+    @classmethod
+    def load_settings(cls):
+        return str(cls._PROJECT_SETTINGS.schema)
+
+
+class FileBrowserPane(ttk.Frame):
+    """A universal FileBrowser class.
+
+    Each FileBrowser object can search for a specific file extension, 
+    as well as combinations of some or all of them.
+
+    Attributes:
+        file_class (File): File type class reference.
+        file_type (tuple): Formatted parameter for filedialog filetype.
+        file_type_title (str): Formatted parameter for filedialog title.
+        path (tk.StringVar): Value holder for path string.
+    
+    Notes:
+        All FileBrowser attributes are preconfigured and packed. Therefore 
+        their specification is not obligatory, 
+        but it can be edited explicitly if necessary.
+    """
+
+    def __init__(self, master=None, label_text="", file_class=File) -> None:
+        """Initialize FileBrowser widget.
+
+        Initialize an object composed of label, button, and dialog widgets. 
+        It is possible to universally search for file types only depending 
+        on the parameter specified by the file_type argument.
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+            label_text (str, optional): Title of the widget.
+            file_class (File, optional): Describes class of files reference.
+        """
+
+        # Reference to a file class
+        self.file_class = file_class
+
+        super().__init__(master)
+        # Specify the file type
+        self.file_type: tuple
+        self.file_type_title: str
+        self.file_type, self.file_type_title = self.file_class.info()
+
+        # A label above widget
+        ttk.Label(self, text=label_text).pack(side=tk.TOP, anchor=tk.SW, expand=True)
+
+        # A button to browse files
+        button = ttk.Button(self,
+                            text="Browse...",
+                            command=self.action_open)
+        button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
+
+        # Tk's StringVar to store path string. Get initial path from ProjectSettings().
+        self.path = tk.StringVar(self, value=self.file_class.load_settings())
+
+        # An entry to display path dialog
+        path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
+        path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
+
+        self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
+
+    def action_open(self):
+        """Open system file dialog to browse files.
+        
+        Open system file dialog to browse and select files.
+        The desired execution sets the path value based on the variable filename.
+
+        Notes:
+            If no path is selected, exits immediately.
+        """
+        filename = filedialog.askopenfilename(
+                                            initialdir=None,
+                                            title=f"Select {self.file_type_title} file",
+                                            filetypes=self.file_type)
+        if filename is None:
+            return
+
+        # Save loaded path.
+        self.file_class.save_path(filename)
+
+        # Update the text in the path dialog widget.
+        self.path.set(self.file_class.get_path())
+
+        # Update ProjectSettings() with code parameters.
+        self.file_class.update_settings()
+
+    
+class XMLValidatorPane(ttk.Frame):
+    """A XML validator against XSD - xml schema.
+
+    An object is a simple button widget which executes a validation process.
+    It access previously loaded xml and xsd files, more precisely its path.
+    It's able to parse both files using lxml package and run validation 
+    of an xml file against the schema.
+
+    Attributes:
+        result (bool): Stores the result of the validation.
+    
+    Notes:
+        The validation ends with a pop-up message with information, 
+        warning or an error depending on the validation run.
+    """
+
+    def __init__(self, master=None) -> None:
+        """Initialize XMLValidator widget.
+
+        Initialize the button and all other necessary variables 
+        that will allow the XML file validation process to start. 
+
+        Args:
+            master (ttk.Frame, optional): A parent widget.
+        """
+
+        super().__init__(master)
+
+        # Validation result
+        self.result: bool = False
+
+        # Button widget with the command to perform the validation.
+        button = ttk.Button(self, text='Validate', command=self.validation_callback)
+        button.pack(side=tk.TOP)
+
+        # Configure the appearance.
+        self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
+
+    def validation_callback(self):
+        """Callback method to perform the complete validation process."""
+        xml = XMLFile.get_path()
+        xsd = XSDFile.get_path()
+
+        # Check that the specified file paths are correct.
+        if not (XMLFile.PATH_VALID and XSDFile.PATH_VALID):
+            messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
+            return
+
+        # The validation process itself.
+        try:
+            self.validate_against_xsd(xml, xsd)
+        except Exception as error:
+            messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
+                                                     f"{error}")
+            pass
+        else:
+            # A message box with information about the validation result.
+            messagebox.showinfo("Verification done", f"Validation passed")
+
+    @staticmethod
+    def validate_against_xsd(xml: str, xsd: str) -> None:
+        """Run xml validation process against given xsd.
+
+        Can be run as a static method without initializing the class object.
+        Providing the appropriate file paths for the validation process will
+        cause the method to run without errors. If the validation process fails
+        or an error is encountered, an exception will be raised and, presumably,
+        the specified files are corrupted.
+
+        Args:
+            xml (str): XML file path.
+            xsd (str): XML schema file path.
+        """
+
+        # Parse xsd file:
+        xmlschema_file = etree.parse(xsd)
+        xmlschema = etree.XMLSchema(xmlschema_file)
+
+        # Parse xml file:
+        xml_file = etree.parse(xml)
+
+        # Perform validation:
+        xmlschema.assertValid(xml_file)

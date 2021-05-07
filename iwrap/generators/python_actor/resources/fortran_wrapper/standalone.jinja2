@@ -115,7 +115,7 @@ program standalone
    M_in_equilibrium0 = lidss(1)
    M_out_equilibrium1 = lidss(2)
 
-   !!!!!!!!! Fortran fortran_wrapper !!!!!!!!!!!!!!!
+   !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
    call physics_iiual(M_in_equilibrium0, M_out_equilibrium1,  code_params, out_outputFlag, out_diagnosticInfo_size, out_diagnosticInfo_cptr)
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    if((.NOT. c_associated(out_diagnosticInfo_cptr)) .OR. (out_diagnosticInfo_size < 1)) then

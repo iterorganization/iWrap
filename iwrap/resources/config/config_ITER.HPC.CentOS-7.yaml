@@ -1,0 +1,97 @@
+<FC2KSystemSettings>
+  <environment>
+    <python>
+      <actorDir>$HOME/public/PYTHON_ACTORS</actorDir>
+    </python>
+  </environment>
+  <sandbox>
+    <root>$HOME/public/KEPLER_SANDBOX</root>
+  </sandbox>
+  <languages>
+    <language>
+      <name>Fortran</name>
+      <compilers>
+        <compiler>
+          <name>Intel Fortran</name>
+          <cmd>ifort</cmd>
+          <compilerFlags>Compiler flags1</compilerFlags>
+          <linkerFlags>Linker flags1</linkerFlags>
+          <openMPFlags>-qopenmp</openMPFlags>
+          <mpiCmd>mpiifort</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>GNU Fortran</name>
+          <cmd>gfortran</cmd>
+          <compilerFlags>Compiler flags2</compilerFlags>
+          <linkerFlags>Linker flags2</linkerFlags>
+          <openMPFlags>-fopenmp</openMPFlags>
+          <mpiCmd>mpif90</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>PGI Fortran</name>
+          <cmd>pgfortran</cmd>
+          <compilerFlags>unused...</compilerFlags>
+          <linkerFlags>unused...</linkerFlags>
+          <openMPFlags>-mp</openMPFlags>
+          <mpiCmd>mpif90</mpiCmd>
+        </compiler>
+      </compilers>
+    </language>
+    <language>
+      <name>C++</name>
+      <compilers>
+        <compiler>
+          <name>GNU C++</name>
+          <cmd>g++</cmd>
+          <compilerFlags>Compiler flags3</compilerFlags>
+          <linkerFlags>Linker flags3</linkerFlags>
+          <openMPFlags>-fopenmp</openMPFlags>
+          <mpiCmd>mpigxx</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>Intel C++</name>
+          <cmd>icc</cmd>
+          <compilerFlags>Compiler flags4</compilerFlags>
+          <linkerFlags>Linker flags4</linkerFlags>
+          <openMPFlags>-qopenmp</openMPFlags>
+          <mpiCmd>mpiicpc</mpiCmd>
+        </compiler>
+        <compiler>
+          <name>PGI C++</name>
+          <cmd>pg++</cmd>
+          <compilerFlags>unused...</compilerFlags>
+          <linkerFlags>unused...</linkerFlags>
+          <openMPFlags>-mp</openMPFlags>
+          <mpiCmd>mpicxx</mpiCmd>
+        </compiler>
+      </compilers>
+    </language>
+  </languages>
+  <batchJobs>
+  	<batchExec>sbatch</batchExec>
+  	<batchExecFlags></batchExecFlags>
+    <batch>  \n#!/bin/sh\n#BSUB -K\n#BSUB -cwd KEP_DIR\n#BSUB -e KEP_ACTOR_err\n#BSUB -o KEP_ACTOR_out\n./KEP_ACTOR.exe</batch>
+    <batchOMP>   \n#!/bin/sh\n#$$ -N KEP_ACTOR\n#$$ -cwd\n#$$ -V\n#$$ -l h_rt=00:30:00 -l h_vmem=1250M\n#$$ -sync y\n#$$ -pe impi_hydra.* 16\n./KEP_ACTOR.exe</batchOMP>
+    <batchMPI>   \n#!/bin/sh\n#BSUB -K\n#BSUB -cwd KEP_DIR\n#BSUB -a openmpi\n#BSUB -q priority\n#BSUB -n KEP_NBPROC\n#BSUB -e KEP_ACTOR_err\n#BSUB -o KEP_ACTOR_out\n mpirun -np `cat $$LSB_DJOB_HOSTFILE | wc -l` --hostfile $$LSB_DJOB_HOSTFILE ./KEP_ACTOR.exe</batchMPI>
+    <batchOMPMPI>   \n#!/bin/sh\n#$$ -N KEP_ACTOR\n#$$ -cwd\n#$$ -V\n#$$ -l h_rt=00:30:00\n#$$ -sync y\n#$$ -pe impi_hydra.* 32\nmodule load impi\nexport OMP_NUM_THREADS=4\nmpirun -perhost 4 -l -np 8 ./KEP_ACTOR.exe</batchOMPMPI>
+  </batchJobs>
+  <runTime>
+    <mpi>
+      <mpiExecCmd>mpirun</mpiExecCmd>
+      <mpiExecFlags>-np KEP_NBPROC</mpiExecFlags>
+      <mpiExecOpenMPFlags>-np KEP_NBPROC</mpiExecOpenMPFlags>
+    </mpi>    
+  </runTime>
+  <debuggers>
+    <debugger>
+      <name>Totalview</name>
+      <cmd>totalview</cmd>
+      <cmd2attach>totalview -e 'dset VERBOSE warning' -e 'dset TV::dll_read_loader_symbols_only *' -e 'dset TV::GUI::pop_at_breakpoint true' -e 'dattach java #PID#' -e 'dbreak -pending #ACTOR_SBRT#' -shm 'Resend=SIGSEGV' -e 'puts  \"\\n\\n\\nNOW YOU CAN PRESS OK BUTTON\\n\\n\\n\"'</cmd2attach>
+    </debugger>
+    <debugger>
+      <name>GNU Debugger</name>
+      <cmd>gdb</cmd>
+      <cmd2attach>gdb -ex 'set confirm off' -ex 'set auto-solib-add off' -ex 'handle SIGSEGV nostop noprint pass'  -ex 'attach #PID#' -ex 'echo \\n\\n\\nPLEASE WAIT UNTILL DEBUGGER STARTS\\n\\n\\n' -ex 'share UAL' -ex 'share #ACTOR_LIB#' -ex 'break #ACTOR_SBRT#' -ex 'echo \\n\\n\\nNOW YOU CAN PRESS OK BUTTON\\n\\n\\n' -ex 'continue'</cmd2attach>
+    </debugger>
+  </debuggers>
+</FC2KSystemSettings>
