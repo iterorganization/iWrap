@@ -4,6 +4,9 @@ from typing import Set
 
 class ActorGenerator( ):
 
+    def __str__(self):
+        return self.name
+
     @property
     @abstractmethod
     def name(self) -> str:
