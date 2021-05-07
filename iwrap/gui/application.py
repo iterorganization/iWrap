@@ -2,10 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import importlib
 from importlib import resources
-from tkinter.constants import NO, S
 from typing import cast, Tuple
 
-from iwrap.generation_engine.generators_mgmt import GeneratorManager
+from iwrap.generation_engine.engine import Engine
 from iwrap.gui.actor_description import ActorDescriptionPane
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar
@@ -24,8 +23,7 @@ class ButtonPane(ttk.Frame):
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
     def generate_action(self):
-        GeneratorManager.init_generator(None, None)
-        GeneratorManager.get_active_generator().generate()
+        Engine().generate_actor()
 
 class MainWindow(tk.Tk, IWrapPane):
     def __init__(self):

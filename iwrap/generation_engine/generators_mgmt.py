@@ -1,7 +1,7 @@
-from typing import Set
+from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
-from iwrap.generators.python_actor import generator
+from iwrap.generators.python_actor.generator import PythonActorGenerator
 
 
 class GeneratorRegistry():
@@ -9,42 +9,32 @@ class GeneratorRegistry():
 
     def __new__(cls):
         if cls.__registry_instance is None:
-            cls.__registry_instance = object.__new__(cls)
+            cls.__registry_instance = object.__new__( cls )
         return cls.__registry_instance
 
     def __init__(self):
-        self._registered_generators: Set[ActorGenerator] = set()
+        self._registered_generators: List[ActorGenerator] = []
+
+    def initialize(self):
+        self.discover_generators()
 
     @property
-    def registered_generators(self) -> Set[ActorGenerator]:
+    def registered_generators(self) -> List[ActorGenerator]:
         return self._registered_generators
+
+    def get_generator(self, generator_name) -> ActorGenerator:
+
+        for generator in self._registered_generators:
+            if generator.name == generator_name:
+                return generator
+
+        raise RuntimeError(f'ERROR: No registered generator for provided actor type <{generator_name}>!' )
 
     def discover_generators(self) -> None:
         # TODO: write a REAL discovery mechanism
-        self._registered_generators = {generator.PythonActorGenerator()}
+        self._registered_generators = [PythonActorGenerator()]
 
+        # raises exception if no generator was found
+        if len( self._registered_generators ) < 1:
+            raise RuntimeError( 'ERROR! No valid generator plug-in can be found!' )
 
-class GeneratorManager():
-    _registry: GeneratorRegistry = GeneratorRegistry()
-    _active_generator: ActorGenerator = None
-
-    @classmethod
-    def get_code_signature(cls) -> str:
-        return cls._active_generator.get_code_signature()
-
-    @classmethod
-    def get_active_generator(cls):
-        return cls._active_generator
-
-    @classmethod
-    def initialize(cls):
-        GeneratorManager._registry.discover_generators()
-        bla = [generator.name for generator in GeneratorManager._registry.registered_generators]
-        return cls._active_generator
-
-    @classmethod
-    def init_generator(cls, actor_id, actor_data_type_id):
-        GeneratorManager.initialize()
-        cls._active_generator = generator.PythonActorGenerator()
-        cls._active_generator.init()
-        pass

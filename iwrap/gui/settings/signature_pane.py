@@ -3,8 +3,8 @@ from tkinter import ttk
 
 from typing import Union
 
+from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
-from iwrap.generation_engine.generators_mgmt import GeneratorManager
 
 
 class SignaturePane(ttk.Frame, IWrapPane):
@@ -154,8 +154,7 @@ class TextBox(ttk.LabelFrame):
     @staticmethod
     def data_load() -> str:
         """Loads text data from an external generator."""
-        GeneratorManager.init_generator(None, None)
-        return GeneratorManager.get_code_signature()
+        return Engine().get_code_signature()
 
     def clear(self) -> None:
         """Removes text from a text box."""
