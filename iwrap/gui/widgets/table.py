@@ -11,7 +11,6 @@ class Table( ttk.Frame ):
         self.columns = []
         self.rows = []
         self.selected_row = None
-
         self.add_new_table(rows, columns)
 
     def add_new_table(self, rows, columns):
@@ -194,10 +193,7 @@ class RowDataWindow:
     def add_new_row(self):
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
-            if self.columns[idx].column_type == Column.RADIOBUTTON:
-                new_row_data.append(cell.get() == self.columns[idx].label_var.get())
-            else:
-                new_row_data.append(cell.get())
+            new_row_data.append(cell.get())
         self.master.add_rows([new_row_data])
         self._close_add_window()
 
@@ -221,16 +217,18 @@ class Row:
         self.row_number = row
         self.row_cells = []
         for idx, elem in enumerate(data):
-            if isinstance(elem, str):
+            if self.columns[idx].column_type == Column.COMBOBOX or self.columns[idx].column_type == Column.TEXT:
                 self.row_cells.append(RowEntry(row, idx, elem, master))
-            if isinstance(elem, bool):
+            if self.columns[idx].column_type == Column.RADIOBUTTON:
                 self.row_cells.append(RowRadioButton(row, idx, elem, master))
 
         self._set_radiobuttons_values()
 
     def _set_radiobuttons_values(self):
-        checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells) if cell.value is True][0]
+        checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
+                                   if cell.value == self.columns[idx].label][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
+
         self.selected_column_label = tk.StringVar()
         self.selected_column_label.set(checked_column_label)
         for idx, row_cell in enumerate(self.row_cells):
