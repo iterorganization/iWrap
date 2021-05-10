@@ -51,10 +51,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane = None
         self.add_language_pane()
 
-        # ADD TRACING
-        self.code_path.trace('w', self.update_settings)
-        self.selected_programming_language.trace('w', self.update_settings)
-
         # COMBOBOX
         ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
@@ -93,8 +89,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description = ProjectSettings.get_settings().code_description
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
-
-        self.language_pane.update_settings()
 
     def reload(self):
         """Reload entry and combobox values when the project settings are changed. If programming language from new
