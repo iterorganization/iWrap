@@ -117,7 +117,8 @@ class Table( ttk.Frame ):
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
     def add_row(self):
-        RowDataWindow(self)
+        new_window = RowDataWindow(self)
+        tk.Button(new_window.footer, text='Add', command=new_window.add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
 
     def edit_row(self):
         selected_row_data = []
@@ -130,18 +131,20 @@ class Table( ttk.Frame ):
                         elif isinstance(row_cell, RowEntry):
                             selected_row_data.append(row_cell.row_text.get())
 
-            RowDataWindow(self, selected_row_data)
+            new_widow = RowDataWindow(self)
+            new_widow.set_row_values(selected_row_data)
+            tk.Button(new_widow.footer, text='Edit', command=new_widow.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
 
 
 class RowDataWindow:
-    def __init__(self, master=None, data=None):
+    def __init__(self, master=None):
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
         self.window.geometry('500x200')
 
         content_frame = tk.Frame(self.window, height=300)
-        footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
-        footer.pack(side=tk.BOTTOM, fill=tk.X)
+        self.footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
+        self.footer.pack(side=tk.BOTTOM, fill=tk.X)
         content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         scrollable_frame = ScrollableFrame(content_frame)
 
@@ -150,18 +153,10 @@ class RowDataWindow:
         self.labelframe.columnconfigure(1, weight=1)
         self.master = master
         self.columns = self.master.columns
-        self.data = data
         self.new_cells = []
         self._add_content()
-        if self.data:
-            self._set_row_values()
 
-        tk.Button(footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
-        if not self.data:
-            tk.Button(footer, text='Add', command=self._add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
-        else:
-            tk.Button(footer, text='Edit', command=self._edit_row, width=8).pack(side=tk.RIGHT, padx=10)
-
+        tk.Button(self.footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
         scrollable_frame.update()
 
     def _add_content(self):
@@ -184,11 +179,11 @@ class RowDataWindow:
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(self.radiobutton_cell_value)
 
-    def _set_row_values(self):
+    def set_row_values(self, data):
         for idx, cell in enumerate(self.new_cells):
-            cell.set(self.data[idx])
+            cell.set(data[idx])
 
-    def _add_new_row(self):
+    def add_new_row(self):
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
             if self.columns[idx].column_type == Column.RADIOBUTTON:
@@ -198,7 +193,7 @@ class RowDataWindow:
         self.master.add_rows([new_row_data])
         self._close_add_window()
 
-    def _edit_row(self):
+    def edit_row(self):
         for row in self.master.rows:
             if row.row_number == self.master.selected_row:
                 for idx, row_cell in enumerate(row.row_cells):
