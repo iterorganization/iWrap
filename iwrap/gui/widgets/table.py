@@ -159,19 +159,18 @@ class RowDataWindow:
         scrollable_frame.update()
 
     def _add_content(self):
-        self.radiobutton_cell_value = tk.StringVar()
-        for idx, column in enumerate(self.columns):
-            column_label_var = column.label_var.get()
-            column_label = tk.Label(self.labelframe, text=f"{column_label_var}:")
-            column_label.grid(row=idx, column=0, sticky="ew", padx=10, pady=5)
+        radiobutton_combobox_cell_value = tk.StringVar()
 
+        for idx, column in enumerate(self.columns):
             if column.column_type == Column.TEXT:
+                self._set_label(idx, column.label_var.get())
                 text_cell_value = tk.StringVar()
                 new_cell = tk.Entry(self.labelframe, textvariable=text_cell_value)
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(text_cell_value)
 
             elif column.column_type == Column.COMBOBOX:
+                self._set_label(idx, column.label_var.get())
                 combobox_cell_value = tk.StringVar()
                 new_cell = ttk.Combobox(self.labelframe, state='readonly', values=column.list_of_values,
                                         textvariable=combobox_cell_value)
@@ -180,11 +179,18 @@ class RowDataWindow:
                 self.new_cells.append(combobox_cell_value)
 
             elif column.column_type == Column.RADIOBUTTON:
-                self.radiobutton_cell_value.set(column_label_var)
-                new_cell = tk.Radiobutton(self.labelframe, variable=self.radiobutton_cell_value,
-                                          value=column_label_var, bg="white")
-                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
-                self.new_cells.append(self.radiobutton_cell_value)
+                if radiobutton_combobox_cell_value not in self.new_cells:
+                    self._set_label(idx, column.data_label)
+                    combobox_values = [column.label_var.get() for column in self.columns
+                                       if column.column_type == Column.RADIOBUTTON]
+                    new_cell = ttk.Combobox(self.labelframe, state='readonly', values=combobox_values,
+                                            textvariable=radiobutton_combobox_cell_value)
+                    new_cell.current(0)
+                    new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
+                self.new_cells.append(radiobutton_combobox_cell_value)
+
+    def _set_label(self, row, label):
+        tk.Label(self.labelframe, text=f"{label}:").grid(row=row, column=0, sticky="ew", padx=10, pady=5)
 
     def set_row_values(self, data):
         for idx, cell in enumerate(self.new_cells):
@@ -226,7 +232,7 @@ class Row:
 
     def _set_radiobuttons_values(self):
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
-                                   if cell.value == self.columns[idx].label][0]
+                                   if cell.value == self.columns[idx].label_var.get()][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
 
         self.selected_column_label = tk.StringVar()
@@ -284,12 +290,12 @@ class Column:
     RADIOBUTTON = 'radiobutton'
     COMBOBOX = 'combobox'
 
-    def __init__(self, column_type, label, list_of_values=None):
+    def __init__(self, column_type, table_label, data_label, list_of_values=None):
         self.label_var = tk.StringVar()
-        self.label_var.set(label)
+        self.label_var.set(table_label)
         self.column_type = column_type
-        self.label = label
         self.list_of_values = list_of_values
+        self.data_label = data_label
 
     def add_column_to_grid(self, position, master):
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
