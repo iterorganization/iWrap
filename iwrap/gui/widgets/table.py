@@ -232,7 +232,8 @@ class Row:
             if self.columns[idx].column_type == Column.RADIOBUTTON:
                 self.row_cells.append(RowRadioButton(row, idx, elem, master))
 
-        self._set_radiobuttons_values()
+        if any(column.column_type == Column.RADIOBUTTON for column in self.columns):
+            self._set_radiobuttons_values()
 
     def _set_radiobuttons_values(self):
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
