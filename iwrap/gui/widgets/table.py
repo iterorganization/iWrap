@@ -172,6 +172,14 @@ class RowDataWindow:
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(text_cell_value)
 
+            elif column.column_type == Column.COMBOBOX:
+                combobox_cell_value = tk.StringVar()
+                new_cell = ttk.Combobox(self.labelframe, state='readonly', values=column.list_of_values,
+                                        textvariable=combobox_cell_value)
+                new_cell.current(0)
+                new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
+                self.new_cells.append(combobox_cell_value)
+
             elif column.column_type == Column.RADIOBUTTON:
                 self.radiobutton_cell_value.set(column_label_var)
                 new_cell = tk.Radiobutton(self.labelframe, variable=self.radiobutton_cell_value,
@@ -276,12 +284,14 @@ class RowEntry:
 class Column:
     TEXT = 'text'
     RADIOBUTTON = 'radiobutton'
+    COMBOBOX = 'combobox'
 
-    def __init__(self, column_type, label):
+    def __init__(self, column_type, label, list_of_values=None):
         self.label_var = tk.StringVar()
         self.label_var.set(label)
         self.column_type = column_type
         self.label = label
+        self.list_of_values = list_of_values
 
     def add_column_to_grid(self, position, master):
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
