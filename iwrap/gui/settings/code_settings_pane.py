@@ -9,24 +9,24 @@ from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import Langu
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
-    """Code setting pane contains a combobox with programming languages, entry for code path, and browse button
-    for searching user files in the file dialog. If the YAML file is imported values in combobox and entry will be
-    added automatically.
+    """Code setting pane contains a combobox with programming languages, entry for code path, entry for code name
+    and browse button for searching user files in the file dialog.
 
     Attributes:
         default_programming_language(str): Value for default programming language. Default to Fortran.
         combobox_values(list): List contains programming languages that are visible in combobox.
         labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
-         programming language combobox, code path entry, and browse button.
-        code_path(StringVar): Value for code path from filedialog or the YAML file. If value is changed
-         update_settings() method is calling.
-        selected_programming_language(StringVar): Value for programming language selected in combobox. If value is
-         changed update_settings() method is calling.
+         programming language combobox, code path entry, code name entry, and browse button.
+        code_path(StringVar): Value for code path from filedialog or the YAML file.
+        code_name(StringVar): Value for code name, can be added and changed by users or imported from the YAML file.
+        selected_programming_language(StringVar): Value for programming language selected in combobox.
         language_pane(Frame): Frame dedicated for specific programming language pane selected in combobox.
         programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values. Enables
          user to select preferable programming language or value is selected automatically if the YAML file is imported.
         browse_text(Entry): A place for code path value. Users can search their filedialog and select code path using
          the browse button or the code path is added automatically if the YAML file is imported.
+        code_name_text(Entry): An editable place for code name value. Value can be added and changed manually by users.
+         The code name is added automatically if the YAML file is imported.
     """
     default_programming_language = 'Fortran'
 
@@ -90,7 +90,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane.pack(fill="both", expand="yes", pady=10)
 
     def update_settings(self, *args):
-        """Update code_path and programming_language values in ProjectSettings
+        """Update code_path, code_name and programming_language values in ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
         code_description.programming_language = self.selected_programming_language.get()
@@ -98,7 +98,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.code_name = self.code_name.get()
 
     def reload(self):
-        """Reload entry and combobox values when the project settings are changed. If programming language from new
+        """Reload entries and combobox values when the project settings are changed. If programming language from new
         project settings is not available in combobox warning message box will be shown and the default value of
         programming language will be selected in combobox.
         """
