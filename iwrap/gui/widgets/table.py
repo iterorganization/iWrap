@@ -117,6 +117,7 @@ class Table( ttk.Frame ):
 
     def add_row(self):
         new_window = RowDataWindow(self)
+        new_window.window.title("iWrap - Add new argument")
         tk.Button(new_window.footer, text='Add', command=new_window.add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
 
     def edit_row(self):
@@ -130,9 +131,10 @@ class Table( ttk.Frame ):
                         elif isinstance(row_cell, RowEntry):
                             selected_row_data.append(row_cell.row_text.get())
 
-            new_widow = RowDataWindow(self)
-            new_widow.set_row_values(selected_row_data)
-            tk.Button(new_widow.footer, text='Edit', command=new_widow.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
+            new_window = RowDataWindow(self)
+            new_window.window.title("iWrap - Edit argument")
+            new_window.set_row_values(selected_row_data)
+            tk.Button(new_window.footer, text='Edit', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
 
 
 class RowDataWindow:
