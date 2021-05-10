@@ -40,6 +40,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.combobox_values = ['Fortran', 'CPP', 'Python']
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
+        self.code_name = tk.StringVar()
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="User code settings", borderwidth=2, relief="groove", height=100)
@@ -51,7 +52,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.language_pane = None
         self.add_language_pane()
 
-        # COMBOBOX
+        # LANGUAGE COMBOBOX
         ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
         self.programming_language_combobox['values'] = self.combobox_values
@@ -59,12 +60,17 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.programming_language_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
         self.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
+        # CODE NAME
+        ttk.Label(labelframe, text="Code name:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.code_name_text = tk.Entry(labelframe, textvariable=self.code_name)
+        self.code_name_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+
         # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(labelframe, text="Code path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.browse_text = tk.Entry(labelframe, state='readonly', textvariable=self.code_path)
-        self.browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
-            .grid(row=1, column=2, padx=10, pady=5)
+            .grid(column=2, row=2, padx=10, pady=5)
 
     def change_language_pane(self, eventObject=None):
         """Update specific language pane when programming language in combobox is changed.
@@ -89,6 +95,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description = ProjectSettings.get_settings().code_description
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
+        code_description.code_name = self.code_name.get()
 
     def reload(self):
         """Reload entry and combobox values when the project settings are changed. If programming language from new
@@ -100,6 +107,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.code_path or ''
+        code_name = code_description.code_name or ''
 
         if programming_language not in self.combobox_values:
             programming_language = CodeSettingsPane.default_programming_language
@@ -112,6 +120,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         self.browse_text.delete(0, tk.END)
         self.code_path.set(code_path)
+        self.code_name.set(code_name)
 
         self.language_pane.reload()
 
