@@ -51,7 +51,7 @@ class TextEditor:
         text (str): The text stored in text editor.
 
     Notes:
-        One type of event triggers the callback method: `FocusOut`.
+        Losing focus affects ProjectSettings().
     """
     def __init__(self, master: ttk.Widget = None):
         """Initialize the scrollable text editor.
@@ -116,13 +116,17 @@ class TextEditor:
         self.clear_text_input()
         self.text_editor.insert('1.0', self._text)
 
-    def focus_lost_event(self, event):
+    def focus_lost_event(self, event) -> None:
         """A private callback method triggered by the event binding.
 
-        Gets text property content and sets parent documentation property.
+        Invokes other methods to execute them after text editor is out of focus.
+
+        Args:
+            event (tk.Event): The handler of the current triggered event along with its parameters.
 
         Notes:
-            For losing focus clears any text selection.
+            Clears text selection.
+            Updates project settings.
         """
         # Clear selected text    
         self.text_editor.selection_clear()
@@ -130,15 +134,19 @@ class TextEditor:
         # Update Project Settings
         self.update_settings()
 
-    def clear_text_input(self):
+    def clear_text_input(self) -> None:
         """Class method for clearing all content stored in the text editor widget.
         """
         self.text_editor.delete('1.0', tk.END)
 
-    def update_settings(self):
+    def update_settings(self) -> None:
+        """Overwrites the contents of the project settings documentation with the current text.
+        """
         ProjectSettings.get_settings().code_description.documentation = self.text
 
     def reload(self) -> None:
+        """Loads the contents of the project settings documentation and places it in a text editor.
+        """
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
         self.text = code_description.documentation
