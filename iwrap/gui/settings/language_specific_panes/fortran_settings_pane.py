@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import tkinter.filedialog
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
@@ -36,7 +37,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # NOTEBOOK WITH TABS
         tab_control = ttk.Notebook(tab_frame)
-        feature_tab = ttk.Frame(tab_control)
         self.sys_lib_tab = ttk.Frame(tab_control)
         self.cus_lib_tab = ttk.Frame(tab_control)
         self.feature_lib_tab = ttk.Frame(tab_control)
@@ -70,7 +70,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
 
-class SystemLibrariesPane(FortranPane):
+class SystemLibrariesPane:
     def __init__(self, master=None):
         self.settings = master.settings
         master_frame = master.sys_lib_tab
@@ -138,7 +138,7 @@ class SystemLibrariesPane(FortranPane):
             self.tree.heading(idx, text=column)
 
 
-class CustomLibrariesPane( FortranPane ):
+class CustomLibrariesPane:
     def __init__(self, master=None):
         self.settings = master.settings
         master_frame = master.cus_lib_tab
@@ -198,7 +198,7 @@ class CustomLibrariesPane( FortranPane ):
         ProjectSettings.get_settings().code_description.language_specific = dict_settings
 
 
-class FeaturesPane(FortranPane):
+class FeaturesPane:
     def __init__(self, master=None):
         self.settings = master.settings
         master_frame = master.feature_lib_tab
@@ -228,4 +228,3 @@ class FeaturesPane(FortranPane):
 
     def update_settings(self):
         pass
-
