@@ -142,6 +142,8 @@ class ArgumentWindow:
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
         self.window.geometry('500x200')
+        self.window.focus_force()
+        self.window.grab_set()
 
         content_frame = tk.Frame(self.window, height=300)
         self.footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
