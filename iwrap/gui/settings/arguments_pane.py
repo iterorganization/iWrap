@@ -4,11 +4,15 @@ from tkinter import ttk
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
-from iwrap.settings.project import ProjectSettings # nowe
+from iwrap.settings.project import ProjectSettings
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
     def __init__(self, master=None):
+        """
+        Todo:
+            * List of IDSes should be loaded dynamically from IMAS
+        """
         super().__init__( master )
 
         self.arguments_settings = None
@@ -44,7 +48,19 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TABLE
-        self.columns = [Column(Column.TEXT, "Type"),
+        IDS = ["bremsstrahlung_visible", "calorimetry", "camera_ir", "camera_visible", "charge_exchange",
+                "coils_non_axisymmetric", "controllers", "core_instant_changes", "core_profiles", "core_sources",
+                "core_transport", "cryostat", "dataset_description", "dataset_fair", "disruption",
+                "distribution_sources", "distributions", "divertors", "ec_launchers", "ece", "edge_profiles",
+                "edge_sources", "edge_transport", "em_coupling", "equilibrium", "gas_injection", "gas_pumping",
+                "gyrokinetics", "hard_x_rays", "ic_antennas", "interferometer", "iron_core", "langmuir_probes",
+                "lh_antennas", "magnetics", "mhd", "mhd_linear", "mse", "nbi", "neutron_diagnostic", "ntms",
+                "numerics", "pellets", "pf_active", "pf_passive", "polarimeter", "pulse_schedule", "radiation",
+                "reflectometer_profile", "refractometer", "sawteeth", "sdn", "soft_x_rays", "spectrometer_mass",
+                "spectrometer_uv", "spectrometer_visible", "spectrometer_x_ray_crystal", "summary", "temporary",
+                "thomson_scattering", "tf", "transport_solver_numerics", "turbulence", "wall", "waves"]
+
+        self.columns = [Column(Column.COMBOBOX, "Type", IDS),
                         Column(Column.RADIOBUTTON, "Input"),
                         Column(Column.RADIOBUTTON, "Output"),
                         Column(Column.TEXT, "Label")]
