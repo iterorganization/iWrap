@@ -249,11 +249,11 @@ class Row:
     def get_row_values(self):
         row_values = {}
         for idx, cell in enumerate(self.row_cells):
-            column_label = self.columns[idx].label_var.get()
+            column_data_label = self.columns[idx].data_label
             if isinstance(cell, RowRadioButton):
-                row_values.update({column_label: self.selected_column_label.get() == column_label})
+                row_values.update({column_data_label: self.selected_column_label.get()})
             elif isinstance(cell, RowEntry):
-                row_values.update({column_label: cell.row_text.get()})
+                row_values.update({column_data_label: cell.row_text.get()})
 
         return row_values
 
