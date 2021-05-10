@@ -60,10 +60,10 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
                 "spectrometer_uv", "spectrometer_visible", "spectrometer_x_ray_crystal", "summary", "temporary",
                 "thomson_scattering", "tf", "transport_solver_numerics", "turbulence", "wall", "waves"]
 
-        self.columns = [Column(Column.COMBOBOX, "Type", IDS),
-                        Column(Column.RADIOBUTTON, "Input"),
-                        Column(Column.RADIOBUTTON, "Output"),
-                        Column(Column.TEXT, "Label")]
+        self.columns = [Column(Column.COMBOBOX, "Type", "Name", IDS),
+                        Column(Column.RADIOBUTTON, "Input", "Intent"),
+                        Column(Column.RADIOBUTTON, "Output", "Intent"),
+                        Column(Column.TEXT, "Label", "Type")]
 
         self.table = Table([], self.columns, table_frame)
 
@@ -89,18 +89,21 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
     def set_data_to_table(self):
         table_data = []
+        intent = {"IN": "Input", "OUT": "Output"}
         for argument in self.arguments_settings:
-            table_data.append([argument['name'], argument['intent'] == 'IN', argument['intent'] == 'OUT', argument['type']])
+            table_data.append([argument['name'], intent[argument['intent']],
+                               intent[argument['intent']], argument['type']])
 
         self.table.add_new_table(table_data, self.columns)
 
     def get_data_from_table(self):
         table_data = self.table.get_data_from_table()
+        intent = {"Input": "IN", "Output": "OUT"}
         arguments = []
         for row in table_data:
-            name = row['Type']
-            row_type = row['Label']
-            intent = ['IN' if row['Input'] is True else 'OUT'][0]
-            arguments.append({'name': name, 'type': row_type, 'intent': intent})
+            name = row['Name']
+            row_type = row['Type']
+            intent_value = intent[row['Intent']]
+            arguments.append({'name': name, 'type': row_type, 'intent': intent_value})
 
         return arguments
