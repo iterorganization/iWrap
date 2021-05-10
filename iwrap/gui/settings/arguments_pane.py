@@ -100,7 +100,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         for row in table_data:
             name = row['Type']
             row_type = row['Label']
-            indent = ['IN' if row['Input'] is True else 'OUT'][0]
-            arguments.append({'name': name, 'type': row_type, 'indent': indent})
+            intent = ['IN' if row['Input'] is True else 'OUT'][0]
+            arguments.append({'name': name, 'type': row_type, 'intent': intent})
 
         return arguments
