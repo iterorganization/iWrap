@@ -263,7 +263,7 @@ class RowRadioButton:
         self.row_number = row
         self.column_number = column
         self.value = value
-        self.cell = tk.Radiobutton(master, bg="white")
+        self.cell = tk.Radiobutton(master, bg="white", state='disabled')
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
