@@ -60,10 +60,10 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
                 "spectrometer_uv", "spectrometer_visible", "spectrometer_x_ray_crystal", "summary", "temporary",
                 "thomson_scattering", "tf", "transport_solver_numerics", "turbulence", "wall", "waves"]
 
-        self.columns = [Column(Column.COMBOBOX, "Type", "Name", IDS),
+        self.columns = [Column(Column.TEXT, "Label", "Name"),
                         Column(Column.RADIOBUTTON, "Input", "Intent"),
                         Column(Column.RADIOBUTTON, "Output", "Intent"),
-                        Column(Column.TEXT, "Label", "Type")]
+                        Column(Column.COMBOBOX, "Type", "Type", IDS)]
 
         self.table = Table([], self.columns, table_frame)
 
