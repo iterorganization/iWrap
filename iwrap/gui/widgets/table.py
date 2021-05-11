@@ -291,11 +291,33 @@ class RowEntry:
 
 
 class Column:
+    """ The column class.
+
+    Attributes:
+        TEXT (str):
+        RADIOBUTTON (str):
+        COMBOBOX (str):
+        label_var (StringVar): The column label.
+        column_type (str): The column type.
+        list_of_values (list): List of possible values in the column. These values will be added to combobox
+         in the Add/Edit window.
+        data_label (str): The data label.
+
+    """
     TEXT = 'text'
     RADIOBUTTON = 'radiobutton'
     COMBOBOX = 'combobox'
 
     def __init__(self, column_type, table_label, data_label, list_of_values=None):
+        """ Initialize the Column class object.
+
+        Args:
+            column_type (str): The column type. Column type should be selected from the Column class attributes
+             (TEXT, RADIOBUTTON, COMBOBOX).
+            table_label (str): The column label.
+            data_label (str): The data label.
+            list_of_values (str): List of possible values in the column.
+        """
         self.label_var = tk.StringVar()
         self.label_var.set(table_label)
         self.column_type = column_type
@@ -303,5 +325,11 @@ class Column:
         self.data_label = data_label
 
     def add_column_to_grid(self, position, master):
+        """ Add column to grid.
+
+        Args:
+            position: The column number to put Entry in.
+            master: The master frame where Entry will be placed.
+        """
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
             .grid(row=0, column=position, sticky="ew")
