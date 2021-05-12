@@ -237,7 +237,7 @@ class Row:
 
     def _set_radiobuttons_values(self):
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
-                                   if cell.value == self.columns[idx].label_var.get()][0]
+                                   if cell.get_cell_value() == self.columns[idx].label_var.get()][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
 
         self.selected_column_label = tk.StringVar()
@@ -259,7 +259,24 @@ class Row:
 
 
 class RowRadioButton:
+    """The class RowRadioButton enables initialize radiobutton type table cells,
+     add them to grid and change color to white or lightgray.
+
+    Attributes:
+        row_number (int): The number of row where cell in placed.
+        column_number (int): The number of column where cell in placed.
+        value (string): The cell data.
+        cell (Entry): The cell Entry placed in table grid.
+    """
     def __init__(self, row, column, value, master):
+        """Initialize the RowRadioButton class object.
+
+        Args:
+            row (int): The row number to put Entry in.
+            column (int): The column number to put Entry in.
+            value (string): The value of cell data.
+            master: The master frame where Entry will be placed.
+        """
         self.row_number = row
         self.column_number = column
         self.value = value
@@ -267,31 +284,68 @@ class RowRadioButton:
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
+        """Change the Radiobutton color to lightgray.
+        """
         self.cell.config(bg="lightgray")
 
     def change_color_to_white(self):
+        """Change the Radiobutton color to white.
+        """
         self.cell.config(bg="white")
+
+    def get_cell_value(self):
+        """ Method returns value of cell data.
+
+        Returns (int): Value of cell data.
+        """
+        return self.value
 
 
 class RowEntry:
+    """The class RowEntry enables initialize text type table cells, add them to grid and change color to white or lightgray.
+
+    Attributes:
+        row_number (int): The number of row where cell in placed.
+        column_number (int): The number of column where cell in placed.
+        row_text (StringVar): The cell data.
+        cell (Entry): The cell Entry placed in table grid.
+    """
     def __init__(self, row, column, text, master):
+        """Initialize the RowEntry class object.
+
+        Args:
+            row (int): The row number to put Entry in.
+            column (int): The column number to put Entry in.
+            text (string): The cell data.
+            master: The master frame where Entry will be placed.
+        """
         self.row_number = row
         self.column_number = column
-        self.value = text
         self.row_text = tk.StringVar()
         self.row_text.set(text)
         self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=6)
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
+        """Change the Entry color to lightgray.
+        """
         self.cell.config(readonlybackground="lightgray")
 
     def change_color_to_white(self):
+        """Change the Entry color to white.
+        """
         self.cell.config(readonlybackground="white")
+
+    def get_cell_value(self):
+        """ Method returns value of cell data.
+
+        Returns (int): Value of cell data.
+        """
+        return self.row_text.get()
 
 
 class Column:
-    """ The column class.
+    """The column class enables define table columns, set their type and add them to grid.
 
     Attributes:
         TEXT (str):
@@ -302,14 +356,13 @@ class Column:
         list_of_values (list): List of possible values in the column. These values will be added to combobox
          in the Add/Edit window.
         data_label (str): The data label.
-
     """
     TEXT = 'text'
     RADIOBUTTON = 'radiobutton'
     COMBOBOX = 'combobox'
 
     def __init__(self, column_type, table_label, data_label, list_of_values=None):
-        """ Initialize the Column class object.
+        """Initialize the Column class object.
 
         Args:
             column_type (str): The column type. Column type should be selected from the Column class attributes
@@ -325,10 +378,10 @@ class Column:
         self.data_label = data_label
 
     def add_column_to_grid(self, position, master):
-        """ Add column to grid.
+        """Add column to grid.
 
         Args:
-            position: The column number to put Entry in.
+            position (int): The column number to put Entry in.
             master: The master frame where Entry will be placed.
         """
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
