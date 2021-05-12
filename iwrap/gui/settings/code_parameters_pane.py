@@ -47,8 +47,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         XSDFile.update_settings()
 
     def reload(self):
-        XMLFile.fetch_settings()
-        XSDFile.fetch_settings()
         self.xml_browser.reload()
         self.xsd_browser.reload()
 
@@ -127,7 +125,7 @@ class XMLFile(File):
 
     @classmethod
     def load_settings(cls):
-        return str(cls._PROJECT_SETTINGS.parameters)
+        return cls._PROJECT_SETTINGS.parameters
 
     @classmethod
     def validate(cls):
@@ -145,7 +143,7 @@ class XSDFile(File):
 
     @classmethod
     def load_settings(cls):
-        return str(cls._PROJECT_SETTINGS.schema)
+        return cls._PROJECT_SETTINGS.schema
 
 
 class FileBrowserPane(ttk.Frame):
@@ -232,7 +230,8 @@ class FileBrowserPane(ttk.Frame):
         self.file_class.update_settings()
 
     def reload(self):
-        self.path.set(self.file_class.load_settings())
+        self.file_class.fetch_settings()
+        self.path.set(self.file_class.get_path())
 
     
 class XMLValidatorPane(ttk.Frame):
