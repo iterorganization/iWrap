@@ -31,10 +31,10 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # XML file path browser dialog
-        xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
+        self.xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
         
         # XSD file path browser dialog
-        xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
+        self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
 
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self)
@@ -49,6 +49,8 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     def reload(self):
         XMLFile.fetch_settings()
         XSDFile.fetch_settings()
+        self.xml_browser.reload()
+        self.xsd_browser.reload()
 
 
 class File:
@@ -228,6 +230,9 @@ class FileBrowserPane(ttk.Frame):
 
         # Update ProjectSettings() with code parameters.
         self.file_class.update_settings()
+
+    def reload(self):
+        self.path.set(self.file_class.load_settings())
 
     
 class XMLValidatorPane(ttk.Frame):
