@@ -47,7 +47,8 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         XSDFile.update_settings()
 
     def reload(self):
-        pass
+        XMLFile.fetch_settings()
+        XSDFile.fetch_settings()
 
 
 class File:
@@ -102,11 +103,15 @@ class File:
         pass
 
     @classmethod
-    def load_settings(cls):
+    def load_settings(cls) -> str:
         """Loads the code parameters fields from ProjectSettings() to PATH variable.
         Applies to the parameters file and the schema file.
         """
         pass
+
+    @classmethod
+    def fetch_settings(cls):
+        cls._PATH = cls.load_settings()
 
 
 class XMLFile(File):
