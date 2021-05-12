@@ -5,7 +5,25 @@ from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 
 
 class Table( ttk.Frame ):
+    """The Table class enables the creation of tables made of columns and rows. Rows can contain text cells and
+     radio buttons. Table class has methods that enable select clicked row, move this row up and down in the table
+    and delete the selected row. There is also possible to add and edit row using the sheet.
+
+    Attributes:
+        frame (ScrollableFrame): The scrollable frame widget.
+        rows ([[str]]): The list of list of strings contains data for rows.
+        columns ([Columns]): The list of the Columns objects.
+        selected_row (int, default=None): The number of the selected row.
+
+    """
     def __init__(self, rows, columns, master=None):
+        """Initialize the Table class object.
+
+        Args:
+            rows ([[str]]): The list of list of strings contains data for rows.
+            columns ([Columns]): The list of the Columns objects.
+            master (ttk.Frame): The master frame.
+        """
         super().__init__(master)
         self.frame = ScrollableFrame(master)
         self.columns = []
@@ -14,12 +32,20 @@ class Table( ttk.Frame ):
         self.add_new_table(rows, columns)
 
     def add_new_table(self, rows, columns):
+        """Adds a new table to the frame.
+
+        Args:
+            rows ([[str]]): The list of list of strings contains data for rows.
+            columns ([Columns]): The list of the Columns objects.
+        """
         self.delete_data_from_table()
         self.columns = columns
         self._add_columns()
         self.add_rows(rows)
 
     def delete_data_from_table(self):
+        """Delete all data from rows in the table.
+        """
         for row in self.rows:
             for row_cell in row.row_cells:
                 row_cell.cell.destroy()
@@ -29,6 +55,10 @@ class Table( ttk.Frame ):
         self.selected_row = None
 
     def get_data_from_table(self):
+        """Returns table with dictionaries contains data from all rows in the table.
+
+        Returns (list): The table with dictionaries contains data from every row in the table.
+        """
         table_data = []
         for row in self.rows:
             rows_values = row.get_row_values()
@@ -37,6 +67,11 @@ class Table( ttk.Frame ):
         return table_data
 
     def add_rows(self, data):
+        """Initializes the Row objects and adds them to table_row list.
+
+        Args:
+            data (list): The list of values needed to be added into cells in the row.
+        """
         for row in data:
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, self.frame, self.columns)
@@ -47,11 +82,18 @@ class Table( ttk.Frame ):
         self.frame.update()
 
     def _add_columns(self):
+        """Adds the Columns objects to the table grid.
+        """
         for idx, column in enumerate(self.columns):
             self.frame.columnconfigure(idx, weight=1)
             column.add_column_to_grid(idx, self.frame)
 
     def _select_row(self, parent_row):
+        """Sets the number of selected row, change the color of selected row from white to light gray
+
+        Args:
+            parent_row (Row): The clicked Row object.
+        """
         self.selected_row = parent_row.row_number
         for row in self.rows:
             for row_cell in row.row_cells:
@@ -61,6 +103,8 @@ class Table( ttk.Frame ):
                     row_cell.change_color_to_white()
 
     def delete_row(self):
+        """Deletes the selected row from the table.
+        """
         for row in self.rows:
             if row.row_number == self.selected_row:
                 for row_cell in row.row_cells:
@@ -74,6 +118,8 @@ class Table( ttk.Frame ):
         self._update_rows()
 
     def _update_rows(self):
+        """Updates all rows position in the table grid, set selected_row to None
+        """
         self.selected_row = None
         for row_number, row in enumerate(self.rows):
             for row_cell in row.row_cells:
@@ -83,6 +129,11 @@ class Table( ttk.Frame ):
 
     @staticmethod
     def _move_row_up(row_to_move):
+        """Decreases row position in the table.
+
+        Args:
+            row_to_move (Row): The Row object in which row position will be decreased.
+        """
         for row_cell in row_to_move.row_cells:
             row_cell.row_number = row_to_move.row_number - 1
             row_cell.cell.grid(row=row_to_move.row_number - 1, column=row_cell.column_number, sticky="ew")
@@ -90,12 +141,19 @@ class Table( ttk.Frame ):
 
     @staticmethod
     def _move_row_down(row_to_move):
+        """Increases row position in the table.
+
+        Args:
+            row_to_move (Row): The Row object in which row position will be increased.
+        """
         for row_cell in row_to_move.row_cells:
             row_cell.row_number = row_to_move.row_number + 1
             row_cell.cell.grid(row=row_to_move.row_number + 1, column=row_cell.column_number, sticky="ew")
         row_to_move.row_number = row_to_move.row_number + 1
 
     def row_up_feature(self):
+        """Enables move row up in the table.
+        """
         if self.selected_row not in [1, None]:
             top_row = [row for row in self.rows if row.row_number == self.selected_row - 1][0]
             current_row = [row for row in self.rows if row.row_number == self.selected_row][0]
@@ -106,6 +164,8 @@ class Table( ttk.Frame ):
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
     def row_down_feature(self):
+        """Enables move row down in the table.
+        """
         if self.selected_row not in [len(self.rows), None]:
             bottom_row = [row for row in self.rows if row.row_number == self.selected_row + 1][0]
             current_row = [row for row in self.rows if row.row_number == self.selected_row][0]
@@ -116,11 +176,17 @@ class Table( ttk.Frame ):
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
     def add_row(self):
+        """Enables add a new row. The method creates an ArgumentWindow object what is associated with opening
+         a new window with add row sheet.
+        """
         new_window = ArgumentWindow(self)
         new_window.window.title("iWrap - Add new argument")
         tk.Button(new_window.footer, text='Add', command=new_window.add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
 
     def edit_row(self):
+        """Enables edit selected row. The method creates an ArgumentWindow object what is associated with opening
+         a new window with a row editor.
+        """
         selected_row_data = []
         if self.selected_row:
             for row in self.rows:
@@ -222,7 +288,23 @@ class ArgumentWindow:
 
 
 class Row:
+    """The row class enables initialize text and radio button type cells in a specific row, set radio buttons values
+     if any column has radio button column type, and get data from all cells in the row.
+
+    Attributes:
+        columns ([Column]): List of Column class objects.
+        row_number (int): The row number to put cells in.
+        row_cells (list): The list of cells related to row. Cell can be RowEntry or RowRadioButton object.
+    """
     def __init__(self, row, data, master, columns):
+        """Initialize the Row class object.
+
+        Args:
+            row (int): The row number to put cells in.
+            data (list): The list of values needed to be an entry into cells.
+            master (ttk.Frame): The master frame where cells will be placed.
+            columns ([Column]): List of Column class objects.
+        """
         self.columns = columns
         self.row_number = row
         self.row_cells = []
@@ -236,6 +318,8 @@ class Row:
             self._set_radiobuttons_values()
 
     def _set_radiobuttons_values(self):
+        """Sets radio buttons values and makes them related to row.
+        """
         checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
                                    if cell.get_cell_value() == self.columns[idx].label_var.get()][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
@@ -247,6 +331,11 @@ class Row:
                 row_cell.cell.config(variable=self.selected_column_label, value=self.columns[idx].label_var.get())
 
     def get_row_values(self):
+        """The method returns table row values.
+
+        Returns (dict): Dictionary contains table row values. The key is column label and the value is cell data.
+        """
+
         row_values = {}
         for idx, cell in enumerate(self.row_cells):
             column_data_label = self.columns[idx].data_label
@@ -259,14 +348,15 @@ class Row:
 
 
 class RowRadioButton:
-    """The class RowRadioButton enables initialize radiobutton type table cells,
-     add them to grid and change color to white or lightgray.
+    """The class RowRadioButton enables initialize radio button type table cells,
+     add them to the grid and change color to white or light gray.
+
 
     Attributes:
-        row_number (int): The number of row where cell in placed.
-        column_number (int): The number of column where cell in placed.
-        value (string): The cell data.
-        cell (Entry): The cell Entry placed in table grid.
+        row_number (int): The row number where the cell is placed.
+        column_number (int): The column number where the cell is placed.
+        value (str): The cell data.
+        cell (Entry): The cell Entry placed in the table grid.
     """
     def __init__(self, row, column, value, master):
         """Initialize the RowRadioButton class object.
@@ -274,8 +364,8 @@ class RowRadioButton:
         Args:
             row (int): The row number to put Entry in.
             column (int): The column number to put Entry in.
-            value (string): The value of cell data.
-            master: The master frame where Entry will be placed.
+            value (str): The value of cell data.
+            master (ttk.Frame): The master frame where Radiobutton will be placed.
         """
         self.row_number = row
         self.column_number = column
@@ -284,31 +374,32 @@ class RowRadioButton:
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
-        """Change the Radiobutton color to lightgray.
+        """Changes the Radiobutton color to lightgray.
         """
         self.cell.config(bg="lightgray")
 
     def change_color_to_white(self):
-        """Change the Radiobutton color to white.
+        """Changes the Radiobutton color to white.
         """
         self.cell.config(bg="white")
 
     def get_cell_value(self):
-        """ Method returns value of cell data.
+        """Returns the value of cell data.
 
-        Returns (int): Value of cell data.
+        Returns (int): The value of cell data.
         """
         return self.value
 
 
 class RowEntry:
-    """The class RowEntry enables initialize text type table cells, add them to grid and change color to white or lightgray.
+    """The class RowEntry enables initialize text type table cells, add them to the grid, and change color
+     to white or light gray.
 
     Attributes:
-        row_number (int): The number of row where cell in placed.
-        column_number (int): The number of column where cell in placed.
+        row_number (int):  The row number where the cell is placed.
+        column_number (int):  The column number where the cell is placed.
         row_text (StringVar): The cell data.
-        cell (Entry): The cell Entry placed in table grid.
+        cell (Entry): The cell Entry placed in the table grid.
     """
     def __init__(self, row, column, text, master):
         """Initialize the RowEntry class object.
@@ -316,8 +407,8 @@ class RowEntry:
         Args:
             row (int): The row number to put Entry in.
             column (int): The column number to put Entry in.
-            text (string): The cell data.
-            master: The master frame where Entry will be placed.
+            text (str): The cell data.
+            master (ttk.Frame): The master frame where Entry will be placed.
         """
         self.row_number = row
         self.column_number = column
@@ -327,33 +418,33 @@ class RowEntry:
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
-        """Change the Entry color to lightgray.
+        """Changes the Entry color to light gray.
         """
         self.cell.config(readonlybackground="lightgray")
 
     def change_color_to_white(self):
-        """Change the Entry color to white.
+        """Changes the Entry color to white.
         """
         self.cell.config(readonlybackground="white")
 
     def get_cell_value(self):
-        """ Method returns value of cell data.
+        """Returns value of cell data.
 
-        Returns (int): Value of cell data.
+        Returns (int): The value of cell data.
         """
         return self.row_text.get()
 
 
 class Column:
-    """The column class enables define table columns, set their type and add them to grid.
+    """The column class enables define table columns, set their type, and add them to the grid.
 
     Attributes:
-        TEXT (str):
-        RADIOBUTTON (str):
-        COMBOBOX (str):
+        TEXT (str): Defines text column type.
+        RADIOBUTTON (str): Defines radiobutton column type.
+        COMBOBOX (str): Defines combobox column type.
         label_var (StringVar): The column label.
         column_type (str): The column type.
-        list_of_values (list): List of possible values in the column. These values will be added to combobox
+        list_of_values (list): The list of possible values in the column. These values will be added to combobox
          in the Add/Edit window.
         data_label (str): The data label.
     """
@@ -369,7 +460,7 @@ class Column:
              (TEXT, RADIOBUTTON, COMBOBOX).
             table_label (str): The column label.
             data_label (str): The data label.
-            list_of_values (str): List of possible values in the column.
+            list_of_values (str): The list of possible values in the column.
         """
         self.label_var = tk.StringVar()
         self.label_var.set(table_label)
@@ -378,11 +469,11 @@ class Column:
         self.data_label = data_label
 
     def add_column_to_grid(self, position, master):
-        """Add column to grid.
+        """Adds a column to grid.
 
         Args:
             position (int): The column number to put Entry in.
-            master: The master frame where Entry will be placed.
+            master (ttk.Frame): The master frame where Entry will be placed.
         """
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
             .grid(row=0, column=position, sticky="ew")
