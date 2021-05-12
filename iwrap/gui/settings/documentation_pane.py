@@ -12,9 +12,6 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
     Attributes:
         documentation_editor (TextEditor): Allows to access the text editor object outside the class.
 
-    Properties:
-        documentation (str): Documentation text.
-
     Notes:
         Creates a new documentation frame with a scrollable documentation text editor.
         Additionally, it creates an instance of the ProjectSettings and loads the code description 
@@ -30,55 +27,33 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         """
         super().__init__(master, text="Actor documentation")
 
-        # Documentation property instance
-        self.documentation: str = ""
-
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
-
-        # Execute initial reload
-        self.reload()
-
-    # Documentation getter
-    @property
-    def documentation(self):
-        """:obj: `str`: Get or set the current documentation text stored in ProjectSettings class.
-        """
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
-        return code_description.documentation
-
-    @documentation.setter
-    def documentation(self, new_documentation):
-        self.update_settings(new_documentation)
     
-    def update_settings(self, update_value : str =""):
+    def update_settings(self):
         """Update documentation in ProjectSettings.
-        Args:
-            update_value (str, optional): Text to update in ProjectSettings.
         """
-        ProjectSettings.get_settings().code_description.documentation = update_value
+        self.documentation_editor.update_settings()
 
     def reload(self):
         """Immediately refresh the documentation editor text content.
         """
-        self.documentation_editor.text = self.documentation
+        self.documentation_editor.reload()
 
 
 class TextEditor:
     """Simple scrollable text editor.
 
     Attributes:
-        _master (optional): (Private) Reference to parent object.
         text_editor (tk.Text): A text widget which handles multiple line text and is complete text editor in a window.
 
     Properties:
         text (str): The text stored in text editor.
 
     Notes:
-        One type of event triggers the callback method: `FocusOut`.
+        Losing focus affects ProjectSettings().
     """
-    def __init__(self, master: ttk.Widget=None):
+    def __init__(self, master: ttk.Widget = None):
         """Initialize the scrollable text editor.
         Args:
             master (ttk.Frame, optional): A parent widget.
@@ -86,9 +61,6 @@ class TextEditor:
             Preconfigures the text editor widget.
         """
         super().__init__()
-
-        # Parent attribute
-        self._master = master
 
         # Text content of a text editor
         self._text: str = ""
@@ -115,6 +87,9 @@ class TextEditor:
         # Pre-configure the text editor appearance
         self.text_editor.config(bg='#FFF', fg='#000', insertbackground='#000')
 
+        # Initial reload of an text editor
+        self.reload()
+
     @property
     def text(self):
         """:obj: `str`: stores the text content of the text editor. Sets and gets value from the text editor widget.
@@ -131,7 +106,7 @@ class TextEditor:
         # In case of file import error
         if not isinstance(new_text, str):
             # Fill with blank text
-            new_text=""
+            new_text = ""
 
         # Set new content to the text container
         self._text = new_text
@@ -141,21 +116,37 @@ class TextEditor:
         self.clear_text_input()
         self.text_editor.insert('1.0', self._text)
 
-    def focus_lost_event(self, event):
+    def focus_lost_event(self, event) -> None:
         """A private callback method triggered by the event binding.
 
-        Gets text property content and sets parent documentation property.
+        Invokes other methods to execute them after text editor is out of focus.
+
+        Args:
+            event (tk.Event): The handler of the current triggered event along with its parameters.
 
         Notes:
-            For losing focus clears any text selection.
+            Clears text selection.
+            Updates project settings.
         """
         # Clear selected text    
         self.text_editor.selection_clear()
 
-        # Update the project documentation
-        self._master.update_settings(self.text)
+        # Update Project Settings
+        self.update_settings()
 
-    def clear_text_input(self):
+    def clear_text_input(self) -> None:
         """Class method for clearing all content stored in the text editor widget.
         """
         self.text_editor.delete('1.0', tk.END)
+
+    def update_settings(self) -> None:
+        """Overwrites the contents of the project settings documentation with the current text.
+        """
+        ProjectSettings.get_settings().code_description.documentation = self.text
+
+    def reload(self) -> None:
+        """Loads the contents of the project settings documentation and places it in a text editor.
+        """
+        project_settings = ProjectSettings.get_settings()
+        code_description = project_settings.code_description
+        self.text = code_description.documentation

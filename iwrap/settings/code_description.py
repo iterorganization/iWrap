@@ -54,6 +54,12 @@ class CodeParameters( Dictionarizable ):
         #: A path to XSD file containing schema that allows to validate code parameters XML description
         self.schema: str = ''
 
+    def clear(self):
+        """Clears class content, setting default values of class attributes
+        """
+        self.parameters = ''
+        self.schema = ''
+
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
@@ -108,8 +114,14 @@ class CodeDescription( Dictionarizable ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-
-        self.__init__()
+        self.programming_language = None
+        self.code_name = None
+        self.data_type = None
+        self.arguments = []
+        self.code_path = None
+        self.code_parameters.clear()
+        self.documentation = None
+        self.language_specific = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes given object to dictionary
