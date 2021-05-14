@@ -43,8 +43,8 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         self.configure(padding=(0, 20, 0, 0))
 
     def update_settings(self):
-        XMLFile.update_settings()
-        XSDFile.update_settings()
+        self.xml_browser.update_settings()
+        self.xsd_browser.update_settings()
 
     def reload(self):
         self.xml_browser.reload()
@@ -218,6 +218,10 @@ class FileBrowserPane(ttk.Frame):
         self.file.save_path(filename)
 
         self.reload()
+
+    def update_settings(self):
+        self.file.save_path(self.path.get())
+        self.file.update_settings()
 
     def reload(self):
         # Load the path
