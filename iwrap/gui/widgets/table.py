@@ -16,7 +16,7 @@ class Table( ttk.Frame ):
         selected_row (int, default=None): The number of the selected row.
 
     """
-    def __init__(self, rows, columns, master=None):
+    def __init__(self, rows, columns, master=None, lost_focus_listeners=None):
         """Initialize the Table class object.
 
         Args:
@@ -29,6 +29,8 @@ class Table( ttk.Frame ):
         self.columns = []
         self.rows = []
         self.selected_row = None
+        self.lost_focus_listeners = lost_focus_listeners
+
         self.add_new_table(rows, columns)
 
     def add_new_table(self, rows, columns):
@@ -77,7 +79,7 @@ class Table( ttk.Frame ):
             table_row = Row(row_number, row, self.frame, self.columns)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
-                row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self._select_row(parent_row))
+                row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
 
         self.frame.update()
 
@@ -88,7 +90,7 @@ class Table( ttk.Frame ):
             self.frame.columnconfigure(idx, weight=1)
             column.add_column_to_grid(idx, self.frame)
 
-    def _select_row(self, parent_row):
+    def select_row(self, parent_row):
         """Sets the number of selected row, change the color of selected row from white to light gray
 
         Args:
@@ -101,6 +103,15 @@ class Table( ttk.Frame ):
                     row_cell.change_color_to_lightgray()
                 else:
                     row_cell.change_color_to_white()
+        self.change_listeners_state()
+
+    def change_listeners_state(self, *args):
+        if self.lost_focus_listeners is not None:
+            for listener in self.lost_focus_listeners:
+                if self.selected_row is not None:
+                    listener["state"] = "normal"
+                else:
+                    listener["state"] = "disabled"
 
     def delete_row(self):
         """Deletes the selected row from the table.
@@ -126,6 +137,7 @@ class Table( ttk.Frame ):
                 row_cell.row_number = row_number + 1
                 row_cell.cell.grid(row=row_number + 1, column=row_cell.cell.grid_info()['column'])
             row.row_number = row_number + 1
+        self.change_listeners_state()
 
     @staticmethod
     def _move_row_up(row_to_move):
@@ -188,7 +200,7 @@ class Table( ttk.Frame ):
          a new window with a row editor.
         """
         selected_row_data = []
-        if self.selected_row:
+        if self.selected_row :
             for row in self.rows:
                 if row.row_number == self.selected_row:
                     for idx, row_cell in enumerate(row.row_cells):
@@ -228,6 +240,8 @@ class ArgumentWindow:
         content_frame.update()
 
     def _add_content(self):
+        """Add content to the ArgumentWindow.
+        """
         radiobutton_combobox_cell_value = tk.StringVar()
 
         for idx, column in enumerate(self.columns):
@@ -460,7 +474,7 @@ class Column:
         COMBOBOX (str): Defines combobox column type.
         label_var (StringVar): The column label.
         column_type (str): The column type.
-        list_of_values (list): The list of possible values in the column. These values will be added to combobox
+        list_of_values (List[str, Any]): The list of possible values in the column. These values will be added to combobox
          in the Add/Edit window.
         data_label (str): The data label.
     """
@@ -468,7 +482,7 @@ class Column:
     RADIOBUTTON = 'radiobutton'
     COMBOBOX = 'combobox'
 
-    def __init__(self, column_type, table_label, data_label, list_of_values=None):
+    def __init__(self, column_type, table_label, data_label, list_of_values=[]):
         """Initialize the Column class object.
 
         Args:
