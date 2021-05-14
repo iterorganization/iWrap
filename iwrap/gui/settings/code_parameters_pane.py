@@ -170,7 +170,7 @@ class FileBrowserPane(ttk.Frame):
         """
 
         # Reference to a file class
-        self.file_class = file_class
+        self.file = file_class()
 
         super().__init__(master)
         # Specify the file type
@@ -188,13 +188,15 @@ class FileBrowserPane(ttk.Frame):
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # Tk's StringVar to store path string. Get initial path from ProjectSettings().
-        self.path = tk.StringVar(self, value=self.file_class.load_settings())
+        self.path = tk.StringVar(self, value=self.file.get_path())
 
         # An entry to display path dialog
         path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path)
         path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
+
+        self.reload()
 
     def action_open(self):
         """Open system file dialog to browse files.
@@ -213,17 +215,16 @@ class FileBrowserPane(ttk.Frame):
             return
 
         # Save loaded path.
-        self.file_class.save_path(filename)
+        self.file.save_path(filename)
 
-        # Update the text in the path dialog widget.
-        self.path.set(self.file_class.get_path())
-
-        # Update ProjectSettings() with code parameters.
-        self.file_class.update_settings()
+        self.reload()
 
     def reload(self):
-        self.file_class.fetch_settings()
-        self.path.set(self.file_class.get_path())
+        # Load the path
+        self.file.load_settings()
+
+        # Update the text in the path dialog widget.
+        self.path.set(self.file.get_path())
 
     
 class XMLValidatorPane(ttk.Frame):
