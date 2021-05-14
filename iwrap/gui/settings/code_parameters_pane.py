@@ -87,17 +87,23 @@ class File:
             Updates ProjectSettings()
         """
         self._PATH = path
-        if path == "" or not isinstance(path, str):
-            self.PATH_VALID = False
+        if not self.is_path_correct():
             return
-        # Set the path validity flag to True
-        self.PATH_VALID = True
         # Perform ProjectSettings() update
         self.update_settings()
 
     def get_path(self) -> str:
         """Returns stored file path string."""
         return self._PATH
+
+    def is_path_correct(self) -> bool:
+        if self._PATH == "" or not isinstance(self._PATH, str):
+            # Set the path validity flag to False
+            self.PATH_VALID = False
+            return False
+        # Set the path validity flag to True
+        self.PATH_VALID = True
+        return True
 
     def update_settings(self) -> None:
         """Updates the code parameters fields in ProjectSettings().
@@ -107,7 +113,7 @@ class File:
     def load_settings(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to PATH variable.
         """
-        pass
+        self.is_path_correct()
 
 
 class XMLFile(File):
@@ -120,6 +126,7 @@ class XMLFile(File):
 
     def load_settings(self) -> None:
         self._PATH = self._PROJECT_SETTINGS.parameters
+        super().load_settings()
 
     @classmethod
     def validate(cls) -> None:
@@ -136,6 +143,7 @@ class XSDFile(File):
 
     def load_settings(self) -> None:
         self._PATH = self._PROJECT_SETTINGS.schema
+        super().load_settings()
 
 
 class FileBrowserPane(ttk.Frame):
