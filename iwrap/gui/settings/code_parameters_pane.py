@@ -60,8 +60,6 @@ class File:
         """
     _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
     _TITLE: str = "ANY"
-    _PATH: str = ""
-    PATH_VALID: bool = False
     _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
 
     @classmethod
@@ -74,8 +72,7 @@ class File:
         """Returns file title."""
         return cls._TITLE
 
-    @classmethod
-    def save_path(cls, path: str = ""):
+    def save_path(self, path: str = ""):
         """Checks that paths are correct, if yes stores it in class variable.
 
         Args:
@@ -84,11 +81,11 @@ class File:
         Note:
             Sets PATH_VALID (boolean) with check result.
         """
-        cls._PATH = path
+        self._PATH = path
         if path == "" or not isinstance(path, str):
-            cls.PATH_VALID = False
+            self.PATH_VALID = False
             return
-        cls.PATH_VALID = True
+        self.PATH_VALID = True
 
     @classmethod
     def get_path(cls):
