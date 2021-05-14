@@ -7,7 +7,7 @@ from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 class Table( ttk.Frame ):
     """The Table class enables the creation of tables made of columns and rows. Rows can contain text cells and
      radio buttons. Table class has methods that enable select clicked row, move this row up and down in the table
-    and delete the selected row. There is also possible to add and edit row using the sheet.
+    and delete the selected row. There is availability to add and edit row using the sheet.
 
     Attributes:
         frame (ScrollableFrame): The scrollable frame widget.
@@ -200,7 +200,7 @@ class Table( ttk.Frame ):
             new_window = ArgumentWindow(self)
             new_window.window.title("iWrap - Edit argument")
             new_window.set_row_values(selected_row_data)
-            tk.Button(new_window.footer, text='Edit', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
+            tk.Button(new_window.footer, text='Close', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
 
 
 class ArgumentWindow:
@@ -215,9 +215,8 @@ class ArgumentWindow:
         self.footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
         self.footer.pack(side=tk.BOTTOM, fill=tk.X)
         content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-        scrollable_frame = ScrollableFrame(content_frame)
 
-        self.labelframe = ttk.LabelFrame(scrollable_frame, text="Add new row")
+        self.labelframe = ttk.LabelFrame(content_frame, text="Add new row")
         self.labelframe.pack(fill=tk.BOTH, expand=0, padx=3, pady=3)
         self.labelframe.columnconfigure(1, weight=1)
         self.master = master
@@ -225,8 +224,8 @@ class ArgumentWindow:
         self.new_cells = []
         self._add_content()
 
-        tk.Button(self.footer, text='Close', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
-        scrollable_frame.update()
+        tk.Button(self.footer, text='Cancel', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
+        content_frame.update()
 
     def _add_content(self):
         radiobutton_combobox_cell_value = tk.StringVar()
