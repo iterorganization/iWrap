@@ -65,19 +65,36 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
                         Column(Column.RADIOBUTTON, "Output", "Intent"),
                         Column(Column.COMBOBOX, "Type", "Type", IDS)]
 
-        self.table = Table([], self.columns, table_frame)
-
         # BUTTONS
-        ttk.Button(buttons_frame_center, text="Add...", command=self.table.add_row, width=10)\
-            .pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Edit...", command=self.table.edit_row, width=10)\
-            .pack(side=tk.TOP, expand=1, pady=10)
-        ttk.Button(buttons_frame_center, text="Up", command=self.table.row_up_feature, width=10)\
-            .pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Down", command=self.table.row_down_feature, width=10)\
-            .pack(side=tk.TOP, expand=1)
-        ttk.Button(buttons_frame_center, text="Remove", command=self.table.delete_row, width=10)\
-            .pack(side=tk.TOP, expand=1, pady=10)
+        buttons = []
+        add_button = ttk.Button(buttons_frame_center, text="Add...", width=10)
+        add_button.pack(side=tk.TOP, expand=1)
+
+        edit_button = ttk.Button(buttons_frame_center, text="Edit...", state='disabled', width=10)
+        edit_button.pack(side=tk.TOP, expand=1, pady=10)
+        buttons.append(edit_button)
+
+        up_button = ttk.Button(buttons_frame_center, text="Up", state='disabled', width=10)
+        up_button.pack(side=tk.TOP, expand=1)
+        buttons.append(up_button)
+
+        down_button = ttk.Button(buttons_frame_center, text="Down", state='disabled', width=10)
+        down_button.pack(side=tk.TOP, expand=1)
+        buttons.append(down_button)
+
+        remove_button = ttk.Button(buttons_frame_center, text="Remove", state='disabled', width=10)
+        remove_button.pack(side=tk.TOP, expand=1, pady=10)
+        buttons.append(remove_button)
+
+        # TABLE
+        self.table = Table([], self.columns, table_frame, buttons)
+
+        # BIND BUTTONS WITH TABLE METHODS
+        add_button['command'] = self.table.add_row
+        edit_button['command'] = self.table.edit_row
+        up_button['command'] = self.table.row_up_feature
+        down_button['command'] = self.table.row_down_feature
+        remove_button['command'] = self.table.delete_row
 
     def reload(self):
         self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
