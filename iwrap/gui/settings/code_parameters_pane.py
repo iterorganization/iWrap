@@ -72,11 +72,11 @@ class File:
         return tuple((cls._EXTENSION, cls._TITLE))
 
     @classmethod
-    def get_title(cls):
+    def get_title(cls) -> str:
         """Returns file title."""
         return cls._TITLE
 
-    def save_path(self, path: str = ""):
+    def save_path(self, path: str = "") -> None:
         """Checks that path is correct, if yes saves to _PATH attribute.
 
         Args:
@@ -91,11 +91,11 @@ class File:
             return
         self.PATH_VALID = True
 
-    def get_path(self):
+    def get_path(self) -> str:
         """Returns stored file path string."""
         return self._PATH
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """Updates the code parameters fields in ProjectSettings().
         """
         pass
@@ -105,21 +105,20 @@ class File:
         """
         pass
 
+
 class XMLFile(File):
     """XML file type subclass."""
     _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
     _TITLE: str = "XML"
 
-    @classmethod
-    def update_settings(cls):
-        cls._PROJECT_SETTINGS.parameters = cls._PATH
+    def update_settings(self) -> None:
+        self._PROJECT_SETTINGS.parameters = self._PATH
+
+    def load_settings(self) -> None:
+        self._PATH = self._PROJECT_SETTINGS.parameters
 
     @classmethod
-    def load_settings(cls):
-        return cls._PROJECT_SETTINGS.parameters
-
-    @classmethod
-    def validate(cls):
+    def validate(cls) -> None:
         cls._PROJECT_SETTINGS.validate()
 
 
