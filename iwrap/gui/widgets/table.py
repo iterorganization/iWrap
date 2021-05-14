@@ -234,7 +234,7 @@ class ArgumentWindow:
             if column.column_type == Column.TEXT:
                 self._set_label(idx, column.label_var.get())
                 text_cell_value = tk.StringVar()
-                new_cell = tk.Entry(self.labelframe, textvariable=text_cell_value)
+                new_cell = ttk.Entry(self.labelframe, textvariable=text_cell_value)
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(text_cell_value)
 
@@ -259,7 +259,7 @@ class ArgumentWindow:
                 self.new_cells.append(radiobutton_combobox_cell_value)
 
     def _set_label(self, row, label):
-        tk.Label(self.labelframe, text=f"{label}:").grid(row=row, column=0, sticky="ew", padx=10, pady=5)
+        ttk.Label(self.labelframe, text=f"{label}:").grid(row=row, column=0, sticky="ew", padx=10, pady=5)
 
     def set_row_values(self, data):
         for idx, cell in enumerate(self.new_cells):
