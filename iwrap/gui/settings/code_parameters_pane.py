@@ -252,15 +252,22 @@ class XMLValidatorPane(ttk.Frame):
         button = ttk.Button(self, text='Validate', command=self.validation_callback)
         button.pack(side=tk.TOP)
 
+        # Initialize files to validate
+        self._xml_file = XMLFile()
+        self._xsd_file = XSDFile()
+
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
-    @staticmethod
-    def validation_callback():
+    def validation_callback(self):
         """Callback method to perform the complete validation process."""
 
+        # Loads the most current ProjectSettings() paths.
+        self._xml_file.load_settings()
+        self._xsd_file.load_settings()
+
         # Check that the specified file paths are correct.
-        if not (XMLFile.PATH_VALID and XSDFile.PATH_VALID):
+        if not (self._xml_file.PATH_VALID and self._xsd_file.PATH_VALID):
             messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
             return
 
