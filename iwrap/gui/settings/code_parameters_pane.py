@@ -176,7 +176,7 @@ class FileBrowserPane(ttk.Frame):
         # Specify the file type
         self.file_type: tuple
         self.file_type_title: str
-        self.file_type, self.file_type_title = self.file_class.info()
+        self.file_type, self.file_type_title = file_class.info()
 
         # A label above widget
         ttk.Label(self, text=label_text).pack(side=tk.TOP, anchor=tk.SW, expand=True)
