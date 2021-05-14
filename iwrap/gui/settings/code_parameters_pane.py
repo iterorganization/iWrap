@@ -105,11 +105,6 @@ class File:
         """
         pass
 
-    @classmethod
-    def fetch_settings(cls):
-        cls._PATH = cls.load_settings()
-
-
 class XMLFile(File):
     """XML file type subclass."""
     _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
