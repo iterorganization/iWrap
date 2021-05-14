@@ -43,10 +43,14 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         self.configure(padding=(0, 20, 0, 0))
 
     def update_settings(self):
+        """Force an update of ProjectSettings from FileBrowserPanes.
+        """
         self.xml_browser.update_settings()
         self.xsd_browser.update_settings()
 
     def reload(self):
+        """Calls FileBrowserPanes method to reload content.
+        """
         self.xml_browser.reload()
         self.xsd_browser.reload()
 
@@ -54,8 +58,9 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 class File:
     """General file type class for not specified file extension.
 
-        Variables:
-            PATH_VALID (bool): Path correctness info.
+        Attributes:
+            PATH_VALID (bool): Indicates whether the file path has a valid construction.
+
 
         """
     _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
@@ -63,6 +68,8 @@ class File:
     _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
 
     def __init__(self) -> None:
+        """Initialize file extension object.
+        """
         self._PATH: str = ""
         self.PATH_VALID: bool = False
 
@@ -97,6 +104,13 @@ class File:
         return self._PATH
 
     def is_path_correct(self) -> bool:
+        """Checks that the file path is constructed correctly and is a string type.
+
+        Returns: Bool
+
+        Notes:
+            Sets PATH_VALID attribute.
+        """
         if self._PATH == "" or not isinstance(self._PATH, str):
             # Set the path validity flag to False
             self.PATH_VALID = False
@@ -130,6 +144,8 @@ class XMLFile(File):
 
     @classmethod
     def validate(cls) -> None:
+        """Invokes XML validation method from ProjectSettings().
+        """
         cls._PROJECT_SETTINGS.validate()
 
 
@@ -153,7 +169,7 @@ class FileBrowserPane(ttk.Frame):
     as well as combinations of some or all of them.
 
     Attributes:
-        file_class (File): File type class reference.
+        file (File): File type object.
         file_type (tuple): Formatted parameter for filedialog filetype.
         file_type_title (str): Formatted parameter for filedialog title.
         path (tk.StringVar): Value holder for path string.
@@ -228,10 +244,14 @@ class FileBrowserPane(ttk.Frame):
         self.reload()
 
     def update_settings(self):
+        """To update, ProjectSettings () reads the path from the widget and writes to the file object.
+        """
         self.file.save_path(self.path.get())
         self.file.update_settings()
 
     def reload(self):
+        """Load the path from ProjectSettings and set it on the widget.
+        """
         # Load the path
         self.file.load_settings()
 
