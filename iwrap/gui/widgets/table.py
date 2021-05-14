@@ -55,6 +55,7 @@ class Table( ttk.Frame ):
             del row
         self.rows = []
         self.selected_row = None
+        self.change_listeners_state()
 
     def get_data_from_table(self):
         """Returns table with dictionaries contains data from all rows in the table.
