@@ -84,12 +84,16 @@ class File:
 
         Note:
             Sets PATH_VALID (boolean) with check result.
+            Updates ProjectSettings()
         """
         self._PATH = path
         if path == "" or not isinstance(path, str):
             self.PATH_VALID = False
             return
+        # Set the path validity flag to True
         self.PATH_VALID = True
+        # Perform ProjectSettings() update
+        self.update_settings()
 
     def get_path(self) -> str:
         """Returns stored file path string."""
