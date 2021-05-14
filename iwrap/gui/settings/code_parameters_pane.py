@@ -62,6 +62,10 @@ class File:
     _TITLE: str = "ANY"
     _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
 
+    def __init__(self) -> None:
+        self._PATH: str = ""
+        self.PATH_VALID: bool = False
+
     @classmethod
     def info(cls) -> Tuple:
         """Returns a tuple with file extension matching browser format and file title."""
@@ -73,7 +77,7 @@ class File:
         return cls._TITLE
 
     def save_path(self, path: str = ""):
-        """Checks that paths are correct, if yes stores it in class variable.
+        """Checks that path is correct, if yes saves to _PATH attribute.
 
         Args:
             path (str, optional): A path string to be stored.
@@ -87,22 +91,17 @@ class File:
             return
         self.PATH_VALID = True
 
-    @classmethod
-    def get_path(cls):
+    def get_path(self):
         """Returns stored file path string."""
-        return cls._PATH
+        return self._PATH
 
-    @classmethod
-    def update_settings(cls):
+    def update_settings(self):
         """Updates the code parameters fields in ProjectSettings().
-        Applies to the parameters file and the schema file.
         """
         pass
 
-    @classmethod
-    def load_settings(cls) -> str:
+    def load_settings(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to PATH variable.
-        Applies to the parameters file and the schema file.
         """
         pass
 
