@@ -127,13 +127,11 @@ class XSDFile(File):
     _EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
     _TITLE: str = "XSD"
 
-    @classmethod
-    def update_settings(cls):
-        cls._PROJECT_SETTINGS.schema = cls._PATH
+    def update_settings(self) -> None:
+        self._PROJECT_SETTINGS.schema = self._PATH
 
-    @classmethod
-    def load_settings(cls):
-        return cls._PROJECT_SETTINGS.schema
+    def load_settings(self) -> None:
+        self._PATH = self._PROJECT_SETTINGS.schema
 
 
 class FileBrowserPane(ttk.Frame):
