@@ -259,13 +259,26 @@ class ArgumentWindow:
                 self.new_cells.append(radiobutton_combobox_cell_value)
 
     def _set_label(self, row, label):
+        """Set labels in the grid.
+
+        Args:
+            row (int): The row number to put Label in.
+            label (string): The text to put to the Label.
+        """
         ttk.Label(self.labelframe, text=f"{label}:").grid(row=row, column=0, sticky="ew", padx=10, pady=5)
 
     def set_row_values(self, data):
+        """Set row values in the edit sheet.
+
+        Args:
+            data (list): List of string values from row.
+        """
         for idx, cell in enumerate(self.new_cells):
             cell.set(data[idx])
 
     def add_new_row(self):
+        """Add new row to the table.
+        """
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
             new_row_data.append(cell.get())
@@ -273,6 +286,8 @@ class ArgumentWindow:
         self._close_add_window()
 
     def edit_row(self):
+        """Edit selected row with values from the edit sheet.
+        """
         for row in self.master.rows:
             if row.row_number == self.master.selected_row:
                 for idx, row_cell in enumerate(row.row_cells):
@@ -283,6 +298,8 @@ class ArgumentWindow:
         self._close_add_window()
 
     def _close_add_window(self):
+        """Close window.
+        """
         self.window.destroy()
 
 
