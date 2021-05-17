@@ -39,7 +39,7 @@ class PhysicsIIBinder:
         logger_physics_ii = logging.getLogger('binding')
         logger_physics_ii.setLevel(logging.ERROR)
     
-        lib_location = os.path.dirname(os.path.realpath(__file__)) + '/../../fortran_wrapper/lib/libphysics_ii.so'
+        lib_location = os.path.dirname(os.path.realpath(__file__)) + '/../../wrapper/lib/libphysics_ii.so'
     
     
         _libactor_def = ctypes.CDLL( lib_location )
