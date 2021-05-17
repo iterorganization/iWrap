@@ -103,8 +103,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         self.table = Table([], self.columns, table_frame, buttons)
 
         # BIND BUTTONS WITH TABLE METHODS
-        add_button['command'] = self.table.add_row
-        edit_button['command'] = self.table.edit_row
+        add_button['command'] = lambda: self.table.add_row("argument")
+        edit_button['command'] = lambda: self.table.edit_row("argument")
         up_button['command'] = self.table.row_up_feature
         down_button['command'] = self.table.row_down_feature
         remove_button['command'] = self.table.delete_row
