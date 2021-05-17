@@ -17,8 +17,10 @@ class Parameters :
 
     def _read_file(self, file_name):
         file_path = self._code_parameters_dir + file_name
-        file_str = open(file_path, 'r').read()
+        file = open(file_path, 'r')
+        file_str = file.read()
         file_str = str(file_str).encode('utf-8')
+        file.close()
         return file_str
 
 
