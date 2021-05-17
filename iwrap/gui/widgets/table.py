@@ -215,17 +215,24 @@ class Table( ttk.Frame ):
             self._move_row_up(bottom_row)
             self.rows.sort(key=lambda x: x.row_number, reverse=False)
 
-    def add_row(self):
+    def add_row(self, frame_title):
         """Enable add a new row. The method creates an ArgumentWindow object what is associated with opening
          a new window with add row sheet.
+
+         Args:
+             frame_title (str): The frame title.
         """
         new_window = ArgumentWindow(self)
-        new_window.window.title("iWrap - Add new argument")
+        new_window.window.title(f"iWrap - Add new {frame_title}")
+        new_window.labelframe['text'] = f"Add new {frame_title}"
         tk.Button(new_window.footer, text='Add', command=new_window.add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
 
-    def edit_row(self):
-        """Enable edit selected row. The method creates an ArgumentWindow object what is associated with opening
-         a new window with a row editor.
+    def edit_row(self, frame_title):
+        """Enable edit selected row. The method creates an ArgumentWindow object what is associated with opening a new
+        window with a row editor.
+
+        Args:
+             frame_title (str): The frame title.
         """
         selected_row_data = []
         if self.get_selected_row():
@@ -238,7 +245,8 @@ class Table( ttk.Frame ):
                             selected_row_data.append(row_cell.row_text.get())
 
             new_window = ArgumentWindow(self)
-            new_window.window.title("iWrap - Edit argument")
+            new_window.window.title(f"iWrap - Edit {frame_title}")
+            new_window.labelframe['text'] = f"Edit {frame_title}"
             new_window.set_row_values(selected_row_data)
             tk.Button(new_window.footer, text='Close', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
 
@@ -272,7 +280,7 @@ class ArgumentWindow:
         self.footer.pack(side=tk.BOTTOM, fill=tk.X)
         content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-        self.labelframe = ttk.LabelFrame(content_frame, text="Add new row")
+        self.labelframe = ttk.LabelFrame(content_frame)
         self.labelframe.pack(fill=tk.BOTH, expand=0, padx=3, pady=3)
         self.labelframe.columnconfigure(1, weight=1)
         self.master = master
