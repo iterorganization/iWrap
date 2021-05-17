@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
@@ -8,14 +9,26 @@ from iwrap.settings.project import ProjectSettings
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
+    """The ArgumentsPane contains a combobox with values from available data types and a table with arguments. The buttons
+    on the right side of the table allow to add a new row, modify the selected row, move the row up or down, and delete
+    the selected row. The table is automatically filled with the argument values from the ProjectSettings.
+
+    Attributes:
+        arguments_settings ([dict]): The list of arguments from the ProjectSettings.
+        columns ([Column]): The list of the Column class objects.
+        data_type (string): The data type value from the ProjectSettings.
+        table (Table): The table widget.
+        data_type_combobox (ttk.Combobox): The data type combobox.
+    """
     def __init__(self, master=None):
-        """
-        Todo:
-            * List of IDSes should be loaded dynamically from IMAS
+        """Initialize the ArgumentsPane class object.
+
+        Args:
+            master (ttk.Frame, None): The master frame.
         """
         super().__init__( master )
-
         self.arguments_settings = None
+        self.data_type = None
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Arguments", borderwidth=2, relief="groove")
@@ -26,10 +39,9 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         combobox_frame.pack(fill=tk.X, side=tk.TOP, pady=5)
 
         # COMBOBOX
-        self.combobox_values = ['IDS', 'HDC']
         ttk.Label(combobox_frame, text="Data type:").pack(fill=tk.X, side=tk.LEFT, padx=10)
         self.data_type_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.data_type_combobox['values'] = self.combobox_values
+        self.data_type_combobox['values'] = ['IDS', 'HDC']
         self.data_type_combobox.current(0)
         self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
 
@@ -48,6 +60,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TABLE
+        # Todo: List of IDSes should be loaded dynamically from IMAS
         IDS = ["bremsstrahlung_visible", "calorimetry", "camera_ir", "camera_visible", "charge_exchange",
                 "coils_non_axisymmetric", "controllers", "core_instant_changes", "core_profiles", "core_sources",
                 "core_transport", "cryostat", "dataset_description", "dataset_fair", "disruption",
@@ -97,14 +110,33 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         remove_button['command'] = self.table.delete_row
 
     def reload(self):
+        """Reload arguments settings and data type from the ProjectSettings, add arguments to the table. If data type
+        from the ProjectSettings is not available in combobox warning message box will be shown and the default value
+        of data type will be selected in combobox.
+        """
         self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
+        self.data_type = ProjectSettings.get_settings().code_description.data_type
+
         self.set_data_to_table()
+        self.data_type_combobox.set(self.data_type)
+
+        if self.data_type not in self.data_type_combobox['values']:
+            self.data_type_combobox.current(0)
+            messagebox.showwarning("Warning", f"Unknown data type. "
+                                              f"The data type set to "
+                                              f"{self.data_type_combobox.get()}.")
 
     def update_settings(self):
+        """Update arguments and data type in the ProjectSettings.
+        """
         arguments = self.get_data_from_table()
+        data_type = self.data_type_combobox.get()
         ProjectSettings.get_settings().code_description.arguments = arguments
+        ProjectSettings.get_settings().code_description.data_type = data_type
 
     def set_data_to_table(self):
+        """Set data from arguments settings to the table.
+        """
         table_data = []
         intent = {"IN": "Input", "OUT": "Output"}
         for argument in self.arguments_settings:
@@ -114,6 +146,10 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         self.table.add_new_table(table_data, self.columns)
 
     def get_data_from_table(self):
+        """Return data from table.
+
+        Returns: The list of data from each row from the table.
+        """
         table_data = self.table.get_data_from_table()
         intent = {"Input": "IN", "Output": "OUT"}
         arguments = []
