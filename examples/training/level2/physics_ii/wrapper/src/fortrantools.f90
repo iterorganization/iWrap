@@ -7,8 +7,6 @@ use iso_c_binding
     type, BIND(C)::code_parameters_t
         type(C_PTR) :: params 
         integer     :: params_size
-        type(C_PTR) :: def_params 
-        integer     :: def_params_size
         type(C_PTR) :: schema 
         integer     :: schema_size
     end type
@@ -70,8 +68,8 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     endif
     
     !get xsd
-    c_str_ptr = code_params.def_params
-    string_size = code_params.def_params_size
+    c_str_ptr = code_params.schema
+    string_size = code_params.schema_size
     iloopmax=string_size/132
     if (mod(string_size,132)/=0) then
     iloopmax = iloopmax + 1
@@ -85,9 +83,9 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     xmllib_code_params%schema(iloopmax)(mod(string_size,132)+1:132) = ' '
     endif
     
-    !get default xml
-    c_str_ptr = code_params.schema
-    string_size = code_params.schema_size
+    !get schema
+    c_str_ptr = code_params.params
+    string_size = code_params.params_size
     iloopmax=string_size/132
     if (mod(string_size,132)/=0) then
     iloopmax = iloopmax + 1
