@@ -41,7 +41,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         # COMBOBOX
         ttk.Label(combobox_frame, text="Data type:").pack(fill=tk.X, side=tk.LEFT, padx=10)
         self.data_type_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.data_type_combobox['values'] = ['legacy', 'HDC']
+        self.data_type_combobox['values'] = ['legacy', 'hdc']
         self.data_type_combobox.current(0)
         self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
 
