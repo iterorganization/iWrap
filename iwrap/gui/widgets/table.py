@@ -59,6 +59,9 @@ class Table( ttk.Frame ):
         self.columns = columns
         self._add_columns()
         self.add_rows(rows)
+        # select first row
+        if len(self.rows):
+            self.select_row(self.rows[0])
 
     def delete_data_from_table(self):
         """Delete all data from rows in the table.
