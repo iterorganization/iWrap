@@ -272,6 +272,7 @@ class ArgumentWindow:
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
         self.window.geometry('500x200')
+        self.window.resizable(width=False, height=True)
         self.window.focus_force()
         self.window.grab_set()
 
