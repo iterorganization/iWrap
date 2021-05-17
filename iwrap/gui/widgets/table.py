@@ -484,7 +484,8 @@ class RowEntry:
         self.column_number = column
         self.row_text = tk.StringVar()
         self.row_text.set(text)
-        self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=6)
+        self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=6,
+                             relief=tk.FLAT, highlightthickness=0)
         self.cell.grid(row=row, column=column, sticky="ew")
 
     def change_color_to_lightgray(self):
