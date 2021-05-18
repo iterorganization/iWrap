@@ -197,8 +197,8 @@ class CustomLibrariesPane:
 
 class FeaturesPane:
     def __init__(self, master=None):
-        self.settings = master.settings
         master_frame = master.feature_lib_tab
+        self.settings = master.settings
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(master_frame, text="Computation", borderwidth=2, relief="groove")
@@ -207,7 +207,7 @@ class FeaturesPane:
         # COMBOBOX MPI Flavour
         ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.mpi_flavour_combobox['values'] = ["MPICH", "OpenMPI"]
+        self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI"]
         self.mpi_flavour_combobox.current(0)
         self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
@@ -219,10 +219,16 @@ class FeaturesPane:
         self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
-        self.settings = FortranSpecificSettings()
+        dict_settings = ProjectSettings.get_settings().code_description.language_specific
+        if dict_settings is None:
+            self.settings.clear()
+        else:
+            self.settings.from_dict(dict_settings)
+
         self.mpi_flavour_combobox.set(self.settings.mpi)
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
 
     def update_settings(self):
         ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific['open_mp'] = self.open_mpi_combobox.get()
+        open_mpi = True if self.open_mpi_combobox.get() == 'yes' else False
+        ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
