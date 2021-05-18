@@ -1,7 +1,7 @@
 ---
 programming_language: Fortran
 code_name: demo_code
-data_type: IDS
+data_type: legacy
 arguments:
 -   name: equilibrium00
     type: equilibrium
