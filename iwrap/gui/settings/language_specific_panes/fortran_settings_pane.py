@@ -96,7 +96,7 @@ class SystemLibrariesPane:
                         Column(Column.TEXT, "Description", "Description")]
 
         # BUTTONS
-        add_button = ttk.Button(buttons_center_frame, text="Add", width=10)
+        add_button = ttk.Button(buttons_center_frame, text="Add...", width=10)
         add_button.pack(side=tk.TOP, expand=1, pady=5)
         # ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
         remove_button = ttk.Button(buttons_center_frame, text="Remove", width=10)
