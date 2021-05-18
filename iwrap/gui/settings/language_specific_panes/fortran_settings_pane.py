@@ -68,8 +68,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.custom_libraries_pane.reload()
 
     def update_settings(self):
-        dict_settings = self.settings.to_dict()
-        ProjectSettings.get_settings().code_description.language_specific = dict_settings
+        compiler = self.compiler_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific['compiler'] = compiler
+        self.feature_pane.update_settings()
+        self.system_libraries_pane.update_settings()
+        self.custom_libraries_pane.update_settings()
 
 
 class SystemLibrariesPane:
@@ -92,14 +95,16 @@ class SystemLibrariesPane:
                         Column(Column.TEXT, "Info", "Info"),
                         Column(Column.TEXT, "Description", "Description")]
 
-        self.table = Table([], self.columns, self.tree_view_frame)
-
         # BUTTONS
-        ttk.Button(buttons_center_frame, text="Add", command=lambda: self.table.add_row("system library"), width=10)\
-            .pack(side=tk.TOP, expand=1, pady=5)
+        add_button = ttk.Button(buttons_center_frame, text="Add", width=10)
+        add_button.pack(side=tk.TOP, expand=1, pady=5)
         # ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Remove", command=self.table.delete_row, width=10)\
-            .pack(side=tk.TOP, expand=1, pady=5)
+        remove_button = ttk.Button(buttons_center_frame, text="Remove", width=10)
+        remove_button.pack(side=tk.TOP, expand=1, pady=5)
+
+        self.table = Table([], self.columns, self.tree_view_frame, [remove_button])
+        add_button['command'] = lambda: self.table.add_row("system library")
+        remove_button['command'] = self.table.delete_row
 
     def add_table_data(self):
         data = []
@@ -186,8 +191,8 @@ class CustomLibrariesPane:
         self.add_custom_lib_from_settings()
 
     def update_settings(self):
-        dict_settings = self.settings.to_dict()
-        ProjectSettings.get_settings().code_description.language_specific = dict_settings
+        custom_libraries = list(self.listbox.get(0, tk.END))
+        ProjectSettings.get_settings().code_description.language_specific['custom_libraries'] = custom_libraries
 
 
 class FeaturesPane:
@@ -219,4 +224,5 @@ class FeaturesPane:
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
 
     def update_settings(self):
-        pass
+        ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific['open_mp'] = self.open_mpi_combobox.get()
