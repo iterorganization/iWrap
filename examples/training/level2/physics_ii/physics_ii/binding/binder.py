@@ -7,7 +7,7 @@ import imas
 from physics_ii.parameters import Parameters
 
 from .data_type import IDSData
-from .data_c_binding import ParametersCType
+from .data_c_binding import ParametersCType, StatusCType
 
 
 class PhysicsIIBinder:
@@ -87,59 +87,17 @@ class PhysicsIIBinder:
         arg = {}
         arg['cval'] = ParametersCType(codeparams)
         arg['cref'] = ctypes.byref(arg['cval'])
-        arg['in'] = True
-        arg['out'] =  False
         arguments_dict['codeparams'] = arg
         arguments_order.append('codeparams')
-        
-
         # End:  Code Params 
                 
         # DIAGNOSTIC INFO
-        # outputFlag
         arg = {}
-        
-        ptrOutputFlag = ctypes.c_int()
-        arg["fc2k_array"] = False
-        arg['cval'] = ptrOutputFlag 
+        status_info = StatusCType()
+        arg['cval'] = status_info
         arg['cref'] = ctypes.byref(arg['cval'])
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['outputFlag'] = arg
-        arguments_order.append('outputFlag')
-    
-        # diagnosticInfo_size -> auxiliary variable for C 
-        arg = {}
-        ptrDiagnosticInfo_size = ctypes.c_int()
-        arg["fc2k_array"] = False
-        arg['cval'] = ptrDiagnosticInfo_size
-        arg['cref'] = ctypes.byref(arg['cval'])
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['diagnosticInfo_size'] = arg
-        arguments_order.append('diagnosticInfo_size')
-        
-        # diagnosticInfo
-        arg = {}
-        
-        ptrDiagnosticInfo = ctypes.c_char_p()
-        arg["fc2k_array"] = True
-        # we don't support unicode --> encode
-        arg['cval'] = ptrDiagnosticInfo            # char*
-        arg['cref'] = ctypes.byref(arg['cval'])    # char**
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['diagnosticInfo'] = arg
-        arguments_order.append('diagnosticInfo')
+        arguments_dict['status'] = arg
+        arguments_order.append('status')
     
         # end DIAGNOSTIC INFO
     
@@ -151,17 +109,17 @@ class PhysicsIIBinder:
     
     
         # Checking returned DIAGNOSTIC INFO
-        diagnosticInfo_size = ptrDiagnosticInfo_size.value
-        outputFlag = ptrOutputFlag.value
-        diagnosticInfo = ptrDiagnosticInfo.value
+        status_code = status_info.code
+        status_msg_size = status_info.message_size
+        status_msg = status_info.message
     
-        if diagnosticInfo_size < 1:
+        if status_msg_size < 1:
             diagnosticInfo = "<No diagnostic message>"
             
-        if outputFlag < 0:
-            raise Exception("Actor *** 'binding' *** returned an error (" + str(outputFlag) + "): '" + diagnosticInfo.decode('utf-8') + "'")
-        if outputFlag > 0:
-                logger_physics_ii.warning("Actor * 'binding' * returned diagnostic info: \n     Output flag:      ", outputFlag, "\n     Diagnostic info: ", diagnosticInfo.decode('utf-8'))
+        if status_code < 0:
+            raise Exception("Actor *** 'binding' *** returned an error (" + str(status_code) + "): '" + status_msg + "'")
+        if status_code > 0:
+                logger_physics_ii.warning("Actor * 'binding' * returned diagnostic info: \n     Output flag:      ", status_code, "\n     Diagnostic info: ", status_msg)
     
         # end DIAGNOSTIC INFO
     

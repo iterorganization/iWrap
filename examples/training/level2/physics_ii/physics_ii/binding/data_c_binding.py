@@ -3,9 +3,33 @@ import ctypes
 from physics_ii.parameters import Parameters
 
 
+# # # # # # # #
+class StatusCType( ctypes.Structure ):
+    '''IDSRef reference structure'''
+    _fields_ = (("_code", ctypes.c_int),
+                ("_message", ctypes.c_char_p),
+                ("_message_size", ctypes.c_int),
+                )
+
+    @property
+    def code(self):
+        return self._code
+
+    @property
+    def message_size(self):
+        return self._message_size
+
+    @property
+    def message(self):
+        return self._message.decode('utf-8')
+
+    def __init__(self):
+        pass
 
 
-# # # # IDSRef internal class # # # #
+
+
+# # # # # # # #
 class ParametersCType( ctypes.Structure ):
     '''IDSRef reference structure'''
     _fields_ = (("params_", ctypes.c_char_p),

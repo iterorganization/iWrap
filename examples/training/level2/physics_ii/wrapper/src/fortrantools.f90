@@ -13,6 +13,16 @@ use iso_c_binding
 end module
 !--------------------------------------------------
 
+!--------------------------------------------------
+module status_module
+use iso_c_binding
+    type, BIND(C)::status_t
+        integer     :: code
+        type(C_PTR) :: message
+        integer     :: message_size
+    end type
+end module
+
 
 module iwrap_tools
 implicit none 
