@@ -3,6 +3,8 @@ from tkinter import ttk
 import tkinter.filedialog
 
 from iwrap.gui.generics import IWrapPane
+from iwrap.gui.widgets.table import Table
+from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 from iwrap.settings.project import ProjectSettings
 
@@ -85,28 +87,34 @@ class SystemLibrariesPane:
         buttons_center_frame = ttk.Frame(buttons_frame)
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
-        # TREE VIEW
-        self.columns = ['Name', 'Info', 'Description']
-        self.tree_view_data = []
-        self.tree = ttk.Treeview(self.tree_view_frame)
-        self.tree['show'] = 'headings'
-        self.tree["columns"] = list(range(0, len(self.columns)))
-        self.tree_view_insert_column()
-        self.add_tree_view_data()
+        # TABLE
+        self.columns = [Column(Column.TEXT, "Name", "Name"),
+                        Column(Column.TEXT, "Info", "Info"),
+                        Column(Column.TEXT, "Description", "Description")]
+
+        self.table = Table([], self.columns, self.tree_view_frame)
 
         # BUTTONS
-        ttk.Button(buttons_center_frame, text="Add", width=10).pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Remove", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Add", command=lambda: self.table.add_row("system library"), width=10)\
+            .pack(side=tk.TOP, expand=1, pady=5)
+        # ttk.Button(buttons_center_frame, text="Info", width=10).pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(buttons_center_frame, text="Remove", command=self.table.delete_row, width=10)\
+            .pack(side=tk.TOP, expand=1, pady=5)
 
-    def prepare_tree_view_data(self):
+    def add_table_data(self):
+        data = []
         for sys_lib in self.settings.system_libraries:
-            self.tree_view_data.append((sys_lib, 'example_info', 'example_description'))
+            data.append([sys_lib, 'example_info', 'example_description'])
 
-    def add_tree_view_data(self):
-        self.prepare_tree_view_data()
-        self.tree_view_insert_data()
-        self.tree.pack(fill=tk.BOTH)
+        self.table.add_new_table(data, self.columns)
+
+    def get_data_from_table(self):
+        system_libraries = self.table.get_data_from_table()
+        libraries_name = []
+        for system_library in system_libraries:
+            libraries_name.append(system_library['Name'])
+
+        return libraries_name
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
@@ -115,27 +123,11 @@ class SystemLibrariesPane:
         else:
             self.settings.from_dict(dict_settings)
 
-        self.add_tree_view_data()
+        self.add_table_data()
 
     def update_settings(self):
-        dict_settings = self.settings.to_dict()
-        ProjectSettings.get_settings().code_description.language_specific = dict_settings
-
-    def tree_view_insert_data(self):
-        for idx, data in enumerate(self.tree_view_data):
-            if idx % 2 == 0:
-                self.tree.insert("", "end", values=data, tag='gray')
-            else:
-                self.tree.insert("", "end", values=data)
-        self.tree.tag_configure('gray', background='#F1F2F2')
-
-    def tree_view_insert_column(self):
-        for idx, column in enumerate(self.columns):
-            if column == 'Description':
-                self.tree.column(idx, anchor="center")
-            else:
-                self.tree.column(idx, anchor="center", width=120, stretch=tk.NO)
-            self.tree.heading(idx, text=column)
+        libraries_name = self.get_data_from_table()
+        ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = libraries_name
 
 
 class CustomLibrariesPane:
