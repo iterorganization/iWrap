@@ -72,15 +72,16 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
 
-    def change_language_pane(self, eventObject=None):
+    def change_language_pane(self, event=None):
         """Update specific language pane when programming language in combobox is changed.
 
         Args:
-            eventObject: Combobox change value event object. Default to None.
+            event: Combobox change value event object. Default to None.
         """
-        self.selected_programming_language.set(self.programming_language_combobox.get())
-        self.language_pane.pack_forget()
-        self.add_language_pane()
+        if self.selected_programming_language.get() != self.programming_language_combobox.get():
+            self.selected_programming_language.set(self.programming_language_combobox.get())
+            self.language_pane.pack_forget()
+            self.add_language_pane()
 
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
