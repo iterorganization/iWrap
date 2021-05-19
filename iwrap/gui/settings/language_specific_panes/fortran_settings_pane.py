@@ -32,6 +32,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_combobox.current(0)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
+        # ttk.Button(combobox_frame, text="tmp", command=self.tmp, width=10).grid()
+
         # TABS FRAME
         tab_frame = ttk.Frame(labelframe)
         tab_frame.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
@@ -49,6 +51,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.feature_pane = FeaturesPane(self)
         self.system_libraries_pane = SystemLibrariesPane(self)
         self.custom_libraries_pane = CustomLibrariesPane(self)
+
+    def tmp(self):
+        print(ProjectSettings.get_settings().code_description.language_specific)
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
@@ -163,6 +168,7 @@ class CustomLibrariesPane:
         self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw', expand=1)
 
     def add_custom_lib_from_settings(self):
+        self.listbox.delete(0, tk.END)
         for cus_lib in self.settings.custom_libraries:
             self.listbox.insert(tk.END, cus_lib)
 
@@ -192,7 +198,20 @@ class CustomLibrariesPane:
 
 
 class FeaturesPane:
+    """The FeaturesPane contains two Combobox widgets and enables the selection of MPI Flavour and OpenMPI.
+
+    Attributes:
+        settings (FortranSpecificSettings): The project settings for fortran language pane.
+        mpi_flavour_combobox (ttk.Combobox): The combobox contains mpi flavour values.
+        open_mpi_combobox (ttk.Combobox): The combobox contains open mpi values.
+    """
+
     def __init__(self, master=None):
+        """Initialize the FeaturesPane object.
+
+        Args:
+            master (FortranPane): The master frame.
+        """
         master_frame = master.feature_lib_tab
         self.settings = master.settings
 
@@ -215,6 +234,8 @@ class FeaturesPane:
         self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
+        """Reload open_mpi and mpi values from the ProjectSettings and set them to the Combobox widgets.
+        """
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
         if dict_settings is None:
             self.settings.clear()
@@ -225,6 +246,8 @@ class FeaturesPane:
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
 
     def update_settings(self):
+        """Update open_mpi and mpi values in the ProjectSettings.
+        """
         ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
         open_mpi = True if self.open_mpi_combobox.get() == 'yes' else False
         ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
