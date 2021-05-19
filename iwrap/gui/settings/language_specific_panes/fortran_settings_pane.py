@@ -30,7 +30,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
         self.compiler_combobox['values'] = self.combobox_values
         self.compiler_combobox.current(0)
-        self.compiler_combobox.bind("<<ComboboxSelected>>", self.update_compiler)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
@@ -50,9 +49,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.feature_pane = FeaturesPane(self)
         self.system_libraries_pane = SystemLibrariesPane(self)
         self.custom_libraries_pane = CustomLibrariesPane(self)
-
-    def update_compiler(self, eventObject=None):
-        self.settings.compiler = self.compiler_combobox.get()
 
     def reload(self):
         dict_settings = ProjectSettings.get_settings().code_description.language_specific
