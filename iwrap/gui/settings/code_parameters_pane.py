@@ -59,7 +59,7 @@ class File:
     """General file type class for not specified file extension.
 
         Attributes:
-            PATH_VALID (bool): Indicates whether the file path has a valid construction.
+            path_valid (bool): Indicates whether the file path has a valid construction.
 
 
         """
@@ -71,7 +71,7 @@ class File:
         """Initialize file extension object.
         """
         self._path: str = ""
-        self.PATH_VALID: bool = False
+        self.path_valid: bool = False
 
     @classmethod
     def info(cls) -> Tuple:
@@ -90,7 +90,7 @@ class File:
             path (str, optional): A path string to be stored.
 
         Note:
-            Sets PATH_VALID (boolean) with check result.
+            Sets path_valid (boolean) with check result.
             Updates ProjectSettings()
         """
         self._path = path
@@ -109,14 +109,14 @@ class File:
         Returns: Bool
 
         Notes:
-            Sets PATH_VALID attribute.
+            Sets path_valid attribute.
         """
         if self._path == "" or not isinstance(self._path, str):
             # Set the path validity flag to False
-            self.PATH_VALID = False
+            self.path_valid = False
             return False
         # Set the path validity flag to True
-        self.PATH_VALID = True
+        self.path_valid = True
         return True
 
     def update_settings(self) -> None:
@@ -297,7 +297,7 @@ class XMLValidatorPane(ttk.Frame):
         self._xsd_file.load_settings()
 
         # Check that the specified file paths are correct.
-        if not (self._xml_file.PATH_VALID and self._xsd_file.PATH_VALID):
+        if not (self._xml_file.path_valid and self._xsd_file.path_valid):
             messagebox.showerror("WARNING! - Validation Error", f"Validation aborted:\n-INCORRECT PATH-")
             return
 
