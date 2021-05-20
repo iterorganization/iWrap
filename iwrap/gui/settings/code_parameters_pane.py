@@ -70,7 +70,7 @@ class File:
     def __init__(self) -> None:
         """Initialize file extension object.
         """
-        self._PATH: str = ""
+        self._path: str = ""
         self.PATH_VALID: bool = False
 
     @classmethod
@@ -84,7 +84,7 @@ class File:
         return cls._TITLE
 
     def save_path(self, path: str = "") -> None:
-        """Checks that path is correct, if yes saves to _PATH attribute.
+        """Checks that path is correct, if yes saves to _path attribute.
 
         Args:
             path (str, optional): A path string to be stored.
@@ -93,7 +93,7 @@ class File:
             Sets PATH_VALID (boolean) with check result.
             Updates ProjectSettings()
         """
-        self._PATH = path
+        self._path = path
         if not self.is_path_correct():
             return
         # Perform ProjectSettings() update
@@ -101,7 +101,7 @@ class File:
 
     def get_path(self) -> str:
         """Returns stored file path string."""
-        return self._PATH
+        return self._path
 
     def is_path_correct(self) -> bool:
         """Checks that the file path is constructed correctly and is a string type.
@@ -111,7 +111,7 @@ class File:
         Notes:
             Sets PATH_VALID attribute.
         """
-        if self._PATH == "" or not isinstance(self._PATH, str):
+        if self._path == "" or not isinstance(self._path, str):
             # Set the path validity flag to False
             self.PATH_VALID = False
             return False
@@ -136,10 +136,10 @@ class XMLFile(File):
     _TITLE: str = "XML"
 
     def update_settings(self) -> None:
-        self._PROJECT_SETTINGS.parameters = self._PATH
+        self._PROJECT_SETTINGS.parameters = self._path
 
     def load_settings(self) -> None:
-        self._PATH = self._PROJECT_SETTINGS.parameters
+        self._path = self._PROJECT_SETTINGS.parameters
         super().load_settings()
 
     @classmethod
@@ -155,10 +155,10 @@ class XSDFile(File):
     _TITLE: str = "XSD"
 
     def update_settings(self) -> None:
-        self._PROJECT_SETTINGS.schema = self._PATH
+        self._PROJECT_SETTINGS.schema = self._path
 
     def load_settings(self) -> None:
-        self._PATH = self._PROJECT_SETTINGS.schema
+        self._path = self._PROJECT_SETTINGS.schema
         super().load_settings()
 
 
