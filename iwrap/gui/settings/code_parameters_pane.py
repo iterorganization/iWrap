@@ -220,8 +220,6 @@ class FileBrowserPane(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
-        self.reload()
-
     def action_open(self):
         """Open system file dialog to browse files.
         
