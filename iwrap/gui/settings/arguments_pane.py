@@ -116,15 +116,16 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         """
         self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
         self.data_type = ProjectSettings.get_settings().code_description.data_type
-
         self.set_data_to_table()
-        self.data_type_combobox.set(self.data_type)
 
         if self.data_type not in self.data_type_combobox['values']:
             self.data_type_combobox.current(0)
+        elif self.data_type not in self.data_type_combobox['values'] and self.data_type is not None:
             messagebox.showwarning("Warning", f"Unknown data type. "
                                               f"The data type set to "
                                               f"{self.data_type_combobox.get()}.")
+        else:
+            self.data_type_combobox.set(self.data_type)
 
     def update_settings(self):
         """Update arguments and data type in the ProjectSettings.
