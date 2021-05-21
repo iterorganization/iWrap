@@ -7,9 +7,11 @@ from physics_ii.parameters import Parameters
 class StatusCType( ctypes.Structure ):
     '''IDSRef reference structure'''
     _fields_ = (("_code", ctypes.c_int),
-                ("_message", ctypes.c_char_p),
+                ("_message", ctypes.c_wchar_p),
                 ("_message_size", ctypes.c_int),
                 )
+    def __init__(self):
+        pass
 
     @property
     def code(self):
@@ -21,10 +23,13 @@ class StatusCType( ctypes.Structure ):
 
     @property
     def message(self):
+        if self._message_size < 0 or self._message is None:
+            return ''
         return self._message.decode('utf-8')
 
-    def __init__(self):
-        pass
+    def convert_to_native_type(self):
+        return ctypes.byref( self )
+
 
 
 
@@ -57,6 +62,10 @@ class ParametersCType( ctypes.Structure ):
         self.schema_ = ctypes.c_char_p( schema )
         str_size = len( schema )
         self.schema_size_ = ctypes.c_int( str_size )
+
+    def convert_to_native_type(self):
+        return ctypes.byref( self )
+
 
     def __init__(self, codeparams: Parameters):
         self.params = codeparams.code_parameters

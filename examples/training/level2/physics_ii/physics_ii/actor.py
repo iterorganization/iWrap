@@ -20,6 +20,8 @@ class PhysicsIIActor:
         self.parameters.read()
         self.parameters.validate()
 
+        self.binder.initialize(self.arguments, self.parameters)
+
         pass
 
 
@@ -27,7 +29,7 @@ class PhysicsIIActor:
         return self.run(*args)
 
     def run(self, *args):
-        out = self.binder.call_native_code(*args, self.parameters)
+        out = self.binder.call_native_code(*args)
         return out
 
 
