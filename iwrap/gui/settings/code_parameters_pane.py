@@ -63,9 +63,9 @@ class File:
 
 
         """
-    _EXTENSION: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
-    _TITLE: str = "ANY"
-    _PROJECT_SETTINGS = ProjectSettings.get_settings().code_description.code_parameters
+    _extension: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    _title: str = "ANY"
+    _project_settings = ProjectSettings.get_settings().code_description.code_parameters
 
     def __init__(self) -> None:
         """Initialize file extension object.
@@ -76,12 +76,12 @@ class File:
     @classmethod
     def info(cls) -> Tuple:
         """Returns a tuple with file extension matching browser format and file title."""
-        return tuple((cls._EXTENSION, cls._TITLE))
+        return tuple((cls._extension, cls._title))
 
     @classmethod
     def get_title(cls) -> str:
         """Returns file title."""
-        return cls._TITLE
+        return cls._title
 
     def save_path(self, path: str = "") -> None:
         """Checks that path is correct, if yes saves to _path attribute.
@@ -132,33 +132,33 @@ class File:
 
 class XMLFile(File):
     """XML file type subclass."""
-    _EXTENSION: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
-    _TITLE: str = "XML"
+    _extension: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    _title: str = "XML"
 
     def update_settings(self) -> None:
-        self._PROJECT_SETTINGS.parameters = self._path
+        self._project_settings.parameters = self._path
 
     def load_settings(self) -> None:
-        self._path = self._PROJECT_SETTINGS.parameters
+        self._path = self._project_settings.parameters
         super().load_settings()
 
     @classmethod
     def validate(cls) -> None:
         """Invokes XML validation method from ProjectSettings().
         """
-        cls._PROJECT_SETTINGS.validate()
+        cls._project_settings.validate()
 
 
 class XSDFile(File):
     """XSD file type subclass."""
-    _EXTENSION: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
-    _TITLE: str = "XSD"
+    _extension: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
+    _title: str = "XSD"
 
     def update_settings(self) -> None:
-        self._PROJECT_SETTINGS.schema = self._path
+        self._project_settings.schema = self._path
 
     def load_settings(self) -> None:
-        self._path = self._PROJECT_SETTINGS.schema
+        self._path = self._project_settings.schema
         super().load_settings()
 
 
