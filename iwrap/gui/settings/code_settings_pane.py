@@ -6,6 +6,7 @@ from tkinter import messagebox
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
+from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
@@ -80,6 +81,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """
         if self.selected_programming_language.get() != self.programming_language_combobox.get():
             self.selected_programming_language.set(self.programming_language_combobox.get())
+            self.language_pane.save_pane_settings()
             self.language_pane.pack_forget()
             self.add_language_pane()
 
@@ -97,6 +99,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
         code_description.code_name = self.code_name.get()
+
+        self.language_pane.update_settings()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -123,6 +127,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.code_path.set(code_path)
         self.code_name.set(code_name)
 
+        LanguageSettingsManager.set_settings(self.programming_language_combobox.get())
         self.language_pane.reload()
 
     def on_click(self):
