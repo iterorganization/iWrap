@@ -6,10 +6,13 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
+from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+
 from iwrap.settings.project import ProjectSettings
 
 
 class FortranPane( ttk.Frame, IWrapPane ):
+    pane_name = 'Fortran'
     """The FortranPane contains a combobox for selecting compiler and three tabs including feature frame, system library
     frame, and custom library frame. Feature frame contains two Combobox widgets and enables the selection of MPI
     Flavour and OpenMPI, system library frame contains the Table widget with system libraries and the custom library
@@ -29,7 +32,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
             master (ttk.Frame): The master frame.
         """
         super().__init__( master )
-        self.settings = FortranSpecificSettings()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
@@ -44,7 +47,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ttk.Label(combobox_frame, text="Compiler:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
         self.compiler_combobox['values'] = ['Intel Fortran (ifort)', 'GNU Compiler Collection (fortran)', 'Intel']
-        self.compiler_combobox.current(0)
+        self.compiler_combobox.set(self.settings.compiler)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
@@ -69,14 +72,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings from the ProjectSettings, set compiler to the Combobox widget as current value.
         Call SystemLibrariesPane, CustomLibrariesPane, and FeaturesPane reload methods.
         """
-        dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        if dict_settings is None:
-            self.settings.clear()
-        else:
-            self.settings.from_dict(dict_settings)
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         self.compiler_combobox.set(self.settings.compiler)
-
         self.feature_pane.reload()
         self.system_libraries_pane.reload()
         self.custom_libraries_pane.reload()
@@ -87,9 +85,24 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         compiler = self.compiler_combobox.get()
         ProjectSettings.get_settings().code_description.language_specific['compiler'] = compiler
+
         self.system_libraries_pane.update_settings()
         self.custom_libraries_pane.update_settings()
         self.feature_pane.update_settings()
+
+        project_settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings.from_dict(project_settings)
+
+    def save_pane_settings(self):
+        compiler = self.compiler_combobox.get()
+        system_libraries = self.system_libraries_pane.get_data_from_table()
+        custom_libraries = list(self.custom_libraries_pane.listbox.get(0, tk.END))
+        mpi = self.feature_pane.mpi_flavour_combobox.get()
+        open_mpi = True if self.feature_pane.open_mpi_combobox.get() == 'Yes' else False
+        self.settings.from_dict({'compiler': compiler,
+                                 'mpi': mpi, 'open_mp': open_mpi,
+                                 'system_libraries': system_libraries,
+                                 'custom_libraries': custom_libraries})
 
 
 class SystemLibrariesPane:
@@ -107,7 +120,7 @@ class SystemLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = FortranSpecificSettings()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         # TABLE FRAME
         table_frame = ttk.Frame(master)
@@ -133,6 +146,7 @@ class SystemLibrariesPane:
         self.table = Table([], self.columns, table_frame, [remove_button])
         add_button['command'] = lambda: self.table.add_row("system library")
         remove_button['command'] = self.table.delete_row
+        self.__add_table_data()
 
     def __add_table_data(self):
         """Add system libraries to the table.
@@ -143,7 +157,7 @@ class SystemLibrariesPane:
 
         self.table.add_new_table(data, self.columns)
 
-    def __get_data_from_table(self):
+    def get_data_from_table(self):
         """Get system libraries names from the table.
 
         Returns (list): The list with system libraries names from the table.
@@ -158,18 +172,13 @@ class SystemLibrariesPane:
     def reload(self):
         """Reload system settings from the ProjectSettings and add system libraries to the Table widget.
         """
-        dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        if dict_settings is None:
-            self.settings.clear()
-        else:
-            self.settings.from_dict(dict_settings)
-
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
         self.__add_table_data()
 
     def update_settings(self):
         """Update system libraries in the ProjectSettings.
         """
-        libraries_name = self.__get_data_from_table()
+        libraries_name = self.get_data_from_table()
         ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = libraries_name
 
 
@@ -187,7 +196,7 @@ class CustomLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = FortranSpecificSettings()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         # LIBRARY PATH FRAME
         library_path_frame = tk.Frame(master)
@@ -215,6 +224,8 @@ class CustomLibrariesPane:
         self.listbox = tk.Listbox(library_path_frame, yscrollcommand=scrollbar.set, selectmode=tk.MULTIPLE)
         self.listbox.pack(side=tk.TOP, fill=tk.BOTH, anchor='nw', expand=1)
 
+        self.__add_custom_lib_from_settings()
+
     def __add_custom_lib_from_settings(self):
         """Add custom libraries from the ProjectSettings to the ListBox widget.
         """
@@ -240,11 +251,7 @@ class CustomLibrariesPane:
     def reload(self):
         """Reload custom_libraries list from the ProjectSettings and add it to the ListBox widget.
         """
-        dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        if dict_settings is None:
-            self.settings.clear()
-        else:
-            self.settings.from_dict(dict_settings)
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         self.__add_custom_lib_from_settings()
 
@@ -270,7 +277,7 @@ class FeaturesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = FortranSpecificSettings()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
@@ -280,31 +287,32 @@ class FeaturesPane:
         ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
         self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI"]
-        self.mpi_flavour_combobox.current(0)
+        if self.settings.mpi != '':
+            self.mpi_flavour_combobox.set(self.settings.mpi)
+        else:
+            self.mpi_flavour_combobox.current(0)
         self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # COMBOBOX OpenMPI
         ttk.Label(labelframe, text="OpenMPI:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.open_mpi_combobox = ttk.Combobox(labelframe, state='readonly')
         self.open_mpi_combobox['values'] = ["Yes", "No"]
-        self.open_mpi_combobox.current(0)
+        self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
         self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def reload(self):
         """Reload open_mpi and mpi values from the ProjectSettings and set them to the Combobox widgets.
         """
-        dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        if dict_settings is None:
-            self.settings.clear()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.pane_name)
+        if self.settings.mpi != '':
+            self.mpi_flavour_combobox.set(self.settings.mpi)
         else:
-            self.settings.from_dict(dict_settings)
-
-        self.mpi_flavour_combobox.set(self.settings.mpi)
+            self.mpi_flavour_combobox.current(0)
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
 
     def update_settings(self):
         """Update open_mpi and mpi values in the ProjectSettings.
         """
         ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
-        open_mpi = True if self.open_mpi_combobox.get() == 'yes' else False
+        open_mpi = True if self.open_mpi_combobox.get() == 'Yes' else False
         ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
