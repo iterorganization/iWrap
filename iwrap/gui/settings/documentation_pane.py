@@ -29,6 +29,8 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
 
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
+        # Disabling update on lost focus:
+        self.documentation_editor.update_settings_on_focus_lost()
     
     def update_settings(self):
         """Update documentation in ProjectSettings.
@@ -62,7 +64,8 @@ class TextEditor:
         """
         super().__init__()
 
-        self.__update_on_focus_lost: bool = False
+        # Initial state of update on focus lost.
+        self.__update_on_focus_lost: bool = True
 
         # Text content of a text editor
         self._text: str = ""
@@ -124,7 +127,7 @@ class TextEditor:
         # When set to True, set the state to False, detach the specified event, and return from the method.
         if self.__update_on_focus_lost is True:
             self.__update_on_focus_lost = False
-            self.text_editor.unbind('<FocusOut>', self.focus_lost_event)
+            self.text_editor.unbind('<FocusOut>')
             return
         # When set to False, set the state to True and reattach the specified event.
         self.__update_on_focus_lost = True
