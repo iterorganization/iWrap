@@ -4,7 +4,7 @@ import logging
 
 import imas
 from iwrap.settings.code_description import Argument
-from physics_ii.parameters import Parameters
+from physics_ii.code_parameters import CodeParameters
 
 
 from .data_type import LegacyIDS
@@ -12,10 +12,14 @@ from .data_c_binding import ParametersCType, StatusCType
 
 
 class PhysicsIIBinder:
-    ACTOR_NAME = 'physics_ii'
 
-    def __init__(self):
-        pass
+    def __init__(self, actor_name, code_name):
+        self.logger = logging.getLogger( 'binding' )
+        self.logger.setLevel( logging.DEBUG )
+
+        self.actor_name = actor_name
+        self.code_name = code_name
+
     
     def save_data(self, ids):
         pass
@@ -24,12 +28,12 @@ class PhysicsIIBinder:
         pass
     
     
-    def initialize(self, arguments, codeparams: Parameters):
-        self.logger = logging.getLogger( 'binding' )
-        self.logger.setLevel( logging.DEBUG )
-
+    def initialize(self, arguments, codeparams: CodeParameters):
         self.code_parameters = codeparams
         self.formal_arguments = arguments
+
+        self.work_db = self.__create_work_db()
+        self.wrapper_func = self.__get_wrapper_function(self.actor_name, self.code_name)
 
     @staticmethod
     def __create_work_db():
@@ -38,13 +42,13 @@ class PhysicsIIBinder:
         return db_entry
 
     @staticmethod
-    def __get_wrapper_function(actor_name):
+    def __get_wrapper_function(actor_name, code_name):
 
         script_path = os.path.dirname( os.path.realpath( __file__ ) )
         lib_path = script_path + '/../../wrapper/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr(wrapper_lib,  actor_name + 'ual')
+        wrapper_fun = getattr(wrapper_lib,  code_name + 'ual')
         return wrapper_fun
 
 
@@ -66,9 +70,6 @@ class PhysicsIIBinder:
         """
         """
         input_idses = list(input_idses)
-        work_db = self.__create_work_db()
-
-        wrapper_func = self.__get_wrapper_function(self.ACTOR_NAME)
 
         # their ordering
         full_arguments_list = []
@@ -79,7 +80,7 @@ class PhysicsIIBinder:
             if formal_arg.intent == Argument.IN:
                 ids_value = input_idses.pop(0)
 
-            arg = LegacyIDS( work_db, formal_arg, ids_value)
+            arg = LegacyIDS( self.work_db, formal_arg, ids_value)
             full_arguments_list.append( arg )
             pass
 
@@ -95,11 +96,11 @@ class PhysicsIIBinder:
 
         # call the actor function
 
-        wrapper_func(*arglist, param_c, status_info.convert_to_native_type())
+        self.wrapper_func(*arglist, param_c, status_info.convert_to_native_type())
     
     
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check(status_info, self.ACTOR_NAME)
+        self.__status_check(status_info, self.actor_name)
     
         # end DIAGNOSTIC INFO
 

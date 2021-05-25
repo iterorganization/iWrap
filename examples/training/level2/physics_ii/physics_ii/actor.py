@@ -1,41 +1,26 @@
 from iwrap.settings.code_description import Argument
 
-from physics_ii.common.job_settings import JobSettings
-from physics_ii.binding.binder import PhysicsIIBinder
-from physics_ii.parameters import Parameters
+from physics_ii.common.base_classes.base_actor import ActorBaseClass
+from physics_ii.code_parameters import CodeParameters
 
+class PhysicsIIActor (ActorBaseClass):
 
-class PhysicsIIActor:
+    CODE_NAME = 'physics_ii'
 
     def __init__(self):
-        self.job_settings = JobSettings()
-        self.arguments = Argument( {'name': 'equilibrium0', 'type': 'equilibrium', 'intent': Argument.IN} ), \
-                         Argument( {'name': 'equilibrium1', 'type': 'equilibrium', 'intent': Argument.OUT} )
-        self.parameters = Parameters()
-        self.binder = PhysicsIIBinder()
+        super().__init__(self.CODE_NAME)
 
+        argument = Argument( {'name': 'equilibrium0', 'type': 'equilibrium', 'intent': Argument.IN} )
+        self.formal_arguments.append(argument)
 
-	 # # #  Actor lifecycle methods # # #
-    def initialize(self):
-        self.parameters.read()
-        self.parameters.validate()
+        argument = Argument({'name': 'equilibrium1', 'type': 'equilibrium', 'intent': Argument.OUT})
+        self.formal_arguments.append(argument)
 
-        self.binder.initialize(self.arguments, self.parameters)
-
-        pass
-
-
-    def __call__(self, *args):
-        return self.run(*args)
-
-    def run(self, *args):
-        out = self.binder.call_native_code(*args)
-        return out
+        self.code_parameters = CodeParameters('input_file.xml', 'input_file.xsd')
 
 
 
-    def finalize(self):
-        print('PhysicsII:ACTOR:: FINALIZE')
-        pass
+
+
 
 

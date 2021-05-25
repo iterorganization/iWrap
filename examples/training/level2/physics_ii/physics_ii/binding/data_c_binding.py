@@ -1,6 +1,6 @@
 import ctypes
 
-from physics_ii.parameters import Parameters
+from physics_ii.code_parameters import CodeParameters
 
 
 # # # # # # # #
@@ -67,6 +67,6 @@ class ParametersCType( ctypes.Structure ):
         return ctypes.byref( self )
 
 
-    def __init__(self, codeparams: Parameters):
-        self.params = codeparams.code_parameters
+    def __init__(self, codeparams: CodeParameters):
+        self.params = codeparams.parameters
         self.schema = codeparams.schema
