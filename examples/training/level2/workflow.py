@@ -16,7 +16,7 @@ class ExampleWorkflowManager:
 
     def init_workflow(self):
         print( '>> Querying arguments <<' )
-        for arg in self.actor_physics_ii.arguments:
+        for arg in self.actor_physics_ii.formal_arguments:
             print(arg)
 
         # INPUT/OUTPUT CONFIGURATION
