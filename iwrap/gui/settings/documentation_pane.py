@@ -118,7 +118,7 @@ class TextEditor:
         self.clear_text_input()
         self.text_editor.insert('1.0', self._text)
 
-    def update_settings_on_focus_lost(self):
+    def update_settings_on_focus_lost(self) -> None:
         """Enable/disable ProjectSettings() updates when focus is lost."""
         # Check the current update execution status:
         # When set to True, set the state to False, detach the specified event, and return from the method.
