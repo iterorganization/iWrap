@@ -14,3 +14,7 @@ _build/
 *.xsd
 *.python-version
 documentation_files/
+*.o
+*.mod
+*.a
+*.so

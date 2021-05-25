@@ -1,39 +1,26 @@
-from iwrap.arguments import Argument
-from iwrap.job_settings import JobSettings
+from iwrap.settings.code_description import Argument
 
-from physics_ii.binding.binder import PhysicsIIBinder
-from physics_ii.parameters import  Parameters
+from physics_ii.common.base_classes.base_actor import ActorBaseClass
+from physics_ii.code_parameters import CodeParameters
 
+class PhysicsIIActor (ActorBaseClass):
 
-class PhysicsIIActor:
-        
+    CODE_NAME = 'physics_ii'
+
     def __init__(self):
-        self.job_settings = JobSettings()
-        self.in_arguments = Argument('equilibrium0', 'IDS', "equilibrium", Argument.IN),
-        self.out_arguments = Argument('equilibrium1', "IDS", "equilibrium", Argument.OUT),
-        self.parameters = Parameters()
-        self.binder = PhysicsIIBinder()
+        super().__init__(self.CODE_NAME)
 
-  
-	 # # #  Actor lifecycle methods # # #
-    def initialize(self):
-        self.parameters.read()
-        self.parameters.validate()
-        
-        pass
+        argument = Argument( {'name': 'equilibrium0', 'type': 'equilibrium', 'intent': Argument.IN} )
+        self.formal_arguments.append(argument)
+
+        argument = Argument({'name': 'equilibrium1', 'type': 'equilibrium', 'intent': Argument.OUT})
+        self.formal_arguments.append(argument)
+
+        self.code_parameters = CodeParameters('input_file.xml', 'input_file.xsd')
 
 
-    def __call__(self, *args):
-        return self.run(*args)
 
-    def run(self, *args):
-        out = self.binder.call_native_code(*args, self.parameters)
-        return out
- 
 
-    
-    def finalize(self):
-        print('PhysicsII:ACTOR:: FINALIZE')
-        pass
+
 
 
