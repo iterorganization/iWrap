@@ -1,5 +1,5 @@
+from iwrap.common.misc import Dictionarizable
 import subprocess
-import re
 
 
 class PkgConfigTools:
@@ -11,7 +11,7 @@ class PkgConfigTools:
     def __init__(self):
         self.pkg_config_list = None
         self.initialize()
-        self.get_pkg_config_dict()
+        self.to_dict()
 
     def initialize(self):
         process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
@@ -21,11 +21,14 @@ class PkgConfigTools:
         stdout, stderr = process.communicate()
         self.pkg_config_list = stdout.decode('ascii').splitlines()
 
-    def get_pkg_config_dict(self):
+    def to_dict(self):
+        pkg_config_dict = {}
         for pkg_config in self.pkg_config_list:
-            split_config = re.split(r'\s+', pkg_config)
+            split_config = pkg_config.split(' ', 1)
             name = split_config[0]
-            info = split_config[1]
-            description = ' '.join(split_config[3:])
-            print(split_config)
-            print(f"name = {name}, info = {info}, desc = {description}")
+            full_description = split_config[1].strip().split(' - ')
+            info = full_description[0]
+            desc = full_description[1]
+            pkg_config_dict[name] = {'info': info, 'description': desc}
+
+        return pkg_config_dict
