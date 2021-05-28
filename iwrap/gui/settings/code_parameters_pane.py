@@ -71,6 +71,7 @@ class File:
         """Initialize file extension object.
         """
         self._path: str = ""
+        self._path_not_verified: str = ""
         self.path_valid: bool = False
 
     @classmethod
@@ -89,21 +90,25 @@ class File:
         Args:
             path (str, optional): A path string to be stored.
         """
-        self._path = path
-        if not self.is_path_correct():
+        if not self.is_path_correct(path):
+            # Reset attribute:
+            self._path_not_verified = ""
             return
+        self._path = path
+        self._path_not_verified = ""
 
     def get_path(self) -> str:
         """Returns stored file path string."""
         return self._path
 
-    def is_path_correct(self) -> bool:
-        """Checks that the file path is constructed correctly and is a string type.
+    def is_path_correct(self, path="") -> bool:
+        """Checks that the provided path is constructed correctly and is a string type.
          Sets path_valid (boolean) with check result.
+         Raises a ValueError exception when the provided path is invalid.
 
         Returns: Bool
         """
-        if self._path == "" or not isinstance(self._path, str) or self._path is None:
+        if not isinstance(path, str):
             # Set the path validity flag to False
             try:
                 self.path_valid = False
@@ -127,7 +132,7 @@ class File:
     def load_settings(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to PATH variable.
         """
-        self.is_path_correct()
+        self.save_path(self._path_not_verified)
 
 
 class XMLFile(File):
@@ -139,7 +144,7 @@ class XMLFile(File):
         self._project_settings.parameters = self._path
 
     def load_settings(self) -> None:
-        self._path = self._project_settings.parameters
+        self._path_not_verified = self._project_settings.parameters
         super().load_settings()
 
     @classmethod
@@ -158,7 +163,7 @@ class XSDFile(File):
         self._project_settings.schema = self._path
 
     def load_settings(self) -> None:
-        self._path = self._project_settings.schema
+        self._path_not_verified = self._project_settings.schema
         super().load_settings()
 
 
