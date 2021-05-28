@@ -3,7 +3,7 @@ from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
-from typing import Tuple
+from typing import Tuple, Union
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
@@ -32,7 +32,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 
         # XML file path browser dialog
         self.xml_browser = FileBrowserPane(self, label_text="Code parameters file:", file_class=XMLFile)
-        
+
         # XSD file path browser dialog
         self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
 
@@ -186,7 +186,7 @@ class FileBrowserPane(ttk.Frame):
         but it can be edited explicitly if necessary.
     """
 
-    def __init__(self, master=None, label_text="", file_class=File) -> None:
+    def __init__(self, master=None, label_text: str = "", file_class=File) -> None:
         """Initialize FileBrowser widget.
 
         Initialize an object composed of label, button, and dialog widgets. 
@@ -200,7 +200,7 @@ class FileBrowserPane(ttk.Frame):
         """
 
         # Reference to a file class
-        self.file = file_class()
+        self.file: File = file_class()
 
         super().__init__(master)
         # Specify the file type
@@ -226,7 +226,7 @@ class FileBrowserPane(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def action_open(self):
+    def action_open(self) -> None:
         """Open system file dialog to browse files.
         
         Open system file dialog to browse and select files.
@@ -236,16 +236,16 @@ class FileBrowserPane(ttk.Frame):
             If no path is selected, exits immediately.
         """
         filename = filedialog.askopenfilename(
-                                            initialdir=None,
-                                            title=f"Select {self.file_type_title} file",
-                                            filetypes=self.file_type)
+            initialdir=None,
+            title=f"Select {self.file_type_title} file",
+            filetypes=self.file_type)
         if filename is None:
             return
 
         # Save loaded path.
         self.file.save_path(filename)
 
-        self.reload()
+        self.path.set(self.file.get_path())
 
     def load_settings(self) -> None:
         """Load data from ProjectSettings and set it as path.
@@ -253,19 +253,13 @@ class FileBrowserPane(ttk.Frame):
         self.file.load_settings()
         self.path.set(self.file.get_path())
 
-    def update_settings(self):
+    def update_settings(self) -> None:
         """To update, ProjectSettings () reads the path from the widget and writes to the file object.
         """
         self.file.save_path(self.path.get())
         self.file.update_settings()
 
-    def reload(self):
-        """Load the path and set it on the widget.
-        """
-        # Update the text in the path dialog widget.
-        self.path.set(self.file.get_path())
 
-    
 class XMLValidatorPane(ttk.Frame):
     """A pane that contains an XML validator against an XSD - xml schema.
 
@@ -276,7 +270,9 @@ class XMLValidatorPane(ttk.Frame):
         warning or an error depending on the validation run.
     """
 
-    def __init__(self, master=None, xml="", xsd="") -> None:
+    def __init__(self, master=None,
+                 xml: Union[File, str] = "",
+                 xsd: Union[File, str] = "") -> None:
         """Initialize XMLValidator widget.
 
         Initialize the button and all other necessary variables 
@@ -292,13 +288,13 @@ class XMLValidatorPane(ttk.Frame):
         button.pack(side=tk.TOP)
 
         # Initialize files to validate
-        self._xml_file = xml
-        self._xsd_file = xsd
+        self._xml_file: Union[File, str] = xml
+        self._xsd_file: Union[File, str] = xsd
 
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
-    def validation_callback(self):
+    def validation_callback(self) -> None:
         """Callback method to perform the complete validation process."""
 
         # Check that the specified file paths are correct.
