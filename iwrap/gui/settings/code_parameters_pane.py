@@ -115,6 +115,7 @@ class File:
                 raise ValueError(f"\tValueError exception thrown! "
                                  f"\n\tGiven path is incorrect!"
                                  f"\n\tpath = \'{self._path}\'"
+                                 f"\n\tpath type = {type(path)}"
                                  f"\n\tPath Invalid !")
             except Exception as err:
                 print(f"Exception caught:\n{err}")
@@ -224,9 +225,6 @@ class FileBrowserPane(ttk.Frame):
         path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
-
-        # Initial load from ProjectSettings.
-        #self.load_settings()
 
     def action_open(self):
         """Open system file dialog to browse files.
