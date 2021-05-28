@@ -51,8 +51,8 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     def reload(self):
         """Calls FileBrowserPanes method to reload content.
         """
-        self.xml_browser.reload()
-        self.xsd_browser.reload()
+        self.xml_browser.load_settings()
+        self.xsd_browser.load_settings()
 
 
 class File:
@@ -97,7 +97,7 @@ class File:
         if not self.is_path_correct():
             return
         # Perform ProjectSettings() update
-        self.update_settings()
+        #self.update_settings()
 
     def get_path(self) -> str:
         """Returns stored file path string."""
@@ -220,6 +220,9 @@ class FileBrowserPane(ttk.Frame):
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
+        # Initial load from ProjectSettings.
+        #self.load_settings()
+
     def action_open(self):
         """Open system file dialog to browse files.
         
@@ -241,6 +244,12 @@ class FileBrowserPane(ttk.Frame):
 
         self.reload()
 
+    def load_settings(self) -> None:
+        """Load data from ProjectSettings and set it as path.
+        """
+        self.file.load_settings()
+        self.path.set(self.file.get_path())
+
     def update_settings(self):
         """To update, ProjectSettings () reads the path from the widget and writes to the file object.
         """
@@ -248,11 +257,8 @@ class FileBrowserPane(ttk.Frame):
         self.file.update_settings()
 
     def reload(self):
-        """Load the path from ProjectSettings and set it on the widget.
+        """Load the path and set it on the widget.
         """
-        # Load the path
-        self.file.load_settings()
-
         # Update the text in the path dialog widget.
         self.path.set(self.file.get_path())
 
