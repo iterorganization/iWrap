@@ -37,7 +37,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         self.xsd_browser = FileBrowserPane(self, label_text="Schema file:", file_class=XSDFile)
 
         # XML Validator object against XSD
-        _validator = XMLValidatorPane(self)
+        _validator = XMLValidatorPane(self, xml=self.xml_browser.file, xsd=self.xsd_browser.file)
 
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
@@ -149,10 +149,10 @@ class XMLFile(File):
         super().load_settings()
 
     @classmethod
-    def validate(cls) -> None:
+    def validate(cls, xml: str = "", xsd: str = "") -> None:
         """Invokes XML validation method from ProjectSettings().
         """
-        cls._project_settings.validate()
+        cls._project_settings.validate(parameters=xml, schema=xsd)
 
 
 class XSDFile(File):
@@ -276,7 +276,7 @@ class XMLValidatorPane(ttk.Frame):
         warning or an error depending on the validation run.
     """
 
-    def __init__(self, master=None) -> None:
+    def __init__(self, master=None, xml="", xsd="") -> None:
         """Initialize XMLValidator widget.
 
         Initialize the button and all other necessary variables 
@@ -292,18 +292,14 @@ class XMLValidatorPane(ttk.Frame):
         button.pack(side=tk.TOP)
 
         # Initialize files to validate
-        self._xml_file = XMLFile()
-        self._xsd_file = XSDFile()
+        self._xml_file = xml
+        self._xsd_file = xsd
 
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
 
     def validation_callback(self):
         """Callback method to perform the complete validation process."""
-
-        # Loads the most current ProjectSettings() paths.
-        self._xml_file.load_settings()
-        self._xsd_file.load_settings()
 
         # Check that the specified file paths are correct.
         if not (self._xml_file.path_valid and self._xsd_file.path_valid):
@@ -312,7 +308,7 @@ class XMLValidatorPane(ttk.Frame):
 
         # The validation process itself.
         try:
-            XMLFile.validate()
+            XMLFile.validate(xml=self._xml_file.get_path(), xsd=self._xsd_file.get_path())
         except Exception as error:
             messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
                                                      f"{error}")
