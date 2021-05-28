@@ -11,7 +11,6 @@ class PkgConfigTools:
     def __init__(self):
         self.pkg_config_list = None
         self.initialize()
-        self.to_dict()
 
     def initialize(self):
         process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
@@ -32,3 +31,14 @@ class PkgConfigTools:
             pkg_config_dict[name] = {'info': info, 'description': desc}
 
         return pkg_config_dict
+
+    def get_pkg_config(self, system_library):
+        pkg_config_dict = self.to_dict()
+        if system_library in pkg_config_dict.keys():
+            return pkg_config_dict[system_library]
+        return None
+
+
+
+
+
