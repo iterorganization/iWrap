@@ -1,7 +1,7 @@
 # Generated with FC2K version 4.13.0
 
 # we need actor name
-ACTOR=physics_ii
+ACTOR_NAME=PhysicsIIActor
 
 FF=ifort
 FC=ifort
@@ -39,12 +39,12 @@ INCLUDES=-I./include $(shell pkg-config  --cflags imas-ifort)
 LIBS=$(shell pkg-config  --libs imas-ifort) 
 
 
-all: bin/physics_ii.exe   lib/libphysics_ii.so 
+all: lib/lib$(ACTOR_NAME).so
 
-bin/physics_ii.exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/FortranWrap.o 
+lib/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/FortranWrap.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./bin
-	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(MAIN_LIB_DEF)  $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(MAIN_LIB_DEF)  $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib/
 
 
 build/RWTools.o: src/RWTools.f90 build/FortranWrap.o
@@ -56,10 +56,10 @@ build/fortrantools.o: src/fortrantools.f90
 	@mkdir -p ./build
 	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
 	
-lib/libphysics_ii.so: build/FortranWrap.o  build/fortrantools.o 
+lib/lib$(ACTOR_NAME).so: build/FortranWrap.o  build/fortrantools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./lib
-	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(MAIN_LIB_DEF) $(CUSTOM_LIBS_DEF) $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(MAIN_LIB_DEF) $(CUSTOM_LIBS_DEF) $(shell pkg-config  --libs xmllib)  $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib/
 
 build/FortranWrap.o: src/FortranWrap.f90 build/fortrantools.o 
 	@echo "   * $< -> $@"

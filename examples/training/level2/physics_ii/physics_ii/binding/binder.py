@@ -3,17 +3,23 @@ import os
 import logging
 
 import imas
+from iwrap.settings.code_description import Argument
+from physics_ii.code_parameters import CodeParameters
 
-from physics_ii.parameters import Parameters
 
-from .data_type import IDSData
-from .data_c_binding import ParametersCType
+from .data_type import LegacyIDS
+from .data_c_binding import ParametersCType, StatusCType
 
 
 class PhysicsIIBinder:
 
-    def __init__(self):
-        pass
+    def __init__(self, actor_name, code_name):
+        self.logger = logging.getLogger( 'binding' )
+        self.logger.setLevel( logging.DEBUG )
+
+        self.actor_name = actor_name
+        self.code_name = code_name
+
     
     def save_data(self, ids):
         pass
@@ -22,154 +28,87 @@ class PhysicsIIBinder:
         pass
     
     
-    def initialize(self):
-        pass
+    def initialize(self, arguments, codeparams: CodeParameters):
+        self.code_parameters = codeparams
+        self.formal_arguments = arguments
+
+        self.work_db = self.__create_work_db()
+        self.wrapper_func = self.__get_wrapper_function(self.actor_name, self.code_name)
+
+    @staticmethod
+    def __create_work_db():
+        db_entry = imas.DBEntry( imas.imasdef.MEMORY_BACKEND, 'tmp', 11, 22 )
+        db_entry.create()
+        return db_entry
+
+    @staticmethod
+    def __get_wrapper_function(actor_name, code_name):
+
+        script_path = os.path.dirname( os.path.realpath( __file__ ) )
+        lib_path = script_path + '/../../wrapper/lib/lib' + actor_name + '.so'
+
+        wrapper_lib = ctypes.CDLL( lib_path )
+        wrapper_fun = getattr(wrapper_lib,  code_name + 'ual')
+        return wrapper_fun
+
+
+    @staticmethod
+    def __status_check(status_info, actor_name):
+
+        if status_info.code < 0:
+            raise Exception(
+                "Actor *** '" + actor_name + "' *** returned an error (" + str( status_info.code ) + "): '"
+                + status_info.message + "'" )
+
+        if status_info.code > 0:
+            logger_physics_ii.warning( "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      ",
+                                       status_info.code, "\n     Diagnostic info: ", status_info.message )
+
 
     # only input arguments, outputs are returned (as a list if more than 1)
-    def call_native_code(self, equilibrium0: imas.equilibrium, codeparams: Parameters) -> imas.equilibrium:
-        """binding actor
-        :param equilibrium0: equilibrium
-        
-        :param codeparams: code parameters, None implies default parameters
-        :param result: equilibrium1,
+    def call_native_code(self, *input_idses) :
         """
+        """
+        input_idses = list(input_idses)
 
-        db_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND, 'tmp', 11, 22)
-        db_entry.create()
-        logger_physics_ii = logging.getLogger('binding')
-        logger_physics_ii.setLevel(logging.ERROR)
-    
-        lib_location = os.path.dirname(os.path.realpath(__file__)) + '/../../fortran_wrapper/lib/libphysics_ii.so'
-    
-    
-        _libactor_def = ctypes.CDLL( lib_location )
-        _func_def = _libactor_def.physics_iiual
-
-    
-        # dict of input and output arguments
-        arguments_dict = {}
         # their ordering
-        arguments_order = []
-        arguments_order_out = []
-    
-        # LOOP over arguments
-        # ======   equilibrium0   ======
+        full_arguments_list = []
 
-        arg = IDSData(db_entry, equilibrium0, 'in', 0).to_args()
-    
-        arguments_dict['equilibrium0'] = arg
-        arguments_order.append('equilibrium0')
-        
-        # ======   equilibrium1   ======
-        equilibrium1 = imas.equilibrium()
-        arg = IDSData(db_entry, equilibrium1, 'out', 1).to_args()
-    
-    
-        arguments_dict['equilibrium1'] = arg
-        arguments_order.append('equilibrium1')
-        arguments_order_out.append('equilibrium1')
-        # end LOOP over arguments
+        # LOOP over full_arguments_list
+        for formal_arg in self.formal_arguments:
+            ids_value = None
+            if formal_arg.intent == Argument.IN:
+                ids_value = input_idses.pop(0)
+
+            arg = LegacyIDS( self.work_db, formal_arg, ids_value)
+            full_arguments_list.append( arg )
+            pass
+
     
         # check conflicting occurences and store data
-        occ_dict = {}
-        for arg in arguments_dict.values():
-            if isinstance(arg['cval'], IDSData.IDSRef):
-                occ_dict[arg['cval'].ids_name] = 1 + occ_dict.get(arg['cval'].ids_name, -1)
-                arg['cval'].occurrence = occ_dict[arg['cval'].ids_name]
-                # store input data
-                if arg['in']:
-                    db_entry.put(arg['value'], arg['cval'].occurrence)
-        
-    
-    
-        # XML Code Params 
-        #  codeparams_str
-        arg = {}
-        arg['cval'] = ParametersCType(codeparams)
-        arg['cref'] = ctypes.byref(arg['cval'])
-        arg['in'] = True
-        arg['out'] =  False
-        arguments_dict['codeparams'] = arg
-        arguments_order.append('codeparams')
-        
+        arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
 
-        # End:  Code Params 
+        # XML Code Params
+        param_c = ParametersCType(self.code_parameters).convert_to_native_type()
                 
         # DIAGNOSTIC INFO
-        # outputFlag
-        arg = {}
-        
-        ptrOutputFlag = ctypes.c_int()
-        arg["fc2k_array"] = False
-        arg['cval'] = ptrOutputFlag 
-        arg['cref'] = ctypes.byref(arg['cval'])
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['outputFlag'] = arg
-        arguments_order.append('outputFlag')
-    
-        # diagnosticInfo_size -> auxiliary variable for C 
-        arg = {}
-        ptrDiagnosticInfo_size = ctypes.c_int()
-        arg["fc2k_array"] = False
-        arg['cval'] = ptrDiagnosticInfo_size
-        arg['cref'] = ctypes.byref(arg['cval'])
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['diagnosticInfo_size'] = arg
-        arguments_order.append('diagnosticInfo_size')
-        
-        # diagnosticInfo
-        arg = {}
-        
-        ptrDiagnosticInfo = ctypes.c_char_p()
-        arg["fc2k_array"] = True
-        # we don't support unicode --> encode
-        arg['cval'] = ptrDiagnosticInfo            # char*
-        arg['cref'] = ctypes.byref(arg['cval'])    # char**
-    
-    
-        arg['in'] = False
-        arg['out'] = True
-    
-        arguments_dict['diagnosticInfo'] = arg
-        arguments_order.append('diagnosticInfo')
-    
-        # end DIAGNOSTIC INFO
-    
-        # call the actor function
-        arglist = [arguments_dict[k]['cref'] for k in arguments_order]
+        status_info = StatusCType()
 
-        _func = _func_def
-        _func(*arglist)
+        # call the actor function
+
+        self.wrapper_func(*arglist, param_c, status_info.convert_to_native_type())
     
     
         # Checking returned DIAGNOSTIC INFO
-        diagnosticInfo_size = ptrDiagnosticInfo_size.value
-        outputFlag = ptrOutputFlag.value
-        diagnosticInfo = ptrDiagnosticInfo.value
-    
-        if diagnosticInfo_size < 1:
-            diagnosticInfo = "<No diagnostic message>"
-            
-        if outputFlag < 0:
-            raise Exception("Actor *** 'binding' *** returned an error (" + str(outputFlag) + "): '" + diagnosticInfo.decode('utf-8') + "'")
-        if outputFlag > 0:
-                logger_physics_ii.warning("Actor * 'binding' * returned diagnostic info: \n     Output flag:      ", outputFlag, "\n     Diagnostic info: ", diagnosticInfo.decode('utf-8'))
+        self.__status_check(status_info, self.actor_name)
     
         # end DIAGNOSTIC INFO
-    
+
         # get output data
         results = []
-        for arg_name in arguments_order_out:
-            arg = arguments_dict[arg_name]
-            results.append(db_entry.get(arg['cval'].ids_name, arg['cval'].occurrence))
+        for arg in full_arguments_list:
+            if arg.intent == Argument.OUT:
+                results.append(arg.convert_to_actor_type())
     
 
     

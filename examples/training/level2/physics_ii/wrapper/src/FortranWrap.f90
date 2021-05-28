@@ -47,10 +47,10 @@ module wrapper
 
 contains
 
-subroutine physics_iiual(M_in_equilibrium0, M_out_equilibrium1, code_params, wrap_out_outputFlag, wrap_out_diagnosticInfo_len&
-, wrap_out_diagnosticInfo_cRetPtr) BIND(C)
+subroutine physics_iiual(M_in_equilibrium0, M_out_equilibrium1, code_params, status_info) BIND(C)
 use idsmodule
 use codeparam_module
+use status_module
 use ids_schemas
 use iwrap_tools
 use ids_routines
@@ -63,6 +63,7 @@ logical     :: file_exist
 
 
     type(code_parameters_t) :: code_params
+    type(status_t) :: status_info
 
 
 	 type(idsstruct) :: M_in_equilibrium0
@@ -96,7 +97,7 @@ call ids_get(M_in_equilibrium0%idx,trim(tabchar),in_equilibrium0)
 ! ------------------ code parameters ----------------------------
 imas_code_params = convert(code_params)
 
- 
+
 	 ! ------------- Input data conversion [ISO_C_BINDING] --------------
 
 !!!!!!!!!!!!!!!!!! your routine !!!!!!!!!!!!!!!!
@@ -110,6 +111,9 @@ call  physics_ii(in_equilibrium0, out_equilibrium1, imas_code_params,  wrap_out_
 	 else
 		 wrap_out_diagnosticInfo_len = -1 
    endif
+         status_info.message_size = wrap_out_diagnosticInfo_len
+         status_info.message = wrap_out_diagnosticInfo_cRetPtr
+         status_info.code = wrap_out_outputFlag
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)  
 	 if(wrap_out_outputFlag < 0 ) then

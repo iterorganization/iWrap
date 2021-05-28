@@ -42,6 +42,7 @@ class MenuBar( tk.Menu ):
         if file is None:
             return
 
+        self.main_window.update_settings()
         self.code_description.save( YAMLSerializer( file ) )
         file.close()
 

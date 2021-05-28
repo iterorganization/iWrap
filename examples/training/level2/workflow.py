@@ -1,3 +1,5 @@
+import sys
+
 import imas,os
 
 from physics_ii.actor import PhysicsIIActor
@@ -5,21 +7,17 @@ from physics_ii.actor import PhysicsIIActor
 
 
 class ExampleWorkflowManager:
-    
+
     def __init__(self):
+
         self.actor_physics_ii = PhysicsIIActor()
         self.input_entry = None
         self.output_entry = None
 
     def init_workflow(self):
-        print( '>> Querying input arguments <<' )
-        for arg in self.actor_physics_ii.in_arguments:
+        print( '>> Querying arguments <<' )
+        for arg in self.actor_physics_ii.formal_arguments:
             print(arg)
-
-        print( '>> Querying out arguments <<' )
-        for arg in self.actor_physics_ii.out_arguments:
-            print( arg )
-
 
         # INPUT/OUTPUT CONFIGURATION
         shot                = 131024
