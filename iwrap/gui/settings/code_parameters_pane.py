@@ -88,16 +88,10 @@ class File:
 
         Args:
             path (str, optional): A path string to be stored.
-
-        Note:
-            Sets path_valid (boolean) with check result.
-            Updates ProjectSettings()
         """
         self._path = path
         if not self.is_path_correct():
             return
-        # Perform ProjectSettings() update
-        #self.update_settings()
 
     def get_path(self) -> str:
         """Returns stored file path string."""
@@ -105,16 +99,22 @@ class File:
 
     def is_path_correct(self) -> bool:
         """Checks that the file path is constructed correctly and is a string type.
+         Sets path_valid (boolean) with check result.
 
         Returns: Bool
-
-        Notes:
-            Sets path_valid attribute.
         """
-        if self._path == "" or not isinstance(self._path, str):
+        if self._path == "" or not isinstance(self._path, str) or self._path is None:
             # Set the path validity flag to False
-            self.path_valid = False
-            return False
+            try:
+                self.path_valid = False
+                raise ValueError(f"\tValueError exception thrown! "
+                                 f"\n\tGiven path is incorrect!"
+                                 f"\n\tpath = \'{self._path}\'"
+                                 f"\n\tPath Invalid !")
+            except Exception as err:
+                print(f"Exception caught:\n{err}")
+            finally:
+                return False
         # Set the path validity flag to True
         self.path_valid = True
         return True
