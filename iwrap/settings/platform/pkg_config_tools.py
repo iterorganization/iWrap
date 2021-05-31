@@ -19,7 +19,7 @@ class PkgConfigTools:
         """Initialize the PkgConfigTools class object.
         """
         self.__pkg_config_list = None
-        self.__system_lib_dict = self.__to_dict()
+        self.__system_lib_dict = None
 
     @property
     def system_lib_dict(self):
@@ -35,6 +35,7 @@ class PkgConfigTools:
                                     PkgConfigTools.PKG_CONFIG_OPT_LIST_ALL], stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
         self.__pkg_config_list = stdout.decode('ascii').splitlines()
+        self.__system_lib_dict = self.__to_dict()
 
     def __to_dict(self):
         pkg_config_dict = {}
