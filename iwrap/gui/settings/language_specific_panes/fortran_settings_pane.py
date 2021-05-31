@@ -1,12 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
+from tkinter import messagebox
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
-from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 
 from iwrap.settings.project import ProjectSettings
 
@@ -104,7 +105,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mpi_combobox.get() == 'Yes' else False
         self.settings.from_dict({'compiler': compiler,
-                                 'mpi': mpi, 'open_mp': open_mpi,
+                                 'mpi': mpi,
+                                 'open_mp': open_mpi,
                                  'system_libraries': system_libraries,
                                  'custom_libraries': custom_libraries})
 
@@ -125,6 +127,9 @@ class SystemLibrariesPane:
             master (ttk.Frame): The master frame.
         """
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.system_lib = PkgConfigTools()
+        self.system_lib.initialize()
+        self.master = master
 
         # TABLE FRAME
         table_frame = ttk.Frame(master)
@@ -148,16 +153,26 @@ class SystemLibrariesPane:
         remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
         self.table = Table([], self.columns, table_frame, [remove_button])
-        add_button['command'] = lambda: self.table.add_row("system library")
+        add_button['command'] = self.initialize_add_system_library_pane
         remove_button['command'] = self.table.delete_row
         self.__add_table_data()
+
+    def initialize_add_system_library_pane(self):
+        pass
 
     def __add_table_data(self):
         """Add system libraries to the table.
         """
         data = []
         for sys_lib in self.settings.system_libraries:
-            data.append([sys_lib, 'example_info', 'example_description'])
+            name = sys_lib
+            system_lib_dict = self.system_lib.get_pkg_config(name)
+            if system_lib_dict is None:
+                messagebox.showwarning("Warning", f"Unknown system library.")
+            else:
+                info = system_lib_dict['info']
+                description = system_lib_dict['description']
+                data.append([name, info, description])
 
         self.table.add_new_table(data, self.columns)
 
