@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
+import time
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
@@ -158,7 +159,8 @@ class SystemLibrariesPane:
         self.__add_table_data()
 
     def initialize_add_system_library_pane(self):
-        pass
+        new_window = AddSystemLibraryWindow(self)
+        # new_window.add_rows()
 
     def __add_table_data(self):
         """Add system libraries to the table.
@@ -168,13 +170,17 @@ class SystemLibrariesPane:
             name = sys_lib
             system_lib_dict = self.system_lib.get_pkg_config(name)
             if system_lib_dict is None:
-                messagebox.showwarning("Warning", f"Unknown system library.")
+                continue
+                # messagebox.showwarning("Warning", f"Unknown system library.")
             else:
                 info = system_lib_dict['info']
                 description = system_lib_dict['description']
                 data.append([name, info, description])
 
         self.table.add_new_table(data, self.columns)
+
+    def add_row_to_table(self, data):
+        self.table.add_rows([data])
 
     def get_data_from_table(self):
         """Get system libraries names from the table.
@@ -199,6 +205,44 @@ class SystemLibrariesPane:
         """
         libraries_name = self.get_data_from_table()
         ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = libraries_name
+
+
+class AddSystemLibraryWindow:
+    def __init__(self, master=None):
+        self.master = master
+        self.window = tk.Toplevel(master.master)
+        self.window.minsize(1000, 600)
+        self.window.geometry('1000x600')
+        self.window.resizable(width=False, height=True)
+        self.window.title("Add system library")
+
+        content_frame = tk.Frame(self.window, height=300)
+        content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
+        footer.pack(side=tk.BOTTOM, fill=tk.X)
+
+        system_lib_dict = master.system_lib.system_lib_dict
+        self.data = []
+        for key, value in system_lib_dict.items():
+            self.data.append([key, value['info'], value['description']])
+
+        self.table = Table([], master.columns, content_frame)
+        self.table.add_rows(self.data[0:100])
+
+        add_button = ttk.Button(footer, text="OK", command=self.add_selected_data_to_table, width=10)
+        add_button.pack(side=tk.RIGHT, padx=10, pady=10)
+        remove_button = ttk.Button(footer, text="Cancel", command=self.window.destroy, width=10)
+        remove_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+    def add_rows(self):
+        self.table.add_rows(self.data[100:len(self.data)])
+
+    def add_selected_data_to_table(self):
+        selected_row = self.table.get_selected_row()
+        if selected_row is not None:
+            selected_data = self.data[selected_row - 1]
+            self.master.add_row_to_table(selected_data)
+        self.window.destroy()
 
 
 class CustomLibrariesPane:
