@@ -29,6 +29,8 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
 
         # Text Editor for Actor documentation
         self.documentation_editor = TextEditor(self)
+        # Disabling update on lost focus:
+        self.documentation_editor.update_settings_on_focus_lost()
     
     def update_settings(self):
         """Update documentation in ProjectSettings.
@@ -61,6 +63,9 @@ class TextEditor:
             Preconfigures the text editor widget.
         """
         super().__init__()
+
+        # Initial state of update on focus lost.
+        self.__update_on_focus_lost: bool = True
 
         # Text content of a text editor
         self._text: str = ""
@@ -115,6 +120,18 @@ class TextEditor:
         # But clear the text widget from leftovers first
         self.clear_text_input()
         self.text_editor.insert('1.0', self._text)
+
+    def update_settings_on_focus_lost(self) -> None:
+        """Enable/disable ProjectSettings() updates when focus is lost."""
+        # Check the current update execution status:
+        # When set to True, set the state to False, detach the specified event, and return from the method.
+        if self.__update_on_focus_lost is True:
+            self.__update_on_focus_lost = False
+            self.text_editor.unbind('<FocusOut>')
+            return
+        # When set to False, set the state to True and reattach the specified event.
+        self.__update_on_focus_lost = True
+        self.text_editor.bind('<FocusOut>', self.focus_lost_event)
 
     def focus_lost_event(self, event) -> None:
         """A private callback method triggered by the event binding.

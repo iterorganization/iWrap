@@ -28,12 +28,14 @@ class Dictionarizable( ABC ):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        dict_ = vars( self )
-        for key, value in dict_.items():
+        obj_as_dict_ = vars( self )
+        dict_ = {}
+        for key, value in obj_as_dict_.items():
             if isinstance( value, Dictionarizable ):
                 dict_[key] = value.to_dict()
             elif isinstance( value, List ):
-                dict_[key] = [item.to_dict() if isinstance( item, Dictionarizable )  else item for item in value ]
+                dict_[key] = [item.to_dict() if isinstance( item, Dictionarizable ) else item for item in value]
+            else:
+                dict_[key] = value
 
         return dict_
-

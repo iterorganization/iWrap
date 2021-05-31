@@ -1,4 +1,5 @@
 from typing import List, Dict, Any
+from lxml import etree
 
 from iwrap.common.misc import Dictionarizable
 from iwrap.settings.serialization import IWrapSerializer
@@ -43,8 +44,12 @@ class Argument( Dictionarizable ):
         return str_
 
 
-class CodeParameters( Dictionarizable ):
+class CodeParameters(Dictionarizable):
     """The data class containing information about files defining code parameters.
+
+    Attributes:
+        parameters (str): Path to a XML file with code parameters
+        schema (str): Path to a XSD file with schema definition for code parameters file
     """
 
     def __init__(self):
@@ -66,7 +71,7 @@ class CodeParameters( Dictionarizable ):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
-        super().from_dict( dictionary )
+        super().from_dict(dictionary)
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes given object to dictionary
@@ -75,6 +80,29 @@ class CodeParameters( Dictionarizable ):
             Dict[str, Any]: Dictionary containing object data
         """
         return super().to_dict()
+
+    def validate(self, parameters: str = None, schema: str = None) -> None:
+        """Self validation of XML file against given schema file (XSD).
+
+        Correct file paths for the validation process will cause the method to run without errors.
+        If the verification process fails or an error occurs, an exception is thrown,
+        and possibly there is a mismatch between the file and its schema
+        or stored files or file paths are damaged.
+        """
+        # In case where no parameters have been provided use class attributes.
+        if parameters is None or schema is None:
+            parameters = self.parameters
+            schema = self.schema
+
+        # Parse XSD file:
+        xmlschema_file = etree.parse(schema)
+        xmlschema = etree.XMLSchema(xmlschema_file)
+
+        # Parse XML file:
+        xml_file = etree.parse(parameters)
+
+        # Perform validation:
+        xmlschema.assertValid(xml_file)
 
 
 class CodeDescription( Dictionarizable ):
