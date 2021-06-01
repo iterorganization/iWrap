@@ -54,6 +54,7 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
 def load_code_description(code_description_file):
     code_description = ProjectSettings.get_settings().code_description
     code_description.load( YAMLSerializer( code_description_file ) )
+    ProjectSettings.get_settings().root_dir = os.path.dirname(code_description_file)
     print( code_description )
 
 
