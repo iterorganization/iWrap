@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 from typing import Any, Dict
 
@@ -35,6 +37,7 @@ class ProjectSettings( Dictionarizable ):
         self.name: str = ''
         self.data_type: str = ''
         self.actor_type: str  = ''
+        self.root_dir = os.getcwd()
         self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
         self.code_description = CodeDescription()
 
@@ -61,6 +64,7 @@ class ProjectSettings( Dictionarizable ):
         self.data_type = ''
         self.actor_type = ''
         self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
+        self.root_dir = os.getcwd()
         self.code_description.clear()
 
     def save(self, serializer: IWrapSerializer):
