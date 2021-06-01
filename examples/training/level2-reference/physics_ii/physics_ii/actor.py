@@ -16,7 +16,7 @@ class PhysicsIIActor (ActorBaseClass):
         argument = Argument({'name': 'equilibrium1', 'type': 'equilibrium', 'intent': Argument.OUT})
         self.formal_arguments.append(argument)
 
-        self.code_parameters = CodeParameters('input_file.xml', 'input_file.xsd')
+        self.code_parameters = CodeParameters('input_physics.xml', 'input_physics.xsd')
 
 
 
