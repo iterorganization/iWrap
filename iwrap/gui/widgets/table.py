@@ -44,7 +44,10 @@ class Table( ttk.Frame ):
         self.selected_row = tk.IntVar()
         self.selected_row.trace('w', self.change_listeners_state)
         self.lost_focus_listeners = lost_focus_listeners
+        self.row_frames = []
 
+        self.columns = columns
+        self._add_columns()
         self.add_new_table(rows, columns)
 
     def add_new_table(self, rows, columns):
@@ -54,10 +57,7 @@ class Table( ttk.Frame ):
             rows ([[str]]): The list of list of strings contains data for rows.
             columns ([Columns]): The list of the Columns objects.
         """
-
         self.delete_data_from_table()
-        self.columns = columns
-        self._add_columns()
         self.add_rows(rows)
         # select first row
         if len(self.rows):
@@ -68,9 +68,14 @@ class Table( ttk.Frame ):
         """
         for row in self.rows:
             for row_cell in row.row_cells:
+                row_cell.cell.pack_forget()
                 row_cell.cell.destroy()
                 del row_cell
             del row
+
+        for row_frame in self.row_frames:
+            row_frame.pack_forget()
+
         self.rows = []
         self.selected_row.set(0)
 
@@ -93,8 +98,11 @@ class Table( ttk.Frame ):
             data (list): The list of values needed to be added into cells in the row.
         """
         for row in data:
+            row_frame = tk.Frame(self.frame)
+            row_frame.pack(side="top", fill="x")
+            self.row_frames.append(row_frame)
             row_number = len(self.rows) + 1
-            table_row = Row(row_number, row, self.frame, self.columns)
+            table_row = Row(row_number, row, row_frame, self.columns)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
@@ -104,9 +112,11 @@ class Table( ttk.Frame ):
     def _add_columns(self):
         """Add the Columns objects to the table grid.
         """
+        column_frame = tk.Frame(self.frame)
+        column_frame.pack(side="top", fill="x")
         for idx, column in enumerate(self.columns):
             self.frame.columnconfigure(idx, weight=1)
-            column.add_column_to_grid(idx, self.frame)
+            column.add_column_to_grid(idx, column_frame)
 
     def get_selected_row(self):
         """Return number of selected row. If row is not selected method returns None.
@@ -161,11 +171,15 @@ class Table( ttk.Frame ):
         """Update all rows position in the table grid, set selected_row to None
         """
         self.selected_row.set(0)
-        for row_number, row in enumerate(self.rows):
-            for row_cell in row.row_cells:
-                row_cell.row_number = row_number + 1
-                row_cell.cell.grid(row=row_number + 1, column=row_cell.cell.grid_info()['column'])
-            row.row_number = row_number + 1
+        data = self.get_data_from_table()
+        rows = []
+        for row_data in data:
+            cells_data = []
+            for column in self.columns:
+                cells_data.append(row_data[column.data_label])
+            rows.append(cells_data)
+
+        self.add_new_table(rows, self.columns)
 
     @staticmethod
     def _move_row_up(row_to_move):
@@ -454,7 +468,7 @@ class RowRadioButton:
         self.column_number = column
         self.value = value
         self.cell = tk.Radiobutton(master, bg="white", state='disabled')
-        self.cell.grid(row=row, column=column, sticky="ew")
+        self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
         """Change the Radiobutton color to lightgray.
@@ -498,7 +512,7 @@ class RowEntry:
         self.row_text.set(text)
         self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=6,
                              relief=tk.FLAT, highlightthickness=0)
-        self.cell.grid(row=row, column=column, sticky="ew")
+        self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
         """Change the Entry color to light gray.
@@ -561,4 +575,4 @@ class Column:
             master (ttk.Frame): The master frame where Entry will be placed.
         """
         tk.Entry(master, textvariable=self.label_var, state='readonly', width=14, justify='center')\
-            .grid(row=0, column=position, sticky="ew")
+            .pack(side="left", fill="both", expand=True)
