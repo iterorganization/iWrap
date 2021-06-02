@@ -155,13 +155,9 @@ class SystemLibrariesPane:
         remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
         self.table = Table([], self.columns, table_frame, [remove_button])
-        add_button['command'] = self.initialize_add_system_library_pane
+        add_button['command'] = lambda: AddSystemLibraryWindow(self)
         remove_button['command'] = self.table.delete_row
         self.__add_table_data()
-
-    def initialize_add_system_library_pane(self):
-        new_window = AddSystemLibraryWindow(self)
-        # new_window.add_rows()
 
     def __add_table_data(self):
         """Add system libraries to the table.
