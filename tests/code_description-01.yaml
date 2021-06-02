@@ -25,6 +25,7 @@ documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
     consequat. '
 language_specific:
     compiler: Intel
+    include_path: ./include/test.mod
     mpi: MPICH2
     open_mp: false
     system_libraries:
