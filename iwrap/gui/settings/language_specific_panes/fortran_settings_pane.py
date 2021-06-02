@@ -3,6 +3,7 @@ from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
 import time
+from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
@@ -177,7 +178,7 @@ class SystemLibrariesPane:
                 description = system_lib_dict['description']
                 data.append([name, info, description])
 
-        self.table.add_new_table(data, self.columns)
+        self.table.add_new_table_content(data)
 
     def add_row_to_table(self, data):
         self.table.add_rows([data])
@@ -216,6 +217,8 @@ class AddSystemLibraryWindow:
         self.window.resizable(width=False, height=True)
         self.window.title("Add system library")
 
+        filter_frame = tk.Frame(self.window, height=50)
+        filter_frame.pack(side=tk.TOP, fill=tk.X)
         content_frame = tk.Frame(self.window, height=300)
         content_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
@@ -226,21 +229,25 @@ class AddSystemLibraryWindow:
         for key, value in system_lib_dict.items():
             self.data.append([key, value['info'], value['description']])
 
+        filter_value = tk.StringVar()
+        tk.Entry(filter_frame, textvariable=filter_value, width=80).pack(side=tk.LEFT, expand=False, padx=20)
+        filter_button = ttk.Button(filter_frame, text="Search", width=10)
+        filter_button.pack(side=tk.LEFT, padx=10, pady=10)
+
         self.table = Table([], master.columns, content_frame)
-        self.table.add_rows(self.data[0:100])
+        self.table.add_rows(self.data)
 
         add_button = ttk.Button(footer, text="OK", command=self.add_selected_data_to_table, width=10)
         add_button.pack(side=tk.RIGHT, padx=10, pady=10)
         remove_button = ttk.Button(footer, text="Cancel", command=self.window.destroy, width=10)
         remove_button.pack(side=tk.RIGHT, padx=10, pady=10)
-
-    def add_rows(self):
-        self.table.add_rows(self.data[100:len(self.data)])
+        filter_button['command'] = lambda: self.table.filter_table(filter_value.get(), self.data)
 
     def add_selected_data_to_table(self):
         selected_row = self.table.get_selected_row()
+        table_data = self.table.get_data_from_table()
         if selected_row is not None:
-            selected_data = self.data[selected_row - 1]
+            selected_data = list(table_data[selected_row - 1].values())
             self.master.add_row_to_table(selected_data)
         self.window.destroy()
 
