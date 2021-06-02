@@ -239,6 +239,20 @@ class Table( ttk.Frame ):
             new_window.set_row_values(selected_row_data)
             tk.Button(new_window.footer, text='Close', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
 
+    def filter_table(self, filter_value, data):
+        """Filter table by filter_value.
+
+        Args:
+            filter_value (str): The filter value.
+            data([[str]]): The list of list of strings contains data for rows.
+        """
+        rows = []
+        for row_data in data:
+            if any(filter_value.upper() in cell_data.upper() for cell_data in row_data):
+                rows.append(row_data)
+        self.selected_row.set(0)
+        self.add_new_table_content(rows)
+
 
 class ArgumentWindow:
     """The ArgumentWindow class is dedicated to adding a new row or editing the selected row. Initializing the class
