@@ -144,7 +144,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
             table_data.append([argument['name'], intent[argument['intent']],
                                intent[argument['intent']], argument['type']])
 
-        self.table.add_new_table(table_data, self.columns)
+        self.table.add_new_table_content(table_data)
 
     def get_data_from_table(self):
         """Return data from table.
