@@ -5,6 +5,7 @@ class FortranSpecificSettings(Dictionarizable):
 
     def __init__(self):
         self.compiler = ''
+        self.include_path = ''
         self.mpi = ''
         self.open_mp = False
         self.system_libraries = []
