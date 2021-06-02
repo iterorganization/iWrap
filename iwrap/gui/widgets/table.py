@@ -44,18 +44,17 @@ class Table( ttk.Frame ):
         self.selected_row = tk.IntVar()
         self.selected_row.trace('w', self.change_listeners_state)
         self.lost_focus_listeners = lost_focus_listeners
-        self.row_frames = []
+        self._row_frames = []
 
         self.columns = columns
         self._add_columns()
-        self.add_new_table(rows, columns)
+        self.add_new_table_content(rows)
 
-    def add_new_table(self, rows, columns):
-        """Add a new table to the frame.
+    def add_new_table_content(self, rows):
+        """Add a new rows to the frame.
 
         Args:
             rows ([[str]]): The list of list of strings contains data for rows.
-            columns ([Columns]): The list of the Columns objects.
         """
         self.delete_data_from_table()
         self.add_rows(rows)
@@ -75,7 +74,7 @@ class Table( ttk.Frame ):
                 del row_cell
             del row
 
-        for row_frame in self.row_frames:
+        for row_frame in self._row_frames:
             row_frame.pack_forget()
 
         self.rows = []
@@ -101,7 +100,7 @@ class Table( ttk.Frame ):
         for row in data:
             row_frame = tk.Frame(self.frame)
             row_frame.pack(side="top", fill="x")
-            self.row_frames.append(row_frame)
+            self._row_frames.append(row_frame)
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, row_frame, self.columns)
             self.rows.append(table_row)
@@ -117,7 +116,7 @@ class Table( ttk.Frame ):
         column_frame.pack(side="top", fill="x")
         for idx, column in enumerate(self.columns):
             self.frame.columnconfigure(idx, weight=1)
-            column.add_column_to_grid(idx, column_frame)
+            column.add_column_to_grid(column_frame)
 
     def get_selected_row(self):
         """Return number of selected row. If row is not selected method returns None.
@@ -130,7 +129,7 @@ class Table( ttk.Frame ):
         return self.selected_row.get()
 
     def select_row(self, parent_row):
-        """Set the number of selected row, change the color of selected row from white to light gray
+        """Set the number of selected row, change the color of selected row from white to light gray.
 
         Args:
             parent_row (Row): The clicked Row object.
@@ -166,10 +165,13 @@ class Table( ttk.Frame ):
                 del row
                 break
 
-        self._update_rows(0)
+        self._update_table(0)
 
-    def _update_rows(self, selected_row):
-        """Update all rows position in the table grid, set selected_row to None
+    def _update_table(self, selected_row):
+        """Collects data from all rows from the table grid, adds new table and sets selected_row value.
+
+        Args:
+            selected_row (int): The row number of selected row.
         """
         self.selected_row.set(selected_row)
         data = self.get_data_from_table()
@@ -180,7 +182,7 @@ class Table( ttk.Frame ):
                 cells_data.append(row_data[column.data_label])
             rows.append(cells_data)
 
-        self.add_new_table(rows, self.columns)
+        self.add_new_table_content(rows)
 
     def row_up_feature(self):
         """Enable move row up in the table.
@@ -190,7 +192,7 @@ class Table( ttk.Frame ):
             current_row = [row for row in self.rows if row.row_number == self.get_selected_row()][0]
             self.rows[top_row.row_number - 1] = current_row
             self.rows[current_row.row_number - 1] = top_row
-            self._update_rows(top_row.row_number - 1)
+            self._update_table(top_row.row_number - 1)
 
     def row_down_feature(self):
         """Enable move row down in the table.
@@ -200,7 +202,7 @@ class Table( ttk.Frame ):
             current_row = [row for row in self.rows if row.row_number == self.get_selected_row()][0]
             self.rows[bottom_row.row_number - 1] = current_row
             self.rows[current_row.row_number - 1] = bottom_row
-            self._update_rows(bottom_row.row_number - 1)
+            self._update_table(bottom_row.row_number - 1)
 
     def add_row(self, frame_title):
         """Enable add a new row. The method creates an ArgumentWindow object what is associated with opening
@@ -365,7 +367,7 @@ class Row:
     Attributes:
         columns ([Column]): List of Column class objects.
         row_number (int): The row number to put cells in.
-        row_cells (list): The list of cells related to row. Cell can be RowEntry or RowRadioButton object.
+        row_cells (list): The list of cells related to row. A cell can be RowEntry or RowRadioButton object.
     """
     def __init__(self, row, data, master, columns):
         """Initialize the Row class object.
@@ -419,7 +421,7 @@ class Row:
 
 
 class RowRadioButton:
-    """The class RowRadioButton enables initialize radio button type table cells, add them to the grid and change
+    """The class RowRadioButton enables initialize radio button type table cells, pack them to the master frame, and change
     color to white or light gray.
 
     Attributes:
@@ -462,7 +464,7 @@ class RowRadioButton:
 
 
 class RowEntry:
-    """The class RowEntry enables initialize text type table cells, add them to the grid, and change color to white or light gray.
+    """The class RowEntry enables initialize text type table cells, pack them to the master frame and change color to white or light gray.
 
     Attributes:
         row_number (int):  The row number where the cell is placed.
@@ -541,7 +543,7 @@ class Column:
         self.data_label = data_label
 
     def add_column_to_grid(self, master):
-        """Add a column to grid.
+        """Pack column to the master frame.
 
         Args:
             master (ttk.Frame): The master frame where Entry will be placed.
