@@ -1,3 +1,6 @@
+module mod_physics_ii
+
+contains
 subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_message)
 
   ! ---------------------------------------
@@ -75,4 +78,4 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   write(*,*) ' '
 
 end subroutine physics_ii
-
+end module mod_physics_ii
