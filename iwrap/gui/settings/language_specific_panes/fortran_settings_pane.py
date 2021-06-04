@@ -103,7 +103,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         custom_libraries = self.custom_libraries_pane.get_list_of_custom_libraries()
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mpi_combobox.get() == 'Yes' else False
+        include_path = self.feature_pane.module_path.get()
         self.settings.from_dict({'compiler': compiler,
+                                 'include_path': include_path,
                                  'mpi': mpi,
                                  'open_mp': open_mpi,
                                  'system_libraries': system_libraries,
@@ -364,6 +366,7 @@ class FeaturesPane:
 
         # MODULE PATH
         self.module_path = tk.StringVar()
+        self.module_path.set(self.settings.include_path or '')
         module_frame = ttk.Frame(master)
         module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
