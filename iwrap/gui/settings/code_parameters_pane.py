@@ -94,7 +94,7 @@ class File:
             # Reset attribute:
             self._path_not_verified = ""
             return
-        self._path = path
+        self._path = path if path is not None else ""
         self._path_not_verified = ""
 
     def get_path(self) -> str:
@@ -108,8 +108,8 @@ class File:
 
         Returns: Bool
         """
-        if not isinstance(path, str):
-            # Set the path validity flag to False
+        if not (path is None or isinstance(path, str)):
+            # Set the path validity flag to False and raise the error out of exception.
             try:
                 self.path_valid = False
                 raise ValueError(f"\tValueError exception thrown! "
