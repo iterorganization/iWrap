@@ -1,3 +1,4 @@
+import shutil
 import tempfile
 
 from iwrap.generation_engine.base_classes import ActorGenerator
@@ -16,6 +17,9 @@ class ActorScriptGenerator( ActorGenerator ):
         pass
 
     def init(self, **kwargs):
+        pass
+
+    def copy_file(self):
         pass
 
     def generate(self):

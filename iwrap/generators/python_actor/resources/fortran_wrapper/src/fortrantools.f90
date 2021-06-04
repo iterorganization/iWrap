@@ -11,6 +11,13 @@ use iso_c_binding
 end module
 !--------------------------------------------------
 
+module status_module
+use iso_c_binding
+    type, BIND(C)::status_t
+        integer     :: code
+        type(C_PTR) :: message
+    end type
+end module
 
 module iwrap_tools
 implicit none 
@@ -29,8 +36,6 @@ implicit none
  
 contains
 
-!character(len=ids_string_length), dimension(:), pointer 
-! ------------------------
 
 FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)    
     use iso_c_binding, ONLY: C_PTR

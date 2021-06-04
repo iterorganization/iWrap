@@ -74,7 +74,7 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         return 0
 
     if args.actor_name:
-        ProjectSettings.get_settings().name = args.actor_name
+        ProjectSettings.get_settings().actor_name = args.actor_name
 
     if args.actor_type:
         Engine().active_generator = args.actor_type
@@ -99,8 +99,9 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
 
 if __name__ == "__main__":
     # GUI
-    main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'], is_commandline_mode=False )
+    #main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'], is_commandline_mode=False )
 
+    main( ['-a', 'physics_ii', '-f', '../examples/training/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
     #main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'] )
     #main( ['-h'] )

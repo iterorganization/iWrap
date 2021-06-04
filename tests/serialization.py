@@ -7,7 +7,7 @@ from iwrap.settings.serialization import YAMLSerializer
 
 project_settings = ProjectSettings.get_settings()
 
-project_settings.name = 'test actor'
+project_settings.actor_name = 'test actor'
 project_settings.actor_type = 'Python actor'
 project_settings.data_type = 'LEGACY_IDS'
 

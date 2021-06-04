@@ -12,7 +12,7 @@ class CodeParameters :
         self.schema = None  # file name or string or ... (?)
         self.parameters = None # file name or string or... (?)
 
-        self._code_parameters_dir = os.path.dirname(os.path.realpath(__file__)) + '/../code_parameters/'
+        self._code_parameters_dir = os.path.dirname(os.path.realpath(__file__)) + '/../input/'
 
     def _read_file(self, file_name):
         file_path = self._code_parameters_dir + file_name

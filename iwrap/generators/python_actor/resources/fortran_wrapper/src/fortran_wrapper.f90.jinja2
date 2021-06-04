@@ -1,0 +1,123 @@
+
+!--------------------------------------------------
+module idsmodule
+    type, BIND(C)::idsstruct
+        character(132)::ids
+        integer::shot
+        integer::run
+        integer::occurrence
+        integer::idx
+        character(132)::machine
+        character(132)::user
+        character(132)::version
+    end type
+end module
+!--------------------------------------------------
+
+module wrapper
+
+contains
+
+subroutine physics_iiual(&
+{% for argument in code_description.arguments -%}
+        {{ argument.name }}_desc,  &
+{% endfor -%}
+code_params, status_info) BIND(C)
+
+    use idsmodule
+    use codeparam_module
+    use status_module
+    use ids_schemas
+    use iwrap_tools
+    use ids_routines
+    use mod_physics_ii
+
+    implicit none
+
+    character(132):: tabchar
+
+{% for argument in code_description.arguments %}
+    ! {{ argument.name }}
+    type(idsstruct) :: {{ argument.name }}_desc
+    type (ids_{{ argument.type }}) :: {{ argument.name }}
+{% endfor %}
+
+	!----  Code parameters ----
+    type(ids_parameters_input) :: imas_code_params
+    type(code_parameters_t) :: code_params
+
+	 !----  Diagnostic info  ----
+     type(status_t) :: status_info
+	 character(len=:), pointer :: diagnosticInfo
+	 integer :: wrap_out_outputFlag
+
+    {% for argument in code_description.arguments if argument.intent == 'IN' %}
+    !--------- Get IDS : {{ argument.name }} ------------------------
+    if ({{ argument.name }}_desc%occurrence/=0) then
+            write(tabchar,"(i0)") {{ argument.name }}_desc%occurrence
+            tabchar=trim({{ argument.name }}_desc%ids)//"/"//trim(tabchar)
+    else
+            tabchar=trim({{ argument.name }}_desc%ids)
+    endif
+    call ids_get({{ argument.name }}_desc%idx,trim(tabchar),{{ argument.name }})
+    {% endfor %}
+
+! ------------------ code parameters ----------------------------
+imas_code_params = convert(code_params)
+
+ 
+	 ! ------------- Input data conversion [ISO_C_BINDING] --------------
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  physics_ii( &
+{% for argument in code_description.arguments -%}
+        {{ argument.name }}, &
+{% endfor -%}
+    imas_code_params,  wrap_out_outputFlag, diagnosticInfo)
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+	 status_info.code = wrap_out_outputFlag
+	 if(associated(diagnosticInfo)) then
+		 status_info.message = convert_string2Cptr(diagnosticInfo)
+   endif
+
+	 ! Return in case of 'soft' crash (diagnostic info < 0)  
+	 if(wrap_out_outputFlag < 0 ) then
+		 return 
+	 endif 
+
+   ! ------------ Provenance information --------------
+ {% for argument in code_description.arguments if argument.intent == 'OUT' %}
+   if (associated({{ argument.name }}%code%name)) then
+      deallocate({{ argument.name }}%code%name)
+   endif
+   if (associated({{ argument.name }}%code%version)) then
+      deallocate({{ argument.name }}%code%version)
+   endif
+   allocate({{ argument.name }}%code%name(1))
+   allocate({{ argument.name }}%code%version(1))
+   {{ argument.name }}%code%name(1) = "physics_ii"
+   {{ argument.name }}%code%version(1) = ""
+    {% endfor %}
+
+     {% for argument in code_description.arguments if argument.intent == 'OUT' %}
+    !--------- PUT IDS : {{ argument.name }} ------------------------
+    if ({{ argument.name }}_desc%occurrence/=0) then
+            write(tabchar,"(i0)") {{ argument.name }}_desc%occurrence
+            tabchar=trim({{ argument.name }}_desc%ids)//"/"//trim(tabchar)
+    else
+            tabchar=trim({{ argument.name }}_desc%ids)
+    endif
+    call ids_put({{ argument.name }}_desc%idx,trim(tabchar),{{ argument.name }})
+    {% endfor %}
+
+    !--------- Dealloacting IDSes ------------------------
+    {% for argument in code_description.arguments %}
+    call ids_deallocate({{ argument.name }})
+    {% endfor %}
+
+
+end
+
+end module wrapper
