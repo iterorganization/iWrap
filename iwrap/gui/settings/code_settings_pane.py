@@ -134,5 +134,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
         filename = tk.filedialog.askopenfilename()
-        self.code_path.set(filename)
+        if filename != '' and filename != ():
+            self.code_path.set(filename)
 
