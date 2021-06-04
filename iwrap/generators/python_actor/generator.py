@@ -1,7 +1,12 @@
+import os
+import shutil
 import tempfile
+from os.path import join
+from pathlib import Path
 from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
+from iwrap.generation_engine.utils.jinja2_template_processing import process_template_dir
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
 from iwrap.settings.code_description import CodeDescription
 
@@ -34,34 +39,103 @@ class PythonActorGenerator(ActorGenerator):
         return {'Fortran', 'CPP'}
 
     def __init__(self):
-        self.install_dir: str = None
+
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
 
     def init(self):
-        self.jinja_env = jinja2.Environment(
-            loader=jinja2.PackageLoader('iwrap.generators.python_actor', 'resources'),
-            autoescape=jinja2.select_autoescape(['html', 'xml'])
-        )
+        self.install_dir: str = str(Path.home()) + '/IWRAP_ACTORS/' + ProjectSettings.get_settings().actor_name
+
         self.wrapper_generator = FortranWrapperGenerator()
 
+
+
     def generate(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
-        print('created temporary directory', self.jinja_env.list_templates())
+        self.temp_dir = tempfile.TemporaryDirectory().name
 
-        generation_env = {'temp_dir': self.temp_dir, 'jinja_env': self.jinja_env}
-        actor_settings = ProjectSettings.get_settings()
+        generation_env = {'temp_dir': self.install_dir}
+        actor_settings_dict = ProjectSettings.get_settings().to_dict()
+        code_description_dict = ProjectSettings.get_settings().code_description.to_dict()
+        dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
-        self.wrapper_generator.init(actor_settings, generation_env)
 
-        self.wrapper_generator.generate()
+
+
+        # TO BE CHECKED!!!!
+
+
+        #if os.path.isdir(self.install_dir):
+        #    shutil.rmtree(self.install_dir)
+
+        process_template_dir('iwrap.generators.python_actor.resources', '', self.install_dir, dictionary, sys.stdout)
+
+
+        #print('TMP2: ', self.jinja_env.loader.provider.module_path)
+
+        #src = self.jinja_env.loader.provider.module_path + "/" + self.jinja_env.loader.package_path
+
+        # shutil.copytree(src,  self.install_dir, copy_function=self.copy_file)
+
+        #self.wrapper_generator.init(dictionary, generation_env)
+
+        #self.wrapper_generator.generate()
+        self.__copy_code_params_files()
+        self.__copy_native_lib()
+        self.__copy_include()
 
     def build(self):
         pass
 
     def install(self):
-        pass
+        # cleanup leftovers (if any)
+        if os.path.isdir( self.install_dir ):
+            shutil.rmtree( self.install_dir )
+
+    def __copy_native_lib(self):
+        code_description = ProjectSettings.get_settings().code_description
+        native_lib_path = code_description.code_path
+
+        root_dir = ProjectSettings.get_settings().root_dir
+        native_lib_abs_path = os.path.join( root_dir, native_lib_path )
+
+        destination_dir = os.path.join( self.install_dir, 'lib' )
+        if not os.path.isdir( destination_dir ):
+            os.makedirs( destination_dir )
+
+        shutil.copy( native_lib_abs_path, destination_dir )
+
+    def __copy_include(self):
+        code_description = ProjectSettings.get_settings().code_description
+        include_path = code_description.language_specific['include_path']
+
+        root_dir = ProjectSettings.get_settings().root_dir
+        include_abs_path = os.path.join( root_dir, include_path )
+
+        destination_dir = os.path.join( self.install_dir, 'fortran_wrapper/include/' )
+        if not os.path.isdir( destination_dir ):
+            os.makedirs( destination_dir )
+
+        shutil.copy( include_abs_path, destination_dir )
+
+    def __copy_code_params_files(self):
+        code_description = ProjectSettings.get_settings().code_description
+        parameters_file = code_description.code_parameters.parameters
+        schema_file = code_description.code_parameters.schema
+
+        if parameters_file is None or \
+            schema_file is None:
+            return
+
+        root_dir = ProjectSettings.get_settings().root_dir
+        parameters_file = os.path.join(root_dir, parameters_file)
+        schema_file = os.path.join(root_dir,schema_file)
+        destination_dir = os.path.join(self.install_dir, 'input')
+        if not os.path.isdir( destination_dir ):
+            os.makedirs( destination_dir )
+
+        shutil.copy( parameters_file, destination_dir )
+        shutil.copy( schema_file, destination_dir )
 
     def cleanup(self):
         self.temp_dir.cleanup()
