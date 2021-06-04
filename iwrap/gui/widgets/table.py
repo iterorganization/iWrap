@@ -63,6 +63,8 @@ class Table( ttk.Frame ):
             self.select_row(self.rows[self.get_selected_row()])
         elif len(self.rows):
             self.select_row(self.rows[0])
+        else:
+            self.selected_row.set(0)
 
     def delete_data_from_table(self):
         """Delete all data from rows in the table.
