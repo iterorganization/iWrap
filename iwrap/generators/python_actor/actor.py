@@ -20,14 +20,10 @@ class ActorScriptGenerator( ActorGenerator ):
         pass
 
     def copy_file(self):
-        src = self.jinja_env.loader.provider.module_path
-        dst = None
-        shutil.copy(src, dst)
+        pass
 
     def generate(self):
-        src = self.jinja_env.loader.provider.module_path
-        dst = None
-        shutil.copytree(src, dst, copy_function=self.copy_file)
+        pass
 
     def build(self):
         pass
