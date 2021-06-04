@@ -39,7 +39,7 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
     def update_settings(self):
         # updating actor name
         actor_name = self.actor_name.get()
-        ProjectSettings.get_settings().name = actor_name
+        ProjectSettings.get_settings().actor_name = actor_name
 
         # updating actor type
         actor_type = self.actor_type_combo.get()
@@ -71,5 +71,5 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
             self.data_type_combo.current( 0 )
 
         self.actor_name.delete( 0, tk.END )
-        actor_name = ProjectSettings.get_settings().name
+        actor_name = ProjectSettings.get_settings().actor_name
         self.actor_name.insert( 0, actor_name )
