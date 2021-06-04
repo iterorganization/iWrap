@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
-from tkinter import messagebox
-import time
-from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
@@ -344,6 +341,15 @@ class FeaturesPane:
         """
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
+        # MODULE PATH
+        self.module_path = tk.StringVar()
+        module_frame = ttk.Frame(master)
+        module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
+        ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
+        self.browse_text = tk.Entry(module_frame, state='readonly', textvariable=self.module_path)
+        self.browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
+        ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10).pack(side=tk.LEFT, padx=10)
+
         # LABEL FRAME
         labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
         labelframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=5)
@@ -365,6 +371,13 @@ class FeaturesPane:
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
         self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
+    def open_filedialog(self):
+        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """
+        filename = tk.filedialog.askopenfilename()
+        if filename != '' and filename != ():
+            self.module_path.set(filename)
+
     def reload(self):
         """Reload open_mpi and mpi values from the LanguageSettingsManager and set them to the Combobox widgets.
         """
@@ -374,10 +387,12 @@ class FeaturesPane:
         else:
             self.mpi_flavour_combobox.current(0)
         self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
+        self.module_path.set(self.settings.include_path or '')
 
     def update_settings(self):
         """Update open_mpi and mpi values in the ProjectSettings.
         """
         ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific['include_path'] = self.module_path.get()
         open_mpi = True if self.open_mpi_combobox.get() == 'Yes' else False
         ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
