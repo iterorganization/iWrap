@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import tkinter.filedialog
 
 from iwrap.gui.generics import IWrapPane
@@ -166,8 +166,8 @@ class SystemLibrariesPane:
             name = sys_lib
             system_lib_dict = self.system_lib.get_pkg_config(name)
             if system_lib_dict is None:
+                messagebox.showwarning("Warning", f"Unknown system library.")
                 continue
-                # messagebox.showwarning("Warning", f"Unknown system library.")
             else:
                 info = system_lib_dict['info']
                 description = system_lib_dict['description']
@@ -199,8 +199,8 @@ class SystemLibrariesPane:
     def update_settings(self):
         """Update system libraries in the ProjectSettings.
         """
-        libraries_name = self.get_data_from_table()
-        ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = libraries_name
+        system_libraries = self.get_data_from_table()
+        ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = system_libraries
 
 
 class AddSystemLibraryWindow:
@@ -294,25 +294,26 @@ class CustomLibrariesPane:
         buttons_center_frame = ttk.Frame(buttons_frame)
         buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
-        # TABLE
-        columns = [Column(Column.TEXT, "Library path", "Library path")]
-        self.table = Table([], columns, library_path_frame)
-
         # BUTTONS
         ttk.Button(buttons_center_frame, text="Add...", command=self.__add_on_click, width=10)\
             .pack(side=tk.TOP, expand=1, pady=5)
-        ttk.Button(buttons_center_frame, text="Remove", command=self.table.delete_row, width=10)\
-            .pack(side=tk.TOP, expand=1, pady=5)
+        remove_button = ttk.Button(buttons_center_frame, text="Remove", width=10)
+        remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
+        # TABLE
+        columns = [Column(Column.TEXT, "Library path", "Library path")]
+        self.table = Table([], columns, library_path_frame, [remove_button])
+        remove_button['command'] = self.table.delete_row
         self.__add_custom_lib_from_settings()
 
     def __add_custom_lib_from_settings(self):
         """Add custom libraries from the ProjectSettings to the Table widget.
         """
         data = []
-        for cus_lib in self.settings.custom_libraries:
-            data.append([cus_lib])
-        self.table.add_rows(data)
+        if self.settings.custom_libraries is not None:
+            for cus_lib in self.settings.custom_libraries:
+                data.append([cus_lib])
+        self.table.add_new_table_content(data)
 
     def __add_on_click(self):
         """Open the filedialog and add selected path to the Table widget.
