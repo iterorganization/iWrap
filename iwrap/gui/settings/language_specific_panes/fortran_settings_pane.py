@@ -352,7 +352,7 @@ class FeaturesPane:
     Attributes:
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         mpi_flavour_combobox (ttk.Combobox): The combobox contains mpi flavour values.
-        open_mpi_combobox (ttk.Combobox): The combobox contains open mpi values.
+        open_mp_combobox (ttk.Combobox): The combobox contains open mpi values.
         module_path (tk.StringVar()): The value for include path.
     """
 
@@ -370,7 +370,7 @@ class FeaturesPane:
         module_frame = ttk.Frame(master)
         module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
-        browse_text = tk.Entry(module_frame, state='readonly', textvariable=self.module_path)
+        browse_text = ttk.Entry(module_frame, state='readonly', textvariable=self.module_path)
         browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
         ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10).pack(side=tk.LEFT, padx=10)
 
@@ -385,7 +385,7 @@ class FeaturesPane:
         self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
         self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
-        # COMBOBOX OpenMPI
+        # COMBOBOX OpenMP
         ttk.Label(labelframe, text="OpenMP:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.open_mp_combobox = ttk.Combobox(labelframe, state='readonly')
         self.open_mp_combobox['values'] = ["Yes", "No"]
