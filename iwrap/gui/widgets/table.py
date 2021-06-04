@@ -59,7 +59,7 @@ class Table( ttk.Frame ):
         self.delete_data_from_table()
         self.add_rows(rows)
         # select row
-        if self.get_selected_row() is not None and len(self.rows):
+        if self.get_selected_row() is not None and len(self.rows) > self.get_selected_row():
             self.select_row(self.rows[self.get_selected_row()])
         elif len(self.rows):
             self.select_row(self.rows[0])
