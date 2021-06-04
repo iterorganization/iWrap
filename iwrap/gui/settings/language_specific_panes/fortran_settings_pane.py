@@ -102,7 +102,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         system_libraries = self.system_libraries_pane.get_data_from_table()
         custom_libraries = self.custom_libraries_pane.get_list_of_custom_libraries()
         mpi = self.feature_pane.mpi_flavour_combobox.get()
-        open_mpi = True if self.feature_pane.open_mpi_combobox.get() == 'Yes' else False
+        open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
         include_path = self.feature_pane.module_path.get()
         self.settings.from_dict({'compiler': compiler,
                                  'include_path': include_path,
@@ -321,7 +321,7 @@ class CustomLibrariesPane:
         """Open the filedialog and add selected path to the Table widget.
         """
         path = tk.filedialog.askopenfilename()
-        if path != '' and path != ():
+        if path not in ['', ()]:
             self.table.add_rows([[path]])
 
     def get_list_of_custom_libraries(self):
@@ -381,25 +381,22 @@ class FeaturesPane:
         # COMBOBOX MPI Flavour
         ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI"]
-        if self.settings.mpi != '':
-            self.mpi_flavour_combobox.set(self.settings.mpi)
-        else:
-            self.mpi_flavour_combobox.current(0)
+        self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI", "None"]
+        self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
         self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # COMBOBOX OpenMPI
-        ttk.Label(labelframe, text="OpenMPI:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.open_mpi_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.open_mpi_combobox['values'] = ["Yes", "No"]
-        self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
-        self.open_mpi_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Label(labelframe, text="OpenMP:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.open_mp_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.open_mp_combobox['values'] = ["Yes", "No"]
+        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
+        self.open_mp_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def open_filedialog(self):
         """Open the filedialog when the browse button is clicked and change the module path value to selected path.
         """
         filename = tk.filedialog.askopenfilename()
-        if filename != '' and filename != ():
+        if filename not in ['', ()]:
             self.module_path.set(filename)
 
     def reload(self):
@@ -407,16 +404,13 @@ class FeaturesPane:
         """
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
         self.module_path.set(self.settings.include_path or '')
-        if self.settings.mpi != '':
-            self.mpi_flavour_combobox.set(self.settings.mpi)
-        else:
-            self.mpi_flavour_combobox.current(0)
-        self.open_mpi_combobox.set(["Yes" if self.settings.open_mp else "No"])
+        self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
+        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
 
     def update_settings(self):
         """Update open_mpi, include path and mpi values in the ProjectSettings.
         """
         ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
         ProjectSettings.get_settings().code_description.language_specific['include_path'] = self.module_path.get()
-        open_mpi = True if self.open_mpi_combobox.get() == 'Yes' else False
+        open_mpi = True if self.open_mp_combobox.get() == 'Yes' else False
         ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
