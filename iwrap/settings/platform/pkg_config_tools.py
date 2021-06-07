@@ -31,10 +31,13 @@ class PkgConfigTools:
         return self.__system_lib_dict
 
     def initialize(self):
-        process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
-                                    PkgConfigTools.PKG_CONFIG_OPT_LIST_ALL], stdout=subprocess.PIPE)
-        stdout, stderr = process.communicate()
-        self.__pkg_config_list = stdout.decode('ascii').splitlines()
+        try:
+            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
+                                            PkgConfigTools.PKG_CONFIG_OPT_LIST_ALL], stdout=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            self.__pkg_config_list = stdout.decode('ascii').splitlines()
+        except (FileNotFoundError, subprocess.SubprocessError):
+            self.__pkg_config_list = []
         self.__system_lib_dict = self.__to_dict()
 
     def __to_dict(self):
