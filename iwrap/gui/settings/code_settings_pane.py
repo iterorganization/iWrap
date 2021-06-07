@@ -63,7 +63,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         # CODE NAME
         ttk.Label(labelframe, text="Code name:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.code_name_text = tk.Entry(labelframe, textvariable=self.code_name)
+        self.code_name_text = ttk.Entry(labelframe, textvariable=self.code_name)
         self.code_name_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
