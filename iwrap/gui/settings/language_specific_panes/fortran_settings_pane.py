@@ -370,7 +370,8 @@ class FeaturesPane:
         module_frame = ttk.Frame(master)
         module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
-        browse_text = ttk.Entry(module_frame, state='readonly', textvariable=self.module_path)
+        browse_text = tk.Entry(module_frame, state='readonly', selectbackground="lightgray",
+                               textvariable=self.module_path)
         browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
         ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10).pack(side=tk.LEFT, padx=10)
 
