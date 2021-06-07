@@ -368,12 +368,14 @@ class FeaturesPane:
         self.module_path = tk.StringVar()
         self.module_path.set(self.settings.include_path or '')
         module_frame = ttk.Frame(master)
-        module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
-        browse_text = tk.Entry(module_frame, state='readonly', selectbackground="lightgray",
-                               textvariable=self.module_path)
+        browse_button = ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10)
+        browse_button.bind("<FocusIn>", self.handle_focus)
+        browse_text = ttk.Entry(module_frame, state='readonly',
+                                textvariable=self.module_path)
+        module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
-        ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10).pack(side=tk.LEFT, padx=10)
+        browse_button.pack(side=tk.LEFT, padx=10)
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
@@ -392,6 +394,15 @@ class FeaturesPane:
         self.open_mp_combobox['values'] = ["Yes", "No"]
         self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
         self.open_mp_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+    @staticmethod
+    def handle_focus(event):
+        """Handle focus event and set focus to the next widget.
+
+        Args:
+            event: The focus event.
+        """
+        event.widget.tk_focusNext().focus()
 
     def open_filedialog(self):
         """Open the filedialog when the browse button is clicked and change the module path value to selected path.
