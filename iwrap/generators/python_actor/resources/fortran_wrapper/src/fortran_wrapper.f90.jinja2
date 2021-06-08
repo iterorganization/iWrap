@@ -19,10 +19,10 @@ module wrapper
 contains
 
 subroutine physics_iiual(&
-{% for argument in code_description.arguments -%}
-        {{ argument.name }}_desc,  &
-{% endfor -%}
-code_params, status_info) BIND(C)
+{% for argument in code_description.arguments %}
+                {{ argument.name }}_desc,  &
+{% endfor %}
+                code_params, status_info) BIND(C)
 
     use idsmodule
     use codeparam_module
@@ -34,7 +34,7 @@ code_params, status_info) BIND(C)
 
     implicit none
 
-    character(132):: tabchar
+    character(132):: ids_full_name
 
 {% for argument in code_description.arguments %}
     ! {{ argument.name }}
@@ -53,27 +53,22 @@ code_params, status_info) BIND(C)
 
     {% for argument in code_description.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
-    if ({{ argument.name }}_desc%occurrence/=0) then
-            write(tabchar,"(i0)") {{ argument.name }}_desc%occurrence
-            tabchar=trim({{ argument.name }}_desc%ids)//"/"//trim(tabchar)
-    else
-            tabchar=trim({{ argument.name }}_desc%ids)
-    endif
-    call ids_get({{ argument.name }}_desc%idx,trim(tabchar),{{ argument.name }})
+    ids_full_name = create_ids_full_name({{ argument.name }}_desc)
+    call ids_get({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
-! ------------------ code parameters ----------------------------
-imas_code_params = convert(code_params)
+    ! ------------------ code parameters ----------------------------
+    imas_code_params = convert(code_params)
 
  
-	 ! ------------- Input data conversion [ISO_C_BINDING] --------------
+	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
     ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
     call  physics_ii( &
-{% for argument in code_description.arguments -%}
-        {{ argument.name }}, &
-{% endfor -%}
-    imas_code_params,  wrap_out_outputFlag, diagnosticInfo)
+{% for argument in code_description.arguments %}
+            {{ argument.name }}, &
+{% endfor %}
+            imas_code_params,  wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
@@ -103,13 +98,8 @@ imas_code_params = convert(code_params)
 
      {% for argument in code_description.arguments if argument.intent == 'OUT' %}
     !--------- PUT IDS : {{ argument.name }} ------------------------
-    if ({{ argument.name }}_desc%occurrence/=0) then
-            write(tabchar,"(i0)") {{ argument.name }}_desc%occurrence
-            tabchar=trim({{ argument.name }}_desc%ids)//"/"//trim(tabchar)
-    else
-            tabchar=trim({{ argument.name }}_desc%ids)
-    endif
-    call ids_put({{ argument.name }}_desc%idx,trim(tabchar),{{ argument.name }})
+    ids_full_name = create_ids_full_name({{ argument.name }}_desc)
+    call ids_put({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
     !--------- Dealloacting IDSes ------------------------

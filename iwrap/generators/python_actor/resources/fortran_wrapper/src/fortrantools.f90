@@ -36,6 +36,21 @@ implicit none
  
 contains
 
+FUNCTION create_ids_full_name(ids_description)  RESULT (ids_full_name)
+    use idsmodule
+    implicit none
+
+    type(idsstruct), intent(IN) :: ids_description
+    character(132):: ids_full_name
+
+    if (ids_description%occurrence/=0) then
+            write(ids_full_name,"(i0)") ids_description%occurrence
+            ids_full_name=trim(ids_description%ids)//"/"//trim(ids_full_name)
+    else
+            ids_full_name=trim(ids_description%ids)
+    endif
+END FUNCTION create_ids_full_name
+
 
 FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)    
     use iso_c_binding, ONLY: C_PTR
