@@ -22,7 +22,8 @@ def process_template_dir(
     jinja_env = jinja2.Environment(
         loader=jinja2.PackageLoader(template_pkg, template_dir),
         autoescape=jinja2.select_autoescape(['html', 'xml']),
-        #trim_blocks=True
+        trim_blocks=True,
+        lstrip_blocks = True
     )
     templates = jinja_env.list_templates()
 
