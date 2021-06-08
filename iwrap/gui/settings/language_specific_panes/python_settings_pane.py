@@ -15,3 +15,6 @@ class PythonPane( ttk.Frame, IWrapPane ):
 
     def reload(self):
         pass
+
+    def save_pane_settings(self):
+        pass

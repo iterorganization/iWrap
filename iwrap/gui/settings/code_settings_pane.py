@@ -6,6 +6,7 @@ from tkinter import messagebox
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
+from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
@@ -62,25 +63,27 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         # CODE NAME
         ttk.Label(labelframe, text="Code name:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.code_name_text = tk.Entry(labelframe, textvariable=self.code_name)
+        self.code_name_text = ttk.Entry(labelframe, textvariable=self.code_name)
         self.code_name_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = tk.Entry(labelframe, state='readonly', textvariable=self.code_path)
+        self.browse_text = ttk.Entry(labelframe, state='readonly', textvariable=self.code_path)
         self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
 
-    def change_language_pane(self, eventObject=None):
+    def change_language_pane(self, event=None):
         """Update specific language pane when programming language in combobox is changed.
 
         Args:
-            eventObject: Combobox change value event object. Default to None.
+            event: Combobox change value event object. Default to None.
         """
-        self.selected_programming_language.set(self.programming_language_combobox.get())
-        self.language_pane.pack_forget()
-        self.add_language_pane()
+        if self.selected_programming_language.get() != self.programming_language_combobox.get():
+            self.selected_programming_language.set(self.programming_language_combobox.get())
+            self.language_pane.save_pane_settings()
+            self.language_pane.pack_forget()
+            self.add_language_pane()
 
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
@@ -96,6 +99,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.programming_language = self.selected_programming_language.get()
         code_description.code_path = self.code_path.get()
         code_description.code_name = self.code_name.get()
+
+        self.language_pane.update_settings()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -122,10 +127,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.code_path.set(code_path)
         self.code_name.set(code_name)
 
+        LanguageSettingsManager.set_settings(self.programming_language_combobox.get())
         self.language_pane.reload()
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
         filename = tk.filedialog.askopenfilename()
-        self.code_path.set(filename)
+        if filename != '' and filename != ():
+            self.code_path.set(filename)
+
