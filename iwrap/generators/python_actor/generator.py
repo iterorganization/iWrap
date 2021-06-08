@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 import tempfile
 from os.path import join
 from pathlib import Path
@@ -85,7 +86,16 @@ class PythonActorGenerator(ActorGenerator):
         self.__copy_include()
 
     def build(self):
-        pass
+
+        proc = subprocess.Popen( [], executable = "make", bufsize=10, cwd=self.install_dir + '/fortran_wrapper', encoding='utf-8', text=True, stdout=subprocess.PIPE )
+        for line in proc.stdout:
+            print( line, end='' )
+
+        return_code = proc.wait()
+        if return_code:
+            raise subprocess.CalledProcessError( return_code, 'make' )
+
+
 
     def install(self):
         # cleanup leftovers (if any)
