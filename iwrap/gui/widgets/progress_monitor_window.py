@@ -38,7 +38,7 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
 
     def __append_text_editor(self, txt):
         self.__text_editor.insert(tk.END, txt)
-        self.update()
+        self.update_idletasks()
 
 
 
