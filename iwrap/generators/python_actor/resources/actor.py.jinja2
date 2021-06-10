@@ -6,7 +6,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
 
-    CODE_NAME = '{{code_description.code_name  | wordwrap(width=10) }}'
+    CODE_NAME = '{{code_description.code_name}}'
 
     def __init__(self):
         super().__init__(self.CODE_NAME)

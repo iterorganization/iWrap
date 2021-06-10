@@ -3,12 +3,14 @@ Generated Py-F actors:
 + standalone mode
 + debug mode
 + extract codes common to all actors to separate 'space' (system module?)
-+ move main actor class in directory hierarchy to make PYTHONPATH shorter
++ introduce a proper logging
 
 
 iWrap:
 ----------------
++ validation of native code description
 + actor generator plugin discovery mechanism based on implicit namespace packages
 + List of IDSes should be loaded dynamically from IMAS
 + handle $SYSTEM_VARS while resolving paths
 + make paths relative while saving the project
++ introduce a proper logging

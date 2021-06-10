@@ -28,9 +28,17 @@ CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-ifort xmllib)
 CORE_LIBS=$(shell pkg-config --libs imas-ifort xmllib)
 
 # required 'platform' libs (i.e. published using pkg-config mechanism)
+{% if actor_settings.code_description.language_specific.system_libraries %}
 PLATFORM_LIBS_NAMES={{ (actor_settings.code_description.language_specific.system_libraries or []) | join(' ')}}
 PLATFORM_LIBS_FLAGS=$(shell pkg-config --cflags $(PLATFORM_LIBS_NAMES))
 PLATFORM_LIBS=$(shell pkg-config --libs $(PLATFORM_LIBS_NAMES))
+{% else %}
+PLATFORM_LIBS_NAMES=
+PLATFORM_LIBS_FLAGS=
+PLATFORM_LIBS=
+{% endif %}
+
+
 
 # required 'custom' libs (i.e. provided by user as a pth to library)
 CUSTOM_LIBS={{ (actor_settings.code_description.language_specific.custom_libraries or [] ) | join(' ')}}
