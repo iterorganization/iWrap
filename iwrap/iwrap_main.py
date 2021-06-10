@@ -92,7 +92,7 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         print( 'No code description file to proceed with. Nothing to do... Booooring...' )
         return 0
 
-    Engine().generate_actor()
+    Engine().generate_actor(info_output_stream = sys.stdout)
 
     return 0
 
@@ -101,9 +101,9 @@ if __name__ == "__main__":
     # GUI
     #main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'], is_commandline_mode=False )
 
-    main( ['-a', 'physics_ii', '-f', '../examples/training/level2/physics_ii.yaml'], is_commandline_mode=False )
+    #main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
-    #main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'] )
+    main( ['-a', 'core2dist', '-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=False )
     #main( ['-h'] )
     #main(['--list-actor-types'])
     # main(is_commandline_mode = False)
