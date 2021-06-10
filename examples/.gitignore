@@ -1,4 +1,8 @@
 !*.yaml
 !*.xml
 !*.xsd
+*.o
+*.mod
+*.a
+*.so
 
