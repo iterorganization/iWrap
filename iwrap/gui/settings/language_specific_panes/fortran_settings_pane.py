@@ -163,6 +163,9 @@ class SystemLibrariesPane:
     def __add_table_data(self):
         """Add system libraries to the table.
         """
+        if not self.settings.system_libraries:
+            return
+
         data = []
         for sys_lib in self.settings.system_libraries:
             name = sys_lib
