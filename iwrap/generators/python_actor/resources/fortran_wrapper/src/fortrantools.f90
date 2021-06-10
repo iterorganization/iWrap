@@ -19,6 +19,21 @@ use iso_c_binding
     end type
 end module
 
+!--------------------------------------------------
+module idsmodule
+    type, BIND(C)::idsstruct
+        character(132)::ids
+        integer::shot
+        integer::run
+        integer::occurrence
+        integer::idx
+        character(132)::machine
+        character(132)::user
+        character(132)::version
+    end type
+end module
+!--------------------------------------------------
+
 module iwrap_tools
 implicit none 
 
