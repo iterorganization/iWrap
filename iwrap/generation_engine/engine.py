@@ -57,4 +57,8 @@ class Engine:
             Engine._active_generator.init()
 
     def generate_actor(self):
+        print( 'GENERATING AN ACTOR!' )
         Engine._active_generator.generate()
+        print( 'BUILDING AN ACTOR!' )
+        Engine._active_generator.build()
+        print('GENERATION COMPLETE!')
