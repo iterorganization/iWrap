@@ -1,28 +1,15 @@
-
-!--------------------------------------------------
-module idsmodule
-    type, BIND(C)::idsstruct
-        character(132)::ids
-        integer::shot
-        integer::run
-        integer::occurrence
-        integer::idx
-        character(132)::machine
-        character(132)::user
-        character(132)::version
-    end type
-end module
-!--------------------------------------------------
-
 module wrapper
 
 contains
 
-subroutine physics_iiual(&
+subroutine {{code_description.code_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
-                code_params, status_info) BIND(C)
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+                code_params,
+{% endif %}
+                status_info) BIND(C)
 
     use idsmodule
     use codeparam_module
@@ -30,7 +17,8 @@ subroutine physics_iiual(&
     use ids_schemas
     use iwrap_tools
     use ids_routines
-    use mod_physics_ii
+    use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
+
 
     implicit none
 
@@ -42,9 +30,11 @@ subroutine physics_iiual(&
     type (ids_{{ argument.type }}) :: {{ argument.name }}
 {% endfor %}
 
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
     type(code_parameters_t) :: code_params
+{% endif %}
 
 	 !----  Diagnostic info  ----
      type(status_t) :: status_info
@@ -57,18 +47,23 @@ subroutine physics_iiual(&
     call ids_get({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
+    {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
     ! ------------------ code parameters ----------------------------
     imas_code_params = convert(code_params)
+    {% endif %}
 
  
 	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
     ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  physics_ii( &
+    call  {{code_description.code_name}}( &
 {% for argument in code_description.arguments %}
             {{ argument.name }}, &
 {% endfor %}
-            imas_code_params,  wrap_out_outputFlag, diagnosticInfo)
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+            imas_code_params,
+{% endif %}
+            wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
@@ -92,7 +87,7 @@ subroutine physics_iiual(&
    endif
    allocate({{ argument.name }}%code%name(1))
    allocate({{ argument.name }}%code%version(1))
-   {{ argument.name }}%code%name(1) = "physics_ii"
+   {{ argument.name }}%code%name(1) = "{{code_description.code_name}}"
    {{ argument.name }}%code%version(1) = ""
     {% endfor %}
 
