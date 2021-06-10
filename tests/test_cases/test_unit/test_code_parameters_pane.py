@@ -1,6 +1,7 @@
 import pytest
 from importlib import import_module
 from misc.services import load_dict
+import tkinter
 
 
 @pytest.fixture
