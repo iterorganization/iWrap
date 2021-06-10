@@ -37,7 +37,7 @@ class FortranBinder:
 
     @staticmethod
     def __create_work_db():
-        db_entry = imas.DBEntry( imas.imasdef.MEMORY_BACKEND, 'tmp', 11, 22 )
+        db_entry = imas.DBEntry( imas.imasdef.MDSPLUS_BACKEND, 'tmp', 11, 22 )
         db_entry.create()
         return db_entry
 
@@ -48,7 +48,7 @@ class FortranBinder:
         lib_path = script_path + '/../../fortran_wrapper/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr(wrapper_lib,  code_name + 'ual')
+        wrapper_fun = getattr(wrapper_lib,  code_name + '_wrapper')
         return wrapper_fun
 
     def __status_check(self, status_info):
@@ -87,14 +87,17 @@ class FortranBinder:
         arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
 
         # XML Code Params
-        param_c = ParametersCType(self.code_parameters).convert_to_native_type()
+        if self.code_parameters.parameters:
+            param_c = ParametersCType(self.code_parameters).convert_to_native_type()
+            arglist.append(param_c)
                 
         # DIAGNOSTIC INFO
         status_info = StatusCType()
+        arglist.append( status_info.convert_to_native_type() )
 
         # call the NATIVE function
-
-        self.wrapper_func(*arglist, param_c, status_info.convert_to_native_type())
+        print(arglist)
+        self.wrapper_func(*arglist )
     
     
         # Checking returned DIAGNOSTIC INFO
