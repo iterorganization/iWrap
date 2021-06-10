@@ -1,3 +1,4 @@
+import sys
 from abc import ABC, abstractmethod
 from typing import Set
 
@@ -33,7 +34,11 @@ class ActorGenerator( ):
         ...
 
     @abstractmethod
-    def init(self):
+    def initialize(self):
+        ...
+
+    @abstractmethod
+    def configure(self, info_output_stream=sys.stdout):
         ...
 
     @abstractmethod

@@ -23,30 +23,12 @@ class ButtonPane(ttk.Frame):
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
     def generate_action(self):
+        from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
 
-        window = tk.Toplevel( self.master )
-        window.transient( self.master)
-        window.minsize( 400, 100 )
-        window.geometry( '400x100' )
-        window.resizable( width=False, height=False )
-        window.title( "iWrap - actor generation" )
+        progress_window = ProgressMonitorWindow()
 
-        label = ttk.Label( window)
-        label.configure(font=('Times, 12'))
-        label.configure(justify=tk.CENTER, anchor=tk.CENTER)
-        label.configure(text='Generating an actor!')
-        label.pack(fill=tk.BOTH, expand=True)
-
-        label = ttk.Label( window)
-        label.configure(font=('Times, 10'))
-        label.configure(justify=tk.CENTER, anchor=tk.CENTER)
-        label.configure(text='Please be patient!')
-        label.pack(fill=tk.BOTH, expand=True)
-
-        self.update_idletasks()
-
-        Engine().generate_actor()
-        window.destroy()
+        Engine().generate_actor( info_output_stream=progress_window )
+        #progress_window.destroy()
 
 
 class MainWindow(tk.Tk, IWrapPane):

@@ -41,16 +41,18 @@ class PythonActorGenerator(ActorGenerator):
 
     def __init__(self):
 
+        self.__info_output_stream = None
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
 
-    def init(self):
+    def initialize(self):
         self.install_dir: str = str(Path.home()) + '/IWRAP_ACTORS/' + ProjectSettings.get_settings().actor_name
 
         self.wrapper_generator = FortranWrapperGenerator()
 
-
+    def configure(self, info_output_stream=sys.stdout):
+        self.__info_output_stream = info_output_stream
 
     def generate(self):
         self.temp_dir = tempfile.TemporaryDirectory().name
@@ -69,7 +71,7 @@ class PythonActorGenerator(ActorGenerator):
         #if os.path.isdir(self.install_dir):
         #    shutil.rmtree(self.install_dir)
 
-        process_template_dir('iwrap.generators.python_actor.resources', '', self.install_dir, dictionary, sys.stdout)
+        process_template_dir('iwrap.generators.python_actor.resources', '', self.install_dir, dictionary, self.__info_output_stream,)
 
 
         #print('TMP2: ', self.jinja_env.loader.provider.module_path)
@@ -87,9 +89,22 @@ class PythonActorGenerator(ActorGenerator):
 
     def build(self):
 
-        proc = subprocess.Popen( [], executable = "make", bufsize=10, cwd=self.install_dir + '/fortran_wrapper', encoding='utf-8', text=True, stdout=subprocess.PIPE )
+        proc = subprocess.Popen( ['make', 'clean'],
+                                 cwd=self.install_dir + '/fortran_wrapper',
+                                 encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
+        for line in proc.stdout.readline():
+            print( line, file=self.__info_output_stream, end='' )
+
+        return_code = proc.wait()
+        if return_code:
+            raise subprocess.CalledProcessError( return_code, 'make clean' )
+
+        proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/fortran_wrapper',
+                                 encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
         for line in proc.stdout:
-            print( line, end='' )
+            print( line, file=self.__info_output_stream, end='' )
 
         return_code = proc.wait()
         if return_code:

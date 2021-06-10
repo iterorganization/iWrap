@@ -16,7 +16,7 @@ class ActorScriptGenerator( ActorGenerator ):
     def __init__(self):
         pass
 
-    def init(self, **kwargs):
+    def initialize(self, **kwargs):
         pass
 
     def copy_file(self):
