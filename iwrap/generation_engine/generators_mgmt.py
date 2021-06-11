@@ -1,3 +1,4 @@
+import pkgutil
 from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
@@ -30,9 +31,32 @@ class GeneratorRegistry():
 
         raise RuntimeError(f'ERROR: No registered generator for provided actor type <{generator_name}>!' )
 
+    def __iter_namespace(self, ns_pkg):
+        # Specifying the second argument (prefix) to iter_modules makes the
+        # returned name an absolute name instead of a relative one. This allows
+        # import_module to work without having to do additional modification to
+        # the name.
+        return pkgutil.iter_modules( ns_pkg.__path__, ns_pkg.__name__ + "." )
+
     def discover_generators(self) -> None:
-        # TODO: write a REAL discovery mechanism
-        self._registered_generators = [PythonActorGenerator()]
+
+        self._registered_generators = []
+
+        try:
+            import iwrap_actor_generator
+            import sys
+            import importlib
+
+            for finder, name, ispkg in self.__iter_namespace( iwrap_actor_generator ):
+                importlib.import_module( name )
+
+        except Exception as exc:
+            print( 'No additional generator plug-ins has been found' )
+
+        actor_generators_list =  ActorGenerator.__subclasses__()
+
+        for actor_generator_class in actor_generators_list:
+            self._registered_generators.append(actor_generator_class())
 
         # raises exception if no generator was found
         if len( self._registered_generators ) < 1:
