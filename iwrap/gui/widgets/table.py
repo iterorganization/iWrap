@@ -458,7 +458,7 @@ class RowRadioButton:
         self.row_number = row
         self.column_number = column
         self.value = value
-        self.cell = tk.Radiobutton(master, bg="white", state='disabled', width=9, highlightthickness=0, bd=0)
+        self.cell = tk.Radiobutton(master, bg="white", state=tk.DISABLED, width=1, highlightthickness=1, bd=0)
         self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
@@ -501,8 +501,8 @@ class RowEntry:
         self.column_number = column
         self.row_text = tk.StringVar()
         self.row_text.set(text)
-        self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=10,
-                             relief=tk.FLAT, highlightthickness=0, justify='left')
+        self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=15,
+                             relief=tk.FLAT, highlightthickness=1, justify='left')
         self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
@@ -564,5 +564,7 @@ class Column:
         Args:
             master (ttk.Frame): The master frame where Entry will be placed.
         """
-        tk.Entry(master, textvariable=self.label_var, state='readonly', width=10, justify='center')\
-            .pack(side="left", fill="both", expand=True)
+        column_entry = tk.Entry(master, textvariable=self.label_var, state='readonly', width=13, justify='center')
+        column_entry.pack(side="left", fill="both", expand=True)
+        if self.column_type == Column.RADIOBUTTON:
+            column_entry["width"] = 1
