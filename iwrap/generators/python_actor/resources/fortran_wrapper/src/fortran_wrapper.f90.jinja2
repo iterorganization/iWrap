@@ -7,7 +7,7 @@ subroutine {{code_description.code_name}}_wrapper(&
                 {{ argument.name }}_desc,  &
 {% endfor %}
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-                code_params,
+                code_params,  &
 {% endif %}
                 status_info) BIND(C)
 
@@ -61,7 +61,7 @@ subroutine {{code_description.code_name}}_wrapper(&
             {{ argument.name }}, &
 {% endfor %}
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-            imas_code_params,
+            imas_code_params,  &
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
