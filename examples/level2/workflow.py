@@ -2,7 +2,7 @@ import sys
 
 import imas,os
 
-from physics_ii.actor import PhysicsIIActor
+from physics_ii.actor import physics_ii
 
 
 
@@ -10,7 +10,7 @@ class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.actor_physics_ii = PhysicsIIActor()
+        self.actor_physics_ii = physics_ii()
         self.input_entry = None
         self.output_entry = None
 
