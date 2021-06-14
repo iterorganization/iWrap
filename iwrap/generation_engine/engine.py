@@ -44,6 +44,12 @@ class Engine:
     def registered_generators(self) -> List[ActorGenerator]:
         return Engine._registry.registered_generators
 
+    @staticmethod
+    def get_generator(generator_id):
+        generator = Engine._registry.get_generator(generator_id)
+        return generator
+
+
     def startup(self):
         PlatformSettings().initialize()
 
