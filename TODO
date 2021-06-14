@@ -9,7 +9,7 @@ Generated Py-F actors:
 iWrap:
 ----------------
 + validation of native code description
-+ actor generator plugin discovery mechanism based on implicit namespace packages
++ language specific panes plugin discovery mechanism based on implicit namespace packages
 + List of IDSes should be loaded dynamically from IMAS
 + handle $SYSTEM_VARS while resolving paths
 + make paths relative while saving the project
