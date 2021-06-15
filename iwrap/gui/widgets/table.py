@@ -50,19 +50,18 @@ class Table( ttk.Frame ):
         self._add_columns()
         self.add_new_table_content(rows)
 
-    def add_new_table_content(self, rows):
+    def add_new_table_content(self, rows, row_to_select=0):
         """Add a new rows to the frame.
 
         Args:
+            row_to_select (int): The number of the row that will be selected. Default to 0.
             rows ([[str]]): The list of list of strings contains data for rows.
         """
         self.delete_data_from_table()
         self.add_rows(rows)
         # select row
-        if self.get_selected_row() is not None and len(self.rows) > self.get_selected_row():
-            self.select_row(self.rows[self.get_selected_row()])
-        elif len(self.rows):
-            self.select_row(self.rows[0])
+        if len(self.rows):
+            self.select_row(self.rows[int(row_to_select)])
         else:
             self.selected_row.set(0)
 
@@ -184,7 +183,7 @@ class Table( ttk.Frame ):
                 cells_data.append(row_data[column.data_label])
             rows.append(cells_data)
 
-        self.add_new_table_content(rows)
+        self.add_new_table_content(rows, self.get_selected_row() or 0)
 
     def row_up_feature(self):
         """Enable move row up in the table.
