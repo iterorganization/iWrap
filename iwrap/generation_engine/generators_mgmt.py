@@ -51,7 +51,7 @@ class GeneratorRegistry():
                 importlib.import_module( name )
 
         except Exception as exc:
-            print( 'No additional generator plug-ins has been found' )
+            print( 'INFO: No additional generator plug-ins has been found' )
 
         actor_generators_list =  ActorGenerator.__subclasses__()
 

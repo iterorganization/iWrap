@@ -3,6 +3,7 @@ from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
 
+from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
@@ -38,7 +39,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
-        self.combobox_values = ['Fortran', 'CPP', 'Python']
+        self.combobox_values = Engine().active_generator.code_languages
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
         self.code_name = tk.StringVar()

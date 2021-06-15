@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
@@ -41,7 +42,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         # COMBOBOX
         ttk.Label(combobox_frame, text="Data type:").pack(fill=tk.X, side=tk.LEFT, padx=10)
         self.data_type_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.data_type_combobox['values'] = ['legacy', 'hdc']
+        self.data_type_combobox['values'] = Engine().active_generator.actor_data_types
         self.data_type_combobox.current(0)
         self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
 

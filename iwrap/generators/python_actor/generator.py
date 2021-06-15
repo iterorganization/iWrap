@@ -29,15 +29,15 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def actor_data_types(self) -> List[str]:
-        return ['legacy', 'hdc']
+        return ['legacy']
 
     @property
     def code_data_types(self) -> List[str]:
-        return ['legacy', 'hdc']
+        return ['legacy']
 
     @property
     def code_languages(self) -> Set[str]:
-        return {'Fortran', 'CPP'}
+        return {'Fortran'}
 
     def __init__(self):
 

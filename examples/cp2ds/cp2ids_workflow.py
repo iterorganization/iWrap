@@ -2,7 +2,7 @@ import sys
 
 import imas,os
 
-from physics_ii.actor import physics_ii
+from core2dist.actor import core2dist
 
 
 
@@ -10,18 +10,15 @@ class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.actor_physics_ii = physics_ii()
+        self.actor_cp2ds = core2dist()
         self.input_entry = None
         self.output_entry = None
 
     def init_workflow(self):
-        print( '>> Querying arguments <<' )
-        for arg in self.actor_physics_ii.formal_arguments:
-            print(arg)
 
         # INPUT/OUTPUT CONFIGURATION
-        shot                = 131024
-        run_in              = 1
+        shot                = 134174
+        run_in              = 37
         input_user_or_path  = 'public'
         input_database      = 'iter'
         run_out             = 10
@@ -39,30 +36,31 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
-        self.actor_physics_ii.initialize() 
+        self.actor_cp2ds.initialize()
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
-        time_slice          = 200.
         print('=> Read input IDSs')
-        input_equilibrium = self.input_entry.get_slice('equilibrium', time_slice, 1)
+        input_core_profiles = self.input_entry.get('core_profiles')
+        print(input_core_profiles.time)
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
 
-        output_equilibrium = self.actor_physics_ii(input_equilibrium)
+        input('XXX')
+        output_distribution_sources = self.actor_cp2ds(input_core_profiles)
         
         
         # SAVE IDSS INTO OUTPUT FILE
         print('=> Export output IDSs to local database')
-        self.output_entry.put(output_equilibrium)
+        self.output_entry.put(output_distribution_sources)
         print('Done exporting.')
 
 
     def end_workflow(self):
         
         # Finalize ALL actors 
-        self.actor_physics_ii.finalize() 
+        self.actor_cp2ds.finalize()
         
         #other finalizastion actions
         self.input_entry.close()
