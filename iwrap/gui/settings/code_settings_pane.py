@@ -39,7 +39,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
-        self.combobox_values = Engine().active_generator.code_languages
+        self.combobox_values = list(Engine().active_generator.code_languages)
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
         self.code_name = tk.StringVar()
