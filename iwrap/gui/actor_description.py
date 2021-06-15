@@ -30,9 +30,14 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.columnconfigure( 1, weight=3 )
 
     def actor_type_combo_action(self, event):
+        current_generator = Engine().active_generator
         selected_index = self.actor_type_combo.current()
         new_generator = Engine().registered_generators[selected_index]
+        if new_generator == current_generator:
+            return
+
         Engine().active_generator = new_generator
+        self.winfo_toplevel().reload()
 
         self.actor_type_combo.selection_clear()
 

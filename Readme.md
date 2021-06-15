@@ -1,7 +1,7 @@
-#iWrap
+# iWrap
 _**Disclaimer**_  
 _iWrap is still under development, so all procedures described below are temporary, prepared for demonstration purposes only!_
-##Description
+## Description
 iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex computing scenarios designed in other language (e.g. Python).
 
 It's plug-in based modular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC data for instance)
@@ -10,12 +10,12 @@ For user conveniency it provides two kinds of interfaces:
 * user friendly graphical interface that allows non-experienced users to define an actor in intuitive way 
 * command line interface foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
 
-##Installation
+## Installation
     git clone ssh://git@git.iter.org/imex/iwrap.git
     cd iwrap
     git checkout develop
 
-##Environment configuration
+## Environment configuration
 To configure an environment, please go to `iwrap` main directory and execute from commandline: 
 > source set-iter.sh (on ITER IO cluster)  
 > OR  
@@ -26,7 +26,7 @@ The scripts provide very simple operations. It:
 * loads `IMAS`
 * sets `PATH` and `PYTHONPATH`
 
-##Launching iWrap
+## Launching iWrap
 To launch _iWrap_, just execute on commandline:
 * to run commandline version
     > iwrap
@@ -62,7 +62,7 @@ Additional information:
 
 For more information, visit <https://confluence.iter.org/display/IMP/IMAS+component+generator>.
 ```
-##Actor generation
+## Actor generation
 >iwrap -a <actor_name> -f <path/to/code_description.yaml>
 
 ... will generate an actor based on code description stored in yaml, where ...
