@@ -16,7 +16,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
     Attributes:
         default_programming_language(str): Value for default programming language. Default to Fortran.
-        combobox_values(list): List contains programming languages that are visible in combobox.
         labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
          programming language combobox, code path entry, code name entry, and browse button.
         code_path(StringVar): Value for code path from filedialog or the YAML file.
@@ -39,7 +38,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
-        self.combobox_values = list(Engine().active_generator.code_languages)
+        # self.combobox_values = list(Engine().active_generator.code_languages)
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
         self.code_name = tk.StringVar()
@@ -57,7 +56,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         # LANGUAGE COMBOBOX
         ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.programming_language_combobox['values'] = self.combobox_values
+        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)
         self.programming_language_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
         self.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
@@ -110,12 +109,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
+        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
 
         programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.code_path or ''
         code_name = code_description.code_name or ''
 
-        if programming_language not in self.combobox_values:
+        if programming_language not in self.programming_language_combobox['values']:
             programming_language = CodeSettingsPane.default_programming_language
             messagebox.showwarning("Warning", f"Unknown programming language. "
                                               f"The programming language set to "
