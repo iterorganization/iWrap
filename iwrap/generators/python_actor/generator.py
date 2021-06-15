@@ -71,7 +71,7 @@ class PythonActorGenerator(ActorGenerator):
         #if os.path.isdir(self.install_dir):
         #    shutil.rmtree(self.install_dir)
 
-        process_template_dir('iwrap.generators.python_actor.resources', '', self.install_dir, dictionary, self.__info_output_stream,)
+        process_template_dir('iwrap.generators.python_actor', 'resources', self.install_dir, dictionary, self.__info_output_stream,)
 
 
         #print('TMP2: ', self.jinja_env.loader.provider.module_path)
@@ -148,9 +148,11 @@ class PythonActorGenerator(ActorGenerator):
         parameters_file = code_description.code_parameters.parameters
         schema_file = code_description.code_parameters.schema
 
-        if parameters_file is None or \
-            schema_file is None:
+        if not parameters_file:
             return
+
+        if parameters_file and not schema_file:
+            raise Exception('Error! Code parameters schema file (XSD) is missing!')
 
         root_dir = ProjectSettings.get_settings().root_dir
         parameters_file = os.path.join(root_dir, parameters_file)

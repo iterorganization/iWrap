@@ -30,7 +30,7 @@ def process_template_dir(
     for template_file in templates:
         if output_stream is not None:
             output_stream.write(f'Processing: {template_dir}/{template_file} \n' )
-        file_path = destination_dir + '/' + template_dir + '/' + template_file
+        file_path = destination_dir + '/' + template_file
         file_dir_path = os.path.dirname(file_path)
         # create dir if not exists
         if not os.path.isdir(file_dir_path):
