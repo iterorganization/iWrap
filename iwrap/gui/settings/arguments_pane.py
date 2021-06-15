@@ -42,7 +42,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         # COMBOBOX
         ttk.Label(combobox_frame, text="Data type:").pack(fill=tk.X, side=tk.LEFT, padx=10)
         self.data_type_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.data_type_combobox['values'] = Engine().active_generator.actor_data_types
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         self.data_type_combobox.current(0)
         self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
 
@@ -115,6 +115,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         from the ProjectSettings is not available in combobox warning message box will be shown and the default value
         of data type will be selected in combobox.
         """
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
         self.data_type = ProjectSettings.get_settings().code_description.data_type
         self.set_data_to_table()
