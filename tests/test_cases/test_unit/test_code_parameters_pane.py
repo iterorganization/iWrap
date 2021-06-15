@@ -20,6 +20,7 @@ def test_class_field(class_name, field, expected_record):
     assert record == expected_record
 
 
-def test_instance():
-    instance = getattr(import_module('iwrap.gui.settings.code_parameters_pane'), "File")
+@pytest.mark.parametrize('class_name', ['File', 'XMLFile', 'XSDFile'])
+def test_instance(class_name):
+    instance = getattr(import_module('iwrap.gui.settings.code_parameters_pane'), class_name)
     assert instance()

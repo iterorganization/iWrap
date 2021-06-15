@@ -38,3 +38,24 @@ def save_dict(data: dict, fname: str = 'tests_data.json') -> None:
     data_modified = tuple2json(data)
     with open(fname, "w+") as file:
         file.write(json.dumps(data_modified, indent=4))
+
+
+def dict_data(fname: str = None, file_dir=__file__):
+    """Loads data from a JSON file."""
+    if fname is None:
+        return
+    dict_path = pathlib.Path(file_dir).parent.absolute() / fname
+    with open(dict_path, "r") as file:
+        return parametrize_dict(json.load(file))
+
+
+def parametrize_dict(data: dict) -> dict:
+    """Finds sub-dictionaries and rebuilds data."""
+    ret_dir = {}
+    if not all(isinstance(value, dict) for value in data.values()):
+        ret_dir["Case_0"] = data
+    else:
+        ret_dir = data
+    return ret_dir
+
+
