@@ -5,15 +5,14 @@ from tests.misc.services import dict_data
 from iwrap.settings.serialization import YAMLSerializer
 
 
-DATA_JSON = 'test_YAMLSerializer_load.json'
-MODULE_PARAMS = [param for param in dict_data(DATA_JSON).keys()]
-MODULE_DATA = dict_data(DATA_JSON)
+DATA_LIST = ['test_YAMLSerializer_load' + "_Case" + str(case).zfill(2) + '.json' for case in range(3)]
+MODULE_PARAMS = ["Case" + str(case).zfill(2) for case, param in enumerate(DATA_LIST)]
 
 
-@pytest.fixture(scope="module", autouse=True, params=MODULE_PARAMS)
+@pytest.fixture(scope="module", autouse=True, params=DATA_LIST, ids=MODULE_PARAMS)
 def dict_ref(request):
     """Creates a new data model of the reference dictionary."""
-    data = MODULE_DATA[request.param]
+    data = dict_data(request.param)
     yield data
     del data
 
