@@ -30,16 +30,21 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.columnconfigure( 1, weight=3 )
 
     def actor_type_combo_action(self, event):
+        current_generator = Engine().active_generator
         selected_index = self.actor_type_combo.current()
         new_generator = Engine().registered_generators[selected_index]
+        if new_generator == current_generator:
+            return
+
         Engine().active_generator = new_generator
+        self.winfo_toplevel().reload()
 
         self.actor_type_combo.selection_clear()
 
     def update_settings(self):
         # updating actor name
         actor_name = self.actor_name.get()
-        ProjectSettings.get_settings().name = actor_name
+        ProjectSettings.get_settings().actor_name = actor_name
 
         # updating actor type
         actor_type = self.actor_type_combo.get()
@@ -71,5 +76,5 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
             self.data_type_combo.current( 0 )
 
         self.actor_name.delete( 0, tk.END )
-        actor_name = ProjectSettings.get_settings().name
+        actor_name = ProjectSettings.get_settings().actor_name
         self.actor_name.insert( 0, actor_name )

@@ -5,6 +5,7 @@ from datetime import datetime
 import jinja2
 
 from iwrap.generation_engine.base_classes import ActorGenerator
+from iwrap.generation_engine.utils.jinja2_template_processing import process_template_dir
 from iwrap.settings.project import ProjectSettings
 
 
@@ -22,15 +23,15 @@ class FortranWrapperGenerator(  ):
     def init(self, actor_settings: ProjectSettings, generation_env: dict):
         self.actor_settings = actor_settings
         self.temp_dir = generation_env['temp_dir']
-        self.jinja_env = generation_env['jinja_env']
 
     def generate(self):
-        actor_settings_dict = self.actor_settings.to_dict()
+        actor_settings_dict = self.actor_settings
+        process_template_dir(template_pkg='iwrap.generators.python_actor.resources',
+                             template_dir='fortran_wrapper',
+                             destination_dir=self.temp_dir,
+                             dictionary=actor_settings_dict,
+                             output_stream=sys.stdout)
 
-        template = self.jinja_env.get_template( 'fortran_wrapper/Makefile.jinja2' )
-        dictionary = {'actor_settings':actor_settings_dict}
-        print( template.stream( dictionary).dump(sys.stdout) )
-        pass
 
     def build(self):
         pass

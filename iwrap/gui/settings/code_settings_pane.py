@@ -3,9 +3,11 @@ from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
 
+from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
+from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
@@ -14,7 +16,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
     Attributes:
         default_programming_language(str): Value for default programming language. Default to Fortran.
-        combobox_values(list): List contains programming languages that are visible in combobox.
         labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
          programming language combobox, code path entry, code name entry, and browse button.
         code_path(StringVar): Value for code path from filedialog or the YAML file.
@@ -37,7 +38,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
-        self.combobox_values = ['Fortran', 'CPP', 'Python']
+
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
         self.code_name = tk.StringVar()
@@ -55,32 +56,34 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         # LANGUAGE COMBOBOX
         ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.programming_language_combobox['values'] = self.combobox_values
+        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)
         self.programming_language_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
         self.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
         # CODE NAME
         ttk.Label(labelframe, text="Code name:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.code_name_text = tk.Entry(labelframe, textvariable=self.code_name)
+        self.code_name_text = ttk.Entry(labelframe, textvariable=self.code_name)
         self.code_name_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = tk.Entry(labelframe, state='readonly', textvariable=self.code_path)
+        self.browse_text = ttk.Entry(labelframe, state='readonly', textvariable=self.code_path)
         self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
 
-    def change_language_pane(self, eventObject=None):
+    def change_language_pane(self, event=None):
         """Update specific language pane when programming language in combobox is changed.
 
         Args:
-            eventObject: Combobox change value event object. Default to None.
+            event: Combobox change value event object. Default to None.
         """
-        self.selected_programming_language.set(self.programming_language_combobox.get())
-        self.language_pane.pack_forget()
-        self.add_language_pane()
+        if self.selected_programming_language.get() != self.programming_language_combobox.get():
+            self.selected_programming_language.set(self.programming_language_combobox.get())
+            self.language_pane.save_pane_settings()
+            self.language_pane.pack_forget()
+            self.add_language_pane()
 
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
@@ -97,6 +100,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.code_path = self.code_path.get()
         code_description.code_name = self.code_name.get()
 
+        self.language_pane.update_settings()
+
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
         project settings is not available in combobox warning message box will be shown and the default value of
@@ -104,12 +109,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
+        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
 
         programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.code_path or ''
         code_name = code_description.code_name or ''
 
-        if programming_language not in self.combobox_values:
+        if programming_language not in self.programming_language_combobox['values']:
             programming_language = CodeSettingsPane.default_programming_language
             messagebox.showwarning("Warning", f"Unknown programming language. "
                                               f"The programming language set to "
@@ -122,10 +128,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.code_path.set(code_path)
         self.code_name.set(code_name)
 
+        LanguageSettingsManager.set_settings(self.programming_language_combobox.get())
         self.language_pane.reload()
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
         filename = tk.filedialog.askopenfilename()
-        self.code_path.set(filename)
+        if filename != '' and filename != ():
+            self.code_path.set(filename)
+

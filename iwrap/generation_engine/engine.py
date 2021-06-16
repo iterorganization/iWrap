@@ -1,3 +1,4 @@
+import sys
 from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
@@ -37,11 +38,17 @@ class Engine:
             value = Engine._registry.get_generator(value)
 
         Engine._active_generator = value
-        Engine._active_generator.init()
+        Engine._active_generator.initialize()
 
     @property
     def registered_generators(self) -> List[ActorGenerator]:
         return Engine._registry.registered_generators
+
+    @staticmethod
+    def get_generator(generator_id):
+        generator = Engine._registry.get_generator(generator_id)
+        return generator
+
 
     def startup(self):
         PlatformSettings().initialize()
@@ -54,7 +61,17 @@ class Engine:
         registered_generators = generators_registry.registered_generators
         if len(registered_generators) > 0:
             Engine._active_generator = registered_generators[0]
-            Engine._active_generator.init()
+            Engine._active_generator.initialize()
 
-    def generate_actor(self):
-        Engine._active_generator.generate()
+    def generate_actor(self, info_output_stream=sys.stdout):
+        try:
+            Engine._active_generator.configure(info_output_stream = info_output_stream)
+            text_decoration = 20 * "="
+            print(text_decoration, 'GENERATING AN ACTOR', text_decoration, file=info_output_stream)
+            Engine._active_generator.generate( )
+            print(text_decoration, 'BUILDING AN ACTOR', text_decoration, file=info_output_stream )
+            Engine._active_generator.build()
+            print(text_decoration, 'GENERATION COMPLETE!', text_decoration,file=info_output_stream)
+        except Exception as exc:
+            print( 'GENERATION FAILED!', file=info_output_stream )
+            print( exc, file=info_output_stream )

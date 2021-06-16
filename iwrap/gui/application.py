@@ -15,7 +15,7 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 class ButtonPane(ttk.Frame):
     def __init__(self, master: ttk.Widget):
         super().__init__(master, borderwidth=1, relief="solid")
-
+        self.master = master
         close_button = ttk.Button(self, text='Close', command=self.winfo_toplevel().destroy)
         close_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
@@ -23,7 +23,13 @@ class ButtonPane(ttk.Frame):
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
     def generate_action(self):
-        Engine().generate_actor()
+        from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
+
+        progress_window = ProgressMonitorWindow()
+
+        Engine().generate_actor( info_output_stream=progress_window )
+        #progress_window.destroy()
+
 
 class MainWindow(tk.Tk, IWrapPane):
     def __init__(self):

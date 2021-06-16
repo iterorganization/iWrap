@@ -1,3 +1,5 @@
+import os
+
 from pathlib import Path
 from typing import Any, Dict
 
@@ -32,9 +34,10 @@ class ProjectSettings( Dictionarizable ):
         return cls._settings
 
     def __init__(self):
-        self.name: str = ''
+        self.actor_name: str = ''
         self.data_type: str = ''
         self.actor_type: str  = ''
+        self.root_dir = os.getcwd()
         self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
         self.code_description = CodeDescription()
 
@@ -57,10 +60,11 @@ class ProjectSettings( Dictionarizable ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.name = ''
+        self.actor_name = ''
         self.data_type = ''
         self.actor_type = ''
         self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
+        self.root_dir = os.getcwd()
         self.code_description.clear()
 
     def save(self, serializer: IWrapSerializer):

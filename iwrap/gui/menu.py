@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import filedialog
 
@@ -60,3 +61,5 @@ class MenuBar( tk.Menu ):
         self.code_description.load( YAMLSerializer( file ) )
         file.close()
         self.main_window.reload()
+        file_real_path = os.path.realpath( file.name )
+        ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )

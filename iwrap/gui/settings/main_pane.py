@@ -28,10 +28,10 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         notebook.add( self.code_settings_pane, text='Code settings' )
         notebook.add( self.code_parameters_pane, text='Code parameters' )
         notebook.add( self.documentation_pane, text='Documentation' )
-        notebook.add( self.signature_pane, text='Signature' )
+        #notebook.add( self.signature_pane, text='Signature' )
 
         # Set tab index property with notebook's index
-        self.signature_pane.tab_index = notebook.index(self.signature_pane)
+        #self.signature_pane.tab_index = notebook.index(self.signature_pane)
 
         notebook.select( None )
         notebook.enable_traversal()
