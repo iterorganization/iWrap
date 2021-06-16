@@ -3,7 +3,7 @@ from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
 from tkinter.constants import S, SEL_FIRST
 
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
@@ -63,7 +63,8 @@ class File:
 
 
         """
-    _extension: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    # _extension: Tuple[Tuple[str, str], None] = (("All files", "*.*"),)
+    _extension: List[Union[List[str], None]] = [["All files", "*.*"], ]
     _title: str = "ANY"
     _project_settings = ProjectSettings.get_settings().code_description.code_parameters
 
@@ -138,7 +139,7 @@ class File:
 
 class XMLFile(File):
     """XML file type subclass."""
-    _extension: Tuple[Tuple[str, str], None] = (("XML Files", "*.xml"),)
+    _extension: List[Union[List[str], None]] = [["XML Files", "*.xml"], ]
     _title: str = "XML"
 
     def update_settings(self) -> None:
@@ -157,7 +158,7 @@ class XMLFile(File):
 
 class XSDFile(File):
     """XSD file type subclass."""
-    _extension: Tuple[Tuple[str, str], None] = (("XSD Files", "*.xsd"),)
+    _extension: List[Union[List[str], None]] = [["XSD Files", "*.xsd"], ]
     _title: str = "XSD"
 
     def update_settings(self) -> None:
@@ -204,7 +205,7 @@ class FileBrowserPane(ttk.Frame):
 
         super().__init__(master)
         # Specify the file type
-        self.file_type: tuple
+        self.file_type: List
         self.file_type_title: str
         self.file_type, self.file_type_title = file_class.info()
 
