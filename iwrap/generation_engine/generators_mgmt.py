@@ -43,7 +43,7 @@ class GeneratorRegistry():
         self._registered_generators = []
 
         try:
-            import iwrap_actor_generator
+            import iwrap_actor_generator # pylint: disable=import-error
             import sys
             import importlib
 
