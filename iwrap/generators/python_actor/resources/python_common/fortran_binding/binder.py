@@ -96,7 +96,6 @@ class FortranBinder:
         arglist.append( status_info.convert_to_native_type() )
 
         # call the NATIVE function
-        print(arglist)
         self.wrapper_func(*arglist )
     
     
