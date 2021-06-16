@@ -1,5 +1,48 @@
 {
-    "name": "test actor",
-    "actor_type": "Python actor",
-    "data_type": "LEGACY_IDS"
+    "programming_language": "Fortran",
+    "code_name": "demo_code",
+    "data_type": "legacy",
+    "arguments": [
+        {
+            "name": "equilibrium00",
+            "type": "equilibrium",
+            "intent": "IN"
+        },
+        {
+            "name": "equilibrium01",
+            "type": "equilibrium",
+            "intent": "IN"
+        },
+        {
+            "name": "equilibrium10",
+            "type": "equilibrium",
+            "intent": "OUT"
+        },
+        {
+            "name": "equilibrium11",
+            "type": "equilibrium",
+            "intent": "OUT"
+        }
+    ],
+    "code_path": "./lib/libtest.so",
+    "code_parameters": {
+        "parameters": "./code_parameters/parameters.xml",
+        "schema": "./code_paramneters/parameters.xsd"
+    },
+    "documentation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+    "language_specific": {
+        "compiler": "Intel",
+        "include_path": "./include/test.mod",
+        "mpi": "MPICH2",
+        "open_mp": false,
+        "system_libraries": [
+            "fftw3f",
+            "glib",
+            "mkl"
+        ],
+        "custom_libraries": [
+            "./lib/custom/libcustom1.a",
+            "./lib/custom/libcustom2.a"
+        ]
+    }
 }
