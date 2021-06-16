@@ -8,7 +8,7 @@ def dict_tuple(data: dict) -> dict:
     for key, value in data.copy().items():
         if isinstance(value, dict):  # For sub-dictionary
             data[key] = dict_tuple(value)
-        elif value.startswith("(") and value.endswith(")"):  # For possible tuple
+        elif value is str and value.startswith("(") and value.endswith(")"):  # For possible tuple
             try:
                 data[key] = eval(value)
             except NotImplementedError:
