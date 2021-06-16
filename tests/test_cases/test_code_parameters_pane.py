@@ -1,6 +1,6 @@
 import pytest
 from importlib import import_module
-from misc.services import load_dict
+from tests.misc.services import load_dict
 import tkinter
 
 
@@ -8,7 +8,7 @@ import tkinter
 def expected_record(request):
     class_name = request.node.funcargs['class_name']
     field = request.node.funcargs['field']
-    expected_record_dict = load_dict(fspath=request.fspath)
+    expected_record_dict = load_dict(fname='tests_data.json')
     return expected_record_dict.get(class_name, dict()).get(field, None)
 
 

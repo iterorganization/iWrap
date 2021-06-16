@@ -1,13 +1,13 @@
 from iwrap.settings.project import ProjectSettings
 from iwrap.settings.code_description import Argument
 import pytest
-from misc.services import load_dict
+from tests.misc.services import load_dict
 
 
 @pytest.fixture
 def expected_record(request):
     attribute_name = request.node.funcargs['attribute_name']
-    expected_record_dict = load_dict(fspath=request.fspath, fname='code_description_data.json')
+    expected_record_dict = load_dict(fname='code_description_data.json')
     return expected_record_dict.get(attribute_name)
 
 

@@ -1,13 +1,13 @@
 import pytest
 from io import StringIO
 import yaml
-from misc.services import dict_data
+from tests.misc.services import dict_data
 from iwrap.settings.serialization import YAMLSerializer
 
 
 DATA_JSON = 'test_YAMLSerializer_load.json'
-MODULE_PARAMS = [param for param in dict_data(DATA_JSON, __file__).keys()]
-MODULE_DATA = dict_data(DATA_JSON, __file__)
+MODULE_PARAMS = [param for param in dict_data(DATA_JSON).keys()]
+MODULE_DATA = dict_data(DATA_JSON)
 
 
 @pytest.fixture(scope="module", autouse=True, params=MODULE_PARAMS)
