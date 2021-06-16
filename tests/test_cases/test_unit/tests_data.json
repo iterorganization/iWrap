@@ -1,14 +1,14 @@
 {
     "File": {
-        "_extension": "(('All files', '*.*'),)",
+        "_extension": [["All files", "*.*"]],
         "_title": "ANY"
     },
     "XMLFile": {
-        "_extension": "(('XML Files', '*.xml'),)",
+        "_extension": [["XML Files", "*.xml"]],
         "_title": "XML"
     },
     "XSDFile": {
-        "_extension": "(('XSD Files', '*.xsd'),)",
+        "_extension": [["XSD Files", "*.xsd"]],
         "_title": "XSD"
     }
 }
