@@ -47,7 +47,6 @@ class ExampleWorkflowManager:
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
 
-        input('XXX')
         output_distribution_sources = self.actor_cp2ds(input_core_profiles)
         
         
