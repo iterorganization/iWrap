@@ -1,13 +1,17 @@
 echo "--------------Module load GCC/9.3.0--------------"
-module load GCC/9.3.0
+module load GCC
 echo "--------------Module load Python/3.8.2-GCCcore-9.3.0--------------"
-module load Python/3.8.2-GCCcore-9.3.0
-echo "--------------Module load PyYAML/5.3-GCCcore-9.3.0--------------"
-module load PyYAML/5.3-GCCcore-9.3.0
+module load Python
+echo "--------------Module load PyYAML--------------"
+module load PyYAML
 echo "--------------Module load lxml/4.5.2-GCCcore-9.3.0--------------"
-module load lxml/4.5.2-GCCcore-9.3.0
+module load lxml
 echo "--------------Module load pytest/5.4.3-GCCcore-9.3.0-Python-3.8.2--------------"
-module load pytest/5.4.3-GCCcore-9.3.0-Python-3.8.2
+if module avail 2>&1 | grep -c pytest; then
+  module load pytest
+else
+  python -m pip install pytest
+fi
 echo "--------------PIP install pylint + pylint-junit"
 python -m pip install pylint
 python -m pip install pylint-junit
