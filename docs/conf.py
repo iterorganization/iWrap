@@ -19,17 +19,15 @@ sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
-stream = open("project_informations.yaml", 'r')
+stream = open("project_informations.yaml.tmp", 'r')
 project_info = yaml.safe_load(stream)
 
 project = project_info['project']
 copyright = '2021, ' + str(project_info['project'])
 author = project_info['author']
 
-# The short X.Y version
+# The X.Y version
 version = str(project_info['version'])
-# The full version, including alpha/beta/rc tags
-release = str(project_info['release'])
 
 
 # -- General configuration ---------------------------------------------------
