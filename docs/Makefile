@@ -11,14 +11,12 @@ PROJECT_PATH  = ../iwrap
 YAML_FILE = project_informations.yaml.tmp
 AUTHOR_KEY = "author"
 PROJECT_KEY = "project"
-RELEASE_KEY = "release"
 VERSION_KEY = "version"
 
 # Set project informations
 AUTHOR = ""
 PROJECT = "iWrap"
-VERSION = $(shell git describe --all)
-RELEASE = $(shell git describe --all --long --dirty)
+VERSION = $(shell git describe --always --dirty)
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -41,7 +39,6 @@ setconfig:
 	echo ${AUTHOR_KEY}: ${AUTHOR} >> ${YAML_FILE}
 	echo ${PROJECT_KEY}: ${PROJECT} >> ${YAML_FILE}
 	echo ${VERSION_KEY}: ${VERSION} >> ${YAML_FILE}
-	echo ${RELEASE_KEY}: ${RELEASE} >> ${YAML_FILE}
 
 clean:
 	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
