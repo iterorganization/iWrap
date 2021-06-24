@@ -129,7 +129,7 @@ class CodeDescription( Dictionarizable ):
         self.code_path: str = None
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
-        self.language_specific: dict = None
+        self.language_specific: dict = {}
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -149,7 +149,7 @@ class CodeDescription( Dictionarizable ):
         self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
-        self.language_specific = None
+        self.language_specific = {}
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes given object to dictionary
