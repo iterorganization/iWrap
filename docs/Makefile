@@ -8,16 +8,14 @@ BUILDDIR      = _build
 GENERATEDDIR  = documentation_files
 PROJECT_PATH  = ../iwrap
 
-YAML_FILE = project_informations.yaml
+YAML_FILE = project_informations.yaml.tmp
 AUTHOR_KEY = "author"
 PROJECT_KEY = "project"
-RELEASE_KEY = "release"
 VERSION_KEY = "version"
 
 # Set project informations
 AUTHOR = ""
 PROJECT = "iWrap"
-RELEASE = $(shell git describe --always --dirty)
 VERSION = $(shell git describe --always --dirty)
 
 # Put it first so that "make" without argument is like "make help".
@@ -37,13 +35,13 @@ apidocs: Makefile
 	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate
 
 setconfig:
-	sed -r "s/^(\s*${AUTHOR_KEY}\s*:\s*).*/\1${AUTHOR}/" -i "$(YAML_FILE)"
-	sed -r "s/^(\s*${PROJECT_KEY}\s*:\s*).*/\1${PROJECT}/" -i "$(YAML_FILE)"
-	sed -r "s/^(\s*${RELEASE_KEY}\s*:\s*).*/\1${RELEASE}/" -i "$(YAML_FILE)"
-	sed -r "s/^(\s*${VERSION_KEY}\s*:\s*).*/\1${VERSION}/" -i "$(YAML_FILE)"
+	touch ${YAML_FILE}
+	echo ${AUTHOR_KEY}: ${AUTHOR} >> ${YAML_FILE}
+	echo ${PROJECT_KEY}: ${PROJECT} >> ${YAML_FILE}
+	echo ${VERSION_KEY}: ${VERSION} >> ${YAML_FILE}
 
 clean:
-	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/
+	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
 
 docs:
 	make clean

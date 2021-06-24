@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # MODULE AVAIL
 touch modules.txt
 module avail &> modules.txt
