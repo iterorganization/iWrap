@@ -62,7 +62,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         # Todo: List of IDSes should be loaded dynamically from IMAS
-        IDS = ["bremsstrahlung_visible", "calorimetry", "camera_ir", "camera_visible", "charge_exchange",
+        IDS = ["amns_data", "bremsstrahlung_visible", "calorimetry", "camera_ir", "camera_visible", "charge_exchange",
                 "coils_non_axisymmetric", "controllers", "core_instant_changes", "core_profiles", "core_sources",
                 "core_transport", "cryostat", "dataset_description", "dataset_fair", "disruption",
                 "distribution_sources", "distributions", "divertors", "ec_launchers", "ece", "edge_profiles",
