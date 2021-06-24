@@ -1,3 +1,4 @@
+from iwrap.settings.code_description import CodeDescription
 from iwrap.settings.project import ProjectSettings
 from iwrap.settings.serialization import YAMLSerializer
 from tests.misc.services import dict_data
@@ -44,11 +45,18 @@ class TestCodeDescription:
         code_description.load(YAMLSerializer(yaml_source))
         assert code_description.to_dict() == dict_ref
 
-    def keys_count(self, dict_to_check, dict_reference: dict):
-        assert len(dict_reference) == len(vars(dict_to_check))
+    def keys_count(self, dict_to_check, dict_reference: dict, matching: bool = True):
+        # if matching is True:
+        #     assert len(dict_reference) == len(dict_to_check)
+        # else:
+        #     assert len(dict_reference) != len(dict_to_check)
+        if matching is True:
+            yield len(dict_reference), len(dict_to_check)
+        else:
+            yield len(dict_reference), len(dict_to_check)
 
     def keys_identity(self, dict_to_check, dict_reference: dict):
-        for key in vars(dict_to_check):
+        for key in dict_to_check:
             assert key in dict_reference
 
     def nested_values(self, nested: Union[list, dict], reference: Union[list, dict]):
@@ -72,13 +80,23 @@ class TestCodeDescription:
     @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
     def test_from_dict(self, function, code_description, dict_ref):
         code_description.from_dict(dict_ref)
-        if function == "nested_values":
+        if function != "keys_count":
             getattr(TestCodeDescription, function)(self, vars(code_description), dict_ref)
         else:
-            getattr(TestCodeDescription, function)(self, code_description, dict_ref)
+            for tested, reference in self.keys_count(vars(code_description), dict_ref, matching=False):
+                assert tested == reference
 
     def test_save(self, code_description, dict_ref):
         pass
 
     def test_clear(self, code_description, dict_ref):
-        pass
+        code_description.from_dict(dict_ref)
+        code_description.clear()
+        dict_ref["test"] = "test"
+        print("CODE DESCRIPTION:", vars(code_description), "\n")
+        print("CODE DESCRIPTION INIT:", vars(CodeDescription()))
+        for tested, reference in self.keys_count(vars(code_description), dict_ref, matching=False):
+            assert tested != reference
+        for key, value in vars(code_description).items():
+            assert key in vars(CodeDescription())
+            # assert value == vars(CodeDescription())[key]
