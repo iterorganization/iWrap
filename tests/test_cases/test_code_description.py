@@ -45,7 +45,7 @@ def code_description(yaml_source):
     del settings
 
 
-@pytest.mark.usefixtures("dict_ref", "yaml_source", "code_description")
+@pytest.mark.usefixtures("dict_ref", "dict_clear_ref", "yaml_source", "code_description")
 class TestCodeDescription:
     def test_to_dict(self, code_description, yaml_source, dict_ref):
         """Checks that the CodeDescription dictionary is correctly filled."""
@@ -88,8 +88,32 @@ class TestCodeDescription:
         for tested, expected in tested_function(self, vars(code_description), dict_ref):
             assert tested == expected
 
-    def test_save(self, code_description, dict_ref):
-        pass
+    @pytest.mark.parametrize('case', ["expect2pass", "expect2fail"])
+    def test_save(self, case, code_description, dict_ref, yaml_source, dict_clear_ref):
+        """CodeDescription writing tests to the file stream."""
+        # Setup:
+        tested = StringIO()
+        expected = StringIO()
+        if case == "expect2pass":
+            code_description.from_dict(dict_ref)
+        elif case == "expect2fail":
+            code_description.from_dict(dict_clear_ref)
+        code_description.save(YAMLSerializer(tested))
+        yaml.dump(dict_ref,
+                  stream=expected,
+                  default_flow_style=False,
+                  sort_keys=False,
+                  indent=4,
+                  explicit_start=True)
+        # Test case:
+        assertion = tested.getvalue() == expected.getvalue()
+        if case == "expect2pass":
+            assert assertion
+        elif case == "expect2fail":
+            assert not assertion
+        # Teardown
+        del tested
+        del expected
 
     @pytest.mark.parametrize('case', ["expect2pass", "expect2fail"])
     @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
