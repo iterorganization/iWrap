@@ -62,7 +62,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TABLE
-        IDS = [ids.value for ids in list(imas.IDSName)]
+        IDS = [ids.value for ids in list(imas.IDSName)] # pylint: disable=no-member
 
         self.columns = [Column(Column.TEXT, "Label", "Name"),
                         Column(Column.RADIOBUTTON, "Input", "Intent"),
