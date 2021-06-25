@@ -1,19 +1,18 @@
-from iwrap.settings.code_description import CodeDescription
 from iwrap.settings.project import ProjectSettings
 from iwrap.settings.serialization import YAMLSerializer
 from tests.misc.services import dict_data
-from typing import Union
+from typing import Union, Tuple
 from io import StringIO
 import pytest
 import yaml
 
 
 # Lists of the parameters files and its ids.
-DATA_PARAMS_LIST = ['code_description_data' + "_Case" + str(case).zfill(2) + '.json' for case in range(1)]
+DATA_PARAMS_LIST = ['code_description_data' + "_Case" + str(case).zfill(2) + '.json' for case in range(3)]
 DATA_PARAMS_IDS = ["Case" + str(case).zfill(2) for case, param in enumerate(DATA_PARAMS_LIST)]
 
 
-@pytest.fixture(scope="module", autouse=True, params=DATA_PARAMS_LIST, ids=DATA_PARAMS_IDS)
+@pytest.fixture(scope="function", autouse=True, params=DATA_PARAMS_LIST, ids=DATA_PARAMS_IDS)
 def dict_ref(request):
     """Creates a new data model of the reference dictionary."""
     data = dict_data(request.param)
@@ -21,7 +20,15 @@ def dict_ref(request):
     del data
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture(scope="module", autouse=True)
+def dict_clear_ref():
+    """Creates a new data model of the reference dictionary."""
+    data = dict_data("code_description_data_CaseClear.json")
+    yield data
+    del data
+
+
+@pytest.fixture(scope="function")
 def yaml_source(dict_ref):
     """Creates a data source in the form of YAML"""
     return yaml.dump(dict_ref, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True)
@@ -45,58 +52,67 @@ class TestCodeDescription:
         code_description.load(YAMLSerializer(yaml_source))
         assert code_description.to_dict() == dict_ref
 
-    def keys_count(self, dict_to_check, dict_reference: dict, matching: bool = True):
-        # if matching is True:
-        #     assert len(dict_reference) == len(dict_to_check)
-        # else:
-        #     assert len(dict_reference) != len(dict_to_check)
-        if matching is True:
-            yield len(dict_reference), len(dict_to_check)
-        else:
-            yield len(dict_reference), len(dict_to_check)
+    def keys_count(self, dict_to_check, dict_reference: dict) -> Tuple:
+        """Yields the number of keys in each dictionary."""
+        yield len(dict_reference), len(dict_to_check)
 
-    def keys_identity(self, dict_to_check, dict_reference: dict):
+    def keys_identity(self, dict_to_check, dict_reference: dict) -> Tuple:
+        """Cross-checks the identity of a key across two dictionaries and returns a tuple of the result."""
         for key in dict_to_check:
-            assert key in dict_reference
+            yield key in dict_reference, True
+        for key in dict_reference:
+            yield key in dict_to_check, True
 
-    def nested_values(self, nested: Union[list, dict], reference: Union[list, dict]):
+    def nested_values(self, nested: Union[list, dict], reference: Union[list, dict]) -> Tuple:
         """Visit all nested nodes and check them against the reference."""
         if isinstance(nested, list):
             for pos, item in enumerate(nested):
-                self.nested_values(item, reference[pos])
+                yield from self.nested_values(item, reference[pos])
         if isinstance(nested, dict):
             for key, value in nested.items():
                 if hasattr(value, "__dict__"):
-                    self.nested_values(vars(value), reference[key])
+                    yield from self.nested_values(vars(value), reference[key])
                 elif isinstance(value, list):
-                    self.nested_values(value, reference[key])
+                    yield from self.nested_values(value, reference[key])
                 elif isinstance(value, dict):
-                    self.nested_values(value, reference[key])
+                    yield from self.nested_values(value, reference[key])
                 else:
-                    assert value == reference[key]
+                    yield value, reference[key]
         else:
-            assert nested == reference
+            yield nested, reference
 
     @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
     def test_from_dict(self, function, code_description, dict_ref):
         code_description.from_dict(dict_ref)
-        if function != "keys_count":
-            getattr(TestCodeDescription, function)(self, vars(code_description), dict_ref)
-        else:
-            for tested, reference in self.keys_count(vars(code_description), dict_ref, matching=False):
-                assert tested == reference
+        tested_function = getattr(TestCodeDescription, function)
+        for tested, expected in tested_function(self, vars(code_description), dict_ref):
+            assert tested == expected
 
     def test_save(self, code_description, dict_ref):
         pass
 
-    def test_clear(self, code_description, dict_ref):
+    @pytest.mark.parametrize('case', ["expect2pass", "expect2fail"])
+    @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
+    def test_clear(self, case, function, code_description, dict_ref, dict_clear_ref):
+        """Tests the clear() method of the CodeDescription class."""
+        # Setup:
         code_description.from_dict(dict_ref)
         code_description.clear()
-        dict_ref["test"] = "test"
-        print("CODE DESCRIPTION:", vars(code_description), "\n")
-        print("CODE DESCRIPTION INIT:", vars(CodeDescription()))
-        for tested, reference in self.keys_count(vars(code_description), dict_ref, matching=False):
-            assert tested != reference
-        for key, value in vars(code_description).items():
-            assert key in vars(CodeDescription())
-            # assert value == vars(CodeDescription())[key]
+        # Reference to testing function:
+        testing_function = getattr(TestCodeDescription, function)
+        # Test cases:
+        if case == "expect2pass":
+            # The assertion case expected to pass:
+            for tested, expected in testing_function(self, vars(code_description), dict_clear_ref):
+                assert tested == expected
+        elif case == "expect2fail":
+            # The assertion case expected to not pass:
+            if function == "keys_identity":
+                # Single configuration case for the key identity:
+                for old_key, _ in dict_ref.copy().items():
+                    dict_ref[(old_key + '_Test')] = dict_ref[old_key]
+                    del dict_ref[old_key]
+            else:
+                dict_ref["test"] = "test"
+            for tested, expected in testing_function(self, vars(code_description), dict_ref):
+                assert not tested == expected
