@@ -79,13 +79,7 @@ related to _code description_ syntax, actors API and the way actors are called f
 1. Navigating to example directory   
    `shell> cd iwrap/examples/cp2ds`
 2. Preparing native code  
-    ``` 
-    shell> cd ./native    
-    shell> make clean
-    shell> make   
-    shell> cd .. 
-    ```
-
+    `shell> make native`
 3. Generating an actor  
    `iwrap -a core2dist -f ./cp2ds.yaml`
 4. Running workflow  
@@ -95,13 +89,7 @@ related to _code description_ syntax, actors API and the way actors are called f
 1. Navigating to example directory   
    `shell> cd iwrap/examples/level2`
 2. Preparing native code  
-    ``` 
-    shell> cd ./native_code    
-    shell> make clean
-    shell> make   
-    shell> cd .. 
-    ```
-
+    `shell> make native`
 3. Generating an actor  
    `iwrap -a physics_ii -f ./physics_ii.yaml`
 4. Running workflow  
