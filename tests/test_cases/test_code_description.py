@@ -115,6 +115,21 @@ class TestCodeDescription:
         del tested
         del expected
 
+    @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
+    @pytest.mark.parametrize('case', ["vs_dict_ref", "vs_class"])
+    def test_load(self, function, case, code_description, dict_ref, yaml_source):
+        """Tests the load() method of the CodeDescription class."""
+        code_description.load(YAMLSerializer(yaml_source))
+
+        testing_function = getattr(TestCodeDescription, function)
+
+        if case == "vs_class" and function == "nested_values":
+            dict_ref = ProjectSettings().code_description
+        else:
+            pass
+
+
+
     @pytest.mark.parametrize('case', ["expect2pass", "expect2fail"])
     @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
     def test_clear(self, case, function, code_description, dict_ref, dict_clear_ref):
