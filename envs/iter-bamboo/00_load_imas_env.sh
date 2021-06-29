@@ -3,5 +3,4 @@
 set -e
 
 # Set up environment
-echo "--------------Module load IMAS--------------"
 module load IMAS
