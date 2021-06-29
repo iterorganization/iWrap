@@ -119,16 +119,23 @@ class TestCodeDescription:
     @pytest.mark.parametrize('case', ["vs_dict_ref", "vs_class"])
     def test_load(self, function, case, code_description, dict_ref, yaml_source):
         """Tests the load() method of the CodeDescription class."""
+        # Setup:
         code_description.load(YAMLSerializer(yaml_source))
-
+        # Change reference depend on case:
+        dict_ref = vars(ProjectSettings().code_description) if case == "vs_class" else dict_ref
+        # Pre-generate testing function:
         testing_function = getattr(TestCodeDescription, function)
-
+        testing_function = testing_function(self, vars(code_description), dict_ref)
+        # Change testing function depend on case:
         if case == "vs_class" and function == "nested_values":
-            dict_ref = ProjectSettings().code_description
-        else:
-            pass
-
-
+            testing_function = zip(vars(code_description).values(), dict_ref.values())
+        # Test case:
+        for tested, expected in testing_function:
+            assertion_not = tested != expected
+            assertion = tested == expected
+            assertion = assertion_not if (case == "vs_class" and function == "nested_values") else assertion
+            assert assertion
+            assert type(expected) is type(tested) or type(None)
 
     @pytest.mark.parametrize('case', ["expect2pass", "expect2fail"])
     @pytest.mark.parametrize('function', ["keys_count", "keys_identity", "nested_values"])
