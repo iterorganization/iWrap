@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh --login
 
 echo "--------------Module load GCC--------------"
 module load GCC

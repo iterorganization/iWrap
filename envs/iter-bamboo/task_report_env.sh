@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh --login
 # Task: Setup Environment and report available modules. Save output to artifact.
 set -e
 my_dir=$(dirname $0)

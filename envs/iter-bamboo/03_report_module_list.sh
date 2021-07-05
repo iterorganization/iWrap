@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh --login
 
 # MODULES LIST
 touch modules_list.txt

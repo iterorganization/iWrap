@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh --login
 # Task: Setup Environment and Run Pylint code check. Publish report artifacts with python modules and imas env modules.
 set -e
 my_dir=$(dirname $0)

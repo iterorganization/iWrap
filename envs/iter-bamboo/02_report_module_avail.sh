@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh --login
 
 # MODULE AVAIL
 touch modules.txt
