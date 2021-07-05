@@ -4,7 +4,7 @@ set -e
 my_dir=$(dirname $0)
 wrk_dir=$(dirname $0)/..
 envs_dir=$(dirname $0)/envs/iter-bamboo
-
+echo "PWD : `pwd`"
 . $envs_dir/00_load_imas_env.sh
 . $envs_dir/10_python_set_env.sh
 . $envs_dir/03_report_module_list.sh
