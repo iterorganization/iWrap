@@ -23,6 +23,8 @@ fi
 # Run Pytests
 echo "====================|--------------Run Tests--------------|===================="
 # Runs python pytest and logs results to junit xml file
+python -m pip list
+python -m pytest
 #python -m pytest --junitxml=test_results.xml -v
 
 
