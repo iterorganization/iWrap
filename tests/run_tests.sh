@@ -24,8 +24,7 @@ fi
 echo "====================|--------------Run Tests--------------|===================="
 # Runs python pytest and logs results to junit xml file
 echo "PYTHON VERSION: `python --version`"
-python3 -m pip list
-python3 -m pytest
+pytest
 #python -m pytest --junitxml=test_results.xml -v
 
 
