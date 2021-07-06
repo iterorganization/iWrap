@@ -1,7 +1,5 @@
 #!/bin/sh --login
 
-#echo "--------------Module load GCC--------------"
-#module load GCC
 echo "--------------Module load Python--------------"
 module load Python
 echo "--------------PIP install Pylint--------------"

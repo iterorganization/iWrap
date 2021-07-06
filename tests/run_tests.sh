@@ -23,7 +23,6 @@ fi
 # Run Pytests
 echo "====================|--------------Run Tests--------------|===================="
 # Runs python pytest and logs results to junit xml file
-echo "PYTHON VERSION: `python --version`"
 python -m pytest --junitxml=test_results.xml -v
 
 

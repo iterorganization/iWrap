@@ -10,5 +10,4 @@ chmod a+x $envs_dir/00_load_imas_env.sh
 
 # Run pylint code check
 echo "~~~~~====================PYLINT CODE CHECK====================~~~~~"
-echo "PYTHON VERSION: `python --version`"
 python -m pylint -E --output-format=pylint_junit.JUnitReporter iwrap > pylint.xml
