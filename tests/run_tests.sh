@@ -1,3 +1,4 @@
+#!/bin/sh --login
 clear
 set -a
 # Prepare tests
