@@ -24,7 +24,7 @@ class CodeParameters:
         self.validate()
 
     def read(self):
-        if(self.parameters_file is None):
+        if not self.parameters_file:
             return
 
         self.parameters = self._read_file( self.parameters_file )
