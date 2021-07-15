@@ -44,10 +44,9 @@ class LegacyIDS ( ctypes.Structure ):
 
     def convert_to_native_type(self):
         # check conflicting occurences and store data
-        occ_dict = {}
 
-        occ_dict[self.ids_name] = 1 + occ_dict.get( self.ids_name, -1 )
-        self.occurrence = occ_dict[self.ids_name]
+        LegacyIDS.occ_dict[self.ids_name] = 1 + LegacyIDS.occ_dict.get( self.ids_name, -1 )
+        self.occurrence = LegacyIDS.occ_dict[self.ids_name]
         # store input data
         if self.intent == Argument.IN:
             self.db_entry.put( self.value, self.occurrence )
@@ -95,5 +94,22 @@ class LegacyIDS ( ctypes.Structure ):
         self.version_[:] = len( self.version_ ) * [ord( ' ' )]
         self.version_[:len( version_ )] = [ord( x ) for x in version_]
 
-
+    def save(self, stream ):
+        stream.write( "------- IDS -------\n" )
+        stream.write( self.ids_name )
+        stream.write( "\n" )
+        stream.write( str(self.shot) )
+        stream.write( "\n" )
+        stream.write( str(self.run) )
+        stream.write( "\n" )
+        stream.write( str(self.occurrence ))
+        stream.write( "\n" )
+        stream.write( str(self.idx) )
+        stream.write( "\n" )
+        stream.write( self.machine)
+        stream.write( "\n" )
+        stream.write( self.user )
+        stream.write( "\n" )
+        stream.write( self.version )
+        stream.write( "\n" )
 
