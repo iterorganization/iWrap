@@ -45,6 +45,7 @@ class PythonActorGenerator(ActorGenerator):
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
+        self.install_dir: str = None
 
     def initialize(self):
         self.install_dir: str = str(Path.home()) + '/IWRAP_ACTORS/' + ProjectSettings.get_settings().actor_name
@@ -56,6 +57,7 @@ class PythonActorGenerator(ActorGenerator):
 
     def generate(self):
         self.temp_dir = tempfile.TemporaryDirectory().name
+        self.install_dir = str( Path.home() ) + '/IWRAP_ACTORS/' + ProjectSettings.get_settings().actor_name
 
         generation_env = {'temp_dir': self.install_dir}
         actor_settings_dict = ProjectSettings.get_settings().to_dict()
@@ -87,18 +89,10 @@ class PythonActorGenerator(ActorGenerator):
         self.__copy_native_lib()
         self.__copy_include()
 
+
     def build(self):
 
-        proc = subprocess.Popen( ['make', 'clean'],
-                                 cwd=self.install_dir + '/fortran_wrapper',
-                                 encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-
-        for line in proc.stdout.readline():
-            print( line, file=self.__info_output_stream, end='' )
-
-        return_code = proc.wait()
-        if return_code:
-            raise subprocess.CalledProcessError( return_code, 'make clean' )
+        self.cleanup()
 
         proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/fortran_wrapper',
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -165,7 +159,17 @@ class PythonActorGenerator(ActorGenerator):
         shutil.copy( schema_file, destination_dir )
 
     def cleanup(self):
-        self.temp_dir.cleanup()
+        #self.temp_dir.cleanup()
+        proc = subprocess.Popen( ['make', 'clean'],
+                                 cwd=self.install_dir + '/fortran_wrapper',
+                                 encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
+        for line in proc.stdout.readline():
+            print( line, file=self.__info_output_stream, end='' )
+
+        return_code = proc.wait()
+        if return_code:
+            raise subprocess.CalledProcessError( return_code, 'make clean' )
 
     def get_code_signature(self) -> str:
         return self.wrapper_generator.get_code_signature()
