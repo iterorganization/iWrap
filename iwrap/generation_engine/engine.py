@@ -75,3 +75,5 @@ class Engine:
         except Exception as exc:
             print( 'GENERATION FAILED!', file=info_output_stream )
             print( exc, file=info_output_stream )
+            import traceback
+            traceback.print_tb( exc.__traceback__ )

@@ -13,9 +13,10 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 
 
 class ButtonPane(ttk.Frame):
-    def __init__(self, master: ttk.Widget):
+    def __init__(self, master: ttk.Widget, update_method):
         super().__init__(master, borderwidth=1, relief="solid")
         self.master = master
+        self.update_method = update_method
         close_button = ttk.Button(self, text='Close', command=self.winfo_toplevel().destroy)
         close_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
@@ -27,6 +28,7 @@ class ButtonPane(ttk.Frame):
 
         progress_window = ProgressMonitorWindow()
 
+        self.update_method()
         Engine().generate_actor( info_output_stream=progress_window )
         #progress_window.destroy()
 
@@ -59,7 +61,7 @@ class MainWindow(tk.Tk, IWrapPane):
         self._logo_img: tk.PhotoImage = self._load_image(resource="imas_transparent_logo.gif", resize=(True, (6, 6)))
         ttk.Label(top_pane, image=self._logo_img).pack(side=tk.RIGHT, padx=(15, 20), pady=(10, 0))
 
-        button_pane = ButtonPane(main_pane)
+        button_pane = ButtonPane(main_pane, self.update_settings)
         button_pane.pack(fill=tk.X, side=tk.BOTTOM)
 
         self.settings_pane = SettingsMainPane(main_pane)

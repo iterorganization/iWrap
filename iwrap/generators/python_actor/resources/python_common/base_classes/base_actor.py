@@ -7,11 +7,11 @@ from ..code_parameters import CodeParameters
 
 class ActorBaseClass( ABC ):
 
-    def __init__(self, code_name):
+    def __init__(self, actor_dir, code_name):
         self.runtime_settings = JobSettings()
         self.formal_arguments = []
         self.code_parameters = CodeParameters()
-        self.binder = FortranBinder( self.__class__.__name__, code_name )
+        self.binder = FortranBinder( actor_dir, self.__class__.__name__, code_name )
 
     # # #  Actor lifecycle methods # # #
 
@@ -19,7 +19,8 @@ class ActorBaseClass( ABC ):
         self.code_parameters.read()
         self.code_parameters.validate()
 
-        self.binder.initialize( self.formal_arguments, self.code_parameters )
+        self.binder.initialize( self.runtime_settings,
+                                self.formal_arguments, self.code_parameters )
 
         pass
 

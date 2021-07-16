@@ -1,9 +1,17 @@
+from enum import Enum, auto
+
 DEBUGGER_TOTALVIEW = 10
 DEBUGGER_GDB = 20
 
-DEBUG_MODE_STANDALONE = 10
-DEBUG_MODE_ATTACH = 20
 
+class DebugMode(Enum):
+    NONE = auto()
+    STANDALONE = auto()
+    ATTACH = auto()
+
+class RunMode(Enum):
+    NORMAL = auto()
+    STANDALONE = auto()
 
 class SandboxSettings:
     LIFETIME_ACTOR = 10
@@ -12,8 +20,13 @@ class SandboxSettings:
 
 class JobSettings:
     def __init__(self):
+
+        # handled/implemented
+        self.run_mode = RunMode.NORMAL
+        self.debug_mode = DebugMode.NONE
+
+        # not implemented yet
         self.batch_job = self.BatchJob()
-        self.debug = self.Debug()
         self.mpi = self.MPI()
         self.open_mp = self.OpenMP()
         self.sandbox = self.Sandbox()

@@ -47,25 +47,28 @@ CUSTOM_LIBS={{ (actor_settings.code_description.language_specific.custom_librari
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
 LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS) $(CODE_LIB_DEF)
 
-#all: bin/$(ACTOR_NAME).exe   lib/lib$(ACTOR_NAME).so
-all: lib/lib$(ACTOR_NAME).so
+all: bin/$(ACTOR_NAME).exe   lib/lib$(ACTOR_NAME).so
+#all: lib/lib$(ACTOR_NAME).so
 
 bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./bin
 	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
-
-build/RWTools.o: src/RWTools.f90 build/fortran_wrapper.o
+build/defs.o: src/defs.f90
 	@echo "  * $< -> $@"
-	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
-
-build/fortrantools.o: src/fortrantools.f90
-	@echo "  * $^ -> $@"
 	@mkdir -p ./build
 	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/fortrantools.o
+build/RWTools.o: src/RWTools.f90 build/defs.o
+	@echo "  * $< -> $@"
+	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+
+build/fortrantools.o: src/fortrantools.f90 build/defs.o
+	@echo "  * $^ -> $@"
+	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+
+lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./lib
 	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
