@@ -11,10 +11,8 @@ subroutine {{code_description.code_name}}_wrapper(&
 {% endif %}
                 status_info) BIND(C)
 
-    use idsmodule
-    use codeparam_module
-    use status_module
     use ids_schemas
+    use iwrap_defs
     use iwrap_tools
     use ids_routines
     use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
@@ -26,7 +24,7 @@ subroutine {{code_description.code_name}}_wrapper(&
 
 {% for argument in code_description.arguments %}
     ! {{ argument.name }}
-    type(idsstruct) :: {{ argument.name }}_desc
+    type(ids_description_t) :: {{ argument.name }}_desc
     type (ids_{{ argument.type }}) :: {{ argument.name }}
 {% endfor %}
 
@@ -70,7 +68,7 @@ subroutine {{code_description.code_name}}_wrapper(&
 	 status_info.code = wrap_out_outputFlag
 	 if(associated(diagnosticInfo)) then
 		 status_info.message = convert_string2Cptr(diagnosticInfo)
-   endif
+     endif
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)  
 	 if(wrap_out_outputFlag < 0 ) then

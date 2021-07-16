@@ -1,76 +1,216 @@
-
-!--------------------------------------------------
-module codeparam_module
-use iso_c_binding
-    type, BIND(C)::code_parameters_t
-        type(C_PTR) :: params 
-        integer     :: params_size
-        type(C_PTR) :: schema 
-        integer     :: schema_size
-    end type
-end module
-!--------------------------------------------------
-
-module status_module
-use iso_c_binding
-    type, BIND(C)::status_t
-        integer     :: code
-        type(C_PTR) :: message
-    end type
-end module
-
-!--------------------------------------------------
-module idsmodule
-    type, BIND(C)::idsstruct
-        character(132)::ids
-        integer::shot
-        integer::run
-        integer::occurrence
-        integer::idx
-        character(132)::machine
-        character(132)::user
-        character(132)::version
-    end type
-end module
-!--------------------------------------------------
-
 module iwrap_tools
-implicit none 
+    use iwrap_defs
+    use iso_c_binding
+
+    implicit none
 
  interface convert
    module procedure &
        convert_codeparams,&
        convert_array2string,&
-	   convert_string2array
- end interface
+	   convert_string2array, &
+       convert_cptr2string
+ end interface convert
+
  
   interface convert2Cptr
    module procedure &
        convert_string2Cptr
  end interface
- 
+
+    interface
+        function C_strlen(s) result(result) bind(C,name="strlen")
+            use iso_c_binding
+
+            integer(C_SIZE_T) :: result
+            type(C_PTR), value, intent(in) :: s  !character(len=*), intent(in)
+        end function
+    end interface
+
 contains
 
+
+    FUNCTION c_str_length(c_string_ptr) result(length)
+        use iso_c_binding
+
+        integer(C_SIZE_T) :: length
+        type(C_PTR), value, intent(in) :: c_string_ptr
+        
+        if (.not. C_ASSOCIATED(c_string_ptr)) then
+            length = 0
+        else
+            length = C_strlen(c_string_ptr)
+        end if
+    end FUNCTION c_str_length
+
 FUNCTION create_ids_full_name(ids_description)  RESULT (ids_full_name)
-    use idsmodule
+
     implicit none
 
-    type(idsstruct), intent(IN) :: ids_description
+    type(ids_description_t), intent(IN) :: ids_description
     character(132):: ids_full_name
 
     if (ids_description%occurrence/=0) then
             write(ids_full_name,"(i0)") ids_description%occurrence
-            ids_full_name=trim(ids_description%ids)//"/"//trim(ids_full_name)
+            ids_full_name=trim(ids_description%ids_name)//"/"//trim(ids_full_name)
     else
-            ids_full_name=trim(ids_description%ids)
+            ids_full_name=trim(ids_description%ids_name)
     endif
 END FUNCTION create_ids_full_name
+
+    SUBROUTINE handle_status_info(status_info)
+            !----  Status info  ----
+        type(status_t) :: status_info
+        character(kind = C_CHAR), dimension(:), pointer :: status_info_array
+        integer  :: status_info_size
+
+        if((.NOT. c_associated(status_info%message)) .OR. (c_str_length(status_info%message) < 1)) then
+            allocate(status_info_array(23))
+            status_info_size = 23
+            status_info_array = transfer("<No status information>", status_info_array)
+        else
+            status_info_size = c_str_length(status_info%message)
+            call c_f_pointer(status_info%message, status_info_array, [status_info_size])
+        endif
+        print *, "---Diagnostic information returned from ***diagnostic***:---"
+        print *, "-------Output flag    : ", status_info%code
+        print *, "-------Status info: ", status_info_array
+        print *, "---------------------------------------------------------"
+    END SUBROUTINE handle_status_info
+
+
+    FUNCTION read_input(db_entry_desc_array) RESULT(status)
+        use rwtool
+        type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
+        integer :: i, status
+        integer :: ids_array_size, array_read_size
+
+        ids_array_size = SIZE(db_entry_desc_array)
+
+        open(10,file='input.txt',form='formatted',access='sequential',status='old', iostat=status)
+
+        read(10,*) array_read_size
+
+        if ( ids_array_size /= array_read_size) then
+            print *, "ERROR: Expected and read number of arguments differs (" ,  ids_array_size, " vs ", array_read_size, " )"
+            status = -1
+            return
+        end if
+
+        do i = 1, ids_array_size
+             call readids(db_entry_desc_array(i))
+        end do
+
+        close(10)
+        status = 0
+    END FUNCTION read_input
+
+
+    SUBROUTINE write_output(status_info)
+        use rwtool
+        type(status_t), intent(IN) :: status_info
+        integer :: str_len, istat
+
+        !-----------Writing output data to file ---------------------
+        open(10,file='output.txt',form='formatted',access='sequential',status='unknown', iostat=istat)
+        call writefile(status_info%code)
+
+        if ( C_ASSOCIATED(status_info%message)) then
+            str_len = c_str_length(status_info%message)
+            call writefile(str_len)
+            call writefile(convert_cptr2string(status_info%message))
+        else
+            call writefile(0)
+            call writefile("")
+        end if
+        close(10)
+
+    END SUBROUTINE write_output
+
+    SUBROUTINE open_db_entries(db_entry_desc_array)
+
+        use ids_routines
+
+        type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
+        integer :: i, j
+
+        db_entry_desc_array(:)%idx = -1
+   do i=1, SIZE(db_entry_desc_array)
+      j=1
+      do while (j.lt.i)
+         if ( db_entry_desc_array(j)%shot .eq. db_entry_desc_array(i)%shot .and.       &
+              db_entry_desc_array(j)%run .eq. db_entry_desc_array(i)%run .and.         &
+              db_entry_desc_array(j)%user .eq. db_entry_desc_array(i)%user .and.       &
+              db_entry_desc_array(j)%machine .eq. db_entry_desc_array(i)%machine .and. &
+              db_entry_desc_array(j)%version .eq. db_entry_desc_array(i)%version ) then
+            EXIT
+         else
+            j=j+1
+         end if
+      end do
+      if (j.eq.i) then
+         call imas_open_env("",db_entry_desc_array(i)%shot,db_entry_desc_array(i)%run,&
+              db_entry_desc_array(i)%idx,db_entry_desc_array(i)%user,db_entry_desc_array(i)%machine,db_entry_desc_array(i)%version)
+      else
+         db_entry_desc_array(i)%idx = db_entry_desc_array(j)%idx
+      end if
+   end do
+    END SUBROUTINE open_db_entries
+
+
+
+    SUBROUTINE close_db_entries(db_entry_desc_array)
+
+        use ids_routines
+
+
+        type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
+        integer :: i, j
+          do i=1, SIZE(db_entry_desc_array)
+      j=1
+      do while (j.lt.i)
+         if (db_entry_desc_array(j)%idx.eq.db_entry_desc_array(i)%idx) then
+            EXIT
+         else
+            j=j+1
+         end if
+      end do
+      if (j.eq.i) then
+         call imas_close(db_entry_desc_array(i)%idx)
+      end if
+   end do
+    END SUBROUTINE close_db_entries
+
+FUNCTION read_codeparams(param_dir, xml_file, xsd_file)  RESULT (code_params)
+    use iso_c_binding, ONLY: C_PTR
+    use rwtool
+    implicit none
+
+    character(len=*), intent(IN) :: param_dir
+    character(len=*), intent(IN) :: xml_file
+    character(len=*), intent(IN) :: xsd_file
+    type(code_parameters_t) :: code_params
+
+    character(len=:), allocatable :: xml_string
+    character(len=:), allocatable :: xsd_string
+
+    if ( LEN(xml_file) < 1 .OR. LEN(xsd_file) < 1 ) return
+
+    xml_string = read_file(param_dir // xml_file)
+    xsd_string = read_file(param_dir // xsd_file)
+
+    code_params%params = convert2Cptr(xml_string)
+    code_params%params_size = LEN(xml_string)
+
+    code_params%schema = convert2Cptr(xsd_string)
+    code_params%schema_size = LEN(xsd_string)
+
+END FUNCTION read_codeparams
 
 
 FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)    
     use iso_c_binding, ONLY: C_PTR
     use ids_schemas, ONLY: ids_parameters_input
-    use codeparam_module
     implicit none
 
 
@@ -124,7 +264,7 @@ implicit none
 character, dimension(:), intent(IN) :: inArray
 character(len=:), allocatable :: outString
 integer :: i
-integer :: strSize
+integer(C_SIZE_T) :: strSize
 
 strSize = SIZE(inArray)
 allocate(character(strSize)::outString)
@@ -155,31 +295,45 @@ END FUNCTION convert_string2array
 ! ======================================================================================
 ! ======================================================================================
 
-FUNCTION convert_string2Cptr(inString)  RESULT (outPtr)
-use iso_c_binding
-implicit none
-character(len=:), pointer, INTENT(IN) :: inString
-type(C_PTR):: outPtr
-character, dimension(:), pointer :: strArray
-integer :: i, strSize
+    FUNCTION convert_string2Cptr(inString)  RESULT (outPtr)
+        use iso_c_binding
+        implicit none
 
+        character(len=*), INTENT(IN) :: inString
+        type(C_PTR) :: outPtr
+        INTEGER :: i, strSize
+        character, dimension(:), pointer :: outArray
 
-strSize = 0
-if (associated(inString)) then 
-   strSize = LEN_TRIM(inString)
-   allocate(strArray(strSize + 1))
+        strSize = LEN(inString)
+        allocate(outArray(strSize + 1))
 
-   DO I = 1, strSize
-      strArray(I) = inString(I:I)
-   END DO
-   strArray(strSize + 1) = C_NULL_CHAR
-   outPtr = C_LOC(strArray(1))
+        DO i = 1,strSize
+           outArray(i) = inString(i:i)
+        END DO
 
-endif
-END FUNCTION convert_string2Cptr
+        outArray(strSize + 1) =  C_NULL_CHAR
+        outPtr = C_LOC(outArray)
+
+    END FUNCTION convert_string2Cptr
 
 ! ------------------------
+FUNCTION convert_cptr2string(in_c_ptr) RESULT( out_string)
+    use ISO_C_BINDING
+    type(C_PTR), intent(in) :: in_c_ptr
+    character(len=:), allocatable :: out_string
+    character(len=1, kind=C_CHAR), dimension(:), pointer :: char_arr
+    integer :: string_size
+    if (.not. C_associated(in_c_ptr)) then
+        out_string = ' '
+        return
+    endif
 
+    string_size = c_str_length(in_c_ptr)
+    call C_F_pointer(in_c_ptr, char_arr,  (/string_size/))
+
+    out_string = transfer(char_arr, out_string)
+
+end FUNCTION
 
 
 
