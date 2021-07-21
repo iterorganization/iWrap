@@ -25,15 +25,16 @@ class FortranPane( ttk.Frame, IWrapPane ):
         system_libraries_pane (SystemLibrariesPane): The SystemLibrariesPane class object.
         custom_libraries_pane (CustomLibrariesPane): The CustomLibrariesPane class object.
     """
-    language = 'Fortran'
+    language = 'fortran'
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, language="fortran"):
         """Initialize the FortranPane class object.
 
         Args:
             master (ttk.Frame): The master frame.
         """
         super().__init__( master )
+        FortranPane.language = language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
         # LABEL FRAME
