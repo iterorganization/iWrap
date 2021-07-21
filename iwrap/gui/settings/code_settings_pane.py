@@ -29,7 +29,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_name_text(Entry): An editable place for code name value. Value can be added and changed manually by users.
          The code name is added automatically if the YAML file is imported.
     """
-    default_programming_language = 'Fortran'
+    default_programming_language = 'fortran'
 
     def __init__(self, master=None):
         """Initialize the code settings pane.
@@ -88,8 +88,9 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
         """
-        pane = LanguagePanesManager.get_language_pane(self.selected_programming_language.get())
-        self.language_pane = pane(self)
+        selected_language = self.selected_programming_language.get().lower()
+        pane = LanguagePanesManager.get_language_pane(selected_language)
+        self.language_pane = pane(self, selected_language)
         self.language_pane.pack(fill="both", expand="yes", pady=10)
 
     def update_settings(self, *args):
@@ -110,25 +111,24 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
-
         programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.code_path or ''
         code_name = code_description.code_name or ''
 
-        if programming_language not in self.programming_language_combobox['values']:
+        if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = CodeSettingsPane.default_programming_language
             messagebox.showwarning("Warning", f"Unknown programming language. "
                                               f"The programming language set to "
                                               f"{CodeSettingsPane.default_programming_language}.")
         self.programming_language_combobox.set('')
-        self.programming_language_combobox.set(programming_language)
+        self.programming_language_combobox.set(programming_language.lower())
         self.change_language_pane()
 
         self.browse_text.delete(0, tk.END)
         self.code_path.set(code_path)
         self.code_name.set(code_name)
 
-        LanguageSettingsManager.set_settings(self.programming_language_combobox.get())
+        LanguageSettingsManager.set_settings(self.programming_language_combobox.get().lower())
         self.language_pane.reload()
 
     def on_click(self):
