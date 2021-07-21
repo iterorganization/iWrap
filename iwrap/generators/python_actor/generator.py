@@ -37,7 +37,7 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def code_languages(self) -> Set[str]:
-        return {'Fortran'}
+        return {'Fortran', 'cpp'}
 
     def __init__(self):
 
@@ -46,6 +46,7 @@ class PythonActorGenerator(ActorGenerator):
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
         self.install_dir: str = None
+        self.wrapper_dir = None
 
     def initialize(self):
         self.install_dir: str = str(Path.home()) + '/IWRAP_ACTORS/' + ProjectSettings.get_settings().actor_name
@@ -61,12 +62,11 @@ class PythonActorGenerator(ActorGenerator):
 
         generation_env = {'temp_dir': self.install_dir}
         actor_settings_dict = ProjectSettings.get_settings().to_dict()
-        code_description_dict = ProjectSettings.get_settings().code_description.to_dict()
+        code_description =  ProjectSettings.get_settings().code_description
+        code_description_dict = code_description.to_dict()
         dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
-
-
-
+        self.wrapper_dir = code_description.programming_language.lower() + '_wrapper'
         # TO BE CHECKED!!!!
 
 
@@ -94,7 +94,7 @@ class PythonActorGenerator(ActorGenerator):
 
         self.cleanup()
 
-        proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/fortran_wrapper',
+        proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/' + self.wrapper_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
@@ -131,7 +131,7 @@ class PythonActorGenerator(ActorGenerator):
         root_dir = ProjectSettings.get_settings().root_dir
         include_abs_path = os.path.join( root_dir, include_path )
 
-        destination_dir = os.path.join( self.install_dir, 'fortran_wrapper/include/' )
+        destination_dir = os.path.join( self.install_dir, self.wrapper_dir + '/include/' )
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
@@ -161,7 +161,7 @@ class PythonActorGenerator(ActorGenerator):
     def cleanup(self):
         #self.temp_dir.cleanup()
         proc = subprocess.Popen( ['make', 'clean'],
-                                 cwd=self.install_dir + '/fortran_wrapper',
+                                 cwd=self.install_dir + '/' + self.wrapper_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout.readline():
