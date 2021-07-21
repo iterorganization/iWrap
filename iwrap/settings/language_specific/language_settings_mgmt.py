@@ -3,7 +3,7 @@ from iwrap.settings.project import ProjectSettings
 
 
 class LanguageSettingsManager:
-    _panes_settings = {'Fortran': FortranSpecificSettings(), 'CPP': None, 'Python': None}
+    _panes_settings = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(), 'python': None}
 
     @classmethod
     def set_settings(cls, pane_name):
