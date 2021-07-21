@@ -5,7 +5,7 @@ from iwrap.gui.settings.language_specific_panes.python_settings_pane import Pyth
 
 class LanguagePanesManager():
 
-    _registered_panes = {'Fortran' : FortranPane, 'CPP': CppPane, 'Python': PythonPane}
+    _registered_panes = {'fortran' : FortranPane, 'cpp': FortranPane, 'python': PythonPane}
 
     @classmethod
     def get_language_pane(cls, language: str) :
