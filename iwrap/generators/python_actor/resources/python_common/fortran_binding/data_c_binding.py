@@ -7,8 +7,7 @@ from ..code_parameters import CodeParameters
 class StatusCType( ctypes.Structure ):
     '''IDSRef reference structure'''
     _fields_ = (("_code", ctypes.c_int),
-                ("_message", ctypes.c_wchar_p),
-                #("_message_size", ctypes.c_int),
+                ("_message", ctypes.c_char_p),
                 )
     def __init__(self):
         pass
@@ -17,17 +16,20 @@ class StatusCType( ctypes.Structure ):
     def code(self):
         return self._code
 
-    #@property
-    #def message_size(self):
-    #    return self._message_size
+    @code.setter
+    def code(self, code):
+        self._code = ctypes.c_int( code )
 
     @property
     def message(self):
-        #if '''self._message_size < 0 or ''' self._message is None:
-        #    return ''
         if self._message is None:
             return ''
-        return self._message.decode('utf-8')
+        return self._message.decode(errors='replace')
+
+    @message.setter
+    def message(self, message):
+        self._message = ctypes.c_char_p(message.encode('utf-8'))
+
 
     def convert_to_native_type(self):
         return ctypes.byref( self )
