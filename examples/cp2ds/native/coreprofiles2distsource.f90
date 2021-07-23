@@ -20,7 +20,7 @@ write(0,*) 'Entering subroutine eq2dist'
 write(0,*) 'size of input IDS  = ',size(coreprofilesin%time)
 
   ! INITIALISATION OF ERROR FLAG
-  error_flag = 0
+  error_flag = -1
   allocate(character(50):: error_message)
   error_message = 'Status info of coreprofiles2distsource'
 

@@ -3,6 +3,7 @@ import sys
 import imas,os
 
 from core2dist.actor import core2dist
+from core2dist.python_common.job_settings import RunMode, DebugMode
 
 
 
@@ -36,6 +37,9 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
+        #
+        #self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
+        #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
         self.actor_cp2ds.initialize()
     
     def execute_workflow(self):

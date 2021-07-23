@@ -38,8 +38,8 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         #
-        self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
-        self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
+        #self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
+        #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
         self.actor_cp2ds.initialize()
     
     def execute_workflow(self):
@@ -52,6 +52,8 @@ class ExampleWorkflowManager:
         print('=> Execute physics code')
 
         output_distribution_sources = self.actor_cp2ds(input_core_profiles)
+
+        print( output_distribution_sources.time )
         
         
         # SAVE IDSS INTO OUTPUT FILE

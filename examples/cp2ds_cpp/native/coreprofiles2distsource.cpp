@@ -6,10 +6,12 @@ void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, Id
     const char* TEXT = "Status info of coreprofiles2distsource CPP";
     int idsSize = -1;
 
-    printf("Entering subroutine eq2dist");
+    printf("Entering subroutine eq2dist\n");
+    *status_code = 0;
+
     idsSize = in_core_profiles.time.extent(0);
 
-    printf("size of input IDS  = .d", idsSize);
+    printf("size of input IDS  = %d\n", idsSize);
 
     // INITIALISATION OF STATUS INFO
     *status_message = (char*)malloc(strlen(TEXT) + 1);
@@ -21,7 +23,7 @@ void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, Id
     for(int i=0; i < idsSize; i++)
     {
         // Time : copy from input IDS
-        printf("Received input time from equilibrium : %f", in_core_profiles.time(i));
+        printf("Received input time from equilibrium : %f\n", in_core_profiles.time(i));
         out_distribution_sources.time(i) = in_core_profiles.time(i);
     }
 
@@ -31,7 +33,7 @@ void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, Id
     out_distribution_sources.code.parameters = "my_code_specific_parameters";
     out_distribution_sources.code.output_flag = 0   ;
 
-    *status_code = 0;
-    printf("End of coreprofiles2distsource CPP");
+
+    printf("End of coreprofiles2distsource CPP\n");
 
 }
