@@ -331,6 +331,7 @@ FUNCTION convert_cptr2string(in_c_ptr) RESULT( out_string)
     string_size = c_str_length(in_c_ptr)
     call C_F_pointer(in_c_ptr, char_arr,  (/string_size/))
 
+    allocate(character(string_size)::out_string)
     out_string = transfer(char_arr, out_string)
 
 end FUNCTION
