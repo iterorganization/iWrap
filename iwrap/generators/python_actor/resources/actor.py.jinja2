@@ -8,11 +8,13 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
 
+    NATIVE_LANGUAGE = '{{code_description.programming_language | lower}}'
     CODE_NAME = '{{code_description.code_name}}'
+
 
     def __init__(self):
         actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        super().__init__(actor_dir, self.CODE_NAME)
+        super().__init__(actor_dir, self.NATIVE_LANGUAGE, self.CODE_NAME)
 
         # Auto-generated list of arguments meta-data
     {% for argument in code_description.arguments %}

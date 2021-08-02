@@ -66,14 +66,21 @@ class PythonActorGenerator(ActorGenerator):
         code_description_dict = code_description.to_dict()
         dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
-        self.wrapper_dir = code_description.programming_language.lower() + '_wrapper'
+        native_language = code_description.programming_language.lower()
+
+        self.wrapper_dir = native_language + '_wrapper'
         # TO BE CHECKED!!!!
 
 
         #if os.path.isdir(self.install_dir):
         #    shutil.rmtree(self.install_dir)
 
-        process_template_dir('iwrap.generators.python_actor', 'resources', self.install_dir, dictionary, self.__info_output_stream,)
+        def filter_func(x: str) -> bool:
+            if "_wrapper" in x:
+                return native_language + '_wrapper' in x
+            return  True
+
+        process_template_dir('iwrap.generators.python_actor', 'resources', self.install_dir, dictionary, filter_func=filter_func, output_stream= self.__info_output_stream,)
 
 
         #print('TMP2: ', self.jinja_env.loader.provider.module_path)
