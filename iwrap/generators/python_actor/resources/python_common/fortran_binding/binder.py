@@ -16,7 +16,7 @@ from ..job_settings import JobSettings, RunMode, DebugMode
 
 class FortranBinder:
 
-    def __init__(self, actor_dir, actor_name, code_name):
+    def __init__(self, actor_dir, actor_name, native_language, code_name):
         self.logger = logging.getLogger( 'binding' )
         self.logger.setLevel( logging.DEBUG )
 
@@ -24,6 +24,7 @@ class FortranBinder:
         self.actor_name = actor_name
         self.code_name = code_name + '_wrapper'
 
+        self.wrapper_dir = self.actor_dir + '/' + native_language + '_wrapper'
     def save_data(self, ids):
         pass
 
@@ -46,7 +47,8 @@ class FortranBinder:
 
     def __get_wrapper_function(self):
 
-        lib_path = self.actor_dir + '/fortran_wrapper/lib/lib' + self.actor_name + '.so'
+        #TODO: set library.so directory
+        lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
         wrapper_fun = getattr( wrapper_lib, self.code_name )
@@ -160,7 +162,7 @@ class FortranBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.actor_dir + '/fortran_wrapper' )
+        os.chdir( self.wrapper_dir)
 
         # call the NATIVE function
         if self.runtime_settings.debug_mode is DebugMode.ATTACH:
