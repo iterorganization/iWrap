@@ -9,6 +9,7 @@ def process_template_dir(
         template_dir: str,
         destination_dir: str,
         dictionary: Dict,
+        filter_func = None,
         output_stream = None) -> None:
     """Function processes all templates within chosen directory of selected package using data provided as dictionary
 
@@ -25,7 +26,7 @@ def process_template_dir(
         trim_blocks=True,
         lstrip_blocks = True
     )
-    templates = jinja_env.list_templates()
+    templates = jinja_env.list_templates(filter_func= filter_func)
 
     for template_file in templates:
         if output_stream is not None:
