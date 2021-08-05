@@ -42,9 +42,9 @@ INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
 LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS) $(CODE_LIB_DEF)
 
 
-all:  lib/lib$(ACTOR_NAME).so  #bin/$(ACTOR_NAME).exe
+all:  lib/lib$(ACTOR_NAME).so  bin/$(ACTOR_NAME).exe
 
-bin/$(ACTOR_NAME).exe: src/standalone.cpp build/RWTools.o build/cpp_wrapper.o 
+bin/$(ACTOR_NAME).exe: src/standalone.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./bin
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
@@ -59,7 +59,12 @@ build/cpp_wrapper.o: src/cpp_wrapper.cpp
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-build/RWTools.o: src/RWTools.cpp
+build/iwrap_tools.o: src/iwrap_tools.cpp
+	@echo "   * $^ -> $@"
+	@mkdir -p build
+	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
+
+build/serialization_tools.o: src/serialization_tools.cpp
 	@echo "   * $^ -> $@"
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
