@@ -1,0 +1,12 @@
+#ifndef _SERIALIZATION_TOOLS
+#define _SERIALIZATION_TOOLS
+
+void read_data(ifstream *stream, ids_description_t *ids_description);
+void read_data(ifstream *stream, int *var);
+
+void write_data(ofstream *stream, int var);
+void write_data(ofstream *stream, char *var);
+
+char* read_file(const char* file_path) ;
+
+#endif // _SERIALIZATION_TOOLS
