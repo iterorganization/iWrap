@@ -73,8 +73,4 @@ extern "C" void {{code_description.code_name}}_wrapper(
     {{ argument.name }}.put({{ argument.name }}_desc->occurrence);
 {% endfor %}
 
-	
-	
-
-
 }
