@@ -28,10 +28,12 @@ write(0,*) 'size of input IDS  = ',size(coreprofilesin%time)
 ! Here we allocate the output IDS  to the same size as the input IDS (but this is not a general rule)
 allocate(distsourceout%time(size(coreprofilesin%time)))
 
+
+write(0,*) 'Received size of input time from equilibrium : ', SIZE(coreprofilesin%time)
+
 ! Fill in the output IDS (Physical data)
 do i=1,size(coreprofilesin%time)
    ! Time : copy from input IDS
-   write(0,*) 'Received input time from equilibrium : ', coreprofilesin%time(i)
    distsourceout%time(i) = coreprofilesin%time(i)  
    ! THE TIME FIELD MUST BE FILLED (MANDATORY) in case of multiple time slice mode for the IDS;
     

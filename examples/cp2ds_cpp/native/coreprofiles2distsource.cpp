@@ -11,7 +11,7 @@ void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, Id
 
     idsSize = in_core_profiles.time.extent(0);
 
-    printf("size of input IDS  = %d\n", idsSize);
+    printf("Size of input IDS  = %d\n", idsSize);
 
     // INITIALISATION OF STATUS INFO
     *status_message = (char*)malloc(strlen(TEXT) + 1);
@@ -19,11 +19,12 @@ void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, Id
 
     out_distribution_sources.time.resize(idsSize);
 
+
+
     // Fill in the output IDS (Physical data)
     for(int i=0; i < idsSize; i++)
     {
         // Time : copy from input IDS
-        printf("Received input time from equilibrium : %f\n", in_core_profiles.time(i));
         out_distribution_sources.time(i) = in_core_profiles.time(i);
     }
 
