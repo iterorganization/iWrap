@@ -40,8 +40,10 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
-        # self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
-        self.actor_physics_ii.runtime_settings.debug_mode = DebugMode.ATTACH
+        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        if actor_run_mode == 'STANDALONE':
+            print('Running STANDALONE version.')
+            self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
         self.actor_physics_ii.initialize() 
     
     def execute_workflow(self):

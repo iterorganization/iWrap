@@ -1,6 +1,9 @@
-.PHONY: native actor actor-gui
+.PHONY: native actor actor-gui wf-run
 
-actor: native
+wf-run:
+	python3 workflow.py
+
+actor:
 	iwrap -a physics_ii -f ./physics_ii.yaml
 
 actor-gui: native

@@ -3,6 +3,7 @@ import sys
 import imas,os
 
 from physics_ii.actor import physics_ii
+from physics_ii.python_common.job_settings import RunMode, DebugMode
 
 
 
@@ -39,6 +40,11 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
+        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        if actor_run_mode == 'STANDALONE':
+            print('Running STANDALONE version.')
+            self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
+
         self.actor_physics_ii.initialize() 
     
     def execute_workflow(self):

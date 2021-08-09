@@ -1,10 +1,14 @@
-.PHONY: native actor actor-gui
+.PHONY: native actor actor-gui wf-run
 
-actor: native
-	iwrap -a physics_ii -f ./physics_ii.yaml
+
+wf-run:
+	python3 cp2ds_cpp_workflow.py
+
+actor:
+	iwrap -a core2dist_cpp -f ./cp2ds_cpp.yaml
 
 actor-gui: native
-	iwrap-gui -a physics_ii -f ./physics_ii.yaml
+	iwrap-gui -a core2dist_cpp -f ./cp2dsn_cpp.yaml
 
 native:
 	make -C ./native clean
