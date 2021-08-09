@@ -2,6 +2,8 @@
 
 wf-run:  workflow_cpp.py
 	python3 workflow_cpp.py
+	@cmp expected_output.txt wf_output.txt &> /dev/null || \
+	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
 	iwrap -a physics_ii_cpp -f ./physics_ii_cpp.yaml
