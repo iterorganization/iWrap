@@ -16,7 +16,7 @@ program standalone
 
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
     !----  Code parameters  ----
-    character(len=*), parameter :: PARAM_DIR = "./input/"
+    character(len=*), parameter :: PARAM_DIR = "../input/"
     character(len=*), parameter :: XML_FILE = "{{code_description.code_parameters.parameters.split('/')[-1]}}"
     character(len=*), parameter :: XSD_FILE = "{{code_description.code_parameters.schema.split('/')[-1]}}"
     type(code_parameters_t) :: code_params
