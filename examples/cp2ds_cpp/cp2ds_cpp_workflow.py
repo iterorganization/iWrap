@@ -68,6 +68,12 @@ class ExampleWorkflowManager:
         
         # Finalize ALL actors 
         self.actor_cp2ds.finalize()
+
+
+        output_ids = self.output_entry.get('distribution_sources')
+
+        with open( 'wf_output.txt', 'w' ) as file:
+            file.write( str(output_ids.time) )
         
         #other finalizastion actions
         self.input_entry.close()

@@ -68,7 +68,12 @@ class ExampleWorkflowManager:
     def end_workflow(self):
         
         # Finalize ALL actors 
-        self.actor_physics_ii.finalize() 
+        self.actor_physics_ii.finalize()
+
+        output_ids = self.output_entry.get('equilibrium')
+
+        with open( 'wf_output.txt', 'w' ) as file:
+            file.write( str(output_ids.time) )
         
         #other finalizastion actions
         self.input_entry.close()
