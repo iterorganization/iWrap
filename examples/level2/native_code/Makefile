@@ -23,7 +23,7 @@ OBJS_ACTOR = codeparam_input_physics.o physics_ii.o
 # LIBRARY COMPILATION
 libphysics_ii.a: ${OBJS_ACTOR}
 	rm -f libphysics_ii.a
-	ar -cr $@ *.o
+	@ar -cr $@ *.o
 
 # TEST THE CONSISTENCY OF THE XML AND XSD FILES FOR INPUT PARAMETERS
 validate:

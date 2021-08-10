@@ -6,7 +6,7 @@ INCLUDES = `pkg-config --cflags imas-ifort`
 all: libcp2ds.a
 
 libcp2ds.a: coreprofiles2distsource.o
-	ar -rvs $@ $^
+	@ar -rs $@ $^
 
 coreprofiles2distsource.o: coreprofiles2distsource.f90
 	$(F90) $(COPTS) -c -o $@ $^ ${INCLUDES} $(LIBS)

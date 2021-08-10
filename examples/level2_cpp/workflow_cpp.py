@@ -16,10 +16,6 @@ class ExampleWorkflowManager:
         self.output_entry = None
 
     def init_workflow(self):
-        print( '>> Querying arguments <<' )
-        for arg in self.actor_physics_ii.formal_arguments:
-            print(arg)
-
         # INPUT/OUTPUT CONFIGURATION
         shot                = 131024
         run_in              = 1

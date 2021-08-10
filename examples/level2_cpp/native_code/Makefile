@@ -8,7 +8,7 @@ all: libphysics_ii_cpp.a
 
 # LIBRARY COMPILATION
 libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o
-	ar -rvs $@ $^
+	@ar -rs $@ $^
 
 # RULES FOR ALL OBJECT FILES
 %.o: %.cpp

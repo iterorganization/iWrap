@@ -1,6 +1,7 @@
 .PHONY: native actor actor-gui wf-run
 
 wf-run:  workflow_cpp.py
+	@rm -rf wf_output.txt
 	python3 workflow_cpp.py
 	@cmp expected_output.txt wf_output.txt &> /dev/null || \
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
