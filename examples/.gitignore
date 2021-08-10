@@ -5,4 +5,6 @@
 *.mod
 *.a
 *.so
+*.txt
+!expected_output.txt
 
