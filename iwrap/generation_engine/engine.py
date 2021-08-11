@@ -72,8 +72,10 @@ class Engine:
             print(text_decoration, 'BUILDING AN ACTOR', text_decoration, file=info_output_stream )
             Engine._active_generator.build()
             print(text_decoration, 'GENERATION COMPLETE!', text_decoration,file=info_output_stream)
+            return 0
         except Exception as exc:
             print( 'GENERATION FAILED!', file=info_output_stream )
             print( exc, file=info_output_stream )
             import traceback
             traceback.print_tb( exc.__traceback__ )
+            return 1
