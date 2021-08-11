@@ -39,15 +39,18 @@ class FortranBinder:
         self.work_db = self.__create_work_db()
         self.wrapper_func = self.__get_wrapper_function()
 
-    @staticmethod
-    def __create_work_db():
-        db_entry = imas.DBEntry( imas.imasdef.MDSPLUS_BACKEND, 'tmp', 11, 22 )
+    def __create_work_db(self):
+        ids_cache = self.runtime_settings.ids_cache
+        db_entry = imas.DBEntry( backend_id=ids_cache.backend,
+                                 db_name=ids_cache.db_name,
+                                 shot=ids_cache.shot,
+                                 run=ids_cache.run )
+
         db_entry.create()
         return db_entry
 
     def __get_wrapper_function(self):
 
-        #TODO: set library.so directory
         lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
