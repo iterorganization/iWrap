@@ -1,3 +1,5 @@
+#!/bin/sh --login
+echo "Setting ITER"
 module purge
 module load IMAS
 module load lxml
