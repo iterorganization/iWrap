@@ -40,11 +40,19 @@ class FortranBinder:
         self.wrapper_func = self.__get_wrapper_function()
 
     def __create_work_db(self):
-        ids_cache = self.runtime_settings.ids_cache
-        db_entry = imas.DBEntry( backend_id=ids_cache.backend,
-                                 db_name=ids_cache.db_name,
-                                 shot=ids_cache.shot,
-                                 run=ids_cache.run )
+        ids_storage = self.runtime_settings.ids_storage
+        is_standalone_run = self.runtime_settings.debug_mode is DebugMode.STANDALONE \
+                            or self.runtime_settings.run_mode is RunMode.STANDALONE
+
+        if is_standalone_run and ids_storage.backend is imas.imasdef.MEMORY_BACKEND:
+            backend = ids_storage.persistent_backend
+        else:
+            backend = ids_storage.backend
+
+        db_entry = imas.DBEntry( backend_id=backend,
+                                 db_name=ids_storage.db_name,
+                                 shot=ids_storage.shot,
+                                 run=ids_storage.run )
 
         db_entry.create()
         return db_entry
