@@ -49,7 +49,6 @@ class ExampleWorkflowManager:
         # READ INPUT IDSS FROM LOCAL DATABASE
         print('=> Read input IDSs')
         input_core_profiles = self.input_entry.get('core_profiles')
-        print(input_core_profiles.time)
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
