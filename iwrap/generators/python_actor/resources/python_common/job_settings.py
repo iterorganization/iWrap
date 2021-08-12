@@ -16,12 +16,14 @@ class RunMode(Enum):
     STANDALONE = auto()
 
 
-class IdsCache:
+class IdsStorage:
     def __init__(self):
         self.db_name = 'tmp'
         self.shot = 9999
         self.run = 9999
         self.backend = imas.imasdef.MEMORY_BACKEND
+        self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
+
 
 class SandboxSettings:
     LIFETIME_ACTOR = 10
@@ -34,7 +36,7 @@ class JobSettings:
         # handled/implemented
         self.run_mode = RunMode.NORMAL
         self.debug_mode = DebugMode.NONE
-        self.ids_cache = IdsCache()
+        self.ids_storage = IdsStorage()
 
         # not implemented yet
         self.batch_job = self.BatchJob()
