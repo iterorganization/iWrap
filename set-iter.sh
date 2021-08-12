@@ -11,6 +11,7 @@ export PYTHONPATH=$PWD:$PYTHONPATH
 module load  XMLlib
 
 mkdir -p $HOME/public/imasdb/tmp/3/0
+mkdir -p $HOME/public/imasdb/iter/3/0
 
 export PYTHONPATH=$HOME/IWRAP_ACTORS:$PYTHONPATH
 
