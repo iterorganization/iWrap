@@ -7,11 +7,10 @@ Welcome to iWrap's documentation!
 =================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 4
+   :caption: Table of Contents:
 
-   /documentation_files/modules.rst
-   
+   /documentation_files/iwrap.rst
 
 Indices and tables
 ==================
@@ -19,3 +18,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
