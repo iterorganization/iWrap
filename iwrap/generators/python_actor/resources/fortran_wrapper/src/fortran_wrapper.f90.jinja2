@@ -15,11 +15,12 @@ subroutine {{code_description.code_name}}_wrapper(&
     use iwrap_defs
     use iwrap_tools
     use ids_routines
+{% if code_description.language_specific.mpi %}
+    use mpi
+{% endif %}
     use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
 
-
     implicit none
-
     character(132):: ids_full_name
 
 {% for argument in code_description.arguments %}
@@ -38,6 +39,16 @@ subroutine {{code_description.code_name}}_wrapper(&
      type(status_t) :: status_info
 	 character(len=:), pointer :: diagnosticInfo
 	 integer :: wrap_out_outputFlag
+
+{% if code_description.language_specific.mpi %}
+    !----  MPI  ----
+    integer :: ierr, process_rank
+    logical :: was_mpi_initialized, was_mpi_finalized
+
+    call MPI_initialized(was_mpi_initialized, ierr)
+    if (.not. was_mpi_initialized)   call MPI_Init(ierr)
+    call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
+{% endif %}
 
     {% for argument in code_description.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
@@ -63,7 +74,10 @@ subroutine {{code_description.code_name}}_wrapper(&
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+{% if code_description.language_specific.mpi %}
+    if (process_rank == 0) then
+       ! --- called only for RANK 0 process
+{% endif %}
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
 	 status_info.code = wrap_out_outputFlag
 	 if(associated(diagnosticInfo)) then
@@ -71,9 +85,7 @@ subroutine {{code_description.code_name}}_wrapper(&
      endif
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)  
-	 if(wrap_out_outputFlag < 0 ) then
-		 return 
-	 endif 
+	 if(wrap_out_outputFlag < 0 ) RETURN
 
    ! ------------ Provenance information --------------
  {% for argument in code_description.arguments if argument.intent == 'OUT' %}
@@ -95,12 +107,19 @@ subroutine {{code_description.code_name}}_wrapper(&
     call ids_put({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
+{% if code_description.language_specific.mpi %}
+    endif ! --- The end of section called only for RANK 0 process
+{% endif %}
     !--------- Dealloacting IDSes ------------------------
     {% for argument in code_description.arguments %}
     call ids_deallocate({{ argument.name }})
     {% endfor %}
 
-
+{% if code_description.language_specific.mpi %}
+    !----  MPI Finalization ----
+    call MPI_finalized(was_mpi_finalized, ierr)
+    if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
+{% endif %}
 end
 
 end module wrapper
