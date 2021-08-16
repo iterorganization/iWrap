@@ -1,6 +1,7 @@
 import pytest
 import subprocess
 import pathlib
+import os
 
 
 TEST_DIR = ["cp2ds", "cp2ds_cpp", "level2", "level2_cpp"]
@@ -20,13 +21,16 @@ def example_dir(request):
 def test_make(cmd, example_dir):
     make_command = ["make", cmd]
     if cmd == "wf-run STANDALONE":
-        make_command = ["ACTOR_RUN_MODE='STANDALONE'", "make", "wf-run"]
+        os.environ['ACTOR_RUN_MODE'] = 'STANDALONE'
+        make_command = ["make", "wf-run"]
 
     process = subprocess.run(make_command,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              universal_newlines=True,
                              cwd=example_dir)
+    if cmd == "wf-run STANDALONE":
+        os.environ['ACTOR_RUN_MODE'] = ''
     print(process.stdout)
     print(process.stderr)
     assert process.returncode == 0
