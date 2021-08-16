@@ -16,11 +16,12 @@ def example_dir(request):
     del example_dir_path
 
 
-@pytest.mark.parametrize('cmd', ["native", "actor", "wf-run"])
-# @pytest.mark.parametrize('cmd', ["native"])
+@pytest.mark.parametrize('cmd', ["native", "actor", "wf-run", "wf-run STANDALONE"])
 def test_make(cmd, example_dir):
     make_command = ["make", cmd]
-    # make_command = ["ls", "-l"]
+    if cmd == "wf-run STANDALONE":
+        make_command = ["ACTOR_RUN_MODE='STANDALONE'", "make", "wf-run"]
+
     process = subprocess.run(make_command,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
