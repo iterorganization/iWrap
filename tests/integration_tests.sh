@@ -1,32 +1,50 @@
-#!/bin/bash
+#!/bin/bash --login
 
+if [ -z "${ONBAMBOO+x}" ]
+then
+  declare -a test_dirs
 
-declare -a test_dirs
+  test_dirs+=("cp2ds")
+  test_dirs+=("cp2ds_cpp")
+  test_dirs+=("level2")
+  test_dirs+=("level2_cpp")
 
-test_dirs+=("cp2ds")
-test_dirs+=("cp2ds_cpp")
-test_dirs+=("level2")
-test_dirs+=("level2_cpp")
+  cd ../examples
 
-cd ../examples
+  for test_dir in ${test_dirs[@]}
+  do
+        echo ==========================================================================================
+        echo ===   TESTING: $test_dir
+        echo ==========================================================================================
+        cd $test_dir
+        echo - - - - - - - Building native code - - - - - - -
+        make native > log.txt
+        echo - - - - - - - - Actor generation - - - - - - - -
+        make actor >> log.txt
+        echo - - - - - - - - Workflow test \(actor in NORMAL run mode\) - - - - - - - -
+        make wf-run >> log.txt
+        echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - -
+        ACTOR_RUN_MODE='STANDALONE' make wf-run #>> log.txt
+        cd ..
+        echo ==========================================================================================
+  done
 
-for test_dir in ${test_dirs[@]}
-do
-      echo ==========================================================================================
-      echo ===   TESTING: $test_dir
-      echo ==========================================================================================
-      cd $test_dir
-      echo - - - - - - - Building native code - - - - - - -
-      make native > log.txt
-      echo - - - - - - - - Actor generation - - - - - - - -
-      make actor >> log.txt
-      echo - - - - - - - - Workflow test \(actor in NORMAL run mode\) - - - - - - - -
-      make wf-run >> log.txt
-      echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - -
-      ACTOR_RUN_MODE='STANDALONE' make wf-run #>> log.txt
-      cd ..
-      echo ==========================================================================================
-done
+  cd ..
+  exit 0
 
-cd ..
-exit 0
+else
+  echo "++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
+  # Source and run scripts with environment vars for CI server
+  set -e
+
+  chmod a+x ./set-iter.sh
+  . ./set-iter.sh
+
+  cd tests/
+
+  # Run Pytests
+  echo "====================|--------------Run Integration Tests--------------|===================="
+  # Runs python pytest and logs results to junit xml file
+  python -m pytest test_cases/test_integration/ --junitxml=test_results.xml -v
+
+fi
