@@ -14,7 +14,7 @@ PROJECT_KEY = "project"
 VERSION_KEY = "version"
 
 # Set project informations
-AUTHOR = ""
+AUTHOR = "author"
 PROJECT = "iWrap"
 VERSION = $(shell git describe --always --dirty)
 
@@ -32,7 +32,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 apidocs: Makefile
-	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate
+	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate --templatedir templates/
 
 setconfig:
 	touch ${YAML_FILE}
