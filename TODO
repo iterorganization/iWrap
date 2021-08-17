@@ -17,3 +17,7 @@ iWrap:
 + make paths relative while saving the project
 + introduce a proper logging
 + INSTALLATION
+
+Examples:
+-----------------
++ make all examples compilable using GCC and Intel
