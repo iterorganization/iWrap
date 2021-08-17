@@ -1,17 +1,20 @@
+from pathlib import Path
 import pytest
-import sys
 import subprocess
-import pathlib
 import os
+import logging
 
+
+LOGGER = logging.getLogger(__name__)
 
 TEST_DIR = ["cp2ds", "cp2ds_cpp", "level2", "level2_cpp"]
 
 
 @pytest.fixture(scope="function", autouse=True, params=TEST_DIR)
 def example_dir(request):
+    """Prepare the test directory for the current example."""
     test_dir = request.param
-    example_dir_path = pathlib.Path().cwd().parent.resolve() / "examples" / test_dir
+    example_dir_path = Path().cwd().parent.resolve() / "examples" / test_dir
 
     yield example_dir_path
 
@@ -21,6 +24,13 @@ def example_dir(request):
 @pytest.mark.slow
 @pytest.mark.parametrize('cmd', ["native", "actor", "wf-run", "wf-run STANDALONE"])
 def test_make(cmd, example_dir):
+    """Executes a \'make\' subprocess and checks whether the return code equals 0."""
+    # Logging info: ===== {EXAMPLE DIR} MAKE {CMD} =====
+    LOGGER.info(f"{'='.join(['=' for _ in range(25)])} "
+                f"{Path(example_dir).name.upper()} "
+                f"MAKE {cmd.upper()} "
+                f"{'='.join(['=' for _ in range(25)])}")
+
     make_command = ["make", cmd]
     if cmd == "wf-run STANDALONE":
         os.environ['ACTOR_RUN_MODE'] = 'STANDALONE'
@@ -33,7 +43,8 @@ def test_make(cmd, example_dir):
                              cwd=example_dir)
     if cmd == "wf-run STANDALONE":
         os.environ['ACTOR_RUN_MODE'] = ''
-    print(process.stdout, file=sys.stdout)
-    print(process.stderr, file=sys.stderr)
-    assert process.returncode == 0
 
+    LOGGER.info(process.stdout)
+    LOGGER.error(process.stderr) if process.stderr != "" else None
+
+    assert process.returncode == 0

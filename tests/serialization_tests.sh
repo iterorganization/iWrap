@@ -21,8 +21,8 @@ else
   cd tests/
 fi
 # Run Pytests
-echo "====================|--------------Run Tests--------------|===================="
+echo "====================|--------------Run Serialization Tests--------------|===================="
 # Runs python pytest and logs results to junit xml file
-python -m pytest test_cases/test_serialization/ --junitxml=test_results.xml -v
+python -m pytest test_cases/test_serialization/
 
 
