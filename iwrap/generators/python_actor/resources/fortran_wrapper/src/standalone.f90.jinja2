@@ -65,7 +65,7 @@ program standalone
 {% endif %}
 
     !-----------Check status info ---------------------
-    call handle_status_info(status_info)
+    call handle_status_info(status_info, "{{actor_settings.actor_name}}")
 
     !-----------Writing output data to file ---------------------
     call write_output(status_info)

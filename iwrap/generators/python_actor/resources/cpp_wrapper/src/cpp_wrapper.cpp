@@ -1,6 +1,10 @@
 
 #include <string.h>
 
+{% if code_description.language_specific.mpi %}
+#include <mpi.h>
+{% endif %}
+
 #include "UALClasses.h"
 #include "defs.h"
 #include  "{{code_description.language_specific.include_path.split('/')[-1]}}"
@@ -24,10 +28,19 @@ extern "C" void {{code_description.code_name}}_wrapper(
     IdsNs::codeparam_t imas_code_params;
 {% endif %}
 
-
-
-
     IdsNs::IDS *db_entry;
+
+    {% if code_description.language_specific.mpi %}
+    //----  MPI  ----
+    int mpi_rank;
+    int was_mpi_initialized, was_mpi_finalized;
+
+    MPI_Initialized(&was_mpi_initialized);
+    if (!was_mpi_initialized)
+        MPI_Init(NULL, NULL);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+{% endif %}
+
 
    {% for argument in code_description.arguments %}
     //--------- IDS : {{ argument.name }} ------------------------
@@ -72,5 +85,13 @@ extern "C" void {{code_description.code_name}}_wrapper(
     //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ argument.name }}.put({{ argument.name }}_desc->occurrence);
 {% endfor %}
+
+
+{% if code_description.language_specific.mpi %}
+    //----  MPI Finalization ----
+    MPI_Finalized(&was_mpi_finalized);
+    if (!was_mpi_finalized)
+       MPI_Finalize();
+{% endif %}
 
 }

@@ -1,4 +1,6 @@
-
+{% if code_description.language_specific.mpi %}
+#include <mpi.h>
+{% endif %}
 #include "iwrap_tools.h"
 #include "cpp_wrapper.h"
 
@@ -10,6 +12,15 @@ int main(int argc, char **argv)
 
     //----  Status info  ----
     status_t status_info;
+
+{% if code_description.language_specific.mpi %}
+    //----  MPI  ----
+    int mpi_rank;
+    int was_mpi_finalized;
+
+    MPI_Init(NULL, NULL);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+{% endif %}
 
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
     //----  Code parameters  ----
@@ -36,10 +47,26 @@ int main(int argc, char **argv)
                 &status_info);
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+   {% if code_description.language_specific.mpi %}
+    if (mpi_rank == 0)
+    {
+       // --- called only for RANK 0 process
+{% endif %}
+
     handle_status_info(status_info, "{{actor_settings.actor_name}}");
 
     //-----------Writing output data to file ---------------------
     write_output(status_info);
 
+{% if code_description.language_specific.mpi %}
+    } //The end of section called only for RANK 0 process
+{% endif %}
     close_db_entries(db_entry_array, IDS_ARGS_NO);
+
+{% if code_description.language_specific.mpi %}
+    //----  MPI Finalization ----
+    MPI_Finalized(&was_mpi_finalized);
+    if (!was_mpi_finalized)
+       MPI_Finalize();
+{% endif %}
 }
