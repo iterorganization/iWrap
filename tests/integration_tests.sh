@@ -45,6 +45,6 @@ else
   # Run Pytests
   echo "====================|--------------Run Integration Tests--------------|===================="
   # Runs python pytest and logs results to junit xml file
-  python -m pytest test_cases/test_integration/ --junitxml=test_results.xml -vv
+  python -m pytest test_cases/test_integration/ --junitxml=test_results.xml -vv -s
 
 fi

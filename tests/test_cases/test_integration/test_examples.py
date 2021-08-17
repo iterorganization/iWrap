@@ -1,4 +1,5 @@
 import pytest
+import sys
 import subprocess
 import pathlib
 import os
@@ -17,6 +18,7 @@ def example_dir(request):
     del example_dir_path
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize('cmd', ["native", "actor", "wf-run", "wf-run STANDALONE"])
 def test_make(cmd, example_dir):
     make_command = ["make", cmd]
@@ -31,7 +33,7 @@ def test_make(cmd, example_dir):
                              cwd=example_dir)
     if cmd == "wf-run STANDALONE":
         os.environ['ACTOR_RUN_MODE'] = ''
-    print(process.stdout)
-    print(process.stderr)
+    print(process.stdout, file=sys.stdout)
+    print(process.stderr, file=sys.stderr)
     assert process.returncode == 0
 
