@@ -37,10 +37,10 @@ class JobSettings:
         self.run_mode = RunMode.NORMAL
         self.debug_mode = DebugMode.NONE
         self.ids_storage = IdsStorage()
+        self.mpi = self.MPI()
 
         # not implemented yet
         self.batch_job = self.BatchJob()
-        self.mpi = self.MPI()
         self.open_mp = self.OpenMP()
         self.sandbox = self.Sandbox()
         self.TBD = None  # any other info needed?
@@ -61,8 +61,8 @@ class JobSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class MPI:
         def __init__(self):
+            self.number_of_processes = 1
             self.TBD = None
-            self.debug_switch = None
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class OpenMP:

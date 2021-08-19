@@ -1,9 +1,13 @@
 # actor name
 ACTOR_NAME={{actor_settings.actor_name}}
 
-FF=ifort
+{% if code_description.language_specific.mpi %}
+FC=mpiifort
+{% else %}
 FC=ifort
-CC=gcc
+{% endif %}
+
+
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
@@ -17,9 +21,9 @@ MOD_DIR=./build/
 FLAGS=-g -fPIC -module $(MOD_DIR)
 
 # Compiler options for gfortran
-XFLAGS=-g -fPIC -fno-second-underscore -ffree-line-length-none -J$(MOD_DIR)
+XFLAGS=-g -fPIC -fno-second-underscore -FCree-line-length-none -J$(MOD_DIR)
 
-FFLAGS=$(FLAGS) $(OPENMPFLAG)
+FCLAGS=$(FLAGS) $(OPENMPFLAG)
 CODE_LIB_FILE=$(notdir {{actor_settings.code_description.code_path}})
 CODE_LIB_DEF=../lib/$(CODE_LIB_FILE)
 
@@ -53,29 +57,29 @@ all: bin/$(ACTOR_NAME).exe   lib/lib$(ACTOR_NAME).so
 bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./bin
-	$(FF) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/defs.o: src/defs.f90
 	@echo "  * $< -> $@"
 	@mkdir -p ./build
-	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 build/RWTools.o: src/RWTools.f90 build/defs.o
 	@echo "  * $< -> $@"
-	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 build/fortrantools.o: src/fortrantools.f90 build/defs.o
 	@echo "  * $^ -> $@"
-	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ./lib
-	$(FF) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FC) $(FCLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/fortran_wrapper.o: src/fortran_wrapper.f90 build/fortrantools.o
 	@echo "   * $< -> $@"
-	$(FF) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 clean:
 	-rm -f *.o build/* lib/*.so bin/*

@@ -16,13 +16,14 @@ from ..job_settings import JobSettings, RunMode, DebugMode
 
 class FortranBinder:
 
-    def __init__(self, actor_dir, actor_name, native_language, code_name):
+    def __init__(self, actor_dir, actor_name, native_language, code_name, is_mpi_code):
         self.logger = logging.getLogger( 'binding' )
         self.logger.setLevel( logging.DEBUG )
 
         self.actor_dir = actor_dir
         self.actor_name = actor_name
         self.code_name = code_name + '_wrapper'
+        self.is_mpi_code = is_mpi_code
 
         self.wrapper_dir = self.actor_dir + '/' + native_language + '_wrapper'
     def save_data(self, ids):
@@ -119,7 +120,7 @@ class FortranBinder:
 
         file.close()
 
-    def __run_standalone(self, full_arguments_list, debug_mode=False):
+    def __run_standalone(self, full_arguments_list, mpi_settings=None, debug_mode=False):
 
         print( "RUNNING STDL" )
 
@@ -127,11 +128,20 @@ class FortranBinder:
 
         self.__save_input( full_arguments_list )
 
-        if debug_mode:
-            exec_command.append( 'totalview' )
+        if self.is_mpi_code and mpi_settings:
+            exec_command.append( 'mpiexec' )
+            np = mpi_settings.number_of_processes
+            if np and str(np).isnumeric():
+                exec_command.append( '-np' )
+                exec_command.append( str(np) )
+            if debug_mode:
+                exec_command.append( '-tv' )
+        elif debug_mode:
+                exec_command.append( 'totalview' )
 
         exec_command.append( './bin/' + self.actor_name + '.exe' )
 
+        print('EXEC command: ', exec_command)
         proc = subprocess.Popen( exec_command,
                                  encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -175,15 +185,18 @@ class FortranBinder:
         cwd = os.getcwd()
         os.chdir( self.wrapper_dir)
 
+        print('RUN MODe: ' , str(self.runtime_settings.run_mode))
+
+        mpi_settings = self.runtime_settings.mpi
         # call the NATIVE function
         if self.runtime_settings.debug_mode is DebugMode.ATTACH:
             self.__run_normal( c_arglist, debug_mode=True )
         elif self.runtime_settings.debug_mode is DebugMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, debug_mode=True )
+            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=True )
         elif self.runtime_settings.run_mode is RunMode.NORMAL:
             self.__run_normal( c_arglist, debug_mode=False )
         elif self.runtime_settings.run_mode is RunMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, debug_mode=False )
+            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=False )
         else:
             raise ValueError( 'ERROR! Unknown "run_mode" value!' )
 
