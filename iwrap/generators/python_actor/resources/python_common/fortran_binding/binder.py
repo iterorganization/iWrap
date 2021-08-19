@@ -16,13 +16,14 @@ from ..job_settings import JobSettings, RunMode, DebugMode
 
 class FortranBinder:
 
-    def __init__(self, actor_dir, actor_name, native_language, code_name):
+    def __init__(self, actor_dir, actor_name, native_language, code_name, is_mpi_code):
         self.logger = logging.getLogger( 'binding' )
         self.logger.setLevel( logging.DEBUG )
 
         self.actor_dir = actor_dir
         self.actor_name = actor_name
         self.code_name = code_name + '_wrapper'
+        self.is_mpi_code = is_mpi_code
 
         self.wrapper_dir = self.actor_dir + '/' + native_language + '_wrapper'
     def save_data(self, ids):
@@ -127,7 +128,7 @@ class FortranBinder:
 
         self.__save_input( full_arguments_list )
 
-        if mpi_settings:
+        if self.is_mpi_code and mpi_settings:
             exec_command.append( 'mpiexec' )
             np = mpi_settings.number_of_processes
             if np and str(np).isnumeric():
@@ -140,6 +141,7 @@ class FortranBinder:
 
         exec_command.append( './bin/' + self.actor_name + '.exe' )
 
+        print('EXEC command: ', exec_command)
         proc = subprocess.Popen( exec_command,
                                  encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
