@@ -8,6 +8,9 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 TEST_DIR = ["cp2ds", "cp2ds_cpp", "level2", "level2_cpp"]
+if "TEST_DIRS" in os.environ:
+    # Redefine the TEST_DIR to include the environment defined names
+    TEST_DIR = os.environ.get("TEST_DIRS").split(sep=':')
 
 
 @pytest.fixture(scope="function", autouse=True, params=TEST_DIR)

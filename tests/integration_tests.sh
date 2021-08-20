@@ -1,17 +1,16 @@
 #!/bin/bash
 
-if [ -z "${ONBAMBOO+x}" ]
-then
-  declare -a test_dirs
+declare -a test_dirs
 
 test_dirs+=("cp2ds")
-test_dirs+=("cp2ds_cpp")
-test_dirs+=("level2")
-test_dirs+=("level2_cpp")
-test_dirs+=("cp2ds-mpi")
-test_dirs+=("cp2ds-mpi_cpp")
+#test_dirs+=("cp2ds_cpp")
+#test_dirs+=("level2")
+#test_dirs+=("level2_cpp")
+#test_dirs+=("cp2ds-mpi")
+#test_dirs+=("cp2ds-mpi_cpp")
 
-
+if [ -z "${ONBAMBOO+x}" ]
+then
   cd ../examples
 
   for test_dir in ${test_dirs[@]}
@@ -23,31 +22,14 @@ test_dirs+=("cp2ds-mpi_cpp")
         echo - - - - - - - Building native code - - - - - - -
         make native > log.txt
         echo - - - - - - - - Actor generation - - - - - - - -
-        make actor >> log.txt
+        make actor > log.txt
         echo - - - - - - - - Workflow test \(actor in NORMAL run mode\) - - - - - - - -
-        make wf-run >> log.txt
+        make wf-run > log.txt
         echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - -
         ACTOR_RUN_MODE='STANDALONE' make wf-run #>> log.txt
         cd ..
         echo ==========================================================================================
   done
-for test_dir in ${test_dirs[@]}
-do
-      echo ==========================================================================================
-      echo ===   TESTING: $test_dir
-      echo ==========================================================================================
-      cd $test_dir
-      echo - - - - - - - Building native code - - - - - - -
-      make native > log.txt
-      echo - - - - - - - - Actor generation - - - - - - - -
-      make actor > log.txt
-      echo - - - - - - - - Workflow test \(actor in NORMAL run mode\) - - - - - - - -
-      make wf-run > log.txt
-      echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - -
-      ACTOR_RUN_MODE='STANDALONE' make wf-run #>> log.txt
-      cd ..
-      echo ==========================================================================================
-done
 
   cd ..
   exit 0
@@ -56,6 +38,10 @@ else
   echo "++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
   # Source and run scripts with environment vars for CI server
   set -e
+
+  # Turn the bash array into a string
+  TEST_DIRS=$( IFS=:; printf '%s' "${test_dirs[*]}" )
+  export TEST_DIRS
 
   chmod a+x ./set-iter.sh
   . ./set-iter.sh
