@@ -3,10 +3,11 @@ import os
 from pathlib import Path
 from typing import Any, Dict
 
-from iwrap.common.misc import Dictionarizable
-from iwrap.settings.code_description import CodeDescription
-from iwrap.settings.serialization import IWrapSerializer
+import yaml
 
+from iwrap.common.misc import Dictionarizable
+from iwrap.settings.actor_description import ActorDescription
+from iwrap.settings.code_description import CodeDescription
 
 class ProjectSettings( Dictionarizable ):
     """Data class describing iWrap project settings.
@@ -34,11 +35,11 @@ class ProjectSettings( Dictionarizable ):
         return cls._settings
 
     def __init__(self):
-        self.actor_name: str = ''
-        self.data_type: str = ''
-        self.actor_type: str  = ''
         self.root_dir = os.getcwd()
-        self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
+        home = Path.home()
+        self.install_dir = str(Path( home, 'IWRAP_ACTORS')) # TODO: Read install dir from platform settings
+
+        self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
@@ -60,28 +61,50 @@ class ProjectSettings( Dictionarizable ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.actor_name = ''
-        self.data_type = ''
-        self.actor_type = ''
-        self.install_dir = Path(Path.home(), '/IWRAP_ACTORS') # TODO: Read install dir from platform settings
         self.root_dir = os.getcwd()
+        self.actor_description.clear()
         self.code_description.clear()
 
-    def save(self, serializer: IWrapSerializer):
+    def save(self, stream):
         """Stores code description in a file
 
         Args:
-            serializer (IWrapSerializer): an object responsible for storing dictionary to file of given format
+            stream : an object responsible for storing data
         """
-        dictionary = self.to_dict()
-        serializer.save( dictionary )
 
-    def load(self, serializer: IWrapSerializer):
+        dumped = (self.actor_description, self.code_description,)
+
+        yaml.dump_all( dumped, stream=stream,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
+
+
+
+
+    def load(self, stream):
         """Loads code description from a file
 
         Args:
-            serializer (IWrapSerializer): an object responsible for reading dictionary from file of given format
+            stream: an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        dictionary = serializer.load()
-        self.from_dict( dictionary )
+        objects_read = yaml.load_all( stream, Loader=yaml.Loader )
+
+        for object in objects_read:
+            if isinstance(object, ActorDescription):
+                self.actor_description.__dict__ = object.__dict__
+            elif isinstance(object, CodeDescription):
+                code_description = object
+            else:
+                # unknown object
+                raise Exception(
+                    "The YAML file being looaded doesn't seem to contain valid description of the native code" )
+
+        # YAML file MUST contain at least code description document
+        if not code_description:
+            # YAML must contain documents
+            raise Exception(
+                "The YAML file being looaded doesn't seem to contain valid description of the native code" )
+
+        self.code_description.__dict__ = object.__dict__
+
+
+
