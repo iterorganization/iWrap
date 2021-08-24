@@ -44,15 +44,15 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
     def update_settings(self):
         # updating actor name
         actor_name = self.actor_name.get()
-        ProjectSettings.get_settings().actor_name = actor_name
+        ProjectSettings.get_settings().actor_description.actor_name = actor_name
 
         # updating actor type
         actor_type = self.actor_type_combo.get()
-        ProjectSettings.get_settings().actor_type = actor_type
+        ProjectSettings.get_settings().actor_description.actor_type = actor_type
 
         # updating actor data type
         data_type = self.data_type_combo.get()
-        ProjectSettings.get_settings().data_type = data_type
+        ProjectSettings.get_settings().actor_description.data_type = data_type
 
     def reload(self):
         # set values of actor types combo
@@ -69,12 +69,12 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.data_type_combo.configure( values=data_types )
 
         # set actor data type in combo
-        data_type = ProjectSettings.get_settings().data_type
+        data_type = ProjectSettings.get_settings().actor_description.data_type
         if data_type is not None and data_type != '':
             self.data_type_combo.set( data_type )
         else:
             self.data_type_combo.current( 0 )
 
         self.actor_name.delete( 0, tk.END )
-        actor_name = ProjectSettings.get_settings().actor_name
+        actor_name = ProjectSettings.get_settings().actor_description.actor_name
         self.actor_name.insert( 0, actor_name )

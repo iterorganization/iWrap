@@ -32,13 +32,13 @@ class YAMLSerializer(IWrapSerializer):
     def __init__(self, stream):
         super().__init__(stream)
 
-    def save(self, dictionary:dict):
+    def save(self, value):
         """Stores code description in a file
 
         Args:
             serializer (IWrapSerializer): an object responsible for storing dictionary to file of given format
         """
-        yaml.dump( dictionary, stream=self.stream, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True )
+        yaml.dump_all( value, stream=self.stream, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True )
 
     def load(self) -> dict:
         """Loads code description from a file
@@ -46,7 +46,10 @@ class YAMLSerializer(IWrapSerializer):
         Args:
             serializer (IWrapSerializer): an object responsible for reading dictionary from file of given format
         """
-        dictionary : dict = yaml.load( self.stream, Loader=yaml.Loader )
+
+        results = yaml.load_all( self.stream, Loader=yaml.Loader )
+        x = [result for result in results]
+        #dictionary : dict = yaml.load_all( self.stream, Loader=yaml.Loader )
         return dictionary
 
 
