@@ -6,7 +6,7 @@ INCLUDES = `pkg-config --cflags imas-ifort`
 all: libcp2ds-mpi.a
 
 libcp2ds-mpi.a: cp2ds-mpi.o
-	@ar -rs $@ $^
+	@ar -rcs $@ $^
 
 cp2ds-mpi.o: cp2ds-mpi.f90
 	$(F90) $(COPTS) -c -o $@ $^ ${INCLUDES} $(LIBS)

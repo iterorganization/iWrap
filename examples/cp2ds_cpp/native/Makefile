@@ -7,7 +7,7 @@ INCLUDES = `pkg-config --cflags imas-cpp`
 all: libcp2ds_cpp.a
 
 libcp2ds_cpp.a: coreprofiles2distsource.o
-	@ar -rvs $@ $^
+	@ar -rcvs $@ $^
 
 coreprofiles2distsource.o: coreprofiles2distsource.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS)

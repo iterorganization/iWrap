@@ -7,7 +7,7 @@ INCLUDES = `pkg-config --cflags imas-cpp`
 all: libcp2ds_mpi_cpp.a
 
 libcp2ds_mpi_cpp.a: cp2ds_mpi.o
-	@ar -rvs $@ $^
+	@ar -rvcs $@ $^
 
 cp2ds_mpi.o: cp2ds_mpi.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS)

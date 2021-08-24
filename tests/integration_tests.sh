@@ -3,11 +3,11 @@
 declare -a test_dirs
 
 test_dirs+=("cp2ds")
-#test_dirs+=("cp2ds_cpp")
-#test_dirs+=("level2")
-#test_dirs+=("level2_cpp")
-#test_dirs+=("cp2ds-mpi")
-#test_dirs+=("cp2ds-mpi_cpp")
+test_dirs+=("cp2ds_cpp")
+test_dirs+=("level2")
+test_dirs+=("level2_cpp")
+test_dirs+=("cp2ds-mpi")
+test_dirs+=("cp2ds-mpi_cpp")
 
 if [ -z "${ONBAMBOO+x}" ]
 then
