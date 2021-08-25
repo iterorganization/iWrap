@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 from lxml import etree
+import yaml
 
 from iwrap.common.misc import Dictionarizable
 from iwrap.settings.serialization import IWrapSerializer
@@ -120,7 +121,7 @@ class CodeDescription( Dictionarizable ):
         documentation (str): human readable description of the native code
         language_specific (Dict[str, Any]): information specific for a given language of the native code
     """
-
+    yaml_tag =  u'!code_description'
     def __init__(self):
         self.programming_language: str = None
         self.code_name: str = None
@@ -130,6 +131,8 @@ class CodeDescription( Dictionarizable ):
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
         self.language_specific: dict = {}
+        yaml.add_representer(self.__class__, representer=CodeDescription.representer)
+        yaml.add_constructor( self.yaml_tag, self.constructor)
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -159,21 +162,43 @@ class CodeDescription( Dictionarizable ):
         """
         return super().to_dict()
 
-    def save(self, serializer: IWrapSerializer):
+
+
+    @staticmethod
+    def representer( dumper, data):
+    # ...
+        return dumper.represent_mapping(
+            CodeDescription.yaml_tag,
+            data.to_dict())
+
+    @staticmethod
+    def constructor(loader, value):
+        data_dict = loader.construct_mapping( value, deep=True )
+        obj = CodeDescription()
+        obj.from_dict(data_dict)
+        return obj
+
+    def save(self, stream):
         """Stores code description in a file
 
         Args:
             serializer (IWrapSerializer): an object responsible for storing dictionary to file of given format
         """
-        dictionary = self.to_dict()
-        serializer.save( dictionary )
+        yaml.dump( self, stream=stream, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True )
 
-    def load(self, serializer: IWrapSerializer):
+    def load(self, stream):
         """Loads code description from a file
 
         Args:
             serializer (IWrapSerializer): an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        dictionary = serializer.load()
-        self.from_dict( dictionary )
+        objects_read = yaml.load_all( stream, Loader=yaml.Loader )
+        objects_read = list(filter(lambda x : isinstance(x, CodeDescription), objects_read ))
+
+        if len(objects_read) < 1:
+            raise Exception("The YAML file being looaded doesn't seem to contain valid description of the native code")
+
+        code_description = objects_read[0]
+        self.__dict__ = code_description.__dict__
+        ...

@@ -4,7 +4,6 @@ from tkinter import filedialog
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
-from iwrap.settings.serialization import YAMLSerializer
 
 
 class MenuBar( tk.Menu ):
@@ -16,6 +15,9 @@ class MenuBar( tk.Menu ):
 
         file_menu = tk.Menu( self, tearoff=0 )
         file_menu.add_command( label='New', command=self.action_new )
+        file_menu.add_command( label='Open...', command=self.action_open )
+        file_menu.add_command( label='Save as...', command=self.action_save_as)
+
         file_menu.add_separator()
 
         import_menu = tk.Menu( file_menu, tearoff=0 )
@@ -39,12 +41,12 @@ class MenuBar( tk.Menu ):
         file = filedialog.asksaveasfile( initialdir=None,
                                        title=None,
                                        filetypes=(("YAML files",
-                                                   "*.yaml"),) )
+                                                   "*.yaml"),))
         if file is None:
             return
 
         self.main_window.update_settings()
-        self.code_description.save( YAMLSerializer( file ) )
+        ProjectSettings.get_settings().code_description.save(file)
         file.close()
 
     def action_import(self):
@@ -58,7 +60,37 @@ class MenuBar( tk.Menu ):
             return
 
         # Loading project settings from file
-        self.code_description.load( YAMLSerializer( file ) )
+        ProjectSettings.get_settings().clear()
+        ProjectSettings.get_settings().code_description.load(file)
+        file.close()
+        self.main_window.reload()
+        file_real_path = os.path.realpath( file.name )
+        ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
+
+    def action_save_as(self):
+        file = filedialog.asksaveasfile( initialdir=None,
+                                       title=None,
+                                       filetypes=(("YAML files",
+                                                   "*.yaml"),) )
+        if file is None:
+            return
+
+        self.main_window.update_settings()
+        ProjectSettings.get_settings().save(file)
+        file.close()
+
+    def action_open(self):
+        file = filedialog.askopenfile( initialdir=None,
+                                         title=None,
+                                         filetypes=(("YAML files",
+                                                     "*.yaml"),),
+                                         defaultextension='yaml')
+
+        if file is None:
+            return
+
+        # Loading project settings from file
+        ProjectSettings.get_settings().load(file)
         file.close()
         self.main_window.reload()
         file_real_path = os.path.realpath( file.name )
