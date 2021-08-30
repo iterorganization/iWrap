@@ -82,8 +82,12 @@ class CodeParameters(Dictionarizable):
         """
         return super().to_dict()
 
-    def validate(self, parameters: str = None, schema: str = None) -> None:
+    def validate(self, parameters_xml_path: str = None, schema_xsd_path: str = None) -> None:
         """Self validation of XML file against given schema file (XSD).
+
+        Args:
+            parameters_xml_path (str): The absolute path string to the XML file with parameters data
+            schema_xsd_path (str): The absolute path string to the XSD file with schema of the XML file
 
         Correct file paths for the validation process will cause the method to run without errors.
         If the verification process fails or an error occurs, an exception is thrown,
@@ -91,16 +95,16 @@ class CodeParameters(Dictionarizable):
         or stored files or file paths are damaged.
         """
         # In case where no parameters have been provided use class attributes.
-        if parameters is None or schema is None:
+        if parameters_xml_path is None or schema_xsd_path is None:
             parameters = self.parameters
             schema = self.schema
 
         # Parse XSD file:
-        xmlschema_file = etree.parse(schema)
+        xmlschema_file = etree.parse(schema_xsd_path)
         xmlschema = etree.XMLSchema(xmlschema_file)
 
         # Parse XML file:
-        xml_file = etree.parse(parameters)
+        xml_file = etree.parse(parameters_xml_path)
 
         # Perform validation:
         xmlschema.assertValid(xml_file)
