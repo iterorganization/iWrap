@@ -1,4 +1,4 @@
----
+--- !code_description
 programming_language: Fortran
 code_name: coreprofiles2distsource
 data_type: legacy
@@ -18,7 +18,6 @@ documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
     veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
     consequat. '
 language_specific:
-    compiler: Intel
     include_path: ./native/mod_coreprofiles2distsource.mod
     mpi: false
     open_mp: false

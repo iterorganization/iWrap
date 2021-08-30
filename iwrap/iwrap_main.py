@@ -5,7 +5,6 @@ from typing import List
 
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings.project import ProjectSettings
-from iwrap.settings.serialization import YAMLSerializer
 
 
 def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
@@ -56,8 +55,9 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
 
 
 def load_code_description(code_description_file):
+    ProjectSettings.get_settings().clear()
     code_description = ProjectSettings.get_settings().code_description
-    code_description.load( YAMLSerializer( code_description_file ) )
+    code_description.load(  code_description_file  )
     file_real_path = os.path.realpath( code_description_file.name )
     ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
 
@@ -93,16 +93,14 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         print('-' * 70 )
 
         return 0
-
-    if args.actor_name:
-        ProjectSettings.get_settings().actor_name = args.actor_name
-
-    if args.actor_type:
-        Engine().active_generator = args.actor_type
-
     if args.file:
         with args.file as file:
             load_code_description( file )
+    if args.actor_name:
+        ProjectSettings.get_settings().actor_description.actor_name = args.actor_name
+
+    if args.actor_type:
+        Engine().active_generator = args.actor_type
 
     if args.gui:
         from iwrap.gui.application import launch_gui
@@ -127,6 +125,8 @@ if __name__ == "__main__":
     # main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
     main( ['-a', 'core2dist', '-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=False )
+    #main( ['-a', 'core2dist', '-f', './multi.yaml'], is_commandline_mode=False )
+
     # main( ['-h'] )
     # main(['--list-actor-types'])
     # main(is_commandline_mode = False)
