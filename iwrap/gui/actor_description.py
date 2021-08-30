@@ -59,7 +59,9 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         data_type = self.data_type_combo.get()
         ProjectSettings.get_settings().actor_description.data_type = data_type
 
-        ProjectSettings.get_settings().install_dir
+        # updating install dir
+        install_dir = self.install_path.get()
+        ProjectSettings.get_settings().actor_description.install_dir = install_dir
 
     def reload(self):
         # set values of actor types combo
@@ -85,6 +87,10 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.actor_name.delete( 0, tk.END )
         actor_name = ProjectSettings.get_settings().actor_description.actor_name
         self.actor_name.insert( 0, actor_name )
+
+        # set install dir in entry
+        install_dir = ProjectSettings.get_settings().actor_description.install_dir or ''
+        self.install_path.set(install_dir)
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
