@@ -15,6 +15,7 @@ class ActorDescription(Dictionarizable ):
         self.actor_name: str = ''
         self.data_type: str = ''
         self.actor_type: str  = ''
+        self.install_dir: str = ''
 
         yaml.add_representer(self.__class__, representer=ActorDescription.representer)
         yaml.add_constructor( self.yaml_tag, self.constructor)
@@ -41,6 +42,7 @@ class ActorDescription(Dictionarizable ):
         self.actor_name = ''
         self.data_type = ''
         self.actor_type = ''
+        self.install_dir = ''
 
 
 
