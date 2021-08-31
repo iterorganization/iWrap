@@ -2,7 +2,7 @@ import pkgutil
 from typing import Set, List
 
 from iwrap.generation_engine.base_classes import ActorGenerator
-from iwrap.generators.python_actor.generator import PythonActorGenerator
+
 
 
 class GeneratorRegistry():
@@ -29,7 +29,8 @@ class GeneratorRegistry():
             if generator.name == generator_name:
                 return generator
 
-        raise RuntimeError(f'ERROR: No registered generator for provided actor type <{generator_name}>!' )
+        types = [generator.name for generator in self.registered_generators]
+        raise ValueError(f'ERROR: No registered generator for provided actor type <{generator_name}>! Registered generators: "{types}".' )
 
     def __iter_namespace(self, ns_pkg):
         # Specifying the second argument (prefix) to iter_modules makes the
@@ -39,6 +40,7 @@ class GeneratorRegistry():
         return pkgutil.iter_modules( ns_pkg.__path__, ns_pkg.__name__ + "." )
 
     def discover_generators(self) -> None:
+        from iwrap.generators.python_actor.generator import PythonActorGenerator
 
         self._registered_generators = []
 
