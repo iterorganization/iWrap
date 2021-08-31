@@ -6,11 +6,14 @@
 Welcome to iWrap's documentation!
 =================================
 
+
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
    :caption: Table of Contents:
 
-   /documentation_files/modules.rst
+   /documentation_files/iwrap_introduction.rst
+   /documentation_files/docstring_documentation.rst
+
 
 Indices and tables
 ==================

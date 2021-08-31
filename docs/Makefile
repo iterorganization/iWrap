@@ -5,7 +5,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
-GENERATEDDIR  = documentation_files
+GENERATEDDIR  = docstring_files
 PROJECT_PATH  = ../iwrap
 
 YAML_FILE = project_informations.yaml.tmp
