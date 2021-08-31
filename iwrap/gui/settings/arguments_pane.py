@@ -133,8 +133,8 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         table_data = []
         intent = {"IN": "Input", "OUT": "Output"}
         for argument in self.arguments_settings:
-            table_data.append([argument['name'], intent[argument['intent']],
-                               intent[argument['intent']], argument['type']])
+            table_data.append([argument.name, intent[argument.intent],
+                               intent[argument.intent], argument.type])
 
         self.table.add_new_table_content(table_data)
 
