@@ -1,5 +1,4 @@
 from iwrap.settings.project import ProjectSettings
-from iwrap.settings.serialization import YAMLSerializer
 from tests.misc.services import dict_data
 from typing import Union, Tuple
 from io import StringIO
@@ -49,7 +48,7 @@ def code_description(yaml_source):
 class TestCodeDescription:
     def test_to_dict(self, code_description, yaml_source, dict_ref):
         """Checks that the CodeDescription dictionary is correctly filled."""
-        code_description.load(YAMLSerializer(yaml_source))
+        code_description.load(yaml_source)
         assert code_description.to_dict() == dict_ref
 
     def keys_count(self, dict_to_check, dict_reference: dict) -> Tuple:
@@ -98,7 +97,7 @@ class TestCodeDescription:
             code_description.from_dict(dict_ref)
         elif case == "expect2fail":
             code_description.from_dict(dict_clear_ref)
-        code_description.save(YAMLSerializer(tested))
+        code_description.save(tested)
         yaml.dump(dict_ref,
                   stream=expected,
                   default_flow_style=False,
@@ -120,7 +119,7 @@ class TestCodeDescription:
     def test_load(self, function, case, code_description, dict_ref, yaml_source):
         """Tests the load() method of the CodeDescription class."""
         # Setup:
-        code_description.load(YAMLSerializer(yaml_source))
+        code_description.load(yaml_source)
         # Change reference depend on case:
         dict_ref = vars(ProjectSettings().code_description) if case == "vs_class" else dict_ref
         # Pre-generate testing function:
