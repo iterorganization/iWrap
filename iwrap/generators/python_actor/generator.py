@@ -49,7 +49,7 @@ class PythonActorGenerator(ActorGenerator):
         self.wrapper_dir = None
 
     def initialize(self):
-        install_dir =  ProjectSettings.get_settings().install_dir
+        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
 
         self.wrapper_generator = FortranWrapperGenerator()
@@ -59,11 +59,11 @@ class PythonActorGenerator(ActorGenerator):
 
     def generate(self):
         self.temp_dir = tempfile.TemporaryDirectory().name
-        install_dir = ProjectSettings.get_settings().install_dir
+        install_dir = ProjectSettings.get_settings().actor_description.install_dir
         self.install_dir = str( Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
 
         generation_env = {'temp_dir': self.install_dir}
-        actor_settings_dict = ProjectSettings.get_settings().to_dict()
+        actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict()
         code_description =  ProjectSettings.get_settings().code_description
         code_description_dict = code_description.to_dict()
         dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
