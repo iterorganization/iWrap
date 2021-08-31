@@ -17,7 +17,7 @@ OPENMPFLAG=
 CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG)
 
 
-CODE_LIB_FILE=$(notdir {{actor_settings.code_description.code_path}})
+CODE_LIB_FILE=$(notdir {{code_description.code_path}})
 CODE_LIB_DEF=../lib/$(CODE_LIB_FILE)
 
 
@@ -26,8 +26,8 @@ CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp xmllib)
 CORE_LIBS=$(shell pkg-config --libs imas-cpp xmllib)
 
 # required 'platform' libs (i.e. published using pkg-config mechanism)
-{% if actor_settings.code_description.language_specific.system_libraries %}
-PLATFORM_LIBS_NAMES={{ (actor_settings.code_description.language_specific.system_libraries or []) | join(' ')}}
+{% if code_description.language_specific.system_libraries %}
+PLATFORM_LIBS_NAMES={{ (code_description.language_specific.system_libraries or []) | join(' ')}}
 PLATFORM_LIBS_FLAGS=$(shell pkg-config --cflags $(PLATFORM_LIBS_NAMES))
 PLATFORM_LIBS=$(shell pkg-config --libs $(PLATFORM_LIBS_NAMES))
 {% else %}
@@ -39,7 +39,7 @@ PLATFORM_LIBS=
 
 
 # required 'custom' libs (i.e. provided by user as a pth to library)
-CUSTOM_LIBS={{ (actor_settings.code_description.language_specific.custom_libraries or [] ) | join(' ')}}
+CUSTOM_LIBS={{ (code_description.language_specific.custom_libraries or [] ) | join(' ')}}
 
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
