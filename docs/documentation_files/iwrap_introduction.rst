@@ -83,3 +83,56 @@ Both scripts share the same set arguments and switches.
     For more information, visit <https://confluence.iter.org/display/IMP/IMAS+component+generator>.
 
 
+Actor generation
+----------------
+
+:code:`iwrap -a <actor_name> -f <path/to/code_description.yaml>`
+
+... will generate an actor based on code description stored in yaml, where ...
+
+:code:`iwrap-gui -a <actor_name> -f <path/to/code_description.yaml>`
+
+... will launch iWrap GUI filled in with information coming from code description
+
+Examples
+--------
+
+Examples placed in directory :code:`iwrap/examples` can be an excellent source of knowledge related to code description syntax, actors API and the way actors are called from workflow.
+
+Example 1: cp2ds
+~~~~~~~~~~~~~~~~
+
+1. Navigating to example directory
+
+:code:`shell> cd iwrap/examples/cp2ds`
+
+2. Preparing native code
+
+:code:`shell> make native`
+
+3. Generating an actor
+
+:code:`iwrap -a core2dist -f ./cp2ds.yaml`
+
+4. Running workflow
+
+:code:`python ./cp2ids_workflow.py`
+
+Example 2: level2
+~~~~~~~~~~~~~~~~~
+
+1. Navigating to example directory
+
+:code:`shell> cd iwrap/examples/level2`
+
+2. Preparing native code
+
+:code:`shell> make native`
+
+3. Generating an actor
+
+:code:`iwrap -a physics_ii -f ./physics_ii.yaml`
+
+4. Running workflow
+
+:code:`python ./workflow.py`

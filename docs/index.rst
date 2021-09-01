@@ -12,6 +12,9 @@ Welcome to iWrap's documentation!
    :caption: Table of Contents:
 
    /documentation_files/iwrap_introduction.rst
+   /documentation_files/iwrap_architecture.rst
+   /documentation_files/iwrap_generated_actors.rst
+   /documentation_files/iwrap_python_actor.rst
    /documentation_files/docstring_documentation.rst
 
 
