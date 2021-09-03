@@ -135,7 +135,7 @@ class PythonActorGenerator(ActorGenerator):
 
     def __copy_include(self):
         code_description = ProjectSettings.get_settings().code_description
-        include_path = code_description.language_specific['include_path']
+        include_path = code_description.language_specific.include_path
 
         root_dir = ProjectSettings.get_settings().root_dir
         include_abs_path = os.path.join( root_dir, include_path )

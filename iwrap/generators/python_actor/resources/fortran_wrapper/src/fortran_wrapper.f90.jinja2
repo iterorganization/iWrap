@@ -15,7 +15,7 @@ subroutine {{code_description.code_name}}_wrapper(&
     use iwrap_defs
     use iwrap_tools
     use ids_routines
-{% if code_description.language_specific.mpi and code_description.language_specific.mpi.lower() != 'none' %}
+{% if code_description.language_specific.mpi %}
     use mpi
 {% endif %}
     use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
@@ -40,7 +40,7 @@ subroutine {{code_description.code_name}}_wrapper(&
 	 character(len=:), pointer :: diagnosticInfo
 	 integer :: wrap_out_outputFlag
 
-{% if code_description.language_specific.mpi and code_description.language_specific.mpi.lower() != 'none' %}
+{% if code_description.language_specific.mpi %}
     !----  MPI  ----
     integer :: ierr, process_rank
     logical :: was_mpi_initialized, was_mpi_finalized
@@ -74,7 +74,7 @@ subroutine {{code_description.code_name}}_wrapper(&
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-{% if code_description.language_specific.mpi and code_description.language_specific.mpi.lower() != 'none' %}
+{% if code_description.language_specific.mpi %}
     if (process_rank == 0) then
        ! --- called only for RANK 0 process
 {% endif %}
@@ -107,7 +107,7 @@ subroutine {{code_description.code_name}}_wrapper(&
     call ids_put({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
-{% if code_description.language_specific.mpi and code_description.language_specific.mpi.lower() != 'none' %}
+{% if code_description.language_specific.mpi %}
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
     !--------- Dealloacting IDSes ------------------------
@@ -115,7 +115,7 @@ subroutine {{code_description.code_name}}_wrapper(&
     call ids_deallocate({{ argument.name }})
     {% endfor %}
 
-{% if code_description.language_specific.mpi and code_description.language_specific.mpi.lower() != 'none' %}
+{% if code_description.language_specific.mpi %}
     !----  MPI Finalization ----
     call MPI_finalized(was_mpi_finalized, ierr)
     if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
