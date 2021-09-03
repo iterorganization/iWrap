@@ -36,8 +36,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         super().__init__( master )
         FortranPane.language = language
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
-
+        self.settings = FortranSpecificSettings()
+        if not ProjectSettings.get_settings().code_description.language_specific:
+            ProjectSettings.get_settings().code_description.language_specific = self.settings
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1)
