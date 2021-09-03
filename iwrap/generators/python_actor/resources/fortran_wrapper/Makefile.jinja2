@@ -1,7 +1,7 @@
 # actor name
 ACTOR_NAME={{actor_settings.actor_name}}
 
-{% if code_description.language_specific.mpi and (code_description.language_specific.mpi.lower() != 'none') %}
+{% if code_description.language_specific.mpi %}
 FC=mpiifort
 {% else %}
 FC=ifort
