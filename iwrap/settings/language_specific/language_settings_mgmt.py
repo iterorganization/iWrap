@@ -1,19 +1,26 @@
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
-from iwrap.settings.project import ProjectSettings
+
 
 
 class LanguageSettingsManager:
-    _panes_settings = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(), 'python': None}
+    _language_settings_handlers = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(),
+                                   'python': None}
+
+    # TODO: Add dynamic discovery of settings handlers
 
     @classmethod
-    def set_settings(cls, pane_name):
-        dict_settings = ProjectSettings.get_settings().code_description.language_specific
-        programming_language = ProjectSettings.get_settings().code_description.programming_language
-        if dict_settings is None or programming_language.lower() != pane_name.lower():
-            cls._panes_settings[pane_name].clear()
+    def get_settings_handler(cls, language, values=None):
+
+        # no special handler
+        if language not in cls._language_settings_handlers:
+            return values or {}
+
+        language_handler = cls._language_settings_handlers[language]
+        language_handler.clear()
+
+        if values and isinstance( values, dict ):
+            language_handler.from_dict( values )
         else:
-            cls._panes_settings[pane_name].from_dict(dict_settings)
+            language_handler = values or {}
 
-    @classmethod
-    def get_settings(cls, pane):
-        return cls._panes_settings[pane]
+        return language_handler

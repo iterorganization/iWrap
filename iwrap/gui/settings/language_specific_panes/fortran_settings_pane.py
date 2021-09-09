@@ -5,6 +5,7 @@ import tkinter.filedialog
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
+from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -35,8 +36,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         super().__init__( master )
         FortranPane.language = language
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-
+        self.settings = FortranSpecificSettings()
+        if not ProjectSettings.get_settings().code_description.language_specific:
+            ProjectSettings.get_settings().code_description.language_specific = self.settings
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1)
@@ -75,7 +77,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings from the LanguageSettingsManager, set compiler to the Combobox widget as current value.
         Call SystemLibrariesPane, CustomLibrariesPane, and FeaturesPane reload methods.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
 
         self.compiler_combobox.set(self.settings.compiler)
         self.feature_pane.reload()
@@ -87,14 +89,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
          FeaturesPane update_settings methods.
         """
         compiler = self.compiler_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific['compiler'] = compiler
+        ProjectSettings.get_settings().code_description.language_specific.compiler = compiler
 
         self.system_libraries_pane.update_settings()
         self.custom_libraries_pane.update_settings()
         self.feature_pane.update_settings()
 
-        project_settings = ProjectSettings.get_settings().code_description.language_specific
-        self.settings.from_dict(project_settings)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
+
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
@@ -131,7 +133,7 @@ class SystemLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.system_lib = PkgConfigTools()
         self.system_lib.initialize()
         self.master = master
@@ -199,14 +201,14 @@ class SystemLibrariesPane:
     def reload(self):
         """Reload system settings from the LanguageSettingsManager and add system libraries to the Table widget.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings =  ProjectSettings.get_settings().code_description.language_specific
         self.__add_table_data()
 
     def update_settings(self):
         """Update system libraries in the ProjectSettings.
         """
         system_libraries = self.get_data_from_table()
-        ProjectSettings.get_settings().code_description.language_specific['system_libraries'] = system_libraries
+        ProjectSettings.get_settings().code_description.language_specific.system_libraries = system_libraries
 
 
 class AddSystemLibraryWindow:
@@ -288,7 +290,7 @@ class CustomLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
 
         # LIBRARY PATH FRAME
         library_path_frame = tk.Frame(master)
@@ -339,14 +341,14 @@ class CustomLibrariesPane:
     def reload(self):
         """Reload custom_libraries list from the LanguageSettingsManager and add it to the Table widget.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.__add_custom_lib_from_settings()
 
     def update_settings(self):
         """Update custom_libraries in the ProjectSettings.
         """
         custom_libraries = self.get_list_of_custom_libraries()
-        ProjectSettings.get_settings().code_description.language_specific['custom_libraries'] = custom_libraries
+        ProjectSettings.get_settings().code_description.language_specific.custom_libraries = custom_libraries
 
 
 class FeaturesPane:
@@ -366,7 +368,7 @@ class FeaturesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings =  ProjectSettings.get_settings().code_description.language_specific
 
         # MODULE PATH
         self.module_path = tk.StringVar()
@@ -418,7 +420,7 @@ class FeaturesPane:
     def reload(self):
         """Reload open_mpi, include path and mpi values from the LanguageSettingsManager and set them to the widgets.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.module_path.set(self.settings.include_path or '')
         self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
         self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
@@ -426,7 +428,7 @@ class FeaturesPane:
     def update_settings(self):
         """Update open_mpi, include path and mpi values in the ProjectSettings.
         """
-        ProjectSettings.get_settings().code_description.language_specific['mpi'] = self.mpi_flavour_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific['include_path'] = self.module_path.get()
+        ProjectSettings.get_settings().code_description.language_specific.mpi = self.mpi_flavour_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
         open_mpi = True if self.open_mp_combobox.get() == 'Yes' else False
-        ProjectSettings.get_settings().code_description.language_specific['open_mp'] = open_mpi
+        ProjectSettings.get_settings().code_description.language_specific.open_mp = open_mpi
