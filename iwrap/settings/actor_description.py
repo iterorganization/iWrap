@@ -5,6 +5,7 @@ from typing import Any, Dict
 from pathlib import Path
 
 import yaml
+from iwrap.settings.platform.platform_settings import PlatformSettings
 
 from iwrap.common.misc import Dictionarizable
 from iwrap.settings.code_description import CodeDescription
@@ -23,7 +24,7 @@ class ActorDescription(Dictionarizable ):
         self.actor_type: str  = ''
         self.install_dir: str = ''
 
-        self.install_dir = str(Path( Path.home(), 'IWRAP_ACTORS' ))   # TODO: Read install dir from platform settings
+        self.install_dir: str = ''
 
         yaml.add_representer(self.__class__, representer=ActorDescription.representer)
         yaml.add_constructor( self._yaml_tag, self.constructor )
@@ -51,7 +52,9 @@ class ActorDescription(Dictionarizable ):
 
         # install_dir
         if not self.install_dir:
-            raise ValueError( 'Actor installation directory is not set!' )
+            self.install_dir = PlatformSettings().install_dir
+            ActorDescription._logger.warning(
+                f'Actor installation directory is not set! Using default one: "{self.install_dir}".' )
 
         try:
             Path(self.install_dir).mkdir(parents=True, exist_ok=True)
