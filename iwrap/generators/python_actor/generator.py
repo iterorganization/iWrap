@@ -37,7 +37,7 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def code_languages(self) -> Set[str]:
-        return {'Fortran', 'cpp'}
+        return {'fortran', 'cpp'}
 
     def __init__(self):
 

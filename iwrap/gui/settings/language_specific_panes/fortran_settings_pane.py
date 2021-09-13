@@ -36,9 +36,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         super().__init__( master )
         FortranPane.language = language
-        self.settings = FortranSpecificSettings()
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
+
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1)
@@ -97,7 +99,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         self.settings = ProjectSettings.get_settings().code_description.language_specific
 
-
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
@@ -133,7 +134,7 @@ class SystemLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
         self.system_lib = PkgConfigTools()
         self.system_lib.initialize()
         self.master = master
@@ -201,7 +202,7 @@ class SystemLibrariesPane:
     def reload(self):
         """Reload system settings from the LanguageSettingsManager and add system libraries to the Table widget.
         """
-        self.settings =  ProjectSettings.get_settings().code_description.language_specific
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.__add_table_data()
 
     def update_settings(self):
@@ -290,8 +291,7 @@ class CustomLibrariesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
-
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
         # LIBRARY PATH FRAME
         library_path_frame = tk.Frame(master)
         library_path_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=1, anchor=tk.NW)
@@ -368,7 +368,7 @@ class FeaturesPane:
         Args:
             master (ttk.Frame): The master frame.
         """
-        self.settings =  ProjectSettings.get_settings().code_description.language_specific
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
         # MODULE PATH
         self.module_path = tk.StringVar()
