@@ -38,10 +38,10 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         #
-        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
-        if actor_run_mode == 'STANDALONE':
-            print('Running STANDALONE version.')
-            self.actor_cp2ds_mpi.runtime_settings.run_mode = RunMode.STANDALONE
+        #actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        #if actor_run_mode == 'STANDALONE':
+        print( 'Running STANDALONE version. (Even if NORMAL was selected)' )
+        self.actor_cp2ds_mpi.runtime_settings.run_mode = RunMode.STANDALONE
 
         self.actor_cp2ds_mpi.runtime_settings.mpi.number_of_processes = 3
         self.actor_cp2ds_mpi.initialize()
