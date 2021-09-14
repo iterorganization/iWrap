@@ -5,3 +5,7 @@ clean:
 
 docs:
 	make -C docs docs
+
+code-check:
+	pylint -E ./iwrap
+
