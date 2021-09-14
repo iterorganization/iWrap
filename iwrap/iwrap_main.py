@@ -3,7 +3,6 @@ import os
 import sys
 from typing import List
 
-from iwrap.generation_engine.engine import Engine
 from iwrap.settings.project import ProjectSettings
 
 
@@ -62,6 +61,7 @@ def load_code_description(project_file):
 
 
 def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
+    from iwrap.generation_engine.engine import Engine
     parser = get_parser( is_commandline_mode )
     args = parser.parse_args( argv )
     args.gui = not is_commandline_mode
