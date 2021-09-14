@@ -150,7 +150,7 @@ class XMLFile(File):
         super().load_settings()
 
     @classmethod
-    def validate(cls, xml: str = "", xsd: str = "") -> None:
+    def validate(cls, xml_path: str = "", xsd_path: str = "") -> None:
         """Invokes XML validation method from ProjectSettings().
         """
         cls._project_settings.validate_xml(parameters_xml_path=xml_path, schema_xsd_path=xsd_path)
@@ -305,7 +305,7 @@ class XMLValidatorPane(ttk.Frame):
 
         # The validation process itself.
         try:
-            XMLFile.validate(xml=self._xml_file.get_path(), xsd=self._xsd_file.get_path())
+            XMLFile.validate(xml_path=self._xml_file.get_path(), xsd_path=self._xsd_file.get_path())
         except Exception as error:
             messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
                                                      f"{error}")
