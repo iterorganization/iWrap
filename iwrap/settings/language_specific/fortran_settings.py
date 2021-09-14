@@ -21,7 +21,7 @@ class FortranSpecificSettings( Dictionarizable, AbstractLanguageSpecificSettings
 
     @mpi.setter
     def mpi(self, value):
-        if value == None:
+        if value == 'None':
             self._mpi = False
         else:
             self._mpi = value
