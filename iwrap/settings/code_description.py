@@ -6,8 +6,9 @@ import yaml
 from pathlib import Path
 from enum import Enum
 
-from iwrap.common.misc import Dictionarizable
+
 from iwrap.generation_engine.engine import Engine
+from iwrap.settings import SettingsBaseClass
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 
 
@@ -15,7 +16,7 @@ class Intent( Enum ):
     IN = 'IN'  # input type of argument
     OUT = 'OUT'  # output type of an argument
 
-class Argument( Dictionarizable ):
+class Argument( SettingsBaseClass ):
     """The data class containing information about argument of the native code
 
     Attributes:
@@ -39,13 +40,18 @@ class Argument( Dictionarizable ):
         self._intent = None
         self.intent = dictionary['intent']
 
-    def validate(self, engine: Engine, project_root_dir: str, data_type: str) -> None:
+    def clear(self):
+        # The whole list is cleared, so no need to clear particular elements
+        pass
+
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         if not self.name:
             raise ValueError( 'Argument name is not set!' )
 
         if not self.type:
             raise ValueError( 'Argument IDS type is not set!' )
 
+        data_type = kwargs['data_type']
         ids_list = Engine.get_ids_types(data_type)
         if self.type not in ids_list:
             raise ValueError( f'Incorrect IDS type {self.type} of argument {self.name}!' )
@@ -77,7 +83,7 @@ class Argument( Dictionarizable ):
         return str_
 
 
-class CodeParameters(Dictionarizable):
+class CodeParameters(SettingsBaseClass):
     """The data class containing information about files defining code parameters.
 
     Attributes:
@@ -159,7 +165,7 @@ class CodeParameters(Dictionarizable):
         xmlschema.assertValid(xml_file)
 
 
-class CodeDescription( Dictionarizable ):
+class CodeDescription( SettingsBaseClass ):
     """Description of the native code used for wrapping the code within an actor.
 
     Attributes:
@@ -232,7 +238,7 @@ class CodeDescription( Dictionarizable ):
         yaml.add_representer(self.__class__, representer=CodeDescription.representer)
         yaml.add_constructor( self._yaml_tag, self.constructor )
 
-    def validate(self, engine: Engine, project_root_dir: str) -> None:
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
         # programming_language
         if not self.programming_language:
@@ -253,7 +259,7 @@ class CodeDescription( Dictionarizable ):
 
         # arguments
         for argument in self.arguments or []:
-            argument.validate(engine, project_root_dir, self.data_type)
+            argument.validate(engine, project_root_dir, **{'data_type' : self.data_type})
 
         # code path
         if not self.code_path:
@@ -272,8 +278,8 @@ class CodeDescription( Dictionarizable ):
 
         if not self.language_specific:
             raise ValueError( 'Language specific data are not set!' )
-
-        self.language_specific.validate(engine, project_root_dir)
+        elif isinstance(self.language_specific, SettingsBaseClass):
+            self.language_specific.validate(engine, project_root_dir) # pylint: disable=no-member
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.

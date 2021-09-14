@@ -1,16 +1,15 @@
 from abc import ABC
 from pathlib import Path
 
-from iwrap.common.misc import Dictionarizable
 from iwrap.generation_engine.engine import Engine
+from iwrap.settings import SettingsBaseClass
 
 
-# TODO Add a superclass for language handlers
-class AbstractLanguageSpecificSettings( ABC ):
+class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
     pass
 
 
-class FortranSpecificSettings( Dictionarizable, AbstractLanguageSpecificSettings ):
+class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
     @property
     def mpi(self):

@@ -7,12 +7,13 @@ import yaml
 
 
 from iwrap.common.misc import Dictionarizable
+from iwrap.settings import SettingsBaseClass
 from iwrap.settings.actor_description import ActorDescription
 from iwrap.settings.code_description import CodeDescription
 
 #from iwrap.generation_engine.engine import Engine
 
-class ProjectSettings( Dictionarizable ):
+class ProjectSettings( SettingsBaseClass ):
     """Data class describing iWrap project settings.
 
     Attributes:
