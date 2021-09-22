@@ -4,7 +4,7 @@ import imas,os
 
 from physics_ii_cpp.actor import physics_ii_cpp
 
-from physics_ii_cpp.python_common.job_settings import RunMode, DebugMode
+from physics_ii_cpp.common.runtime_settings import RunMode, DebugMode
 
 
 class ExampleWorkflowManager:

@@ -1,6 +1,6 @@
 from abc import ABC
 
-from ..job_settings import JobSettings
+from ..runtime_settings import RuntimeSettings
 from ..fortran_binding.binder import FortranBinder
 from ..code_parameters import CodeParameters
 
@@ -8,7 +8,7 @@ from ..code_parameters import CodeParameters
 class ActorBaseClass( ABC ):
 
     def __init__(self, actor_dir, native_language, code_name, is_mpi_code):
-        self.runtime_settings = JobSettings()
+        self.runtime_settings = RuntimeSettings()
         self.formal_arguments = []
         self.code_parameters = CodeParameters()
         self.binder = FortranBinder( actor_dir, self.__class__.__name__, native_language, code_name, is_mpi_code )

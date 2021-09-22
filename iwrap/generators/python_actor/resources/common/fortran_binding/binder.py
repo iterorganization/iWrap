@@ -11,7 +11,7 @@ from ..code_parameters import CodeParameters
 
 from .data_type import LegacyIDS
 from .data_c_binding import ParametersCType, StatusCType
-from ..job_settings import JobSettings, RunMode, DebugMode
+from ..runtime_settings import RuntimeSettings, RunMode, DebugMode
 
 
 class FortranBinder:
@@ -32,7 +32,7 @@ class FortranBinder:
     def read_data(self, ids):
         pass
 
-    def initialize(self, runtime_settings: JobSettings, arguments, codeparams: CodeParameters):
+    def initialize(self, runtime_settings: RuntimeSettings, arguments, codeparams: CodeParameters):
         self.runtime_settings = runtime_settings
         self.code_parameters = codeparams
         self.formal_arguments = arguments
