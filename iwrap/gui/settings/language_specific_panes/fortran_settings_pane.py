@@ -152,6 +152,8 @@ class SystemLibrariesPane:
         # BUTTONS
         add_button = ttk.Button(buttons_center_frame, text="Add...", width=10)
         add_button.pack(side=tk.TOP, expand=1, pady=5)
+        info_button = ttk.Button(buttons_center_frame, text="Info...", width=10)
+        info_button.pack(side=tk.TOP, expand=1, pady=5)
         remove_button = ttk.Button(buttons_center_frame, text="Remove", width=10)
         remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
@@ -159,9 +161,10 @@ class SystemLibrariesPane:
         self.columns = [Column(Column.TEXT, "Name", "Name"),
                         Column(Column.TEXT, "Info", "Info"),
                         Column(Column.TEXT, "Description", "Description")]
-        self.table = Table([], self.columns, table_frame, [remove_button])
+        self.table = Table([], self.columns, table_frame, [remove_button, info_button])
         add_button['command'] = lambda: AddSystemLibraryWindow(self)
         remove_button['command'] = self.table.delete_row
+        info_button['command'] = lambda: SystemLibraryInfoWindow(self)
         self.__add_table_data()
 
     def __add_table_data(self):
@@ -212,6 +215,59 @@ class SystemLibrariesPane:
         ProjectSettings.get_settings().code_description.language_specific.system_libraries = system_libraries
 
 
+class SystemLibraryInfoWindow:
+    def __init__(self, master=None):
+        self.master = master
+
+        self.lib_name = None
+        self.get_lib_name()
+
+        # WINDOW
+        self.window = tk.Toplevel(master.master)
+        self.window.minsize(700, 400)
+        self.window.geometry('700x500')
+        self.window.resizable(width=False, height=True)
+        self.window.title("System library info")
+        self.window.focus_force()
+        self.window.grab_set()
+
+        # FRAMES
+        frame_lib_name = tk.Frame(self.window, height=30)
+        frame_lib_name.pack(side=tk.TOP, fill=tk.X)
+        frame_libs = tk.Frame(self.window, height=30)
+        frame_libs.pack(side=tk.TOP, fill=tk.X, expand=1)
+        frame_cflags = tk.Frame(self.window, height=30)
+        frame_cflags.pack(side=tk.TOP, fill=tk.X)
+        footer = tk.Frame(self.window, bd=1, relief=tk.SUNKEN, height=50)
+        footer.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # LABELS
+        tk.Label(frame_lib_name, text=f"{self.lib_name}", font='bold')\
+            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
+        tk.Label(frame_libs, text=f"pkg-config --libs {self.lib_name}", font='bold')\
+            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
+        tk.Label(frame_cflags, text=f"pkg-config --cflags {self.lib_name}", font='bold')\
+            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
+
+        # TEXT EDITORS
+        self.text_editor_name = tk.Text(frame_lib_name, height=8, state='disabled')
+        self.text_editor_name.pack(side=tk.TOP, expand=True, fill=tk.X)
+        self.text_editor_libs = tk.Text(frame_libs, height=8, state='disabled')
+        self.text_editor_libs.pack(side=tk.TOP, expand=True, fill=tk.X)
+        self.text_editor_cflags = tk.Text(frame_cflags, height=8, state='disabled')
+        self.text_editor_cflags.pack(side=tk.TOP, expand=True, fill=tk.X)
+
+        # CLOSE BUTTON
+        remove_button = ttk.Button(footer, text="OK", command=self.window.destroy, width=10)
+        remove_button.pack(padx=10, pady=10)
+
+    def get_lib_name(self):
+        selected_row = self.master.table.get_selected_row()
+        table_data = self.master.table.get_data_from_table()
+        selected_data = list(table_data[selected_row - 1].values())
+        self.lib_name = selected_data[0]
+
+
 class AddSystemLibraryWindow:
     """Opens a new window with a table contains available system libraries. The table can be filtered by user.
 
@@ -260,7 +316,7 @@ class AddSystemLibraryWindow:
         self.table.add_rows(data)
 
         # BUTTONS
-        add_button = ttk.Button(footer, text="OK", command=self.add_selected_data_to_table, width=10)
+        add_button = ttk.Button(footer, text="Add", command=self.add_selected_data_to_table, width=10)
         add_button.pack(side=tk.RIGHT, padx=10, pady=10)
         remove_button = ttk.Button(footer, text="Cancel", command=self.window.destroy, width=10)
         remove_button.pack(side=tk.RIGHT, padx=10, pady=10)
