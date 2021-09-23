@@ -104,12 +104,16 @@ class CodeParameters(SettingsBaseClass):
             raise ValueError( 'XSD schema must be set if XML parameters file is specified!' )
 
         # parameters
-        if self.parameters and not Path(project_root_dir, self.parameters).exists():
-            raise ValueError( 'Path to XML parameters file is invalid!' )
+        if self.parameters:
+            __path = Path(project_root_dir, self.parameters)
+            if not __path.exists():
+                raise ValueError( f'Path to XML parameters file is invalid! {str(__path)}' )
 
         # schema
-        if self.schema and not Path(project_root_dir, self.schema).exists():
-            raise ValueError( 'Path to XSD schema file is invalid!' )
+        if self.schema:
+            __path = Path(project_root_dir, self.schema)
+            if not __path.exists():
+                raise ValueError( f'Path to XSD schema file is invalid! {str(__path)}' )
 
         # validate correctness of XML
         if self.parameters and self.schema:
@@ -266,8 +270,9 @@ class CodeDescription( SettingsBaseClass ):
             raise ValueError( 'Path to native code is not set!' )
 
         from iwrap.settings.project import ProjectSettings
-        if not Path(project_root_dir, self.code_path).exists():
-            raise ValueError( 'Path to native code points to not existing location ["' + self.code_path + '"]' )
+        __path = Path(project_root_dir, self.code_path)
+        if not __path.exists():
+            raise ValueError( 'Path to native code points to not existing location ["' + str(__path) + '"]' )
 
         # code parameters
         self.code_parameters.validate(engine, project_root_dir)

@@ -44,8 +44,9 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         if not self.include_path:
             raise ValueError( 'Path to include/module file is not set!' )
 
-        if not Path( project_root_dir, self.include_path ).exists():
-            raise ValueError( 'Path to include/module file is not valid!' )
+        __path = Path( project_root_dir, self.include_path )
+        if not __path.exists():
+            raise ValueError( f'Path to include/module file is not valid! {str(path)}' )
 
         # mpi
         # TODO Validate MPI against platform settings
@@ -58,8 +59,9 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
         # custom_libraries
         for library in self.custom_libraries or []:
-            if not Path( project_root_dir, library ).exists():
-                raise ValueError( 'Path to library file is not valid!' )
+            __path = Path( project_root_dir, library)
+            if not __path.exists():
+                raise ValueError( f'Path to library file is not valid! {str(__path)}' )
 
     def clear(self):
         self.__init__()
