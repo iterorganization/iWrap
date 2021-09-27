@@ -9,7 +9,7 @@ class ActorBaseClass( ABC ):
 
     def __init__(self, actor_dir, native_language, code_name, is_mpi_code):
         self.runtime_settings = RuntimeSettings()
-        self.formal_arguments = []
+        self.arguments = []
         self.code_parameters = CodeParameters()
         self.binder = FortranBinder( actor_dir, self.__class__.__name__, native_language, code_name, is_mpi_code )
 
@@ -20,7 +20,7 @@ class ActorBaseClass( ABC ):
         self.code_parameters.validate()
 
         self.binder.initialize( self.runtime_settings,
-                                self.formal_arguments, self.code_parameters )
+                                self.arguments, self.code_parameters )
 
         pass
 
