@@ -3,7 +3,7 @@ import sys
 import imas,os
 
 from core2dist_mpi.actor import core2dist_mpi
-from core2dist_mpi.python_common.job_settings import RunMode, DebugMode
+from core2dist_mpi.common.runtime_settings import RunMode, DebugMode
 
 
 
@@ -38,10 +38,10 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         #
-        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
-        if actor_run_mode == 'STANDALONE':
-            print('Running STANDALONE version.')
-            self.actor_core2dist_mpi.runtime_settings.run_mode = RunMode.STANDALONE
+        #actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        #if actor_run_mode == 'STANDALONE':
+        print('Running STANDALONE version. (Even if NORMAL was selected)')
+        self.actor_core2dist_mpi.runtime_settings.run_mode = RunMode.STANDALONE
         #self.actor_core2dist_mpi.runtime_settings.debug_mode = DebugMode.ATTACH
         self.actor_core2dist_mpi.runtime_settings.mpi.number_of_processes = 3
         self.actor_core2dist_mpi.initialize()

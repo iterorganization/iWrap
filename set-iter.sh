@@ -2,7 +2,7 @@
 echo "Setting ITER"
 module purge
 module load IMAS
-module load lxml
+module load lxml/4.6.2-GCCcore-10.2.0
 
 
 export PATH=${PWD}/bin:${PATH}

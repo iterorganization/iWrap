@@ -30,7 +30,7 @@ class SandboxSettings:
     LIFETIME_SCENARIO = 20
 
 
-class JobSettings:
+class RuntimeSettings:
     def __init__(self):
 
         # handled/implemented

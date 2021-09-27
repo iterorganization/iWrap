@@ -2,20 +2,18 @@ Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
 + introduce a proper logging
-+ add BE selection mechanism
 + improve 'runwork' mechanism
-+ MPI
 + OpenMP
 * "per patform" configuration
 + INSTALLATION
 
 iWrap:
 ----------------
-+ validation of native code description
 + language specific panes plugin discovery mechanism based on implicit namespace packages
 + handle $SYSTEM_VARS while resolving paths
 + make paths relative while saving the project
 + introduce a proper logging
++ set iWrap version based on GIT
 + INSTALLATION
 
 Examples:

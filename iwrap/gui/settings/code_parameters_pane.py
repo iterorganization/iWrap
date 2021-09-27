@@ -152,12 +152,8 @@ class XMLFile(File):
     @classmethod
     def validate(cls, xml_path: str = "", xsd_path: str = "") -> None:
         """Invokes XML validation method from ProjectSettings().
-
-        Args:
-            xml_path (str): The absolute path string to the XML file with parameters data
-            xsd_path (str): The absolute path string to the XSD file with schema of the XML file
         """
-        cls._project_settings.validate(parameters_xml_path=xml_path, schema_xsd_path=xsd_path)
+        cls._project_settings.validate_xml(parameters_xml_path=xml_path, schema_xsd_path=xsd_path)
 
 
 class XSDFile(File):

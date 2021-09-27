@@ -3,7 +3,6 @@ import os
 import sys
 from typing import List
 
-from iwrap.generation_engine.engine import Engine
 from iwrap.settings.project import ProjectSettings
 
 
@@ -23,7 +22,7 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                       )
 
     generation_group = parser.add_argument_group( 'Actor generation' )
-    generation_group.add_argument( '-a', '--actor-name', type=str,  # required=is_commandline_mode,
+    generation_group.add_argument( '-a', '--actor-name', type=str,
                                    help="user defined name of the actor" )
 
     generation_group.add_argument( '-t', '--actor-type', type=str,
@@ -35,7 +34,7 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                    help="type of data to be used by the actor" )
 
     generation_group.add_argument( '-f', '--file', type=argparse.FileType( 'r' ),
-                                   help="a path to code description *.yaml file" )
+                                   help="a path to code/actor description *.yaml file" )
 
     information_group = parser.add_argument_group( 'Additional information' )
     information_group.add_argument( '--list-actor-types',
@@ -54,15 +53,15 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
     return parser
 
 
-def load_code_description(code_description_file):
+def load_code_description(project_file):
     ProjectSettings.get_settings().clear()
-    code_description = ProjectSettings.get_settings().code_description
-    code_description.load(  code_description_file  )
-    file_real_path = os.path.realpath( code_description_file.name )
-    ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
+    project_settings = ProjectSettings.get_settings()
+    project_settings.load(  project_file  )
+
 
 
 def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
+    from iwrap.generation_engine.engine import Engine
     parser = get_parser( is_commandline_mode )
     args = parser.parse_args( argv )
     args.gui = not is_commandline_mode
@@ -124,9 +123,9 @@ if __name__ == "__main__":
 
     # main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
-    main( ['-a', 'core2dist', '-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=False )
-    #main( ['-a', 'core2dist', '-f', './multi.yaml'], is_commandline_mode=False )
 
+    main( ['-a', 'core2dist', '-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=True )
+    #main( ['-a', 'core2dist_mpi', '-f', '../examples/cp2ds-mpi/cp2ds-mpi.yaml'], is_commandline_mode=True )
     # main( ['-h'] )
     # main(['--list-actor-types'])
     # main(is_commandline_mode = False)

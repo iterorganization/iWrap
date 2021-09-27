@@ -16,16 +16,21 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.actor_name = ttk.Entry( self )
         self.actor_name.grid( column=1, columnspan=10, row=0, padx=10, pady=5, sticky=(tk.W, tk.E) )
 
-        ttk.Label( self, text="Type :" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
+        ttk.Label( self, text="Type:" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
 
         self.actor_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.actor_type_combo.grid( column=1, columnspan=10, row=1, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.actor_type_combo.bind( "<<ComboboxSelected>>", self.actor_type_combo_action )
 
-        ttk.Label( self, text="Data type :" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
+        ttk.Label( self, text="Data type:" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
 
         self.data_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
+
+        self.install_path = tk.StringVar()
+        ttk.Label(self, text="Install path:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Entry(self, textvariable=self.install_path).grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(self, text="...", command=self.on_click, width=2).grid(column=2, row=3, padx=5)
 
         self.columnconfigure( 1, weight=3 )
 
@@ -54,6 +59,10 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         data_type = self.data_type_combo.get()
         ProjectSettings.get_settings().actor_description.data_type = data_type
 
+        # updating install dir
+        install_dir = self.install_path.get()
+        ProjectSettings.get_settings().actor_description.install_dir = install_dir
+
     def reload(self):
         # set values of actor types combo
         actor_types = Engine().registered_generators
@@ -78,3 +87,14 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         self.actor_name.delete( 0, tk.END )
         actor_name = ProjectSettings.get_settings().actor_description.actor_name
         self.actor_name.insert( 0, actor_name )
+
+        # set install dir in entry
+        install_dir = ProjectSettings.get_settings().actor_description.install_dir or ''
+        self.install_path.set(install_dir)
+
+    def on_click(self):
+        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """
+        directory = tk.filedialog.askdirectory()
+        if directory not in ('', ()):
+            self.install_path.set(directory)

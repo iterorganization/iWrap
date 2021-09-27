@@ -3,7 +3,7 @@ import sys
 import imas,os
 
 from core2dist.actor import core2dist
-from core2dist.python_common.job_settings import RunMode, DebugMode
+from core2dist.common.runtime_settings import RunMode, DebugMode
 
 
 

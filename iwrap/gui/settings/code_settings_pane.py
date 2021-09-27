@@ -128,7 +128,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.code_path.set(code_path)
         self.code_name.set(code_name)
 
-        LanguageSettingsManager.set_settings(self.programming_language_combobox.get().lower())
+        ProjectSettings.get_settings().code_description.programming_language = self.programming_language_combobox.get()
         self.language_pane.reload()
 
     def on_click(self):
