@@ -107,8 +107,16 @@ class Table( ttk.Frame ):
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
+                row_cell.cell.bind("<Double-Button-1>", lambda event, parent_row=table_row: self.show_info())
 
         self.frame.update()
+
+    def show_info(self):
+        """Show window with information about selected row.
+        """
+        for listener in self.lost_focus_listeners:
+            if listener['text'] == "Info...":
+                listener.invoke()
 
     def _add_columns(self):
         """Add the Columns objects to the table grid.

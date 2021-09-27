@@ -229,7 +229,6 @@ class SystemLibraryInfoWindow:
         self.window.resizable(False, False)
         self.window.title("System library info")
         self.window.focus_force()
-        self.window.grab_set()
 
         # FRAMES
         frame_lib_name = tk.Frame(self.window, height=30)
