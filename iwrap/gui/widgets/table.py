@@ -28,7 +28,7 @@ class Table( ttk.Frame ):
                 ['example3', 'Output', 'Output', 'example4']]
         Table(values, columns, master_frame)
     """
-    def __init__(self, rows, columns, master=None, lost_focus_listeners=None):
+    def __init__(self, rows, columns, master=None, lost_focus_listeners=[]):
         """Initialize the Table class object.
 
         Args:

@@ -164,12 +164,13 @@ class SystemLibrariesPane:
         self.table = Table([], self.columns, table_frame, [remove_button, info_button])
         add_button['command'] = lambda: AddSystemLibraryWindow(self)
         remove_button['command'] = self.table.delete_row
-        info_button['command'] = lambda: SystemLibraryInfoWindow(self)
+        info_button['command'] = lambda: SystemLibraryInfoWindow(self, self.master)
         self.__add_table_data()
 
     def __add_table_data(self):
         """Add system libraries to the table.
         """
+        self.table.delete_data_from_table()
         if not self.settings.system_libraries:
             return
 
@@ -216,7 +217,7 @@ class SystemLibrariesPane:
 
 
 class SystemLibraryInfoWindow:
-    def __init__(self, master=None):
+    def __init__(self, master=None, masterwindow=None):
         self.master = master
 
         self.lib_name = None
@@ -224,7 +225,7 @@ class SystemLibraryInfoWindow:
         self.get_lib_info()
 
         # WINDOW
-        self.window = tk.Toplevel(master.master)
+        self.window = tk.Toplevel(masterwindow)
         self.window.geometry('700x500')
         self.window.resizable(False, False)
         self.window.title("System library info")
@@ -293,6 +294,7 @@ class AddSystemLibraryWindow:
             master (SystemLibrariesPane): The master pane.
         """
         self.master = master
+        self.system_lib = master.system_lib
 
         # WINDOW
         self.window = tk.Toplevel(master.master)
@@ -316,14 +318,16 @@ class AddSystemLibraryWindow:
         tk.Entry(filter_frame, textvariable=filter_value, width=80).pack(side=tk.LEFT, expand=False, padx=20)
         filter_button = ttk.Button(filter_frame, text="Search", width=10)
         filter_button.pack(side=tk.LEFT, padx=10, pady=10)
+        info_button = ttk.Button(filter_frame, text="Info...", width=10)
+        info_button.pack(side=tk.LEFT, padx=10, pady=10)
 
         # TABLE
-        system_lib_dict = master.system_lib.system_lib_dict
         data = []
-        for key, value in system_lib_dict.items():
+        for key, value in self.system_lib.system_lib_dict.items():
             data.append([key, value['info'], value['description']])
-        self.table = Table([], master.columns, content_frame)
+        self.table = Table([], master.columns, content_frame, [info_button])
         self.table.add_rows(data)
+        info_button['command'] = lambda: SystemLibraryInfoWindow(self, self.master.master)
 
         # BUTTONS
         add_button = ttk.Button(footer, text="Add", command=self.add_selected_data_to_table, width=10)
