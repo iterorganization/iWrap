@@ -1,3 +1,19 @@
+KNOWN ISSUES (to be corrected)
+- runtime settings must be set before initialize - misleading - to check if calls can be independent
+- MPI has to be always run in standalone mode
+- input.txt - access denied  - to be run in sandbox
+
+REPORTED BY MIREILLE
+- In the GUI: ‘save’ missing next to ‘save as’
+- Description of ‘module path’ missing, along with the description on how the fortran code has to be adapted to make it generate the mod file
+- The default folder for ‘save as’ should remain where the yaml file was originally set (instead of moving to the last folder edited for other functionalities of the gui)
+- The yaml file should be able to receive environment variables
+- When I load the yaml of an actor which has system libraries, and then load the yaml of another actor which has no system library defined, it keeps the information of the system library of the previous actor
+- Relative paths:
+  o  they are relative to where the yaml file is located, but they should be relative to the folder from which iwrap is executed instead
+  o  iwrap should accept relative paths, to avoid the need to edit the yaml file manually to change paths from absolute to relative
+- MPI actors need runtime standalone settings (to be done before initialize() )
+
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
@@ -5,7 +21,6 @@ Generated Py-F actors:
 + improve 'runwork' mechanism
 + OpenMP
 * "per patform" configuration
-+ INSTALLATION
 
 iWrap:
 ----------------
@@ -19,3 +34,7 @@ iWrap:
 Examples:
 -----------------
 + make all examples compilable using GCC and Intel
+
+Manual
+-----------------
+Describe adding libs more clearly
