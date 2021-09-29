@@ -17,6 +17,7 @@ class MenuBar( tk.Menu ):
         file_menu.add_command( label='New', command=self.action_new )
         file_menu.add_command( label='Open...', command=self.action_open )
         file_menu.add_command( label='Save as...', command=self.action_save_as)
+        file_menu.add_command( label='Save', command=self.action_save)
 
         file_menu.add_separator()
 
@@ -76,6 +77,9 @@ class MenuBar( tk.Menu ):
         self.main_window.update_settings()
         ProjectSettings.get_settings().save(file)
         file.close()
+
+    def action_save(self):
+        pass
 
     def action_open(self):
         file = filedialog.askopenfile( initialdir=None,
