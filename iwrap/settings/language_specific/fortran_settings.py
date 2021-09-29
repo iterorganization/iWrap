@@ -46,7 +46,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
         __path = Path( project_root_dir, self.include_path )
         if not __path.exists():
-            raise ValueError( f'Path to include/module file is not valid! {str(path)}' )
+            raise ValueError( f'Path to include/module file is not valid! {str(__path)}' )
 
         # mpi
         # TODO Validate MPI against platform settings
