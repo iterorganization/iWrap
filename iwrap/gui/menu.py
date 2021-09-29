@@ -78,8 +78,16 @@ class MenuBar( tk.Menu ):
         ProjectSettings.get_settings().save(file)
         file.close()
 
+        file_real_path = os.path.realpath( file.name )
+        ProjectSettings.get_settings().project_file_path = file_real_path
+
     def action_save(self):
-        pass
+        filename = ProjectSettings.get_settings().project_file_path
+        if filename != '':
+            self.main_window.update_settings()
+            ProjectSettings.get_settings().save(open(filename, 'w'))
+        else:
+            self.action_save_as()
 
     def action_open(self):
         file = filedialog.askopenfile( initialdir=None,
@@ -94,6 +102,8 @@ class MenuBar( tk.Menu ):
         # Loading project settings from file
         ProjectSettings.get_settings().load(file)
         file.close()
+
         self.main_window.reload()
         file_real_path = os.path.realpath( file.name )
         ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
+        ProjectSettings.get_settings().project_file_path = file_real_path
