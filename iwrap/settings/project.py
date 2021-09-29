@@ -38,6 +38,7 @@ class ProjectSettings( SettingsBaseClass ):
 
     def __init__(self):
         self.root_dir = os.getcwd()
+        self.project_file_path = ''
 
         self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
@@ -82,6 +83,7 @@ class ProjectSettings( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.root_dir = os.getcwd()
+        self.project_file_path = ''
         self.actor_description.clear()
         self.code_description.clear()
 
