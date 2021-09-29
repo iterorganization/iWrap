@@ -167,6 +167,7 @@ class SystemLibrariesPane:
     def __add_table_data(self):
         """Add system libraries to the table.
         """
+        self.table.delete_data_from_table()
         if not self.settings.system_libraries:
             return
 
