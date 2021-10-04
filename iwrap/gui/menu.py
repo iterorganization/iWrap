@@ -12,8 +12,8 @@ class MenuBar( tk.Menu ):
         super().__init__( master )
         self.main_window = master
         self.code_description = ProjectSettings.get_settings().code_description
-        self.save_and_open_initialdir = ProjectSettings.get_settings().root_dir
-        self.import_and_export_initialdir = ProjectSettings.get_settings().root_dir
+        self.__save_and_open_initialdir = ProjectSettings.get_settings().root_dir
+        self.__import_and_export_initialdir = ProjectSettings.get_settings().root_dir
 
         file_menu = tk.Menu( self, tearoff=0 )
         file_menu.add_command( label='New', command=self.action_new )
@@ -41,7 +41,7 @@ class MenuBar( tk.Menu ):
         self.main_window.reload()
 
     def action_export(self):
-        file = filedialog.asksaveasfile( initialdir=self.import_and_export_initialdir,
+        file = filedialog.asksaveasfile( initialdir=self.__import_and_export_initialdir,
                                        title=None,
                                        filetypes=(("YAML files",
                                                    "*.yaml"),))
@@ -50,11 +50,11 @@ class MenuBar( tk.Menu ):
 
         self.main_window.update_settings()
         ProjectSettings.get_settings().code_description.save(file)
-        self.import_and_export_initialdir = os.path.dirname(file.name)
+        self.__import_and_export_initialdir = os.path.dirname(file.name)
         file.close()
 
     def action_import(self):
-        file = filedialog.askopenfile( initialdir=self.import_and_export_initialdir,
+        file = filedialog.askopenfile( initialdir=self.__import_and_export_initialdir,
                                          title=None,
                                          filetypes=(("YAML files",
                                                      "*.yaml"),),
@@ -66,12 +66,12 @@ class MenuBar( tk.Menu ):
         # Loading project settings from file
         ProjectSettings.get_settings().clear()
         ProjectSettings.get_settings().code_description.load(file)
-        self.import_and_export_initialdir = os.path.dirname(file.name)
+        self.__import_and_export_initialdir = os.path.dirname(file.name)
         file.close()
         self.main_window.reload()
 
     def action_save_as(self):
-        file = filedialog.asksaveasfile( initialdir=self.save_and_open_initialdir,
+        file = filedialog.asksaveasfile( initialdir=self.__save_and_open_initialdir,
                                        title=None,
                                        filetypes=(("YAML files",
                                                    "*.yaml"),) )
@@ -84,7 +84,7 @@ class MenuBar( tk.Menu ):
 
         file_real_path = os.path.realpath( file.name )
         ProjectSettings.get_settings().project_file_path = file_real_path
-        self.save_and_open_initialdir = os.path.dirname(file.name)
+        self.__save_and_open_initialdir = os.path.dirname(file.name)
 
     def action_save(self):
         filename = ProjectSettings.get_settings().project_file_path
@@ -95,7 +95,7 @@ class MenuBar( tk.Menu ):
             self.action_save_as()
 
     def action_open(self):
-        file = filedialog.askopenfile( initialdir=self.save_and_open_initialdir,
+        file = filedialog.askopenfile( initialdir=self.__save_and_open_initialdir,
                                          title=None,
                                          filetypes=(("YAML files",
                                                      "*.yaml"),),
@@ -112,4 +112,4 @@ class MenuBar( tk.Menu ):
         file_real_path = os.path.realpath( file.name )
         ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
         ProjectSettings.get_settings().project_file_path = file_real_path
-        self.save_and_open_initialdir = os.path.dirname(file.name)
+        self.__save_and_open_initialdir = os.path.dirname(file.name)
