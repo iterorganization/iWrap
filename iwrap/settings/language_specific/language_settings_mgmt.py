@@ -22,8 +22,6 @@ class LanguageSettingsManager:
 
         if values and isinstance( values, dict ):
             language_handler.from_dict( values )
-        else:
-            language_handler = values or {}
 
         return language_handler
 
