@@ -202,7 +202,7 @@ class CodeDescription( Dictionarizable ):
             # language specific settings depends on language chosen
             # language was not set while language specific settings were read so they need
             # to be set here 'again' converting from dict to a proper object
-            if  self._language_specific and isinstance(self._language_specific, dict):
+            if  self._language_specific is not None and isinstance(self._language_specific, dict):
                 self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
                                                                                         self._language_specific )
 
