@@ -18,11 +18,13 @@ documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
     veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
     consequat. '
 language_specific:
-    compiler: Intel
+    compiler_vendor: GNU
+    compiler_cmd: mpifort
     include_path: ./native/mod_cp2ds_mpi.mod
     mpi: true
-    open_mp: false
-    system_libraries:
-    custom_libraries:
+    open_mp_switch: false
+    extra_libraries:
+        pkg_config_defined:
+        lib_path:
 
 

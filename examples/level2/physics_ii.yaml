@@ -18,12 +18,14 @@ documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
     veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
     consequat. '
 language_specific:
-    compiler: Intel
+    compiler_vendor: GNU
+    compiler_cmd: gfortran
     include_path: ./native_code/mod_physics_ii.mod
     mpi: false
-    open_mp: false
-    system_libraries:
-    - xmllib
-    custom_libraries:
+    open_mp_switch: false
+    extra_libraries:
+        pkg_config_defined:
+                - xmllib
+        lib_path:
 
 

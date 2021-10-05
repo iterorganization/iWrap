@@ -1,5 +1,5 @@
-F90?=ifort
-ifeq ($(F90), ifort)
+FC?=gfortran
+ifeq ($(FC), ifort)
 # INTEL - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
   F90=ifort
   F90FLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS

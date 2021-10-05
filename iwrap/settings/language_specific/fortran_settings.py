@@ -9,6 +9,33 @@ class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
     pass
 
 
+class ExtraLibraries( SettingsBaseClass ):
+
+    def __init__(self):
+        self.pkg_config_defined = []
+        self.lib_path = []
+
+    def validate(self, engine: Engine, project_root_dir: str) -> None:
+
+        # system_libraries
+        # TODO Validate system libs against platform settings
+
+        # custom_libraries
+        for library in self.lib_path or []:
+            __path = Path( project_root_dir, library )
+            if not __path.exists():
+                raise ValueError( f'Path to library file is not valid! {str( __path )}' )
+
+    def clear(self):
+        self.__init__()
+
+    def from_dict(self, dictionary: dict):
+        super().from_dict( dictionary )
+
+    def to_dict(self):
+        return super().to_dict()
+
+
 class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
     @property
@@ -26,17 +53,17 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
             self._mpi = value
 
     def __init__(self):
-        self.compiler = ''
+        self.compiler_vendor = ''
+        self.compiler_cmd = ''
         self.include_path = ''
         self._mpi = ''
-        self.open_mp = False
-        self.system_libraries = []
-        self.custom_libraries = []
+        self.open_mp_switch = False
+        self.extra_libraries = ExtraLibraries()
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
 
-        # compiler
-        if not self.compiler:
+        # compiler_cmd
+        if not self.compiler_cmd:
             raise ValueError( 'Compiler to be used is not set!' )
         # TODO Validate compiler against platform settings
 
@@ -46,7 +73,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
         __path = Path( project_root_dir, self.include_path )
         if not __path.exists():
-            raise ValueError( f'Path to include/module file is not valid! {str(__path)}' )
+            raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
         # mpi
         # TODO Validate MPI against platform settings
@@ -54,14 +81,8 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         # open_mp
         # TODO validate open mp
 
-        # system_libraries
-        # TODO Validate system libs against platform settings
-
-        # custom_libraries
-        for library in self.custom_libraries or []:
-            __path = Path( project_root_dir, library)
-            if not __path.exists():
-                raise ValueError( f'Path to library file is not valid! {str(__path)}' )
+        # extra_libraries
+        self.extra_libraries.validate(engine, project_root_dir)
 
     def clear(self):
         self.__init__()

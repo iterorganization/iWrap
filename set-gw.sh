@@ -1,14 +1,14 @@
 module purge
 module load cineca
 
-module load IMAS/3.32.1
+module load imasenv/3.33.0/gcc
 
 
 setenv PATH "${PWD}/bin:${PATH}"
 setenv PYTHONPATH ${PWD}:${PYTHONPATH}
 
 # setting environment for running examples
-module load xmllib/3.3.1/intel/17.0
+module load xmllib/3.3.1/gcc
 imasdb iter
 imasdb tmp
 setenv PYTHONPATH $HOME/IWRAP_ACTORS:$PYTHONPATH

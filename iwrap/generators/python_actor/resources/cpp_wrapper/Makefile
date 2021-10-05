@@ -1,11 +1,8 @@
 # actor name
 ACTOR_NAME={{actor_settings.actor_name}}
 
-{% if code_description.language_specific.mpi %}
-CXX=mpicxx
-{% else %}
-CXX=g++
-{% endif %}
+
+CXX={{ code_description.language_specific.compiler_cmd }}
 
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
