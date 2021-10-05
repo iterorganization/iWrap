@@ -28,6 +28,8 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         """
         super().__init__(master)
 
+        # Common reference for directory browsers.
+        self._browser_dir = ProjectSettings.get_settings().root_dir
         # XML file path browser dialog
         self.xml_browser = CodeParameterBrowserPane(self, label_text="Code parameters file:", file_type="XML")
 
@@ -142,6 +144,7 @@ class CodeParameterBrowserPane(ttk.Frame):
             label_text (str, optional): Title above the widget.
         """
         super().__init__(master)
+        self._master = master
         if file_type == "XML":
             self.file_path = XMLPath()
         elif file_type == "XSD":
@@ -170,11 +173,13 @@ class CodeParameterBrowserPane(ttk.Frame):
             If no path is selected, exits immediately.
         """
         filename = filedialog.askopenfilename(
-                    initialdir=None,
+                    initialdir=self._master._browser_dir,
                     title=f"Select {self.file_path.file_type[0][0]}",
                     filetypes=self.file_path.file_type)
         if not self.file_path.is_path_correct(filename):
             return
+
+        self._master._browser_dir = '/'.join(filename.split('/')[:-1])
 
         # Save loaded path.
         self.file_path.path.set(filename)
