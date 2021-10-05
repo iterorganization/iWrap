@@ -9,13 +9,18 @@ Welcome to iWrap's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Table of Contents:
+   :caption: Docstring documentation:
 
-   /documentation_files/iwrap_introduction.rst
-   /documentation_files/iwrap_architecture.rst
-   /documentation_files/iwrap_generated_actors.rst
-   /documentation_files/iwrap_python_actor.rst
    /documentation_files/docstring_documentation.rst
+
+
+.. toctree::
+   :maxdepth: 4
+   :caption: iWrap documentation:
+
+   /iwrap_documentation/index.md
+
+
 
 
 Indices and tables

@@ -22,7 +22,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
     'sphinx.ext.extlinks',
-    'recommonmark'
+    'recommonmark',
+    'sphinx_markdown_tables'
 ]
 
 autodoc_default_options = {

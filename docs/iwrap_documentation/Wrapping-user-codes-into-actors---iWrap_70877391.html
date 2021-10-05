@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scientific Worfklows : Wrapping user codes into actors - iWrap</title>
+        <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body class="theme-default aui-theme-default">
+        <div id="page">
+            <div id="main" class="aui-page-panel">
+                <div id="main-header">
+                    <div id="breadcrumb-section">
+                        <ol id="breadcrumbs">
+                            <li class="first">
+                                <span><a href="index.html">Scientific Worfklows</a></span>
+                            </li>
+                                                </ol>
+                    </div>
+                    <h1 id="title-heading" class="pagetitle">
+                                                <span id="title-text">
+                            Scientific Worfklows : Wrapping user codes into actors - iWrap
+                        </span>
+                    </h1>
+                </div>
+
+                <div id="content" class="view">
+                    <div class="page-metadata">
+                        
+        
+    
+        
+    
+        
+        
+            Created by <span class='author'> Bartosz Palak</span>, last modified on 21 wrz 2021
+                        </div>
+                    <div id="main-content" class="wiki-content group">
+                    <div class="confluence-information-macro confluence-information-macro-warning"><p class="title">Disclaimer</p><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>iWrap is currently being actively developed, so it is not publicly available yet. The first 'production' release is planned at the begin of 2022.&#xa0;</p></div></div><p><br></p><p><style type="text/css">/*<![CDATA[*/
+div.rbtoc1632746266966 {padding: 0px;}
+div.rbtoc1632746266966 ul {list-style: disc;margin-left: 0px;}
+div.rbtoc1632746266966 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style></p><div class="toc-macro rbtoc1632746266966">
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-Introduction">1. Introduction</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-Motivations">1.1. Motivations</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-iWrap-actorgenerator">1.2. iWrap - actor generator</a></li>
+</ul>
+</li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Preparationofcode">2. Preparation of code</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Codeandactordescription">3. Code and actor description</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-YAMLfilesyntax">3.1. &#xa0;YAML file syntax</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Nativecodedescription">3.2. Native code description</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-Commonpart">3.2.1. Common part</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Languagespecificpart-Fortran/C++">3.2.2. Language specific part - Fortran/C++</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Example-Fortrancodedescription">3.2.3. Example - Fortran code description</a></li>
+</ul>
+</li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Actordescription">3.3. Actor description</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-Actordescriptionsyntax">3.3.1. Actor description syntax</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Example">3.3.2. Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Actorgeneration">4. Actor generation</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-iWrapcommandline">4.1. iWrap commandline</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-iWrapgraphicalinterface">4.2. &#xa0;iWrap graphical interface</a></li>
+</ul>
+</li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Usageofactorwithinworkflow">5. Usage of actor within workflow</a>
+<ul class="toc-indentation">
+<li><a href="#WrappingusercodesintoactorsiWrap-Actorimportandcreation">5.1. Actor import and&#xa0;creation</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Actorruntimesettings">5.2. Actor runtime settings</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Actorlifecycle">5.3. Actor life cycle</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Thesimplestworkflow">5.4. The simplest workflow</a></li>
+<li><a href="#WrappingusercodesintoactorsiWrap-Workflowexample">5.5. &#xa0;Workflow example</a></li>
+</ul>
+</li>
+</ul>
+</div><p></p><h1 id="WrappingusercodesintoactorsiWrap-Introduction"><span class="nh-number">1. </span>Introduction</h1><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p class="title">Glossary</p><p><em><strong>Scenario (aka workflow)</strong></em></p><ul><li>A set of components (actors) constituting a directed graph to execute a computing algorithm</li><li>Actors are dependent: a control and data is passed from actor to actor</li><li>Usually the order of actors execution and the way how data are passed from actor to actor is managed by so called "workflow system". Such manager can be a simple script (codes) or more sophisticated "orchestrator" (e.g. Kepler)</li></ul><p><em><strong>Actor</strong></em></p><ul><li>A basic component of scenario / workflow</li><li>An actor performs some actions (e.g. computations, visualisation, etc)</li><li>Usually given actor consumes results provided by a previous actor in a scenario and produces data for a next actor in a scenario</li><li><p class="p1"><span class="s1">Actor API strictly depends on</span><span class="s2"><span>&#xa0;</span>targeted workflow system: an orchestrator "fires" particular actions on actor&#xa0;</span></p></li><li>An actor, using its internal mechanisms ('wrappers') calls '<em>native code'</em>&#xa0;method(s), usually written in other language than an actor&#xa0;&#xa0;</li></ul><p><strong>Native code</strong></p><ul><li>A physics code, of standardised signature, provided by software developer&#xa0;</li></ul></div></div><h2 id="WrappingusercodesintoactorsiWrap-Motivations"><span class="nh-number">1.1. </span>Motivations</h2><p>Complex simulations often combines a number of physics codes, potentially provided by various actors and written in different programming languages. To make them working together, an additional layer, that 'orchestrates' execution of particular codes, and takes care on passing data between 'producers' and 'consumers' is needed.&#xa0;Sometimes the functionality of such layer is provided by dedicated software (aka 'workflow orchestrators', like Kepler <a class="external-link" href="https://kepler-project.org/" rel="nofollow">https://kepler-project.org/</a>), sometimes it can be handled by much simpler mechanism like Python scripts.&#xa0; Unfortunately all components ('actors') that constitute a computing scenario ('workflow') must be implemented in the same programming language, defining the same API.</p><p>Unfortunately, in most cases, scientific, simulation codes that performs computing intensive calculations&#xa0; (due to performance reasons) are written in C++ or Fortran, while 'workflow orchestrators' are implemented in (more popular nowadays) languages, like Java, Python, etc. Hence the need for a 'wrapper' that intermediates between native code language and language of the orchestrator. Such wrappers can be developed manually, however users may benefit from a tool that automatise this process - iWrap</p><h2 id="WrappingusercodesintoactorsiWrap-iWrap-actorgenerator"><span class="nh-number">1.2. </span>iWrap - actor generator</h2><p><span class="confluence-embedded-file-wrapper image-center-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image image-center" height="400" src="attachments/70877391/70877442.png" data-image-src="attachments/70877391/70877442.png" data-unresolved-comment-count="0" data-linked-resource-id="70877442" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-3_13-6-52.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877391" data-linked-resource-container-version="23"></span></p><p><span>iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex&#xa0;computing scenarios designed in other language (e.g. Python).</span></p><p><span>It's plug-in based&#xa0;</span><span>modular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC data&#xa0;</span>for instance)</p><p><em><strong>iWrap goals:</strong></em></p><ul><li>iWrap creates a Python script (aka an actor) that:<ul><li>calls a user code</li><li>provides error handling</li><li>calls debugger (if run in "debug" mode)</li><li>runs MPI code</li></ul></li><li>iWrap generates a Fortran/CPP wrapper, which intermediates between Python script (workflow) and user code in terms of:<ul><li>reading/writing of in/out physical data (IDS)</li><li>passing other arguments to/from the actor</li></ul></li></ul><p><em><strong>iWrap interfaces:</strong></em></p><p><span>For user conveniency it provides two kinds of interfaces:</span></p><ul><li><span> user friendly&#xa0;<em>graphical interface</em>&#xa0;that allows non-experienced users to define an actor in intuitive way and&#xa0;</span></li><li><span><em>command line interface</em>&#xa0;foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.</span></li></ul><h1 id="WrappingusercodesintoactorsiWrap-Preparationofcode"><span class="nh-number">2. </span>Preparation of code</h1><p><span style="color: rgb(23,43,77);">A signature of user code must follow strict rules to allow interaction between it and wrapping actor.&#xa0; Please use following <a href="iWrap---native-code-API_70877452.html">&#xa0;&gt;&gt;link&lt;&lt;</a></span><span style="color: rgb(23,43,77);">&#xa0;to get detailed guidelines for integration of native code into workflows using iWrap&#xa0;&#xa0;</span></p><h1 id="WrappingusercodesintoactorsiWrap-Codeandactordescription"><span class="nh-number">3. </span>Code and actor description</h1><p>iWrap, to properly wrap the code, needs detailed informations about both: the wrapped code and an actor to be generated. A formal description of the code provides information about the programming language used, arguments passed to/from the code, type of these arguments, etc, etc, while an actor description tells iWrap how to name generated actor, where to put it, etc. Such descriptions has to be provided in YAML format file, prepared manually, or automatically with help of iWrap GUI.</p><div class="confluence-information-macro confluence-information-macro-information"><p class="title">Hint</p><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>iWrap GUI allows to generate an actor without the need for manual preparation of actor/code description.&#xa0;</p></div></div><p><br></p><h2 id="WrappingusercodesintoactorsiWrap-YAMLfilesyntax"><span class="nh-number">3.1. </span>&#xa0;YAML file syntax</h2><p>The YAML file consists of two independent parts (aka 'YAML documents'), marked by tags corresponding to their roles: <code>actor_description</code> and <code>code_description</code>. Only <em>code description</em> part is mandatory, and&#xa0; <em>actor description</em> could be provided in a file, or using iWrap commandline switches or interacting with GUI.</p><p>The structure of the file is following:</p><p><br></p><div class="code panel pdl" style="border-width: 1px;"><div class="codeHeader panelHeader pdl" style="border-bottom-width: 1px;"><b>iwrap_file.yaml</b></div><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: yml; gutter: false; theme: Confluence" data-theme="Confluence"># actor description part - optional 
+--- !actor_description
+	&lt;see chapter below for details&gt;
+...
+
+# code description part - mandatory
+ --- !code_description  
+ 	&lt;see chapter below for details&gt; 
+...
+ </pre>
+</div></div><p><br></p><p><br></p><div class="confluence-information-macro confluence-information-macro-warning"><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><ul><li>All YAML fields are <em>MANDATORY</em>, unless explicitly described as <em>OPTIONAL</em></li><li>A code description part must begin with <code>"--- !code_description"</code>&#xa0;</li></ul></div></div><p><br></p><h2 id="WrappingusercodesintoactorsiWrap-Nativecodedescription"><span class="nh-number">3.2. </span>Native code description</h2><p>Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains generic information common for all languages, The latter one contains information specific for a given language of the native code (currently defined only for Fortran and CPP).&#xa0;</p><p><br></p><div class="confluence-information-macro confluence-information-macro-warning"><p class="title">Root directory</p><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p><span>Root directory for all relative paths to files included in code description is on of the following:</span></p><ul><li><span>A</span><span>&#xa0;directory containing YAML file from which project was loaded</span></li></ul><ul><li><span>A directory from which iWrap was run (if not loaded from file)</span></li></ul></div></div><p><br></p><h3 id="WrappingusercodesintoactorsiWrap-Commonpart"><span class="nh-number">3.2.1. </span>Common part</h3><p>&#xa0;Generic information common for all (or at least majority of) programming languages.</p><ul><li><code>programming_language</code>&#xa0;<br><ul><li>meaning:&#xa0; language of physics code</li><li>value: one of predefined values: 'Fortran', 'CPP'</li><li>example: 'Fortran'</li></ul></li><li><em><code>code_name</code></em>&#xa0;<br><ul><li>meaning:<ul><li>name of user method / subroutine to be called,</li><li>must be<span>&#xa0;</span><strong>exactly the same</strong>&#xa0;as name of called method / subroutine</li><li>it is used also as an actor name and the name of directory where actor is installed</li></ul></li><li>value: string</li><li>example: 'my_subroutine'&#xa0;</li></ul></li><li><em><code>data_type</code></em>&#xa0;<br><ul><li>meaning: data type handled by the physics code</li><li>value: 'legacy' (currently only 'Legacy IDS' type has been implemented)</li><li>example: 'legacy'</li></ul></li><li><em><code>arguments</code>&#xa0; </em><em>-<span>&#xa0;</span></em>list of arguments<ul><li>argument definition:&#xa0;<ul><li><em>name</em>:<ul><li>meaning: user defined argument name</li><li>value: string</li><li>example: equilibrium00&#xa0;&#xa0;&#xa0;</li></ul></li><li><em>type</em>:<ul><li>meaning: a type of an IDS argument</li><li>value:&#xa0;<ul><li>predefined name of one of the IDSes</li></ul></li><li>example: 'equilibrium'&#xa0;</li></ul></li><li>intent<ul><li>meaning: determines if given argument is input or output one</li><li>value: predefined - string "IN", "OUT"</li></ul></li></ul></li></ul></li><li><code><em>code_path</em>:</code>&#xa0;<ul><li>meaning: path to system library (C, CPP) , script (Python), etc containing the physics code, including method/subroutine to be run</li><li>value: string, valid path to file</li><li>example: 'any text'&#xa0;&#xa0;</li></ul></li><li><em><code>code_parameters</code></em><strong>&#xa0; </strong>- a structure containing <code>parameters</code> and schema <code>entry</code>:<ul><li><code>parameters</code>&#xa0;:<ul><li>meaning: path to XML file containing user defined parameters of the physics code</li><li>value: string, valid path to file</li><li>example: './code_parameters/parameters.xml'</li></ul></li><li><code>schema</code>&#xa0;:<ul><li>meaning: path to XSD file contains schema of XML parameters, to be able to validate them</li><li>value: string, valid path to file</li><li>example: './code_parameters/parameters.xsd'</li></ul></li></ul></li></ul><ul><li><em><code>documentation</code>&#xa0;:</em><ul><li>meaning: human readable description of native code</li><li>value: string</li><li>example: 'any text'</li></ul></li></ul><h3 id="WrappingusercodesintoactorsiWrap-Languagespecificpart-Fortran/C++"><span class="nh-number">3.2.2. </span>Language specific part - Fortran/C++</h3><ul><li><code>compiler</code>&#xa0;:<ul><li>meaning: the name/vendor of the compiler (and not compiler command!) used to compile native codes</li><li>value: string, one of vendors of compilers, currently: 'Intel' or 'GCC'</li><li>example: 'Intel'</li></ul></li><li><code>mpi_flavour</code>&#xa0;<br><ul><li>meaning: MPI compiler flavour to be used</li><li>values: string, one of:&#xa0;<span style="color: rgb(23,43,77);"><span>&#xa0;</span>MPICH, MPICH2, MVAPICH2, OpenMPI, etc.</span></li><li>example 'MPICH2'</li></ul></li><li><code>open_mp</code>&#xa0;:<ul><li>meaning: if user code should be compiled with OpenMP flag</li><li>values: boolean</li><li>example 'true'</li></ul></li><li><em><code>system_libraries</code>&#xa0;:</em><ul><li>meaning: a list of&#xa0;system libraries, managed using&#xa0;<em>pkg-config</em><span>&#xa0;</span>mechanism,&#xa0; that has to be used while native code linking</li><li>value:&#xa0;a list of&#xa0;system libraries names, as they are published by&#xa0;<em>pkg-config</em>&#xa0;</li><li><p class="auto-cursor-target">example:&#xa0;</p><div class="table-wrap"><table class="wrapped confluenceTable" style="text-align: left;"><tbody style="text-align: left;"><tr style="text-align: left;"><td style="text-align: left;" class="confluenceTd"><p style="text-align: left;"><code class="sql plain" style="text-align: left;">- fftw3f</code><br><code class="sql plain" style="text-align: left;">- glib</code><br><code class="sql plain" style="text-align: left;">- mkl</code></p></td></tr></tbody></table></div></li></ul></li></ul><ul><li><code>custom_libraries</code>&#xa0;:<ul><li>meaning: additional libraries, not managed by&#xa0;<em>pkg-config</em><span>&#xa0;</span>mechanism, necessary to link of the physics code<em>&#xa0;</em>:</li><li>value:&#xa0;&#xa0;a list of paths to libraries&#xa0;</li><li><p class="auto-cursor-target">example:&#xa0;</p><div class="table-wrap"><table class="wrapped confluenceTable" style="text-align: left;"><colgroup><col></colgroup><tbody style="text-align: left;"><tr style="text-align: left;"><td style="text-align: left;" class="confluenceTd"><p style="text-align: left;"><code class="sql plain" style="text-align: left;">- ./lib/custom/libcustom1.a</code><br><code class="sql plain" style="text-align: left;">- ./lib/custom/libcustom2.a</code></p></td></tr></tbody></table></div></li></ul></li></ul><h3 class="auto-cursor-target" id="WrappingusercodesintoactorsiWrap-Example-Fortrancodedescription"><span class="nh-number">3.2.3. </span>Example - Fortran code description</h3><p><br></p><div class="code panel pdl" style="border-width: 1px;"><div class="codeHeader panelHeader pdl" style="border-bottom-width: 1px;"><b>fortran_code.yaml</b></div><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: yml; gutter: false; theme: Confluence" data-theme="Confluence">--- !code_description
+programming_language: Fortran
+code_name: demo_code
+data_type: legacy
+arguments:
+-&#xa0;&#xa0; name: equilibrium00
+&#xa0;&#xa0;&#xa0;&#xa0;type: equilibrium
+&#xa0;&#xa0;&#xa0;&#xa0;intent: IN
+-&#xa0;&#xa0; name: equilibrium11
+&#xa0;&#xa0;&#xa0;&#xa0;type: equilibrium
+&#xa0;&#xa0;&#xa0;&#xa0;intent: OUT
+code_path: ./lib/libmy_lib.a
+code_parameters:
+&#xa0;&#xa0;&#xa0;&#xa0;parameters: ./code_paramneters/parameters.xml
+&#xa0;&#xa0;&#xa0;&#xa0;schema: ./code_paramneters/parameters.xsd
+documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+&#xa0;&#xa0;&#xa0;&#xa0;eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+&#xa0;&#xa0;&#xa0;&#xa0;veniam... '
+language_specific:
+&#xa0;&#xa0;&#xa0;&#xa0;compiler: Intel
+&#xa0;&#xa0;&#xa0;&#xa0;mpi_flavour: MPICH2
+&#xa0;&#xa0;&#xa0;&#xa0;open_mp: false
+&#xa0;&#xa0;&#xa0;&#xa0;system_libraries:
+&#xa0;&#xa0;&#xa0;&#xa0;- fftw3f
+&#xa0;&#xa0;&#xa0;&#xa0;- glib
+&#xa0;&#xa0;&#xa0;&#xa0;- mkl
+&#xa0;&#xa0;&#xa0;&#xa0;custom_libraries:
+&#xa0;&#xa0;&#xa0;&#xa0;- ./lib/custom/libcustom1.a
+&#xa0;&#xa0;&#xa0;&#xa0;- ./lib/custom/libcustom2.a</pre>
+</div></div><h2 id="WrappingusercodesintoactorsiWrap-Actordescription"><span class="nh-number">3.3. </span>Actor description</h2><div class="confluence-information-macro confluence-information-macro-warning"><span class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><ul><li>All YAML fields are <em>MANDATORY</em>, unless explicitly described as <em>OPTIONAL</em></li><li>An actor description part must begin with <code>"--- !actor_description"</code>&#xa0;</li></ul></div></div><h3 id="WrappingusercodesintoactorsiWrap-Actordescriptionsyntax"><span class="nh-number">3.3.1. </span>Actor description syntax</h3><p><br></p><ul><li><em><code>actor_name</code>&#xa0;:</em><ul><li>meaning: the arbitrary, user defined name of the actor. It determines: the name of class to be generated and directory where actor will be put</li><li>value: string</li><li>example: 'core2dist'</li></ul></li><li><em><code>actor_type</code>:</em><ul><li>meaning:&#xa0;&#xa0;</li><li>values: 'python' (currently only python type has been implemented)</li><li>example&#xa0;</li></ul></li><li><em><code>data_type</code>:</em><ul><li>meaning: data type handled at the workflow level&#xa0;</li><li>value: 'legacy' (currently only 'Legacy IDS' type has been implemented)</li><li>example: 'legacy'</li></ul></li><li><em><code>install_dir</code>:</em><ul><li>optional parameter</li><li>meaning:&#xa0; user chosen folder, where an actor will be installed</li><li>values: string,&#xa0;</li><li>example : /my/working/dir/IWRAP_ACTORS</li><li>if not defined, a default installation directory will be used</li></ul></li></ul><h3 id="WrappingusercodesintoactorsiWrap-Example"><span class="nh-number">3.3.2. </span>Example</h3><div class="code panel pdl" style="border-width: 1px;"><div class="codeHeader panelHeader pdl" style="border-bottom-width: 1px;"><b>actor_description.yaml</b></div><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: yml; gutter: false; theme: Confluence" data-theme="Confluence">--- !actor_description
+actor_name: core2dist
+actor_type: python
+data_type: legacy
+install_dir:  /my/working/dir/IWRAP_ACTORS
+...</pre>
+</div></div><h1 id="WrappingusercodesintoactorsiWrap-Actorgeneration"><span class="nh-number">4. </span>Actor generation</h1><h2 id="WrappingusercodesintoactorsiWrap-iWrapcommandline"><span class="nh-number">4.1. </span>iWrap commandline</h2><p>Once YAML file is prepared it can be used for generation of an actor using iWrap commandline.</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">usage: iwrap [-h] [-a ACTOR_NAME] [-t ACTOR_TYPE] [-d DATA_TYPE] [-f FILE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Actor generation:
+  -a ACTOR_NAME, --actor-name ACTOR_NAME
+                        user defined name of the actor
+  -t ACTOR_TYPE, --actor-type ACTOR_TYPE
+                        type of an actor to be generated
+  -d DATA_TYPE, --data-type DATA_TYPE
+                        type of data to be used by the actor
+  -f FILE, --file FILE  a path to code/actor description *.yaml file
+
+</pre>
+</div></div><p><br></p><p>If YAML file contains&#xa0; both code description and actor description parts, no additional switches are required.</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">shell&gt; iwrap -f actor_and_code_descriptions.yaml</pre>
+</div></div><p><br></p><p>If YAML contains only code description, additional information necessary to generate an actor must be provided. An actor name is mandatory switch in such case, while the other arguments (actor and data type) are optional - if they are absent, default values are used.</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">shell&gt; iwrap -a actor_name -f code_descriptions.yaml</pre>
+</div></div><p><br></p><h2 id="WrappingusercodesintoactorsiWrap-iWrapgraphicalinterface"><span class="nh-number">4.2. </span>&#xa0;iWrap graphical interface</h2><p><a href="iWrap---graphical-interface_70877876.html">&gt;&gt;here&lt;&lt;</a></p><h1 id="WrappingusercodesintoactorsiWrap-Usageofactorwithinworkflow"><span class="nh-number">5. </span>Usage of actor within workflow</h1><h2 id="WrappingusercodesintoactorsiWrap-Actorimportandcreation"><span class="nh-number">5.1. </span><span>Actor import and&#xa0;</span>creation</h2><p class="auto-cursor-target">To make an actor class visible inside a workflow script it has to be imported:</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">from &lt;actor_package&gt;.actor import &lt;actor_class&gt;&#xa0;</pre>
+</div></div><p class="auto-cursor-target">In a current version both:&#xa0;<em>&lt;actor_package&gt;</em>&#xa0;and&#xa0;<em>&lt;actor_class&gt;</em> &#xa0;are set to the same value provided by user as an <em>'actor name'.</em></p><p class="auto-cursor-target">To import an actor named e.g. <em>'physics_ii</em>' a correct import will look like:</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">from physics_ii.actor import physics_ii&#xa0;</pre>
+</div></div><p>An actor instance can be created using already imported actor class in 'usual pythonic' way:</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">actor_object = &lt;actor name&gt;()
+e.g.
+actor_object = physics_ii()</pre>
+</div></div><h2 id="WrappingusercodesintoactorsiWrap-Actorruntimesettings"><span class="nh-number">5.2. </span>Actor runtime settings</h2><p>Among the actor properties one is especially important: <code>runtime_settings.</code>&#xa0; This property tells the wrapper how native code should be run and defines:</p><ul><li>Run mode<ul><li>Defined by setting: <code>&lt;actor name&gt;.runtime_settings.run_mode = value</code></li><li><p>Import of enumerated values: <code>from &lt;actor name&gt;.python_common.job_settings import RunMode</code>&#xa0;</p></li><li><code>RunMode.NORMAL</code> (default) - native code is called directly from Python, within the same process (and environment) that workflow script. Usually system resources, shared with other Python threads are limited, however this mode is suitable for most of the actors.&#xa0; &#xa0;</li><li><code>RunMode.STANDALONE</code> - an actor runs native code as executable in a separate system process, having its own environment and (usually) bigger system resources available. This mode is suitable e.g. for memory demanding code.</li><li><p class="auto-cursor-target">Example:&#xa0;</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">from physics_ii.python_common.job_settings import RunMode
+self.physics_ii.runtime_settings.run_mode = RunMode.STANDALONE</pre>
+</div></div></li></ul></li><li>Debug mode:<ul><li>Defined by setting: <code>&lt;actor name&gt;.runtime_settings.debug_mode = value</code></li><li>Import of enumerated values: <code>from &lt;actor name&gt;.python_common.job_settings import DebugMode</code>&#xa0;</li><li><code>DebugMode.STANDALONE</code> - similarly to STANDALONE <em>run mode</em> - an actor runs <u>native code as executable in a separate system process</u>, but this time under debugger control. Debugged code can be run several times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable for most of the purposes.&#xa0; &#xa0;</li><li><code>DebugMode.ATTACH</code> - an actor runs <u>a debugger as parallel process, attaching it to a running workflow</u> and setting breakpoint on wrapped native code of the debugged actor.&#xa0; Because debugger attaches to a workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results from actor interdependencies (e.g. one actor overwrites memory of the other one).</li><li><p class="auto-cursor-target">Example:&#xa0;</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">from physics_ii.python_common.job_settings import DebugMode
+self.physics_ii.runtime_settings.run_mode = DebugMode.STANDALONE</pre>
+</div></div></li></ul></li><li>MPI settings<ul><li>Currently only number of nodes to run a code in parallel are defined</li><li>Defined by setting: <code>&lt;actor name&gt;.runtime_settings.mpi.number_of_processes = value</code></li><li>Please note:&#xa0;<ul><li>MPI code is run always in standalone mode</li><li>If a native code is not marked as 'MPI' during actor generation, this setting is ignored</li></ul></li></ul></li><li>IDS storage settings:<ul><li>This attribute defines settings of temporary storage being used while passing IDSes between an actor and native code.</li><li>Defined by setting: <code>&lt;actor name&gt;.runtime_settings.ids_storage.&lt;storage_parameter&gt; = value</code></li><li>Storage parameters that can be set:<ul><li><code>db_name:</code>&#xa0;<ul><li>Meaning: name of data base to be used</li><li>Default value: 'tmp'</li></ul></li><li><code>shot:</code><ul><li>Meaning - shot number</li><li>Default value - 9999</li></ul></li><li><code>run</code> :<ul><li>Meaning - run number</li><li>Default value - 9999</li></ul></li><li><code>backend:</code><ul><li>Meaning - backend to be used</li><li>Default value - <code>imas.imasdef.MEMORY_BACKEND</code>&#xa0;</li></ul></li><li><code>persistent_backend</code>&#xa0;<ul><li>Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running actor in a standalone mode, when a native code is run as separate process, so it doesn't share memory with other actors.</li><li>Default value -&#xa0; imas.imasdef.MDSPLUS_BACKEND</li></ul></li></ul></li><li>Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.</li></ul></li><li>Other settings - not yet implemented:<ul><li>Sandbox settings</li><li>Batch job settings</li><li>OpenMP settings</li></ul></li></ul><h2 id="WrappingusercodesintoactorsiWrap-Actorlifecycle"><span class="nh-number">5.3. </span>Actor life cycle</h2><p>During its 'life' an actor goes through several states, that can be passed only in a strict order:</p><ul><li><p class="auto-cursor-target">Creation of the object</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">actor_object = &lt;actor name&gt;()
+e.g.
+actor_object = physics_ii()</pre>
+</div></div></li><li>Setting up the runtime settings<ul><li><p class="auto-cursor-target">Tuning up the actor before its initialization and native code execution</p></li><li>See chapter above</li></ul></li><li>Actor initialisation:<ul><li><p class="auto-cursor-target">Calling <code>initialize()</code> method of the actor to perform internal initialisation actions</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">actor_object.initialize()</pre>
+</div></div></li></ul></li><li>Native code call:<ul><li>This step can be repeated an arbitrary number of times</li><li><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">  &lt;output IDS or list of IDSes&gt; = actor_object(&lt;input IDS/IDSes&gt;)  
+e.g.
+  output_distribution_sources = actor_object(input_core_profiles)       &#xa0; </pre>
+</div></div></li></ul></li><li>Actor finalisation<ul><li><p class="auto-cursor-target">Calling <code>finalize()</code> method of the actor to perform internal finalisation actions</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: java; gutter: false; theme: Confluence" data-theme="Confluence">actor_object.finalize()</pre>
+</div></div></li></ul></li></ul><h2 id="WrappingusercodesintoactorsiWrap-Thesimplestworkflow"><span class="nh-number">5.4. </span>The simplest workflow</h2><p>A skeleton of the very simple workflow could be implemented like this:</p><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence"># Import of the actor class
+from &lt;actor name&gt;.actor import &lt;actor name&gt; 
+
+# Creation of actor object
+actor_object = &lt;actor name&gt;()
+
+# Reading input data
+...
+
+# Setting up runtime properties (if necessary)
+...
+
+# Actor initialisation
+actor_object.initialize()
+
+# Native code run &#xa0;   
+&lt;output IDS or list of IDSes&gt;  = actor_object(&lt;input IDS/IDSes&gt;)  
+
+# Actor finalisation
+actor_object.finalize()
+
+# Saving output data
+...</pre>
+</div></div><p><br></p><h2 id="WrappingusercodesintoactorsiWrap-Workflowexample"><span class="nh-number">5.5. </span>&#xa0;Workflow example</h2><div class="code panel pdl" style="border-width: 1px;"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: py; gutter: false; theme: Confluence" data-theme="Confluence">import sys
+import imas, os
+
+from core2dist.actor import core2dist
+from core2dist.python_common.job_settings import RunMode, DebugMode
+
+class ExampleWorkflowManager:
+
+    def __init__(self):
+        self.actor_cp2ds = core2dist()
+        self.input_entry = None
+        self.output_entry = None
+
+    def init_workflow(self):
+
+        # INPUT/OUTPUT CONFIGURATION
+        shot                = 134174
+        run_in              = 37
+        input_user_or_path  = 'public'
+        input_database      = 'iter'
+        run_out             = 10
+        output_user_or_path = os.getenv('USER')
+        output_database     = input_database
+
+        # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
+        print('=&gt; Open input datafile')
+        self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
+        self.input_entry.open()
+        
+        # CREATE OUTPUT DATAFILE
+        print('=&gt; Create output datafile')
+        self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
+        self.output_entry.create()
+
+        # # # # # # # # Initialization of ALL actors  # # # # # # # #
+         #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.STANDALONE
+ &#xa0; &#xa0; &#xa0; &#xa0; self.actor_cp2ds.initialize()
+    
+    def execute_workflow(self):
+        # READ INPUT IDSS FROM LOCAL DATABASE
+        print('=&gt; Read input IDSs')
+        input_core_profiles = self.input_entry.get('core_profiles')
+
+        # EXECUTE PHYSICS CODE
+        print('=&gt; Execute physics code')
+
+        output_distribution_sources = self.actor_cp2ds(input_core_profiles)        
+        
+        # SAVE IDSS INTO OUTPUT FILE
+        print('=&gt; Export output IDSs to local database')
+        self.output_entry.put(output_distribution_sources)
+        print('Done exporting.')
+
+    def end_workflow(self):
+        
+        # Finalise ALL actors 
+        self.actor_cp2ds.finalize()
+
+        #other finalisation actions
+        self.input_entry.close()
+        self.output_entry.close()
+
+manager = ExampleWorkflowManager()
+
+manager.init_workflow()
+manager.execute_workflow()
+manager.end_workflow()</pre>
+</div></div><p><br></p><p><br></p><p><br></p><p><br></p>
+                    </div>
+
+                                                            <div class="pageSection group">
+                        <div class="pageSectionHeader">
+                            <h2 id="attachments" class="pageSectionTitle">Attachments:</h2>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877391/70877442.png">image2021-9-3_13-6-52.png</a> (image/png)
+                                <br/>
+                                                    </div>
+                    </div>
+                    
+                                                      
+                </div>             </div> 
+            <div id="footer" role="contentinfo">
+                <section class="footer-body">
+                    <p>Document generated by Confluence on 27 wrz 2021 14:37</p>
+                    <div id="footer-logo"><a href="http://www.atlassian.com/">Atlassian</a></div>
+                </section>
+            </div>
+        </div>     </body>
+</html>

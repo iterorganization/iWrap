@@ -43,8 +43,12 @@ setconfig:
 clean:
 	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
 
+make html_to_md:
+	python3 $(SOURCEDIR)/html_to_md.py
+
 docs:
 	make clean
+	make html_to_md
 	make setconfig
 	make apidocs
 	make html
