@@ -35,7 +35,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         self.xsd_browser = CodeParameterBrowserPane(self, label_text="Schema file:", file_type="XSD")
 
         # XML Validator object against XSD
-        _validator = XMLValidatorPane(self, xml=self.xml_browser.path, xsd=self.xsd_browser.path)
+        _validator = XMLValidatorPane(self, xml=self.xml_browser.file_path, xsd=self.xsd_browser.file_path)
 
         #: The frame is set up with a padding 20 on the top
         self.configure(padding=(0, 20, 0, 0))
@@ -57,7 +57,6 @@ class CodeParameterPath:
     _extension_description: Tuple[Tuple[Union[Tuple[str], None]]] = ((("All files", "*.*"), ),
                                                                      (("XML files", "*.xml"),),
                                                                      (("XSD files", "*.xsd"),))
-    _project_settings = ProjectSettings.get_settings().code_description.code_parameters
 
     def __init__(self) -> None:
         """General file type class for not specified file extension.
@@ -87,20 +86,18 @@ class CodeParameterPath:
         """
         pass
 
-    def reload(self):
+    def reload(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to path variable.
         """
         pass
 
-    @classmethod
-    def validate(cls, xml_path: str = "", xsd_path: str = "") -> None:
-        """Invokes XML validation method from ProjectSettings().
-        """
-
+    @property
+    def _project_settings(self):
+        return ProjectSettings.get_settings().code_description.code_parameters
 
 
 class XMLPath(CodeParameterPath):
-    def __init__(self):
+    def __init__(self) -> None:
         super(XMLPath, self).__init__()
         self.file_type = self._extension_description[1]
 
@@ -110,17 +107,19 @@ class XMLPath(CodeParameterPath):
         super(XMLPath, self).update_settings()
         self._project_settings.parameters = self.path.get()
 
-    def reload(self):
+    def reload(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to path variable.
         """
         super(XMLPath, self).reload()
-        if not self.is_path_correct(ProjectSettings.get_settings().code_description.code_parameters.parameters):
+        path_to_set = self._project_settings.parameters
+        if not self.is_path_correct(path_to_set):
             return
-        self.path.set(ProjectSettings.get_settings().code_description.code_parameters.parameters)
+
+        self.path.set(path_to_set)
 
 
 class XSDPath(CodeParameterPath):
-    def __init__(self):
+    def __init__(self) -> None:
         super(XSDPath, self).__init__()
         self.file_type = self._extension_description[2]
 
@@ -128,11 +127,13 @@ class XSDPath(CodeParameterPath):
         super(XSDPath, self).update_settings()
         self._project_settings.schema = self.path.get()
 
-    def reload(self):
+    def reload(self) -> None:
         super(XSDPath, self).reload()
-        if not self.is_path_correct(ProjectSettings.get_settings().code_description.code_parameters.schema):
+        path_to_set = self._project_settings.schema
+        if not self.is_path_correct(path_to_set):
             return
-        self.path.set(ProjectSettings.get_settings().code_description.code_parameters.schema)
+
+        self.path.set(path_to_set)
 
 
 class CodeParameterBrowserPane(ttk.Frame):
@@ -153,11 +154,11 @@ class CodeParameterBrowserPane(ttk.Frame):
         """
         super().__init__(master)
         if file_type == "XML":
-            self.path = XMLPath()
+            self.file_path = XMLPath()
         elif file_type == "XSD":
-            self.path = XSDPath()
+            self.file_path = XSDPath()
         else:
-            self.path = CodeParameterPath()
+            self.file_path = CodeParameterPath()
 
         # A label above widget
         ttk.Label(self, text=label_text).pack(side=tk.TOP, anchor=tk.SW, expand=True)
@@ -169,7 +170,7 @@ class CodeParameterBrowserPane(ttk.Frame):
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # An entry to display path dialog
-        path_dialog = ttk.Entry(self, state='readonly', textvariable=self.path.path)
+        path_dialog = ttk.Entry(self, state='readonly', textvariable=self.file_path.path)
         path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
@@ -181,24 +182,24 @@ class CodeParameterBrowserPane(ttk.Frame):
         """
         filename = filedialog.askopenfilename(
                     initialdir=None,
-                    title=f"Select {self.path.file_type[0][0]}",
-                    filetypes=self.path.file_type)
-        if not self.path.is_path_correct(filename):
+                    title=f"Select {self.file_path.file_type[0][0]}",
+                    filetypes=self.file_path.file_type)
+        if not self.file_path.is_path_correct(filename):
             return
 
         # Save loaded path.
-        self.path.path.set(filename)
+        self.file_path.path.set(filename)
         self.update_settings()
 
     def update_settings(self) -> None:
         """To update, ProjectSettings() reads the path from the widget and writes to the file object.
         """
-        self.path.update_settings()
+        self.file_path.update_settings()
 
     def reload(self) -> None:
         """Load data from ProjectSettings and set it as path.
         """
-        self.path.reload()
+        self.file_path.reload()
 
 
 class XMLValidatorPane(ttk.Frame):
@@ -211,7 +212,7 @@ class XMLValidatorPane(ttk.Frame):
         warning or an error depending on the validation run.
     """
 
-    def __init__(self, master, xml: XMLPath, xsd: XSDPath) -> None:
+    def __init__(self, master, xml: CodeParameterPath, xsd: CodeParameterPath) -> None:
         """Initialize the button and all other necessary variables
         that will allow the XML file validation process to start.
         Args:
@@ -224,8 +225,8 @@ class XMLValidatorPane(ttk.Frame):
         button.pack(side=tk.TOP)
 
         # Initialize files to validate
-        self._xml_file: XMLPath = xml
-        self._xsd_file: XSDPath = xsd
+        self._xml_file: CodeParameterPath = xml
+        self._xsd_file: CodeParameterPath = xsd
 
         # Configure the appearance.
         self.pack(side=tk.TOP, anchor=tk.CENTER, expand=False, pady=5, ipady=5, padx=5, ipadx=5)
