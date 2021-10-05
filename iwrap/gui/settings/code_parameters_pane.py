@@ -89,7 +89,7 @@ class CodeParameterPath:
     def reload(self) -> None:
         """Loads the code parameters fields from ProjectSettings() to path variable.
         """
-        pass
+        self.path_valid = True
 
     @property
     def _project_settings(self):
