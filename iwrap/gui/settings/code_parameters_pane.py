@@ -54,30 +54,28 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 
 
 class CodeParameterPath:
-    _extension_description: Tuple[Tuple[Union[Tuple[str], None]]] = ((("All files", "*.*"), ),
-                                                                     (("XML files", "*.xml"),),
-                                                                     (("XSD files", "*.xsd"),))
+    _extension_description: Tuple[Tuple[Union[Tuple[str], None]]] = (("All files", "*.*"),
+                                                                     ("XML files", "*.xml"),
+                                                                     ("XSD files", "*.xsd"))
 
     def __init__(self) -> None:
-        """General file type class for not specified file extension.
+        """The general CodeParameters file path class for not specified file extension.
         Attributes:
-            path (str): Stores the path string.
+            path (tk.StringVar): Stores the path string.
             path_valid (bool): Indicates whether the file path has a valid construction.
+            file_type = A description of the file type for a browser filtering.
         """
         self.path: str = tk.StringVar(value="")
         self.path_valid: bool = False
-        self.file_type = self._extension_description[0]
+        self.file_type = (self._extension_description[0],)
 
     def is_path_correct(self, path="") -> bool:
-        """Checks that the provided path is constructed correctly and is a string type.
-         Sets path_valid (boolean) with check result.
-        Returns: Bool
+        """Checks that the provided path is constructed correctly.
+            Sets path_valid (boolean) with the check result.
         """
         if not path or not isinstance(path, str):
-            # Set the path validity flag to False and return False.
             self.path_valid = False
             return False
-        # Set the path validity flag to True
         self.path_valid = True
         return True
 
@@ -99,17 +97,13 @@ class CodeParameterPath:
 class XMLPath(CodeParameterPath):
     def __init__(self) -> None:
         super(XMLPath, self).__init__()
-        self.file_type = self._extension_description[1]
+        self.file_type = (self._extension_description[1],)
 
     def update_settings(self) -> None:
-        """Updates the code parameters fields in ProjectSettings().
-        """
         super(XMLPath, self).update_settings()
         self._project_settings.parameters = self.path.get()
 
     def reload(self) -> None:
-        """Loads the code parameters fields from ProjectSettings() to path variable.
-        """
         super(XMLPath, self).reload()
         path_to_set = self._project_settings.parameters
         if not self.is_path_correct(path_to_set):
@@ -121,7 +115,7 @@ class XMLPath(CodeParameterPath):
 class XSDPath(CodeParameterPath):
     def __init__(self) -> None:
         super(XSDPath, self).__init__()
-        self.file_type = self._extension_description[2]
+        self.file_type = (self._extension_description[2],)
 
     def update_settings(self) -> None:
         super(XSDPath, self).update_settings()
@@ -139,18 +133,13 @@ class XSDPath(CodeParameterPath):
 class CodeParameterBrowserPane(ttk.Frame):
 
     def __init__(self, master, file_type: str, label_text: str = "") -> None:
-        """A universal file browser class.
-        Each CodeParameterBrowserPane object can search for a specific file extension.
-
+        """A file browser object composed of label, button, and dialog widget.
         Attributes:
-            path (CodeParameterPath): Value holder for path string.
-
-        Initializes an object composed of label, button, and dialog widget.
-
+            file_path (CodeParameterPath): The path object for specified file type.
         Args:
             master (ttk.Frame): A parent widget.
-            label_text (str, optional): Title above the widget.
             file_type (str): Describes a file type reference.
+            label_text (str, optional): Title above the widget.
         """
         super().__init__(master)
         if file_type == "XML":
@@ -170,7 +159,7 @@ class CodeParameterBrowserPane(ttk.Frame):
         button.pack(side=tk.RIGHT, expand=False, fill=tk.X, padx=5)
 
         # An entry to display path dialog
-        path_dialog = ttk.Entry(self, state='readonly', textvariable=self.file_path.path)
+        path_dialog = ttk.Entry(self, state='normal', textvariable=self.file_path.path)
         path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
