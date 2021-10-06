@@ -26,9 +26,9 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.documentation_pane = DocumentationPane( notebook )
         self.signature_pane = SignaturePane( notebook )
 
-        selected_language = self.code_settings_pane.selected_programming_language.get()
-        self.language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
-        self.language_settings_pane = self.language_pane_manager(notebook, selected_language)
+        self.language_settings_pane = None
+        self.add_language_pane(notebook)
+        self.code_settings_pane.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
         notebook.add( self.arguments_pane, text='Arguments' )
         notebook.add( self.code_settings_pane, text='Code settings' )
@@ -49,6 +49,27 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         """Conditions events."""
         if event.widget.index("current") == self.signature_pane.tab_index:
             self.signature_pane.reload()
+
+    def change_language_pane(self, event) -> None:
+        """Update specific language pane when programming language in combobox is changed.
+
+        Args:
+            event: Combobox change value event object. Default to None.
+        """
+        selected_language = self.code_settings_pane.programming_language_combobox.get()
+        current_language = self.code_settings_pane.selected_programming_language.get()
+        if current_language != selected_language:
+            self.code_settings_pane.selected_programming_language.set(selected_language)
+            self.language_settings_pane.save_pane_settings()
+            self.save_pane_settings.pack_forget()
+            self.add_language_pane()
+
+    def add_language_pane(self, notebook):
+        """Add specific language pane for selected programming language.
+        """
+        selected_language = self.code_settings_pane.selected_programming_language.get()
+        language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
+        self.language_settings_pane = language_pane_manager(notebook, selected_language)
 
     def update_settings(self):
         self.arguments_pane.update_settings()

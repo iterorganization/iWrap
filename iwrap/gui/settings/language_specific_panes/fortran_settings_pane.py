@@ -6,6 +6,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
+from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -37,6 +38,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
         FortranPane.language = language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        print(self.settings.__dict__)
 
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
@@ -108,12 +110,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
         include_path = self.feature_pane.module_path.get()
-        self.settings.from_dict({'compiler': compiler,
+        extra_lib = ExtraLibraries()
+        extra_lib.pkg_config_defined = system_libraries
+        extra_lib.lib_path = custom_libraries
+        self.settings.from_dict({'compiler_cmd': compiler,
                                  'include_path': include_path,
-                                 'mpi': mpi,
-                                 'open_mp': open_mpi,
-                                 'system_libraries': system_libraries,
-                                 'custom_libraries': custom_libraries})
+                                 '_mpi': mpi,
+                                 'open_mp_switch': open_mpi,
+                                 'extra_libraries': extra_lib})
 
 
 class SystemLibrariesPane:
