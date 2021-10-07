@@ -14,29 +14,30 @@ from .data_c_binding import ParametersCType, StatusCType
 from ..runtime_settings import RuntimeSettings, RunMode, DebugMode
 
 
-class FortranBinder:
+class CBinder:
 
-    def __init__(self, actor_dir, actor_name, native_language, code_name, is_mpi_code):
+    def __init__(self, actor):
         self.logger = logging.getLogger( 'binding' )
         self.logger.setLevel( logging.DEBUG )
 
-        self.actor_dir = actor_dir
-        self.actor_name = actor_name
-        self.code_name = code_name + '_wrapper'
-        self.is_mpi_code = is_mpi_code
+        self.actor_dir = actor.actor_dir
+        self.actor_name = actor.name
+        self.code_name = actor.code_name + '_wrapper'
+        self.is_mpi_code = actor.is_mpi_code
 
-        self.wrapper_dir = self.actor_dir + '/' + native_language + '_wrapper'
+        self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
+
+        self.runtime_settings = actor.runtime_settings
+        self.code_parameters = actor.code_parameters
+        self.formal_arguments = actor.arguments
+
     def save_data(self, ids):
         pass
 
     def read_data(self, ids):
         pass
 
-    def initialize(self, runtime_settings: RuntimeSettings, arguments, codeparams: CodeParameters):
-        self.runtime_settings = runtime_settings
-        self.code_parameters = codeparams
-        self.formal_arguments = arguments
-
+    def initialize(self):
         self.work_db = self.__create_work_db()
         self.wrapper_func = self.__get_wrapper_function()
 
@@ -131,17 +132,17 @@ class FortranBinder:
         if self.is_mpi_code and mpi_settings:
             exec_command.append( 'mpiexec' )
             np = mpi_settings.number_of_processes
-            if np and str(np).isnumeric():
+            if np and str( np ).isnumeric():
                 exec_command.append( '-np' )
-                exec_command.append( str(np) )
+                exec_command.append( str( np ) )
             if debug_mode:
                 exec_command.append( '-tv' )
         elif debug_mode:
-                exec_command.append( 'totalview' )
+            exec_command.append( 'totalview' )
 
         exec_command.append( './bin/' + self.actor_name + '.exe' )
 
-        print('EXEC command: ', exec_command)
+        print( 'EXEC command: ', exec_command )
         proc = subprocess.Popen( exec_command,
                                  encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -183,9 +184,9 @@ class FortranBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.wrapper_dir)
+        os.chdir( self.wrapper_dir )
 
-        print('RUN MODe: ' , str(self.runtime_settings.run_mode))
+        print( 'RUN MODe: ', str( self.runtime_settings.run_mode ) )
 
         mpi_settings = self.runtime_settings.mpi
         # call the NATIVE function
@@ -205,8 +206,6 @@ class FortranBinder:
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info )
-
-
 
         # get output data
         results = []

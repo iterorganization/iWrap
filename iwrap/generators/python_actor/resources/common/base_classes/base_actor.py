@@ -1,7 +1,7 @@
 from abc import ABC
 
 from ..runtime_settings import RuntimeSettings
-from ..fortran_binding.binder import FortranBinder
+from ..fortran_binding.binder import CBinder
 from ..code_parameters import CodeParameters
 
 
@@ -11,7 +11,12 @@ class ActorBaseClass( ABC ):
         self.runtime_settings = RuntimeSettings()
         self.arguments = []
         self.code_parameters = CodeParameters()
-        self.binder = FortranBinder( actor_dir, self.__class__.__name__, native_language, code_name, is_mpi_code )
+        self.actor_dir = actor_dir
+        self.code_name = code_name
+        self.native_language = native_language
+        self.name = self.__class__.__name__
+        self.is_mpi_code = is_mpi_code
+        self.__binder = CBinder( actor=self )
 
     # # #  Actor lifecycle methods # # #
 
@@ -19,8 +24,7 @@ class ActorBaseClass( ABC ):
         self.code_parameters.read()
         self.code_parameters.validate()
 
-        self.binder.initialize( self.runtime_settings,
-                                self.arguments, self.code_parameters )
+        self.__binder.initialize( )
 
         pass
 
