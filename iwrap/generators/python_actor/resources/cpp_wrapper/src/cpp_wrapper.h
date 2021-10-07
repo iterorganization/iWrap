@@ -6,7 +6,7 @@
 
 
 
-extern "C" void {{code_description.code_name}}_wrapper(
+extern "C" void {{actor_description.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}

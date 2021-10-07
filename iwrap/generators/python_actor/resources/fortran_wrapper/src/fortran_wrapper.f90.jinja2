@@ -2,7 +2,7 @@ module wrapper
 
 contains
 
-subroutine {{code_description.code_name}}_wrapper(&
+subroutine {{actor_settings.actor_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
@@ -65,7 +65,7 @@ subroutine {{code_description.code_name}}_wrapper(&
 	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
     ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.code_name}}( &
+    call  {{code_description.subroutines.main}}( &
 {% for argument in code_description.arguments %}
             {{ argument.name }}, &
 {% endfor %}
@@ -97,7 +97,7 @@ subroutine {{code_description.code_name}}_wrapper(&
    endif
    allocate({{ argument.name }}%code%name(1))
    allocate({{ argument.name }}%code%version(1))
-   {{ argument.name }}%code%name(1) = "{{code_description.code_name}}"
+   {{ argument.name }}%code%name(1) = "{{code_description.subroutines.main}}"
    {{ argument.name }}%code%version(1) = ""
     {% endfor %}
 

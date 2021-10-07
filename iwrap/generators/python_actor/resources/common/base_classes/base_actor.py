@@ -7,12 +7,11 @@ from ..code_parameters import CodeParameters
 
 class ActorBaseClass( ABC ):
 
-    def __init__(self, actor_dir, native_language, code_name, is_mpi_code):
+    def __init__(self, actor_dir, native_language, is_mpi_code):
         self.runtime_settings = RuntimeSettings()
         self.arguments = []
         self.code_parameters = CodeParameters()
         self.actor_dir = actor_dir
-        self.code_name = code_name
         self.native_language = native_language
         self.name = self.__class__.__name__
         self.is_mpi_code = is_mpi_code
@@ -32,7 +31,7 @@ class ActorBaseClass( ABC ):
         return self.run( *args )
 
     def run(self, *args):
-        out = self.binder.call_native_code( *args )
+        out = self.__binder.call_native_code( *args )
         return out
 
     def finalize(self):

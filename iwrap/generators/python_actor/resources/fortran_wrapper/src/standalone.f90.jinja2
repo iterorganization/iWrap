@@ -49,7 +49,7 @@ program standalone
     call open_db_entries(db_entry_desc_array)
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
-    call {{code_description.code_name}}_wrapper(&
+    call {{actor_settings.actor_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}

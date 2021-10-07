@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     db_entry_array = open_db_entries(db_entry_desc_array, IDS_ARGS_NO);
 
     //!!!!!!!!! Cpp wrapper !!!!!!!!!!!!!!!
-    {{code_description.code_name}}_wrapper(
+    {{actor_description.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}

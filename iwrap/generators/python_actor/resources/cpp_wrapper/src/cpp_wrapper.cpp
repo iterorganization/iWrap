@@ -10,7 +10,7 @@
 #include  "{{code_description.language_specific.include_path.split('/')[-1]}}"
 
 
-extern "C" void {{code_description.code_name}}_wrapper(
+extern "C" void {{actor_description.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
@@ -62,7 +62,7 @@ extern "C" void {{code_description.code_name}}_wrapper(
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.code_name}}(
+    {{code_description.subroutines.main}}(
 {% for argument in code_description.arguments %}
             {{ argument.name }},
 {% endfor %}
@@ -77,7 +77,7 @@ extern "C" void {{code_description.code_name}}_wrapper(
    // ------------ Provenance information --------------
 
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-   {{ argument.name }}.code.name = "{{code_description.code_name}}";
+   {{ argument.name }}.code.name = "{{code_description.subroutines.main}}";
    {{ argument.name }}.code.version = "";
 {% endfor %}
 

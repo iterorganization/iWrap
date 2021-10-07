@@ -82,6 +82,56 @@ class Argument( SettingsBaseClass ):
                + 'Intent : ' + self.intent + '\n'
         return str_
 
+class Subroutines(SettingsBaseClass):
+    """The data class containing information about subroutines to be called from library provided by developer.
+
+    Attributes:
+        init (str): A name of subroutine that could be used to initialise the native code (optional)
+        main (str): A name of the main subroutine that will be called from actor (mandatory)
+        finish (str): A name of subroutine that could be used to finalise the native code (optional)
+    """
+
+    def __init__(self):
+        #: A name of subroutine that could be used to initialise the native code (optional)
+        self.init: str = ''
+
+        #: A name of the main subroutine that will be called from actor (mandatory)
+        self.main: str = ''
+
+        #: A name of subroutine that could be used to finalise the native code (optional)
+        self.finish: str = ''
+
+    def validate(self, engine: Engine, project_root_dir: str) -> None:
+
+        # validate correctness of XML
+
+        if not self.main:
+            raise ValueError( 'A name of the main subroutine must provided!' )
+
+
+    def clear(self):
+        """Clears class content, setting default values of class attributes
+        """
+        self.init = ''
+        self.main = ''
+        self.finish = ''
+
+    def from_dict(self, dictionary: Dict[str, Any]) -> None:
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
+        super().from_dict(dictionary)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
+        return super().to_dict()
+
 
 class CodeParameters(SettingsBaseClass):
     """The data class containing information about files defining code parameters.
@@ -232,7 +282,7 @@ class CodeDescription( SettingsBaseClass ):
 
     def __init__(self):
         self._programming_language: str = ''
-        self.code_name: str = None
+        self.subroutines: Subroutines = Subroutines()
         self.data_type: str = None
         self._arguments: List[Argument] = []
         self.code_path: str = None
@@ -250,10 +300,8 @@ class CodeDescription( SettingsBaseClass ):
         else:
             engine.validate_programming_language(self.programming_language)
 
-
-        # code_name
-        if not self.code_name:
-            raise ValueError( 'Name of the code called by actor is not set!' )
+        # subroutines
+        self.subroutines.validate( engine, project_root_dir )
 
         # data_type
         if not self.data_type:

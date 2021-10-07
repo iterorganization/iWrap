@@ -22,7 +22,7 @@ class CBinder:
 
         self.actor_dir = actor.actor_dir
         self.actor_name = actor.name
-        self.code_name = actor.code_name + '_wrapper'
+        self.main_sbrt_name = actor.name + '_wrapper'
         self.is_mpi_code = actor.is_mpi_code
 
         self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
@@ -64,7 +64,7 @@ class CBinder:
         lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr( wrapper_lib, self.code_name )
+        wrapper_fun = getattr( wrapper_lib, self.main_sbrt_name )
         return wrapper_fun
 
     def __status_check(self, status_info):
@@ -88,7 +88,7 @@ class CBinder:
                       '-e', 'dset TV::dll_read_loader_symbols_only *',
                       '-e', 'dset TV::GUI::pop_at_breakpoint true',
                       '-e', f'dattach python {process_id}',
-                      '-e', f'dbreak -pending {self.code_name}',
+                      '-e', f'dbreak -pending {self.main_sbrt_name}',
                       '-e', 'puts  "\n\nTotalView attached to a running Python process.\n"',
                       '-e', 'puts  "Press any key to continue!\n"',
                       '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',

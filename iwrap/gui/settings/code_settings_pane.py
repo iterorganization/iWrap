@@ -64,7 +64,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = ttk.Entry(labelframe, textvariable=self.code_path)
+        self.browse_text = ttk.Entry(labelframe, state='readonly', textvariable=self.code_path)
         self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
@@ -87,7 +87,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.code_path or ''
-        code_name = code_description.code_name or ''
+        code_name = code_description.subroutines.main or ''
 
         if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = CodeSettingsPane.default_programming_language
