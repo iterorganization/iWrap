@@ -42,7 +42,7 @@ Scientific Worfklows : iWrap - graphical interface
 * [3. Actor description](#iWrapgraphicalinterface-Actordescription)
 * [4. Code description](#iWrapgraphicalinterface-Codedescription)
 	+ [4.1. Arguments](#iWrapgraphicalinterface-Arguments)
-		- [4.1.1.  Add argument](#iWrapgraphicalinterface-Addargument)
+		- [4.1.1. Add argument](#iWrapgraphicalinterface-Addargument)
 		- [4.1.2. Edit argument](#iWrapgraphicalinterface-Editargument)
 	+ [4.2. Code settings](#iWrapgraphicalinterface-Codesettings)
 		- [4.2.1. User code settings](#iWrapgraphicalinterface-Usercodesettings)
@@ -85,7 +85,7 @@ This group of graphical controls allows setting the description of the actor.
 
 * **Name** - a user-defined name of the actor
 * **Type** - a user-defined type of the actor
-* **Data type** -  an actor data type
+* **Data type** - an actor data type
 * **Install** **path** - path where actor will be installed
 
 4. Code description
@@ -101,7 +101,7 @@ This group of graphical controls allows setting the description of the actor.
 In the table, there are columns like:
 
 * **Label** - user defined name of an argument
-* **Input/Output** - defines argument as *an input/output*
+* **Input/Output** - defines argument as*an input/output*
 * **Type** - defines an IDS based type of argument (e.g. equilibrium, topinfo, etc.)
 
   
@@ -109,13 +109,13 @@ In the table, there are columns like:
 
 On the right side of the table, there is a section with buttons. Add button allows to add a new argument, edit to edit argument and up/down buttons are changing the position of selected argument in the table. The remove button removes selected argument.
 
-To change **Edit**, **Up**/**Down,** and **Remove** buttons state to active at least one argument has to be added to the table. 
+To change **Edit**, **Up**/**Down,** and **Remove** buttons state to active at least one argument has to be added to the table.
 
-### 4.1.1.  Add argument
+### 4.1.1. Add argument
 
 ![](attachments/70877876/70879061.png)
 
-To add new arguments click **Add...** button in the *Arguments* section. A new window named *iWrap - Add new argument* will appear. Filling label (argument can be also added with empty label) and selecting intent and type allow adding new argument by clicking **Add** button. Click **Cancel** to exit this window. 
+To add new arguments click **Add...** button in the *Arguments* section. A new window named *iWrap - Add new argument* will appear. Filling label (argument can be also added with empty label) and selecting intent and type allow adding new argument by clicking **Add** button. Click **Cancel** to exit this window.
 
 ### 4.1.2. Edit argument
 
@@ -187,7 +187,7 @@ To add new arguments click **Add...** button in the *System libraries* section. 
 
 Available operations on libraries list:
 
-* **Add...** - Adds a new library to the list
+* **Add...**- Adds a new library to the list
 * **Remove** - Removes a new library from the list
 
   
@@ -198,7 +198,7 @@ To change **Remove** button state to active at least one library path has to be 
 4.3. Code parameters
 --------------------
 
-*Code parameters* are all parameters that are specific to the code (like switches, scaling parameters, and parameters for built-in analytical models) as well as parameters to explicitly overrule fields in the IMAS data structures.
+*Code parameters* are all parameters that are specific to the code (like switches, scaling parameters, and parameters for built-in analytical models) as well as parameters to explicitly overrule fields in the IMASdata structures.
 
 ![](attachments/70877876/70879052.png)
 

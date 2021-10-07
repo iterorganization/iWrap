@@ -9,13 +9,13 @@ Welcome to iWrap's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Docstring documentation:
+   :caption: Code documentation:
 
    /documentation_files/docstring_documentation.rst
 
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 5
    :caption: iWrap documentation:
 
    /iwrap_documentation/index.md
