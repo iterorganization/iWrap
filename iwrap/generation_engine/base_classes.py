@@ -1,9 +1,13 @@
+import logging
 import sys
 from abc import ABC, abstractmethod
 from typing import Set
 
 
 class ActorGenerator( ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __str__(self):
         return self.name
