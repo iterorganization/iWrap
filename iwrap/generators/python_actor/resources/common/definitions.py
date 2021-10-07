@@ -1,3 +1,4 @@
+import logging
 
 
 class Argument(  ):
@@ -8,6 +9,9 @@ class Argument(  ):
         type (`str`): type of the IDS (e.g. 'equilibrium')
         intent (`str`): determines if argument is IN or OUT
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     IN = 'IN' # input type of argument
     OUT = 'OUT' # output type of an argument
 

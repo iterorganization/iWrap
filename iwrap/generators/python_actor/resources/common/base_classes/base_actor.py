@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 
 from ..runtime_settings import RuntimeSettings
@@ -6,6 +7,9 @@ from ..code_parameters import CodeParameters
 
 
 class ActorBaseClass( ABC ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, actor_dir, native_language, code_name, is_mpi_code):
         self.runtime_settings = RuntimeSettings()

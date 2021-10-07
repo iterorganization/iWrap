@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import subprocess
@@ -18,6 +19,9 @@ from iwrap.settings.project import ProjectSettings
 
 
 class PythonActorGenerator(ActorGenerator):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     @property
     def name(self) -> str:

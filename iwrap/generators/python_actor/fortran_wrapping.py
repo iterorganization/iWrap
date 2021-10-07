@@ -1,3 +1,4 @@
+import logging
 import sys
 import tempfile
 from datetime import datetime
@@ -10,6 +11,9 @@ from iwrap.settings.project import ProjectSettings
 
 
 class FortranWrapperGenerator(  ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     TEMPLATE_SUBDIR = 'fortran_wrapper'
     FILES_TO_BE_COPIED = ('src/','','')
