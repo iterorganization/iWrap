@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import List, Dict, Any
 from lxml import etree
@@ -13,6 +14,9 @@ from iwrap.settings.language_specific.language_settings_mgmt import LanguageSett
 
 
 class Intent( Enum ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     IN = 'IN'  # input type of argument
     OUT = 'OUT'  # output type of an argument
 
@@ -24,6 +28,9 @@ class Argument( SettingsBaseClass ):
         type (`str`): type of the IDS (e.g. 'equilibrium')
         intent : determines if argument is IN or OUT
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
 
     @property
@@ -90,6 +97,9 @@ class CodeParameters(SettingsBaseClass):
         parameters (str): Path to a XML file with code parameters
         schema (str): Path to a XSD file with schema definition for code parameters file
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         #: A path to XML file containing native code parameters
@@ -184,6 +194,9 @@ class CodeDescription( SettingsBaseClass ):
         documentation (str): human readable description of the native code
         language_specific (Dict[str, Any]): information specific for a given language of the native code
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _yaml_tag = u'!code_description'
 
     @property

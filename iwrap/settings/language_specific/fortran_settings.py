@@ -1,3 +1,4 @@
+import logging
 from abc import ABC
 from pathlib import Path
 
@@ -6,10 +7,16 @@ from iwrap.settings import SettingsBaseClass
 
 
 class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     pass
 
 
 class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     @property
     def mpi(self):
