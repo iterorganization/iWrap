@@ -17,33 +17,32 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         super().__init__( master, text="Wrapped code description:", relief="groove", borderwidth=2, height=100 )
 
         self.pack( pady=10 )
-        notebook = ttk.Notebook( self )
-        notebook.pack( expand=True, fill=tk.BOTH)
+        self.notebook = ttk.Notebook( self )
+        self.notebook.pack( expand=True, fill=tk.BOTH)
 
-        self.arguments_pane = ArgumentsPane( notebook )
-        self.code_settings_pane = CodeSettingsPane( notebook )
-        self.code_parameters_pane = CodeParametersPane( notebook )
-        self.documentation_pane = DocumentationPane( notebook )
-        self.signature_pane = SignaturePane( notebook )
+        self.arguments_pane = ArgumentsPane( self.notebook )
+        self.code_settings_pane = CodeSettingsPane( self.notebook )
+        self.code_parameters_pane = CodeParametersPane( self.notebook )
+        self.documentation_pane = DocumentationPane( self.notebook )
+        self.signature_pane = SignaturePane( self.notebook )
 
         self.language_settings_pane = None
-        self.add_language_pane(notebook)
-        self.code_settings_pane.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
-        notebook.add( self.arguments_pane, text='Arguments' )
-        notebook.add( self.code_settings_pane, text='Code settings' )
-        notebook.add( self.language_settings_pane, text='Language settings' )
-        notebook.add( self.code_parameters_pane, text='Code parameters' )
-        notebook.add( self.documentation_pane, text='Documentation' )
+        self.notebook.add( self.arguments_pane, text='Arguments' )
+        self.notebook.add( self.code_settings_pane, text='Code settings' )
+        self.notebook.add( self.code_parameters_pane, text='Code parameters' )
+        self.notebook.add( self.documentation_pane, text='Documentation' )
+        self.add_language_pane()
         #notebook.add( self.signature_pane, text='Signature' )
 
         # Set tab index property with notebook's index
         #self.signature_pane.tab_index = notebook.index(self.signature_pane)
 
-        notebook.select( None )
-        notebook.enable_traversal()
+        self.notebook.select( None )
+        self.notebook.enable_traversal()
         # When tab is changed execute event handler.
-        notebook.bind("<<NotebookTabChanged>>", self.event_handler)
+        self.notebook.bind("<<NotebookTabChanged>>", self.event_handler)
+        self.code_settings_pane.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
 
     def event_handler(self, event) -> None:
         """Conditions events."""
@@ -61,15 +60,16 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         if current_language != selected_language:
             self.code_settings_pane.selected_programming_language.set(selected_language)
             self.language_settings_pane.save_pane_settings()
-            self.save_pane_settings.pack_forget()
+            self.notebook.forget(self.language_settings_pane)
             self.add_language_pane()
 
-    def add_language_pane(self, notebook):
+    def add_language_pane(self):
         """Add specific language pane for selected programming language.
         """
         selected_language = self.code_settings_pane.selected_programming_language.get()
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
-        self.language_settings_pane = language_pane_manager(notebook, selected_language)
+        self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
+        self.notebook.insert(2, self.language_settings_pane, text="Language settings")
 
     def update_settings(self):
         self.arguments_pane.update_settings()

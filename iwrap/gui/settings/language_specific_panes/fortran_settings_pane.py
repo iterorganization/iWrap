@@ -38,17 +38,16 @@ class FortranPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
         FortranPane.language = language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-        print(self.settings.__dict__)
 
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
-        labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
+        self.labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
+        self.labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # COMBOBOX FRAME
-        combobox_frame = ttk.Frame(labelframe)
+        combobox_frame = ttk.Frame(self.labelframe)
         combobox_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
         combobox_frame.grid_columnconfigure(1, weight=1)
 
@@ -60,7 +59,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
-        tab_frame = ttk.Frame(labelframe)
+        tab_frame = ttk.Frame(self.labelframe)
         tab_frame.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
@@ -117,7 +116,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
                                  'include_path': include_path,
                                  '_mpi': mpi,
                                  'open_mp_switch': open_mpi,
-                                 'extra_libraries': extra_lib})
+                                 'extra_libraries': extra_lib.to_dict()})
 
 
 class SystemLibrariesPane:
