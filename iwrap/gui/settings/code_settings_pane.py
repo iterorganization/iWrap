@@ -64,7 +64,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = ttk.Entry(labelframe, state='readonly', textvariable=self.code_path)
+        self.browse_text = ttk.Entry(labelframe, textvariable=self.code_path)
         self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
