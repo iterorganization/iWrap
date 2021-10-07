@@ -35,7 +35,7 @@ Scientific Worfklows : Wrapping user codes into actors - iWrap
 
 Disclaimer
 
-iWrap is currently being actively developed, so it is not publicly available yet. The first 'production' release is planned at the begin of 2022. 
+iWrap is currently being actively developed, so it is not publicly available yet. The first 'production' release is planned at the begin of 2022.
 
   
 
@@ -43,12 +43,13 @@ iWrap is currently being actively developed, so it is not publicly available yet
 
 
 
-* [1. Introduction](#WrappingusercodesintoactorsiWrap-Introduction)
+* [
+1.Introduction](#WrappingusercodesintoactorsiWrap-Introduction)
 	+ [1.1. Motivations](#WrappingusercodesintoactorsiWrap-Motivations)
 	+ [1.2. iWrap - actor generator](#WrappingusercodesintoactorsiWrap-iWrap-actorgenerator)
 * [2. Preparation of code](#WrappingusercodesintoactorsiWrap-Preparationofcode)
 * [3. Code and actor description](#WrappingusercodesintoactorsiWrap-Codeandactordescription)
-	+ [3.1.  YAML file syntax](#WrappingusercodesintoactorsiWrap-YAMLfilesyntax)
+	+ [3.1. YAML file syntax](#WrappingusercodesintoactorsiWrap-YAMLfilesyntax)
 	+ [3.2. Native code description](#WrappingusercodesintoactorsiWrap-Nativecodedescription)
 		- [3.2.1. Common part](#WrappingusercodesintoactorsiWrap-Commonpart)
 		- [3.2.2. Language specific part - Fortran/C++](#WrappingusercodesintoactorsiWrap-Languagespecificpart-Fortran/C++)
@@ -58,16 +59,17 @@ iWrap is currently being actively developed, so it is not publicly available yet
 		- [3.3.2. Example](#WrappingusercodesintoactorsiWrap-Example)
 * [4. Actor generation](#WrappingusercodesintoactorsiWrap-Actorgeneration)
 	+ [4.1. iWrap commandline](#WrappingusercodesintoactorsiWrap-iWrapcommandline)
-	+ [4.2.  iWrap graphical interface](#WrappingusercodesintoactorsiWrap-iWrapgraphicalinterface)
+	+ [4.2. iWrap graphical interface](#WrappingusercodesintoactorsiWrap-iWrapgraphicalinterface)
 * [5. Usage of actor within workflow](#WrappingusercodesintoactorsiWrap-Usageofactorwithinworkflow)
-	+ [5.1. Actor import and creation](#WrappingusercodesintoactorsiWrap-Actorimportandcreation)
+	+ [5.1. Actor import andcreation](#WrappingusercodesintoactorsiWrap-Actorimportandcreation)
 	+ [5.2. Actor runtime settings](#WrappingusercodesintoactorsiWrap-Actorruntimesettings)
 	+ [5.3. Actor life cycle](#WrappingusercodesintoactorsiWrap-Actorlifecycle)
 	+ [5.4. The simplest workflow](#WrappingusercodesintoactorsiWrap-Thesimplestworkflow)
-	+ [5.5.  Workflow example](#WrappingusercodesintoactorsiWrap-Workflowexample)
+	+ [5.5. Workflow example](#WrappingusercodesintoactorsiWrap-Workflowexample)
 
 
-1. Introduction
+
+1.Introduction
 ===============
 
 Glossary
@@ -83,8 +85,8 @@ Glossary
 * A basic component of scenario / workflow
 * An actor performs some actions (e.g. computations, visualisation, etc)
 * Usually given actor consumes results provided by a previous actor in a scenario and produces data for a next actor in a scenario
-* Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor
-* An actor, using its internal mechanisms ('wrappers') calls '*native code'* method(s), usually written in other language than an actor
+* Actor API strictly depends ontargeted workflow system: an orchestrator "fires" particular actions on actor
+* An actor, using its internal mechanisms ('wrappers') calls '*native code'*method(s), usually written in other language than an actor
 
 **Native code**
 
@@ -92,18 +94,18 @@ Glossary
 1.1. Motivations
 ----------------
 
-Complex simulations often combines a number of physics codes, potentially provided by various actors and written in different programming languages. To make them working together, an additional layer, that 'orchestrates' execution of particular codes, and takes care on passing data between 'producers' and 'consumers' is needed. Sometimes the functionality of such layer is provided by dedicated software (aka 'workflow orchestrators', like Kepler <https://kepler-project.org/>), sometimes it can be handled by much simpler mechanism like Python scripts.  Unfortunately all components ('actors') that constitute a computing scenario ('workflow') must be implemented in the same programming language, defining the same API.
+Complex simulations often combines a number of physics codes, potentially provided by various actors and written in different programming languages. To make them working together, an additional layer, that 'orchestrates' execution of particular codes, and takes care on passing data between 'producers' and 'consumers' is needed.Sometimes the functionality of such layer is provided by dedicated software (aka 'workflow orchestrators', like Kepler <https://kepler-project.org/>), sometimes it can be handled by much simpler mechanism like Python scripts. Unfortunately all components ('actors') that constitute a computing scenario ('workflow') must be implemented in the same programming language, defining the same API.
 
-Unfortunately, in most cases, scientific, simulation codes that performs computing intensive calculations  (due to performance reasons) are written in C++ or Fortran, while 'workflow orchestrators' are implemented in (more popular nowadays) languages, like Java, Python, etc. Hence the need for a 'wrapper' that intermediates between native code language and language of the orchestrator. Such wrappers can be developed manually, however users may benefit from a tool that automatise this process - iWrap
+Unfortunately, in most cases, scientific, simulation codes that performs computing intensive calculations (due to performance reasons) are written in C++ or Fortran, while 'workflow orchestrators' are implemented in (more popular nowadays) languages, like Java, Python, etc. Hence the need for a 'wrapper' that intermediates between native code language and language of the orchestrator. Such wrappers can be developed manually, however users may benefit from a tool that automatise this process - iWrap
 
 1.2. iWrap - actor generator
 ----------------------------
 
 ![](attachments/70877391/70877442.png)
 
-iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex computing scenarios designed in other language (e.g. Python).
+iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complexcomputing scenarios designed in other language (e.g. Python).
 
-It's plug-in based modular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC data for instance)
+It's plug-in basedmodular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC datafor instance)
 
 ***iWrap goals:***
 
@@ -120,13 +122,13 @@ It's plug-in based modular design with clear separation of concerns allows to g
 
 For user conveniency it provides two kinds of interfaces:
 
-* user friendly *graphical interface* that allows non-experienced users to define an actor in intuitive way and
-* *command line interface* foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
+* user friendly*graphical interface*that allows non-experienced users to define an actor in intuitive way and
+* *command line interface*foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
 
 2. Preparation of code
 ======================
 
-A signature of user code must follow strict rules to allow interaction between it and wrapping actor.  Please use following [>>link<<](iWrap---native-code-API_70877452.md) to get detailed guidelines for integration of native code into workflows using iWrap  
+A signature of user code must follow strict rules to allow interaction between it and wrapping actor. Please use following [>>link<<](iWrap---native-code-API_70877452.md)to get detailed guidelines for integration of native code into workflows using iWrap
 
 3. Code and actor description
 =============================
@@ -135,15 +137,15 @@ iWrap, to properly wrap the code, needs detailed informations about both: the wr
 
 Hint
 
-iWrap GUI allows to generate an actor without the need for manual preparation of actor/code description. 
+iWrap GUI allows to generate an actor without the need for manual preparation of actor/code description.
 
   
 
 
-3.1.  YAML file syntax
-----------------------
+3.1. YAML file syntax
+---------------------
 
-The YAML file consists of two independent parts (aka 'YAML documents'), marked by tags corresponding to their roles: `actor_description` and `code_description`. Only *code description* part is mandatory, and  *actor description* could be provided in a file, or using iWrap commandline switches or interacting with GUI.
+The YAML file consists of two independent parts (aka 'YAML documents'), marked by tags corresponding to their roles: `actor_description` and `code_description`. Only *code description* part is mandatory, and *actor description* could be provided in a file, or using iWrap commandline switches or interacting with GUI.
 
 The structure of the file is following:
 
@@ -179,7 +181,7 @@ The structure of the file is following:
 3.2. Native code description
 ----------------------------
 
-Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains generic information common for all languages, The latter one contains information specific for a given language of the native code (currently defined only for Fortran and CPP). 
+Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains generic information common for all languages, The latter one contains information specific for a given language of the native code (currently defined only for Fortran and CPP).
 
   
 
@@ -188,29 +190,29 @@ Root directory
 
 Root directory for all relative paths to files included in code description is on of the following:
 
-* A directory containing YAML file from which project was loaded
+* Adirectory containing YAML file from which project was loaded
 * A directory from which iWrap was run (if not loaded from file)
   
 
 
 ### 3.2.1. Common part
 
- Generic information common for all (or at least majority of) programming languages.
+Generic information common for all (or at least majority of) programming languages.
 
-* `programming_language`   
+* `programming_language`  
 
-	+ meaning:  language of physics code
+	+ meaning: language of physics code
 	+ value: one of predefined values: 'Fortran', 'CPP'
 	+ example: 'Fortran'
-* *`code_name`*   
+* *`code_name`*  
 
 	+ meaning:
 		- name of user method / subroutine to be called,
-		- must be **exactly the same** as name of called method / subroutine
+		- must be**exactly the same**as name of called method / subroutine
 		- it is used also as an actor name and the name of directory where actor is installed
 	+ value: string
 	+ example: 'my\_subroutine'
-* *`data_type`*   
+* *`data_type`*  
 
 	+ meaning: data type handled by the physics code
 	+ value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
@@ -234,46 +236,46 @@ Root directory for all relative paths to files included in code description is o
 	+ value: string, valid path to file
 	+ example: 'any text'
 * *`code_parameters`*- a structure containing `parameters` and schema `entry`:
-	+ `parameters` :
+	+ `parameters`:
 		- meaning: path to XML file containing user defined parameters of the physics code
 		- value: string, valid path to file
 		- example: './code\_parameters/parameters.xml'
-	+ `schema` :
+	+ `schema`:
 		- meaning: path to XSD file contains schema of XML parameters, to be able to validate them
 		- value: string, valid path to file
 		- example: './code\_parameters/parameters.xsd'
-* *`documentation` :*
+* *`documentation`:*
 	+ meaning: human readable description of native code
 	+ value: string
 	+ example: 'any text'
 
 ### 3.2.2. Language specific part - Fortran/C++
 
-* `compiler` :
+* `compiler`:
 	+ meaning: the name/vendor of the compiler (and not compiler command!) used to compile native codes
 	+ value: string, one of vendors of compilers, currently: 'Intel' or 'GCC'
 	+ example: 'Intel'
-* `mpi_flavour`   
+* `mpi_flavour`  
 
 	+ meaning: MPI compiler flavour to be used
-	+ values: string, one of:  MPICH, MPICH2, MVAPICH2, OpenMPI, etc.
+	+ values: string, one of:MPICH, MPICH2, MVAPICH2, OpenMPI, etc.
 	+ example 'MPICH2'
-* `open_mp` :
+* `open_mp`:
 	+ meaning: if user code should be compiled with OpenMP flag
 	+ values: boolean
 	+ example 'true'
-* *`system_libraries` :*
-	+ meaning: a list of system libraries, managed using *pkg-config* mechanism,  that has to be used while native code linking
-	+ value: a list of system libraries names, as they are published by *pkg-config*
-	+ example: 
+* *`system_libraries`:*
+	+ meaning: a list ofsystem libraries, managed using*pkg-config*mechanism, that has to be used while native code linking
+	+ value:a list ofsystem libraries names, as they are published by*pkg-config*
+	+ example:
 	
 	
 	
 	| `- fftw3f``- glib``- mkl` |
-* `custom_libraries` :
-	+ meaning: additional libraries, not managed by *pkg-config* mechanism, necessary to link of the physics code:
-	+ value:  a list of paths to libraries
-	+ example: 
+* `custom_libraries`:
+	+ meaning: additional libraries, not managed by*pkg-config*mechanism, necessary to link of the physics code:
+	+ value:a list of paths to libraries
+	+ example:
 	
 	
 	
@@ -292,30 +294,30 @@ programming\_language: Fortran
 code\_name: demo\_code
 data\_type: legacy
 arguments:
--   name: equilibrium00
-    type: equilibrium
-    intent: IN
--   name: equilibrium11
-    type: equilibrium
-    intent: OUT
+- name: equilibrium00
+type: equilibrium
+intent: IN
+- name: equilibrium11
+type: equilibrium
+intent: OUT
 code\_path: ./lib/libmy\_lib.a
 code\_parameters:
-    parameters: ./code\_paramneters/parameters.xml
-    schema: ./code\_paramneters/parameters.xsd
+parameters: ./code\_paramneters/parameters.xml
+schema: ./code\_paramneters/parameters.xsd
 documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-    veniam... '
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam... '
 language\_specific:
-    compiler: Intel
-    mpi\_flavour: MPICH2
-    open\_mp: false
-    system\_libraries:
-    - fftw3f
-    - glib
-    - mkl
-    custom\_libraries:
-    - ./lib/custom/libcustom1.a
-    - ./lib/custom/libcustom2.a
+compiler: Intel
+mpi\_flavour: MPICH2
+open\_mp: false
+system\_libraries:
+- fftw3f
+- glib
+- mkl
+custom\_libraries:
+- ./lib/custom/libcustom1.a
+- ./lib/custom/libcustom2.a
 ```
 
 3.3. Actor description
@@ -328,7 +330,7 @@ language\_specific:
   
 
 
-* *`actor_name` :*
+* *`actor_name`:*
 	+ meaning: the arbitrary, user defined name of the actor. It determines: the name of class to be generated and directory where actor will be put
 	+ value: string
 	+ example: 'core2dist'
@@ -342,7 +344,7 @@ language\_specific:
 	+ example: 'legacy'
 * *`install_dir`:*
 	+ optional parameter
-	+ meaning:  user chosen folder, where an actor will be installed
+	+ meaning: user chosen folder, where an actor will be installed
 	+ values: string,
 	+ example : /my/working/dir/IWRAP\_ACTORS
 	+ if not defined, a default installation directory will be used
@@ -391,7 +393,7 @@ Actor generation:
   
 
 
-If YAML file contains  both code description and actor description parts, no additional switches are required.
+If YAML file contains both code description and actor description parts, no additional switches are required.
 
 
 
@@ -413,33 +415,33 @@ shell> iwrap -a actor\_name -f code\_descriptions.yaml
   
 
 
-4.2.  iWrap graphical interface
--------------------------------
+4.2. iWrap graphical interface
+------------------------------
 
 [>>here<<](iWrap---graphical-interface_70877876.md)
 
 5. Usage of actor within workflow
 =================================
 
-5.1. Actor import and creation
-------------------------------
+5.1. Actor import andcreation
+-----------------------------
 
 To make an actor class visible inside a workflow script it has to be imported:
 
 
 
 ```
-from <actor\_package>.actor import <actor\_class> 
+from <actor\_package>.actor import <actor\_class>
 ```
 
-In a current version both: *<actor\_package>* and *<actor\_class>*  are set to the same value provided by user as an *'actor name'.*
+In a current version both:*<actor\_package>*and*<actor\_class>* are set to the same value provided by user as an *'actor name'.*
 
 To import an actor named e.g. *'physics\_ii*' a correct import will look like:
 
 
 
 ```
-from physics\_ii.actor import physics\_ii 
+from physics\_ii.actor import physics\_ii
 ```
 
 An actor instance can be created using already imported actor class in 'usual pythonic' way:
@@ -455,14 +457,14 @@ actor\_object = physics\_ii()
 5.2. Actor runtime settings
 ---------------------------
 
-Among the actor properties one is especially important: `runtime_settings.`  This property tells the wrapper how native code should be run and defines:
+Among the actor properties one is especially important: `runtime_settings.` This property tells the wrapper how native code should be run and defines:
 
 * Run mode
 	+ Defined by setting: `<actor name>.runtime_settings.run_mode = value`
 	+ Import of enumerated values: `from <actor name>.python_common.job_settings import RunMode`
 	+ `RunMode.NORMAL` (default) - native code is called directly from Python, within the same process (and environment) that workflow script. Usually system resources, shared with other Python threads are limited, however this mode is suitable for most of the actors.
 	+ `RunMode.STANDALONE` - an actor runs native code as executable in a separate system process, having its own environment and (usually) bigger system resources available. This mode is suitable e.g. for memory demanding code.
-	+ Example: 
+	+ Example:
 	
 	
 	
@@ -474,8 +476,8 @@ Among the actor properties one is especially important: `runtime_settings.`  Th
 	+ Defined by setting: `<actor name>.runtime_settings.debug_mode = value`
 	+ Import of enumerated values: `from <actor name>.python_common.job_settings import DebugMode`
 	+ `DebugMode.STANDALONE` - similarly to STANDALONE *run mode* - an actor runs native code as executable in a separate system process, but this time under debugger control. Debugged code can be run several times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable for most of the purposes.
-	+ `DebugMode.ATTACH` - an actor runs a debugger as parallel process, attaching it to a running workflow and setting breakpoint on wrapped native code of the debugged actor.  Because debugger attaches to a workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results from actor interdependencies (e.g. one actor overwrites memory of the other one).
-	+ Example: 
+	+ `DebugMode.ATTACH` - an actor runs a debugger as parallel process, attaching it to a running workflow and setting breakpoint on wrapped native code of the debugged actor. Because debugger attaches to a workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results from actor interdependencies (e.g. one actor overwrites memory of the other one).
+	+ Example:
 	
 	
 	
@@ -507,7 +509,7 @@ Among the actor properties one is especially important: `runtime_settings.`  Th
 			* Default value - `imas.imasdef.MEMORY_BACKEND`
 		- `persistent_backend`
 			* Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running actor in a standalone mode, when a native code is run as separate process, so it doesn't share memory with other actors.
-			* Default value -  imas.imasdef.MDSPLUS\_BACKEND
+			* Default value - imas.imasdef.MDSPLUS\_BACKEND
 	+ Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
 * Other settings - not yet implemented:
 	+ Sandbox settings
@@ -544,7 +546,7 @@ actor\_object = physics\_ii()
 	+ ```
 	  <output IDS or list of IDSes> = actor\_object(<input IDS/IDSes>)  
 	e.g.
-	  output\_distribution\_sources = actor\_object(input\_core\_profiles)         
+	  output\_distribution\_sources = actor\_object(input\_core\_profiles)        
 	```
 * Actor finalisation
 	+ Calling `finalize()` method of the actor to perform internal finalisation actions
@@ -578,7 +580,7 @@ actor\_object = <actor name>()
 # Actor initialisation
 actor\_object.initialize()
 
-# Native code run     
+# Native code run    
 <output IDS or list of IDSes>  = actor\_object(<input IDS/IDSes>)  
 
 # Actor finalisation
@@ -591,8 +593,8 @@ actor\_object.finalize()
   
 
 
-5.5.  Workflow example
-----------------------
+5.5. Workflow example
+---------------------
 
 
 
@@ -633,7 +635,7 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
          #self.actor\_cp2ds.runtime\_settings.debug\_mode = DebugMode.STANDALONE
-         self.actor\_cp2ds.initialize()
+     self.actor\_cp2ds.initialize()
     
     def execute\_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
