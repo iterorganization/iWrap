@@ -6,6 +6,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
+from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -37,13 +38,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
         super().__init__( master )
         FortranPane.language = language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
+        print(self.settings.__dict__)
 
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
-        labelframe.pack(fill=tk.BOTH, expand=1)
+        labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # COMBOBOX FRAME
         combobox_frame = ttk.Frame(labelframe)
@@ -54,7 +56,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ttk.Label(combobox_frame, text="Compiler:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
         self.compiler_combobox['values'] = ['Intel Fortran (ifort)', 'GNU Compiler Collection (fortran)', 'Intel']
-        self.compiler_combobox.set(self.settings.compiler)
+        self.compiler_combobox.set(self.settings.compiler_cmd)
         self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
@@ -81,7 +83,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         self.settings = ProjectSettings.get_settings().code_description.language_specific
 
-        self.compiler_combobox.set(self.settings.compiler)
+        self.compiler_combobox.set(self.settings.compiler_cmd)
         self.feature_pane.reload()
         self.system_libraries_pane.reload()
         self.custom_libraries_pane.reload()
@@ -108,12 +110,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
         include_path = self.feature_pane.module_path.get()
-        self.settings.from_dict({'compiler': compiler,
+        extra_lib = ExtraLibraries()
+        extra_lib.pkg_config_defined = system_libraries
+        extra_lib.lib_path = custom_libraries
+        self.settings.from_dict({'compiler_cmd': compiler,
                                  'include_path': include_path,
-                                 'mpi': mpi,
-                                 'open_mp': open_mpi,
-                                 'system_libraries': system_libraries,
-                                 'custom_libraries': custom_libraries})
+                                 '_mpi': mpi,
+                                 'open_mp_switch': open_mpi,
+                                 'extra_libraries': extra_lib})
 
 
 class SystemLibrariesPane:
@@ -168,11 +172,11 @@ class SystemLibrariesPane:
         """Add system libraries to the table.
         """
         self.table.delete_data_from_table()
-        if not self.settings.system_libraries:
+        if not self.settings.extra_libraries.pkg_config_defined:
             return
 
         data = []
-        for sys_lib in self.settings.system_libraries:
+        for sys_lib in self.settings.extra_libraries.pkg_config_defined:
             name = sys_lib
             system_lib_dict = self.system_lib.get_pkg_config(name)
             if system_lib_dict is None:
@@ -319,8 +323,8 @@ class CustomLibrariesPane:
         """Add custom libraries from the ProjectSettings to the Table widget.
         """
         data = []
-        if self.settings.custom_libraries is not None:
-            for cus_lib in self.settings.custom_libraries:
+        if self.settings.extra_libraries.lib_path is not None:
+            for cus_lib in self.settings.extra_libraries.lib_path:
                 data.append([cus_lib])
         self.table.add_new_table_content(data)
 
@@ -399,7 +403,7 @@ class FeaturesPane:
         ttk.Label(labelframe, text="OpenMP:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.open_mp_combobox = ttk.Combobox(labelframe, state='readonly')
         self.open_mp_combobox['values'] = ["Yes", "No"]
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
+        self.open_mp_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
         self.open_mp_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     @staticmethod
@@ -424,7 +428,7 @@ class FeaturesPane:
         self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.module_path.set(self.settings.include_path or '')
         self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
+        self.open_mp_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
 
     def update_settings(self):
         """Update open_mpi, include path and mpi values in the ProjectSettings.
