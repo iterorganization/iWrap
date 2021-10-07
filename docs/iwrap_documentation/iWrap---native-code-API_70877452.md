@@ -37,23 +37,20 @@ Scientific Worfklows : iWrap - native code API
 
 
 
-* [
-1.Introduction](#iWrapnativecodeAPI-Introduction)
-* [
-2.Fortran](#iWrapnativecodeAPI-Fortran)
+* [1. Introduction](#iWrapnativecodeAPI-Introduction)
+* [2. Fortran](#iWrapnativecodeAPI-Fortran)
 	+ [2.1. Native code signature](#iWrapnativecodeAPI-Nativecodesignature)
 	+ [2.2. Module](#iWrapnativecodeAPI-Module)
 	+ [2.3. Subroutine](#iWrapnativecodeAPI-Subroutine)
 	+ [2.4. Arguments](#iWrapnativecodeAPI-Arguments)
 	+ [2.5. Example](#iWrapnativecodeAPI-Example)
-* [3. C++](#iWrapnativecodeAPI-C++)
+* [3.  C++](#iWrapnativecodeAPI-C++)
 	+ [3.1. Native code signature](#iWrapnativecodeAPI-Nativecodesignature.1)
 	+ [3.2. Header](#iWrapnativecodeAPI-Header)
 	+ [3.3. Method](#iWrapnativecodeAPI-Method)
 	+ [3.4. Arguments](#iWrapnativecodeAPI-Arguments.1)
 	+ [3.5. Example](#iWrapnativecodeAPI-Example.1)
-* [
-4.MPI](#iWrapnativecodeAPI-MPI)
+* [4. MPI](#iWrapnativecodeAPI-MPI)
 * [5. Code packaging](#iWrapnativecodeAPI-Codepackaging)
 
 
@@ -89,16 +86,16 @@ A signature of user code must follow strict rules to allow interaction between i
 
 
 * Input and output IDSes:
-	+ **Optional**arguments
+	+ **Optional** arguments
 	+ Intent: IN or OUT
 * XML parameters:
-	+ **Optional**argument
+	+ **Optional** argument
 	+ Intent: IN
 * Status code:
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Intent: OUT
 * Status message
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Intent: OUT
 
 The current version of iWrap allows to wrap native code implemented in Fortran or C++
@@ -130,25 +127,25 @@ A native code that will be wrapped by iWrap and that will become a part of workf
 
 ```
 module <module name>
-
-subroutine <subroutinename> ([ids1, ids2, ..., idsN,] [xml\_parameters], status\_code, status\_message)
-use ids\_schemas
-!IN/OUTIDSes
-type(ids\_<ids\_name>), intent([IN|OUT]):: ids1
-type(ids\_<ids\_name>), intent([IN|OUT]):: ids2
-. . .
-type(ids\_<ids\_name>), intent([IN|OUT]):: idsN
-
-
-! XML code parameters
-type(ids\_parameters\_input) :: xml\_parameters
-
-! status info
-integer, intent(OUT) :: status\_code
-character(len=:), pointer, intent(OUT) :: status\_message
-
-endsubroutine <subroutinename>
-endmodule <modulename>
+  
+subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml\_parameters], status\_code, status\_message)
+  use ids\_schemas
+  ! IN/OUT IDSes
+  type(ids\_<ids\_name>), intent([IN|OUT]):: ids1
+  type(ids\_<ids\_name>), intent([IN|OUT]):: ids2
+   . . .
+  type(ids\_<ids\_name>), intent([IN|OUT]):: idsN 
+ 
+ 
+  ! XML code parameters
+  type(ids\_parameters\_input) :: xml\_parameters
+ 
+  ! status info
+  integer, intent(OUT) :: status\_code
+  character(len=:), pointer, intent(OUT) :: status\_message
+ 
+end subroutine <subroutine name>
+end module <module name>
 ```
 
   
@@ -173,21 +170,21 @@ endmodule <modulename>
 Arguments shall be provided in a strict order:
 
 * Input and output IDSes:
-	+ **Optional**arguments
+	+ **Optional** arguments
 	+ Intent: IN or OUT
-	+ Defined as "`type(ids_<ids_name>)`"
+	+ Defined as "`type(ids_<ids_name>)` "
 * XML parameters:
-	+ **Optional**argument
+	+ **Optional** argument
 	+ Intent: IN
 	+ Defined as "`type(ids_parameters_input), intent(IN)"`
 * Status code:
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Intent: OUT
-	+ Defined as "`integer, intent(OUT)"`
+	+ Defined as  "`integer, intent(OUT)"`
 * Status message
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Intent: OUT
-	+ Defined as:`character(len=:), pointer, intent(OUT)`
+	+ Defined as: `character(len=:), pointer, intent(OUT)`
 
 No INOUT arguments are allowed!
 
@@ -198,27 +195,28 @@ No INOUT arguments are allowed!
 
 ```
 module physics\_ii\_mod
+  
+subroutine physics\_ii(equilibrium\_in, equilibrium\_out, code\_param, error\_flag, error\_message)      
 
-subroutine physics\_ii(equilibrium\_in, equilibrium\_out, code\_param, error\_flag, error\_message)  
-
-  use ids\_schemas  
+  use ids\_schemas   
 
   ! IN/OUT IDSes
-type(ids\_equilibrium):: equilibrium\_in, equilibrium\_out
-
-! XML code parameters
-type(ids\_parameters\_input) :: code\_param
-
-! status info
-integer, intent(out) :: error\_flag
-character(len=:), pointer, intent(out) :: error\_message
-
+  type(ids\_equilibrium):: equilibrium\_in, equilibrium\_out
+ 
+  ! XML code parameters
+  type(ids\_parameters\_input) :: code\_param
+ 
+  ! status info
+  integer, intent(out) :: error\_flag
+  character(len=:), pointer, intent(out) :: error\_message
+ 
 end subroutine physics\_ii
 end module physics\_ii\_mod
 ```
 
-3. C++
-======
+
+3. C++
+=======
 
 3.1. Native code signature
 --------------------------
@@ -250,21 +248,21 @@ To generate an actor user has to provide a file containing C++ header of wrapped
 Arguments shall be provided in a strict order:
 
 * Input IDSes:
-	+ **Optional**arguments
+	+ **Optional** arguments
 	+ Defined as `"IdsNs::IDS::<ids_name>"`
 * Output IDSes:
-	+ **Optional**arguments
-	+ Defined as `IdsNs::IDS::<ids_name>&`(please notice reference sign - '&')
+	+ **Optional** arguments
+	+ Defined as `IdsNs::IDS::<ids_name>&`  (please notice reference sign - '&')
 * XML parameters:
-	+ **Optional**argument
+	+ **Optional** argument
 	+ Input argument
 	+ Defined as `"IdsNs::codeparam_t` "
 * Status code:
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Output argument
-	+ Defined as `"int*"`
+	+ Defined as  `"int*"`
 * Status message
-	+ **Mandatory**argument
+	+ **Mandatory** argument
 	+ Output argument
 	+ Defined as: "`char**` "
 
@@ -306,14 +304,15 @@ All native codes that use MPI should follow the rules described below:
 
 
 
-| `!``---- MPI initialisation ----``call MPI_initialized(was_mpi_initialized, ierr)``if (.``not``. was_mpi_initialized) call MPI_Init(ierr)``!``---- MPI Finalisation ----``call MPI_finalized(was_mpi_finalized, ierr)``if (.``not``. was_mpi_finalized) call MPI_Finalize(ierr)` |
+| `!``----  MPI initialisation ----``call MPI_initialized(was_mpi_initialized, ierr)``if (.``not``. was_mpi_initialized)   call MPI_Init(ierr)` `!``----  MPI Finalisation ----``call MPI_finalized(was_mpi_finalized, ierr)``if (.``not``. was_mpi_finalized)   call MPI_Finalize(ierr)` |
 
   
 
 
-* Please be aware of a special role of ranked 0 process: Wrapper that run native code, launched in parallel, reads input data in every processes but writes it only in 'rank 0' process. So native code should gather all results that need to be stored by 'rank 0' process. It concerns alsothose coming from 'rank 0' process are analysed by wrapper.
+* Please be aware of a special role of ranked 0 process: Wrapper that run native code,  launched in parallel, reads input data in every processes but writes it only in 'rank 0' process. So native code should gather all results that need to be stored by 'rank 0' process. It concerns also those coming from 'rank 0' process are analysed by wrapper.
 
-5. Code packaging
+
+5.Code packaging
 =================
 
 A native code written in C++ or Fortran should be packed within static Linux library using e.g. `ar` tool for that purpose.

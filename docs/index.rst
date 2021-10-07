@@ -15,7 +15,7 @@ Welcome to iWrap's documentation!
 
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 1
    :caption: iWrap documentation:
 
    /iwrap_documentation/index.md
