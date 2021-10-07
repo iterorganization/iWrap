@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -22,6 +23,9 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         table (Table): The table widget.
         data_type_combobox (ttk.Combobox): The data type combobox.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the ArgumentsPane class object.
 

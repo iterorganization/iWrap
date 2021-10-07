@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -10,6 +11,9 @@ from iwrap.gui.settings.signature_pane import SignaturePane
 
 
 class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master=None):
         super().__init__( master, text="Wrapped code description:", relief="groove", borderwidth=2, height=100 )

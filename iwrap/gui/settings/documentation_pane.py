@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import LabelFrame, ttk
 from tkinter.constants import S
@@ -17,6 +18,9 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         Additionally, it creates an instance of the ProjectSettings and loads the code description 
         that can later be exported to a YAML file or imports documentation to the editor.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the documentation pane tab.
         Args:
@@ -55,6 +59,9 @@ class TextEditor:
     Notes:
         Losing focus affects ProjectSettings().
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master: ttk.Widget = None):
         """Initialize the scrollable text editor.
         Args:

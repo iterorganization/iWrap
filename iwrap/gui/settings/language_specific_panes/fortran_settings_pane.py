@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.filedialog
@@ -26,6 +27,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         system_libraries_pane (SystemLibrariesPane): The SystemLibrariesPane class object.
         custom_libraries_pane (CustomLibrariesPane): The CustomLibrariesPane class object.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     language = 'fortran'
 
     def __init__(self, master=None, language="fortran"):
@@ -128,6 +132,9 @@ class SystemLibrariesPane:
         system_lib (PkgConfigTools): The PkgConfigTools class object.
 
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the SystemLibrariesPane class object.
 
@@ -221,6 +228,9 @@ class AddSystemLibraryWindow:
         window (tk.Toplevel): The new window with system libraries table.
         table (Table): The table contains system libraries.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the AddSystemLibraryWindow class object.
 
@@ -286,6 +296,9 @@ class CustomLibrariesPane:
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         table (Table): The Table contains custom libraries.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the CustomLibrariesPane class object.
 
@@ -362,6 +375,9 @@ class FeaturesPane:
         open_mp_combobox (ttk.Combobox): The combobox contains open mpi values.
         module_path (tk.StringVar()): The value for include path.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master=None):
         """Initialize the FeaturesPane class object.

@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog
@@ -29,6 +30,9 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_name_text(Entry): An editable place for code name value. Value can be added and changed manually by users.
          The code name is added automatically if the YAML file is imported.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     default_programming_language = 'fortran'
 
     def __init__(self, master=None):

@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import Frame, ttk, messagebox
 from tkinter import filedialog
@@ -10,6 +11,9 @@ from iwrap.settings.project import ProjectSettings
 
 
 class CodeParametersPane(ttk.Frame, IWrapPane):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master=None):
         """This pane is used to validate the XML file against the XSD schema file.
@@ -56,6 +60,9 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 
 
 class CodeParameterPath:
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _extension_description: Tuple[Tuple[Union[Tuple[str], None]]] = (("All files", "*.*"),
                                                                      ("XML files", "*.xml"),
                                                                      ("XSD files", "*.xsd"))
@@ -97,6 +104,9 @@ class CodeParameterPath:
 
 
 class XMLPath(CodeParameterPath):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self) -> None:
         super(XMLPath, self).__init__()
         self.file_type = (self._extension_description[1],)
@@ -115,6 +125,9 @@ class XMLPath(CodeParameterPath):
 
 
 class XSDPath(CodeParameterPath):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self) -> None:
         super(XSDPath, self).__init__()
         self.file_type = (self._extension_description[2],)
@@ -133,6 +146,9 @@ class XSDPath(CodeParameterPath):
 
 
 class CodeParameterBrowserPane(ttk.Frame):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master, file_type: str, label_text: str = "") -> None:
         """A file browser object composed of label, button, and dialog widget.
@@ -205,6 +221,9 @@ class XMLValidatorPane(ttk.Frame):
         The validation ends with a pop-up message with information,
         warning or an error depending on the validation run.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master, xml: CodeParameterPath, xsd: CodeParameterPath) -> None:
         """Initialize the button and all other necessary variables
