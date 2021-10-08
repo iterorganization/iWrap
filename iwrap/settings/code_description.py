@@ -346,13 +346,13 @@ class CodeDescription( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.programming_language = None
-        self.code_name = None
         self.data_type = None
         self.arguments = []
         self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
         self.language_specific = {}
+        self.subroutines.clear()
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes given object to dictionary
