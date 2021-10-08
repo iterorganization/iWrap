@@ -35,4 +35,4 @@ class ActorBaseClass( ABC ):
         return out
 
     def finalize(self):
-        pass
+        self.__binder.finalize()

@@ -20,6 +20,7 @@ class CBinder:
         self.logger = logging.getLogger( 'binding' )
         self.logger.setLevel( logging.DEBUG )
 
+        self.actor = actor
         self.actor_dir = actor.actor_dir
         self.actor_name = actor.name
         self.main_sbrt_name = actor.name + '_wrapper'
@@ -31,6 +32,10 @@ class CBinder:
         self.code_parameters = actor.code_parameters
         self.formal_arguments = actor.arguments
 
+        self.wrapper_init_func = None
+        self.wrapper_main_func = None
+        self.wrapper_finish_func = None
+
     def save_data(self, ids):
         pass
 
@@ -39,7 +44,54 @@ class CBinder:
 
     def initialize(self):
         self.work_db = self.__create_work_db()
-        self.wrapper_func = self.__get_wrapper_function()
+
+        if self.actor.code_description['subroutines'].get('init'):
+            self.wrapper_init_func = self.__get_wrapper_function( 'init_' + self.actor_name + "_wrapper")
+        self.wrapper_main_func = self.__get_wrapper_function(self.main_sbrt_name)
+
+        if self.actor.code_description['subroutines'].get('finish'):
+            self.wrapper_finish_func = self.__get_wrapper_function( 'finish_' + self.actor_name + "_wrapper")
+
+        if not self.wrapper_init_func:
+            return
+
+        c_arglist = []
+
+        # XML Code Params
+        if self.code_parameters.parameters:
+            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+            c_arglist.append( param_c )
+
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_init_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
+
+    def finalize(self):
+        if not self.wrapper_finish_func:
+            return
+
+        c_arglist = []
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_finish_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
 
     def __create_work_db(self):
         ids_storage = self.runtime_settings.ids_storage
@@ -59,12 +111,12 @@ class CBinder:
         db_entry.create()
         return db_entry
 
-    def __get_wrapper_function(self):
+    def __get_wrapper_function(self, function_name: str):
 
         lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr( wrapper_lib, self.main_sbrt_name )
+        wrapper_fun = getattr( wrapper_lib, function_name )
         return wrapper_fun
 
     def __status_check(self, status_info):
@@ -110,7 +162,7 @@ class CBinder:
             t.start()
             input()  # just to wait until debugger starts
 
-        self.wrapper_func( *c_arglist )
+        self.wrapper_main_func( *c_arglist )
 
     def __save_input(self, full_arguments_list):
 

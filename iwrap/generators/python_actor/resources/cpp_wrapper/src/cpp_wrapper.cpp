@@ -9,8 +9,67 @@
 #include "defs.h"
 #include  "{{code_description.language_specific.include_path.split('/')[-1]}}"
 
+{% if code_description.subroutines.init %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  NATIVE INIT SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void init_{{actor_settings.actor_name}}_wrapper(
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+                code_parameters_t* code_params,
+{% endif %}
+                status_t* status_info)
+{
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+	//----  Code parameters ----
+    IdsNs::codeparam_t imas_code_params;
+{% endif %}
 
-extern "C" void {{actor_description.actor_name}}_wrapper(
+     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+    // ------------------ code parameters ----------------------------
+    //imas_code_params = convert(code_params)
+    (imas_code_params.parameters) = (char**)&(code_params->params);
+    (imas_code_params.default_param) = (char**)&(code_params->params);
+    (imas_code_params.schema) = (char**)&(code_params->schema);
+
+    {% endif %}
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{code_description.subroutines.init}}(
+{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+            imas_code_params,
+{% endif %}
+            &(status_info->code), &(status_info->message) );
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	if(status_info->code < 0)
+		return;
+}
+{% endif %}
+
+{% if code_description.subroutines.finish %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   NATIVE FINISH SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void finish_{{actor_settings.actor_name}}_wrapper(
+                status_t* status_info)
+{
+
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{code_description.subroutines.finish}}(
+            &(status_info->code), &(status_info->message) );
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	if(status_info->code < 0)
+		return;
+}
+{% endif %}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   NATIVE MAIN SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+extern "C" void {{actor_settings.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}

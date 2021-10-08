@@ -47,14 +47,14 @@ contains
     !
     !    MAIN SUBROUTINE
     !
-    subroutine code_lifecycle(equilibrium_in, equilibrium_out, codeparam, status_code, status_message)
+    subroutine code_lifecycle(equilibrium_in, equilibrium_out, xml_parameters, status_code, status_message)
         use ids_schemas, only: ids_equilibrium, ids_parameters_input, ids_is_valid
         use ids_routines, only: ids_copy
 
         implicit none
 
         type(ids_equilibrium):: equilibrium_in,equilibrium_out
-        type(ids_parameters_input) :: codeparam
+        type(ids_parameters_input) :: xml_parameters
         integer, intent(out) :: status_code
         character(len=:), pointer, intent(out) :: status_message
 

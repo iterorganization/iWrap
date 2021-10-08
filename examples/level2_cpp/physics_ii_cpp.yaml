@@ -1,6 +1,7 @@
 --- !code_description
 programming_language: cpp
-code_name: physics_ii_cpp
+subroutines:
+    main:   physics_ii_cpp
 data_type: legacy
 arguments:
 -   name: equilibrium_in

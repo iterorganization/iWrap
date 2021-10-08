@@ -1,6 +1,9 @@
 --- !code_description
 programming_language: Fortran
-code_name: coreprofiles2distsource
+subroutines:
+    init:
+    main:   coreprofiles2distsource
+    finish:
 data_type: legacy
 arguments:
 -   name: core_profiles_in
