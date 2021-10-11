@@ -123,10 +123,10 @@ class CBinder:
                       ]
 
         proc = subprocess.Popen( tv_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
@@ -215,10 +215,10 @@ class CBinder:
 
         print( 'EXEC command: ', exec_command )
         proc = subprocess.Popen( exec_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
