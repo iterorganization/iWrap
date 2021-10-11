@@ -39,6 +39,14 @@ program standalone
     code_params = read_codeparams(PARAM_DIR, XML_FILE, XSD_FILE)
 {% endif %}
 
+     {% if code_description.subroutines.init %}
+    ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
+    call init_{{actor_settings.actor_name}}_wrapper(&
+        {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+                code_params,  &
+        {% endif %}
+                status_info)
+    {% endif %}
 
 
    !-----------Reading input ---------------------
@@ -76,6 +84,11 @@ program standalone
     !-----------Close DB entries---------------------
     call close_db_entries(db_entry_desc_array)
 
+
+     {% if code_description.subroutines.finish %}
+    ! - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
+    call finish_{{actor_settings.actor_name}}_wrapper(status_info)
+    {% endif %}
 
 {% if code_description.language_specific.mpi %}
     !----  MPI Finalization ----
