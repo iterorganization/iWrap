@@ -1,9 +1,7 @@
 --- !code_description
 programming_language: Fortran
 subroutines:
-    init:   None
     main:   physics_ii
-    finish: None
 data_type: legacy
 arguments:
 -   name: equilibrium_in
