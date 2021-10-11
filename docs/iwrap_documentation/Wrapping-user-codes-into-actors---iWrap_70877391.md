@@ -44,10 +44,13 @@ iWrap is currently being actively developed, so it is not publicly available yet
 
 
 * [1. Introduction](#WrappingusercodesintoactorsiWrap-Introduction)
+
 	+ [1.1. Motivations](#WrappingusercodesintoactorsiWrap-Motivations)
 	+ [1.2. iWrap - actor generator](#WrappingusercodesintoactorsiWrap-iWrap-actorgenerator)
 * [2. Preparation of code](#WrappingusercodesintoactorsiWrap-Preparationofcode)
+
 * [3. Code and actor description](#WrappingusercodesintoactorsiWrap-Codeandactordescription)
+
 	+ [3.1.  YAML file syntax](#WrappingusercodesintoactorsiWrap-YAMLfilesyntax)
 	+ [3.2. Native code description](#WrappingusercodesintoactorsiWrap-Nativecodedescription)
 		- [3.2.1. Common part](#WrappingusercodesintoactorsiWrap-Commonpart)
@@ -57,9 +60,11 @@ iWrap is currently being actively developed, so it is not publicly available yet
 		- [3.3.1. Actor description syntax](#WrappingusercodesintoactorsiWrap-Actordescriptionsyntax)
 		- [3.3.2. Example](#WrappingusercodesintoactorsiWrap-Example)
 * [4. Actor generation](#WrappingusercodesintoactorsiWrap-Actorgeneration)
+
 	+ [4.1. iWrap commandline](#WrappingusercodesintoactorsiWrap-iWrapcommandline)
 	+ [4.2.  iWrap graphical interface](#WrappingusercodesintoactorsiWrap-iWrapgraphicalinterface)
 * [5. Usage of actor within workflow](#WrappingusercodesintoactorsiWrap-Usageofactorwithinworkflow)
+
 	+ [5.1. Actor import and creation](#WrappingusercodesintoactorsiWrap-Actorimportandcreation)
 	+ [5.2. Actor runtime settings](#WrappingusercodesintoactorsiWrap-Actorruntimesettings)
 	+ [5.3. Actor life cycle](#WrappingusercodesintoactorsiWrap-Actorlifecycle)
@@ -76,20 +81,29 @@ Glossary
 ***Scenario (aka workflow)***
 
 * A set of components (actors) constituting a directed graph to execute a computing algorithm
+
 * Actors are dependent: a control and data is passed from actor to actor
+
 * Usually the order of actors execution and the way how data are passed from actor to actor is managed by so called "workflow system". Such manager can be a simple script (codes) or more sophisticated "orchestrator" (e.g. Kepler)
+
 
 ***Actor***
 
 * A basic component of scenario / workflow
+
 * An actor performs some actions (e.g. computations, visualisation, etc)
+
 * Usually given actor consumes results provided by a previous actor in a scenario and produces data for a next actor in a scenario
+
 * Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor
+
 * An actor, using its internal mechanisms ('wrappers') calls '*native code'* method(s), usually written in other language than an actor
+
 
 **Native code**
 
 * A physics code, of standardised signature, provided by software developer
+
 1.1. Motivations
 ----------------
 
@@ -109,11 +123,13 @@ It's plug-in based modular design with clear separation of concerns allows to g
 ***iWrap goals:***
 
 * iWrap creates a Python script (aka an actor) that:
+
 	+ calls a user code
 	+ provides error handling
 	+ calls debugger (if run in "debug" mode)
 	+ runs MPI code
 * iWrap generates a Fortran/CPP wrapper, which intermediates between Python script (workflow) and user code in terms of:
+
 	+ reading/writing of in/out physical data (IDS)
 	+ passing other arguments to/from the actor
 
@@ -122,7 +138,9 @@ It's plug-in based modular design with clear separation of concerns allows to g
 For user conveniency it provides two kinds of interfaces:
 
 * user friendly *graphical interface* that allows non-experienced users to define an actor in intuitive way and
+
 * *command line interface* foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
+
 
 
 2.Preparation of code
@@ -153,20 +171,20 @@ The structure of the file is following:
   
 
 
-**iwrap\_file.yaml**
+**iwrap_file.yaml**
 
-```
+`
 # actor description part - optional 
---- !actor\_description
+--- !actor_description
 	<see chapter below for details>
 ...
 
 # code description part - mandatory
- --- !code\_description  
+ --- !code_description  
  	<see chapter below for details> 
 ...
  
-```
+`
 
   
 
@@ -175,7 +193,9 @@ The structure of the file is following:
 
 
 * All YAML fields are *MANDATORY*, unless explicitly described as *OPTIONAL*
+
 * A code description part must begin with `"--- !code_description"`
+
   
 
 
@@ -192,7 +212,9 @@ Root directory
 Root directory for all relative paths to files included in code description is on of the following:
 
 * A directory containing YAML file from which project was loaded
+
 * A directory from which iWrap was run (if not loaded from file)
+
   
 
 
@@ -202,23 +224,27 @@ Root directory for all relative paths to files included in code description is o
 
 * `programming_language`   
 
+
 	+ meaning:  language of physics code
 	+ value: one of predefined values: 'Fortran', 'CPP'
 	+ example: 'Fortran'
 * *`code_name`*   
+
 
 	+ meaning:
 		- name of user method / subroutine to be called,
 		- must be **exactly the same** as name of called method / subroutine
 		- it is used also as an actor name and the name of directory where actor is installed
 	+ value: string
-	+ example: 'my\_subroutine'
+	+ example: 'my_subroutine'
 * *`data_type`*   
+
 
 	+ meaning: data type handled by the physics code
 	+ value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
 	+ example: 'legacy'
 * *`arguments`* *-*list of arguments
+
 	+ argument definition:
 		- *name*:
 			* meaning: user defined argument name
@@ -232,20 +258,23 @@ Root directory for all relative paths to files included in code description is o
 		- intent
 			* meaning: determines if given argument is input or output one
 			* value: predefined - string "IN", "OUT"
-* `*code\_path*:`
+* `*code_path*:`
+
 	+ meaning: path to system library (C, CPP) , script (Python), etc containing the physics code, including method/subroutine to be run
 	+ value: string, valid path to file
 	+ example: 'any text'
 * *`code_parameters`*- a structure containing `parameters` and schema `entry`:
+
 	+ `parameters` :
 		- meaning: path to XML file containing user defined parameters of the physics code
 		- value: string, valid path to file
-		- example: './code\_parameters/parameters.xml'
+		- example: './code_parameters/parameters.xml'
 	+ `schema` :
 		- meaning: path to XSD file contains schema of XML parameters, to be able to validate them
 		- value: string, valid path to file
-		- example: './code\_parameters/parameters.xsd'
+		- example: './code_parameters/parameters.xsd'
 * *`documentation` :*
+
 	+ meaning: human readable description of native code
 	+ value: string
 	+ example: 'any text'
@@ -253,47 +282,52 @@ Root directory for all relative paths to files included in code description is o
 ### 3.2.2. Language specific part - Fortran/C++
 
 * `compiler` :
+
 	+ meaning: the name/vendor of the compiler (and not compiler command!) used to compile native codes
 	+ value: string, one of vendors of compilers, currently: 'Intel' or 'GCC'
 	+ example: 'Intel'
 * `mpi_flavour`   
 
+
 	+ meaning: MPI compiler flavour to be used
 	+ values: string, one of:  MPICH, MPICH2, MVAPICH2, OpenMPI, etc.
 	+ example 'MPICH2'
 * `open_mp` :
+
 	+ meaning: if user code should be compiled with OpenMP flag
 	+ values: boolean
 	+ example 'true'
 * *`system_libraries` :*
+
 	+ meaning: a list of system libraries, managed using *pkg-config* mechanism,  that has to be used while native code linking
 	+ value: a list of system libraries names, as they are published by *pkg-config*
 	+ example: 
 	
 	
 	
-	| `- fftw3f``- glib``- mkl` |
+	| `- fftw3f- glib- mkl` |
 * `custom_libraries` :
+
 	+ meaning: additional libraries, not managed by *pkg-config* mechanism, necessary to link of the physics code:
 	+ value:  a list of paths to libraries
 	+ example: 
 	
 	
 	
-	| `- ./lib/custom/libcustom1.a``- ./lib/custom/libcustom2.a` |
+	| `- ./lib/custom/libcustom1.a- ./lib/custom/libcustom2.a` |
 
 ### 3.2.3. Example - Fortran code description
 
   
 
 
-**fortran\_code.yaml**
+**fortran_code.yaml**
 
-```
---- !code\_description
-programming\_language: Fortran
-code\_name: demo\_code
-data\_type: legacy
+`
+--- !code_description
+programming_language: Fortran
+code_name: demo_code
+data_type: legacy
 arguments:
 -   name: equilibrium00
     type: equilibrium
@@ -301,67 +335,73 @@ arguments:
 -   name: equilibrium11
     type: equilibrium
     intent: OUT
-code\_path: ./lib/libmy\_lib.a
-code\_parameters:
-    parameters: ./code\_paramneters/parameters.xml
-    schema: ./code\_paramneters/parameters.xsd
+code_path: ./lib/libmy_lib.a
+code_parameters:
+    parameters: ./code_paramneters/parameters.xml
+    schema: ./code_paramneters/parameters.xsd
 documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
     eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
     veniam... '
-language\_specific:
+language_specific:
     compiler: Intel
-    mpi\_flavour: MPICH2
-    open\_mp: false
-    system\_libraries:
+    mpi_flavour: MPICH2
+    open_mp: false
+    system_libraries:
     - fftw3f
     - glib
     - mkl
-    custom\_libraries:
+    custom_libraries:
     - ./lib/custom/libcustom1.a
     - ./lib/custom/libcustom2.a
-```
+`
 
 3.3. Actor description
 ----------------------
 
 * All YAML fields are *MANDATORY*, unless explicitly described as *OPTIONAL*
+
 * An actor description part must begin with `"--- !actor_description"`
+
 ### 3.3.1. Actor description syntax
 
   
 
 
 * *`actor_name` :*
+
 	+ meaning: the arbitrary, user defined name of the actor. It determines: the name of class to be generated and directory where actor will be put
 	+ value: string
 	+ example: 'core2dist'
 * *`actor_type`:*
+
 	+ meaning:
 	+ values: 'python' (currently only python type has been implemented)
 	+ example
 * *`data_type`:*
+
 	+ meaning: data type handled at the workflow level
 	+ value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
 	+ example: 'legacy'
 * *`install_dir`:*
+
 	+ optional parameter
 	+ meaning:  user chosen folder, where an actor will be installed
 	+ values: string,
-	+ example : /my/working/dir/IWRAP\_ACTORS
+	+ example : /my/working/dir/IWRAP_ACTORS
 	+ if not defined, a default installation directory will be used
 
 ### 3.3.2. Example
 
-**actor\_description.yaml**
+**actor_description.yaml**
 
-```
---- !actor\_description
-actor\_name: core2dist
-actor\_type: python
-data\_type: legacy
-install\_dir:  /my/working/dir/IWRAP\_ACTORS
+`
+--- !actor_description
+actor_name: core2dist
+actor_type: python
+data_type: legacy
+install_dir:  /my/working/dir/IWRAP_ACTORS
 ...
-```
+`
 
 
 4.Actor generation
@@ -374,23 +414,23 @@ Once YAML file is prepared it can be used for generation of an actor using iWrap
 
 
 
-```
-usage: iwrap [-h] [-a ACTOR\_NAME] [-t ACTOR\_TYPE] [-d DATA\_TYPE] [-f FILE]
+`
+usage: iwrap [-h] [-a ACTOR_NAME] [-t ACTOR_TYPE] [-d DATA_TYPE] [-f FILE]
 
 optional arguments:
   -h, --help            show this help message and exit
 
 Actor generation:
-  -a ACTOR\_NAME, --actor-name ACTOR\_NAME
+  -a ACTOR_NAME, --actor-name ACTOR_NAME
                         user defined name of the actor
-  -t ACTOR\_TYPE, --actor-type ACTOR\_TYPE
+  -t ACTOR_TYPE, --actor-type ACTOR_TYPE
                         type of an actor to be generated
-  -d DATA\_TYPE, --data-type DATA\_TYPE
+  -d DATA_TYPE, --data-type DATA_TYPE
                         type of data to be used by the actor
   -f FILE, --file FILE  a path to code/actor description *.yaml file
 
 
-```
+`
 
   
 
@@ -399,9 +439,9 @@ If YAML file contains  both code description and actor description parts, no ad
 
 
 
-```
-shell> iwrap -f actor\_and\_code\_descriptions.yaml
-```
+`
+shell> iwrap -f actor_and_code_descriptions.yaml
+`
 
   
 
@@ -410,9 +450,9 @@ If YAML contains only code description, additional information necessary to gene
 
 
 
-```
-shell> iwrap -a actor\_name -f code\_descriptions.yaml
-```
+`
+shell> iwrap -a actor_name -f code_descriptions.yaml
+`
 
   
 
@@ -433,29 +473,29 @@ To make an actor class visible inside a workflow script it has to be imported:
 
 
 
-```
-from <actor\_package>.actor import <actor\_class> 
-```
+`
+from <actor_package>.actor import <actor_class> 
+`
 
-In a current version both: *<actor\_package>* and *<actor\_class>*  are set to the same value provided by user as an *'actor name'.*
+In a current version both: *<actor_package>* and *<actor_class>*  are set to the same value provided by user as an *'actor name'.*
 
-To import an actor named e.g. *'physics\_ii*' a correct import will look like:
+To import an actor named e.g. *'physics_ii*' a correct import will look like:
 
 
 
-```
-from physics\_ii.actor import physics\_ii 
-```
+`
+from physics_ii.actor import physics_ii 
+`
 
 An actor instance can be created using already imported actor class in 'usual pythonic' way:
 
 
 
-```
-actor\_object = <actor name>()
+`
+actor_object = <actor name>()
 e.g.
-actor\_object = physics\_ii()
-```
+actor_object = physics_ii()
+`
 
 5.2. Actor runtime settings
 ---------------------------
@@ -463,6 +503,7 @@ actor\_object = physics\_ii()
 Among the actor properties one is especially important: `runtime_settings.`  This property tells the wrapper how native code should be run and defines:
 
 * Run mode
+
 	+ Defined by setting: `<actor name>.runtime_settings.run_mode = value`
 	+ Import of enumerated values: `from <actor name>.python_common.job_settings import RunMode`
 	+ `RunMode.NORMAL` (default) - native code is called directly from Python, within the same process (and environment) that workflow script. Usually system resources, shared with other Python threads are limited, however this mode is suitable for most of the actors.
@@ -471,11 +512,12 @@ Among the actor properties one is especially important: `runtime_settings.`  Th
 	
 	
 	
-	```
-	from physics\_ii.python\_common.job\_settings import RunMode
-	self.physics\_ii.runtime\_settings.run\_mode = RunMode.STANDALONE
-	```
+	`
+	from physics_ii.python_common.job_settings import RunMode
+	self.physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
+	`
 * Debug mode:
+
 	+ Defined by setting: `<actor name>.runtime_settings.debug_mode = value`
 	+ Import of enumerated values: `from <actor name>.python_common.job_settings import DebugMode`
 	+ `DebugMode.STANDALONE` - similarly to STANDALONE *run mode* - an actor runs native code as executable in a separate system process, but this time under debugger control. Debugged code can be run several times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable for most of the purposes.
@@ -484,17 +526,19 @@ Among the actor properties one is especially important: `runtime_settings.`  Th
 	
 	
 	
-	```
-	from physics\_ii.python\_common.job\_settings import DebugMode
-	self.physics\_ii.runtime\_settings.run\_mode = DebugMode.STANDALONE
-	```
+	`
+	from physics_ii.python_common.job_settings import DebugMode
+	self.physics_ii.runtime_settings.run_mode = DebugMode.STANDALONE
+	`
 * MPI settings
+
 	+ Currently only number of nodes to run a code in parallel are defined
 	+ Defined by setting: `<actor name>.runtime_settings.mpi.number_of_processes = value`
 	+ Please note:
 		- MPI code is run always in standalone mode
 		- If a native code is not marked as 'MPI' during actor generation, this setting is ignored
 * IDS storage settings:
+
 	+ This attribute defines settings of temporary storage being used while passing IDSes between an actor and native code.
 	+ Defined by setting: `<actor name>.runtime_settings.ids_storage.<storage_parameter> = value`
 	+ Storage parameters that can be set:
@@ -512,9 +556,10 @@ Among the actor properties one is especially important: `runtime_settings.`  Th
 			* Default value - `imas.imasdef.MEMORY_BACKEND`
 		- `persistent_backend`
 			* Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running actor in a standalone mode, when a native code is run as separate process, so it doesn't share memory with other actors.
-			* Default value -  imas.imasdef.MDSPLUS\_BACKEND
+			* Default value -  imas.imasdef.MDSPLUS_BACKEND
 	+ Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
 * Other settings - not yet implemented:
+
 	+ Sandbox settings
 	+ Batch job settings
 	+ OpenMP settings
@@ -528,37 +573,42 @@ During its 'life' an actor goes through several states, that can be passed only 
 
 
 
-```
-actor\_object = <actor name>()
+
+`
+actor_object = <actor name>()
 e.g.
-actor\_object = physics\_ii()
-```
+actor_object = physics_ii()
+`
 * Setting up the runtime settings
+
 	+ Tuning up the actor before its initialization and native code execution
 	+ See chapter above
 * Actor initialisation:
+
 	+ Calling `initialize()` method of the actor to perform internal initialisation actions
 	
 	
 	
-	```
-	actor\_object.initialize()
-	```
+	`
+	actor_object.initialize()
+	`
 * Native code call:
+
 	+ This step can be repeated an arbitrary number of times
-	+ ```
-	  <output IDS or list of IDSes> = actor\_object(<input IDS/IDSes>)  
+	+ `
+	  <output IDS or list of IDSes> = actor_object(<input IDS/IDSes>)  
 	e.g.
-	  output\_distribution\_sources = actor\_object(input\_core\_profiles)         
-	```
+	  output_distribution_sources = actor_object(input_core_profiles)         
+	`
 * Actor finalisation
+
 	+ Calling `finalize()` method of the actor to perform internal finalisation actions
 	
 	
 	
-	```
-	actor\_object.finalize()
-	```
+	`
+	actor_object.finalize()
+	`
 
 5.4. The simplest workflow
 --------------------------
@@ -567,12 +617,12 @@ A skeleton of the very simple workflow could be implemented like this:
 
 
 
-```
+`
 # Import of the actor class
 from <actor name>.actor import <actor name> 
 
 # Creation of actor object
-actor\_object = <actor name>()
+actor_object = <actor name>()
 
 # Reading input data
 ...
@@ -581,17 +631,17 @@ actor\_object = <actor name>()
 ...
 
 # Actor initialisation
-actor\_object.initialize()
+actor_object.initialize()
 
 # Native code run     
-<output IDS or list of IDSes>  = actor\_object(<input IDS/IDSes>)  
+<output IDS or list of IDSes>  = actor_object(<input IDS/IDSes>)  
 
 # Actor finalisation
-actor\_object.finalize()
+actor_object.finalize()
 
 # Saving output data
 ...
-```
+`
 
   
 
@@ -601,75 +651,75 @@ actor\_object.finalize()
 
 
 
-```
+`
 import sys
 import imas, os
 
 from core2dist.actor import core2dist
-from core2dist.python\_common.job\_settings import RunMode, DebugMode
+from core2dist.python_common.job_settings import RunMode, DebugMode
 
 class ExampleWorkflowManager:
 
-    def \_\_init\_\_(self):
-        self.actor\_cp2ds = core2dist()
-        self.input\_entry = None
-        self.output\_entry = None
+    def __init__(self):
+        self.actor_cp2ds = core2dist()
+        self.input_entry = None
+        self.output_entry = None
 
-    def init\_workflow(self):
+    def init_workflow(self):
 
         # INPUT/OUTPUT CONFIGURATION
         shot                = 134174
-        run\_in              = 37
-        input\_user\_or\_path  = 'public'
-        input\_database      = 'iter'
-        run\_out             = 10
-        output\_user\_or\_path = os.getenv('USER')
-        output\_database     = input\_database
+        run_in              = 37
+        input_user_or_path  = 'public'
+        input_database      = 'iter'
+        run_out             = 10
+        output_user_or_path = os.getenv('USER')
+        output_database     = input_database
 
         # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
         print('=> Open input datafile')
-        self.input\_entry = imas.DBEntry(imas.imasdef.MDSPLUS\_BACKEND,input\_database,shot,run\_in,input\_user\_or\_path)
-        self.input\_entry.open()
+        self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
+        self.input_entry.open()
         
         # CREATE OUTPUT DATAFILE
         print('=> Create output datafile')
-        self.output\_entry = imas.DBEntry(imas.imasdef.MDSPLUS\_BACKEND,output\_database,shot,run\_out,output\_user\_or\_path)
-        self.output\_entry.create()
+        self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
+        self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
-         #self.actor\_cp2ds.runtime\_settings.debug\_mode = DebugMode.STANDALONE
-         self.actor\_cp2ds.initialize()
+         #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.STANDALONE
+         self.actor_cp2ds.initialize()
     
-    def execute\_workflow(self):
+    def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
         print('=> Read input IDSs')
-        input\_core\_profiles = self.input\_entry.get('core\_profiles')
+        input_core_profiles = self.input_entry.get('core_profiles')
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
 
-        output\_distribution\_sources = self.actor\_cp2ds(input\_core\_profiles)        
+        output_distribution_sources = self.actor_cp2ds(input_core_profiles)        
         
         # SAVE IDSS INTO OUTPUT FILE
         print('=> Export output IDSs to local database')
-        self.output\_entry.put(output\_distribution\_sources)
+        self.output_entry.put(output_distribution_sources)
         print('Done exporting.')
 
-    def end\_workflow(self):
+    def end_workflow(self):
         
         # Finalise ALL actors 
-        self.actor\_cp2ds.finalize()
+        self.actor_cp2ds.finalize()
 
         #other finalisation actions
-        self.input\_entry.close()
-        self.output\_entry.close()
+        self.input_entry.close()
+        self.output_entry.close()
 
 manager = ExampleWorkflowManager()
 
-manager.init\_workflow()
-manager.execute\_workflow()
-manager.end\_workflow()
-```
+manager.init_workflow()
+manager.execute_workflow()
+manager.end_workflow()
+`
 
   
 
@@ -705,4 +755,3 @@ Document generated by Confluence on 27 wrz 2021 14:37
 
 
  
-

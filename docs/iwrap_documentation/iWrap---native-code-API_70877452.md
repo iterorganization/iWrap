@@ -38,20 +38,25 @@ Scientific Worfklows : iWrap - native code API
 
 
 * [1. Introduction](#iWrapnativecodeAPI-Introduction)
+
 * [2. Fortran](#iWrapnativecodeAPI-Fortran)
+
 	+ [2.1. Native code signature](#iWrapnativecodeAPI-Nativecodesignature)
 	+ [2.2. Module](#iWrapnativecodeAPI-Module)
 	+ [2.3. Subroutine](#iWrapnativecodeAPI-Subroutine)
 	+ [2.4. Arguments](#iWrapnativecodeAPI-Arguments)
 	+ [2.5. Example](#iWrapnativecodeAPI-Example)
 * [3.  C++](#iWrapnativecodeAPI-C++)
+
 	+ [3.1. Native code signature](#iWrapnativecodeAPI-Nativecodesignature.1)
 	+ [3.2. Header](#iWrapnativecodeAPI-Header)
 	+ [3.3. Method](#iWrapnativecodeAPI-Method)
 	+ [3.4. Arguments](#iWrapnativecodeAPI-Arguments.1)
 	+ [3.5. Example](#iWrapnativecodeAPI-Example.1)
 * [4. MPI](#iWrapnativecodeAPI-MPI)
+
 * [5. Code packaging](#iWrapnativecodeAPI-Codepackaging)
+
 
 
 
@@ -61,9 +66,13 @@ Scientific Worfklows : iWrap - native code API
 A signature of user code must follow strict rules to allow interaction between it and wrapping actor. Without the detailed knowledge of method signature iWrap cannot built an actor.
 
 * Only IDS data are accepted as dynamic data input/output
+
 * Static data provided as additional codeparam input ,
+
 * Optional error code/mesg output (not mandatory),
+
 * A constraint: at least one IDS is either produced or consumed
+
 
   
 
@@ -86,15 +95,19 @@ A signature of user code must follow strict rules to allow interaction between i
 
 
 * Input and output IDSes:
+
 	+ **Optional** arguments
 	+ Intent: IN or OUT
 * XML parameters:
+
 	+ **Optional** argument
 	+ Intent: IN
 * Status code:
+
 	+ **Mandatory** argument
 	+ Intent: OUT
 * Status message
+
 	+ **Mandatory** argument
 	+ Intent: OUT
 
@@ -125,28 +138,28 @@ A native code that will be wrapped by iWrap and that will become a part of workf
 
 
 
-```
+`
 module <module name>
   
-subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml\_parameters], status\_code, status\_message)
-  use ids\_schemas
+subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml_parameters], status_code, status_message)
+  use ids_schemas
   ! IN/OUT IDSes
-  type(ids\_<ids\_name>), intent([IN|OUT]):: ids1
-  type(ids\_<ids\_name>), intent([IN|OUT]):: ids2
+  type(ids_<ids_name>), intent([IN|OUT]):: ids1
+  type(ids_<ids_name>), intent([IN|OUT]):: ids2
    . . .
-  type(ids\_<ids\_name>), intent([IN|OUT]):: idsN 
+  type(ids_<ids_name>), intent([IN|OUT]):: idsN 
  
  
   ! XML code parameters
-  type(ids\_parameters\_input) :: xml\_parameters
+  type(ids_parameters_input) :: xml_parameters
  
   ! status info
-  integer, intent(OUT) :: status\_code
-  character(len=:), pointer, intent(OUT) :: status\_message
+  integer, intent(OUT) :: status_code
+  character(len=:), pointer, intent(OUT) :: status_message
  
 end subroutine <subroutine name>
 end module <module name>
-```
+`
 
   
 
@@ -155,14 +168,19 @@ end module <module name>
 -----------
 
 * Native code should be put within a module
+
 * Module is used by compiler to check, if code signature expected by wrapper is exactly the same as provided.
+
 * A name of the module could be arbitrary - chosen by code developer
+
 
 2.3. Subroutine
 ---------------
 
 * A user code should be provided as a subroutine (and not a function)
+
 * A name of the module could be arbitrary - chosen by code developer
+
 
 2.4. Arguments
 --------------
@@ -170,18 +188,22 @@ end module <module name>
 Arguments shall be provided in a strict order:
 
 * Input and output IDSes:
+
 	+ **Optional** arguments
 	+ Intent: IN or OUT
 	+ Defined as "`type(ids_<ids_name>)` "
 * XML parameters:
+
 	+ **Optional** argument
 	+ Intent: IN
 	+ Defined as "`type(ids_parameters_input), intent(IN)"`
 * Status code:
+
 	+ **Mandatory** argument
 	+ Intent: OUT
 	+ Defined as  "`integer, intent(OUT)"`
 * Status message
+
 	+ **Mandatory** argument
 	+ Intent: OUT
 	+ Defined as: `character(len=:), pointer, intent(OUT)`
@@ -193,26 +215,26 @@ No INOUT arguments are allowed!
 
 
 
-```
-module physics\_ii\_mod
+`
+module physics_ii_mod
   
-subroutine physics\_ii(equilibrium\_in, equilibrium\_out, code\_param, error\_flag, error\_message)      
+subroutine physics_ii(equilibrium_in, equilibrium_out, code_param, error_flag, error_message)      
 
-  use ids\_schemas   
+  use ids_schemas   
 
   ! IN/OUT IDSes
-  type(ids\_equilibrium):: equilibrium\_in, equilibrium\_out
+  type(ids_equilibrium):: equilibrium_in, equilibrium_out
  
   ! XML code parameters
-  type(ids\_parameters\_input) :: code\_param
+  type(ids_parameters_input) :: code_param
  
   ! status info
-  integer, intent(out) :: error\_flag
-  character(len=:), pointer, intent(out) :: error\_message
+  integer, intent(out) :: error_flag
+  character(len=:), pointer, intent(out) :: error_message
  
-end subroutine physics\_ii
-end module physics\_ii\_mod
-```
+end subroutine physics_ii
+end module physics_ii_mod
+`
 
 
 3. C++
@@ -226,10 +248,10 @@ end module physics\_ii\_mod
 
 
 
-```
+`
 #include "UALClasses.h"
-void <method name>([IdsNs::IDS::<ids\_name> ids1, ..., IdsNs::IDS::<ids\_name>& idsN,] [IdsNs::codeparam\_t codeparam,] int* status\_code, char** status\_message)
-```
+void <method name>([IdsNs::IDS::<ids_name> ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int* status_code, char** status_message)
+`
 
 3.2. Header
 -----------
@@ -240,7 +262,9 @@ To generate an actor user has to provide a file containing C++ header of wrapped
 -----------
 
 * A user code should be provided as a single method
+
 * A name of the module could be arbitrary - chosen by code developer
+
 
 3.4. Arguments
 --------------
@@ -248,20 +272,25 @@ To generate an actor user has to provide a file containing C++ header of wrapped
 Arguments shall be provided in a strict order:
 
 * Input IDSes:
+
 	+ **Optional** arguments
 	+ Defined as `"IdsNs::IDS::<ids_name>"`
 * Output IDSes:
+
 	+ **Optional** arguments
 	+ Defined as `IdsNs::IDS::<ids_name>&`  (please notice reference sign - '&')
 * XML parameters:
+
 	+ **Optional** argument
 	+ Input argument
 	+ Defined as `"IdsNs::codeparam_t` "
 * Status code:
+
 	+ **Mandatory** argument
 	+ Output argument
 	+ Defined as  `"int*"`
 * Status message
+
 	+ **Mandatory** argument
 	+ Output argument
 	+ Defined as: "`char**` "
@@ -271,28 +300,28 @@ No INOUT arguments are allowed!
 3.5. Example
 ------------
 
-**Header file - physics\_ii.h**
+**Header file - physics_ii.h**
 
-```
-#ifndef \_LEVEL\_II\_CPP
-#define \_LEVEL\_II\_CPP
+`
+#ifndef _LEVEL_II_CPP
+#define _LEVEL_II_CPP
 
 #include "UALClasses.h"
 
-void physics\_ii\_cpp(IdsNs::IDS::equilibrium in\_equilibrium, IdsNs::IDS::equilibrium& out\_equilibrium, IdsNs::codeparam\_t codeparam, int* status\_code, char** status\_message);
+void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
 
-#endif // \_LEVEL\_II\_CPP
-```
+#endif // _LEVEL_II_CPP
+`
 
-**Implementation file - level\_ii.cpp**
+**Implementation file - level_ii.cpp**
 
-```
+`
 #include "UALClasses.h"
-void physics\_ii\_cpp(IdsNs::IDS::equilibrium in\_equilibrium, IdsNs::IDS::equilibrium& out\_equilibrium, IdsNs::codeparam\_t codeparam, int* status\_code, char** status\_message)
+void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
 {
 ....
 }
-```
+`
 
 
 4.MPI
@@ -304,12 +333,14 @@ All native codes that use MPI should follow the rules described below:
 
 
 
-| `!``----  MPI initialisation ----``call MPI_initialized(was_mpi_initialized, ierr)``if (.``not``. was_mpi_initialized)   call MPI_Init(ierr)` `!``----  MPI Finalisation ----``call MPI_finalized(was_mpi_finalized, ierr)``if (.``not``. was_mpi_finalized)   call MPI_Finalize(ierr)` |
+
+| `!----  MPI initialisation ----call MPI_initialized(was_mpi_initialized, ierr)if (.not. was_mpi_initialized)   call MPI_Init(ierr)` `!----  MPI Finalisation ----call MPI_finalized(was_mpi_finalized, ierr)if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)` |
 
   
 
 
 * Please be aware of a special role of ranked 0 process: Wrapper that run native code,  launched in parallel, reads input data in every processes but writes it only in 'rank 0' process. So native code should gather all results that need to be stored by 'rank 0' process. It concerns also those coming from 'rank 0' process are analysed by wrapper.
+
 
 
 5.Code packaging
@@ -319,11 +350,11 @@ A native code written in C++ or Fortran should be packed within static Linux lib
 
 
 
-```
+`
 ar -cr lib<name>.a <object files *.o list>
 e.g.:
-ar -cr libphysics\_ii.a *.o
-```
+ar -cr libphysics_ii.a *.o
+`
 
   
 
@@ -353,4 +384,3 @@ Document generated by Confluence on 27 wrz 2021 14:37
 
 
  
-

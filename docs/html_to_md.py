@@ -8,6 +8,12 @@ def fix_headers(markdown):
     for reg in reg_list:
         markdown = markdown.replace(reg, '\n' + "".join(reg.split(' ')))
 
+    x = []
+    for line in markdown.splitlines():
+        if line.startswith('* '):
+            line = line + '\n'
+        x.append(line)
+    markdown = '\n'.join(x)
     return markdown
 
 def simple_clean(markdown):
@@ -17,6 +23,8 @@ def simple_clean(markdown):
         markdown = markdown.replace(markdown[x:y], '')
 
     markdown = markdown.replace('.html', '.md')
+    markdown = markdown.replace('\_', '_')
+    markdown = markdown.replace('``', '')
 
     return markdown
 
