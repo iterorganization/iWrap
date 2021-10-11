@@ -60,6 +60,7 @@ contains
 
         ! INITIALISATION OF ERROR FLAG
         status_code = 0
+        allocate(character(50):: status_message)
 
         ! INITIAL DISPLAY
         write(*,*) ' '
@@ -86,11 +87,11 @@ contains
             allocate(equilibrium_out%code%output_flag(1))
             equilibrium_out%code%output_flag(1) = 0   ! Integer output flag, 0 means the run was successful and can be used in the rest of the workflow, <0 means failure
 
+            status_message = 'life_cycle: OK'
         else
             ! ERROR IF THE CODE DOES NOT COMPLETE TO THE END
             status_code = -1
-            allocate(character(50):: status_message)
-            status_message = 'Error in physics_ii: input IDS not valid'
+            status_message = 'Error in life_cyclce: input IDS not valid'
         endif
 
         ! FINAL DISPLAY

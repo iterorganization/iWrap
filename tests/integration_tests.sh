@@ -8,6 +8,8 @@ test_dirs+=("level2")
 test_dirs+=("level2_cpp")
 test_dirs+=("cp2ds-mpi")
 test_dirs+=("cp2ds-mpi_cpp")
+test_dirs+=("code_lifecycle")
+test_dirs+=("code_lifecycle_cpp")
 
 if [ -z "${ONBAMBOO+x}" ]
 then

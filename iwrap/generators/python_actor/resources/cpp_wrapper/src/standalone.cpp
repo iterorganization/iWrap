@@ -16,9 +16,11 @@ int main(int argc, char **argv)
 {% if code_description.language_specific.mpi %}
     //----  MPI  ----
     int mpi_rank;
-    int was_mpi_finalized;
+    int was_mpi_finalized, was_mpi_initialized;
 
-    MPI_Init(NULL, NULL);
+    MPI_Initialized(&was_mpi_initialized);
+    if (!was_mpi_initialized)
+        MPI_Init(NULL, NULL);
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 {% endif %}
 
@@ -31,6 +33,15 @@ int main(int argc, char **argv)
 
     code_params = read_codeparams(PARAM_DIR, XML_FILE, XSD_FILE);
 {% endif %}
+
+     {% if code_description.subroutines.init %}
+    // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
+    init_{{actor_settings.actor_name}}_wrapper(
+        {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+                &code_params,
+        {% endif %}
+                &status_info);
+    {% endif %}
 
     read_input(db_entry_desc_array, IDS_ARGS_NO);
 
@@ -62,6 +73,13 @@ int main(int argc, char **argv)
     } //The end of section called only for RANK 0 process
 {% endif %}
     close_db_entries(db_entry_array, IDS_ARGS_NO);
+
+
+     {% if code_description.subroutines.finish %}
+    // - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
+    finish_{{actor_settings.actor_name}}_wrapper(&status_info);
+    handle_status_info(status_info, "{{actor_settings.actor_name}}");
+    {% endif %}
 
 {% if code_description.language_specific.mpi %}
     //----  MPI Finalization ----

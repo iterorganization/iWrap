@@ -31,7 +31,7 @@ class ActorBaseClass( ABC ):
         return self.run( *args )
 
     def run(self, *args):
-        out = self.__binder.call_native_code( *args )
+        out = self.__binder.step( *args )
         return out
 
     def finalize(self):

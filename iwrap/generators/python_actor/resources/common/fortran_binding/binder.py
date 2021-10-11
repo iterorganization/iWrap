@@ -24,7 +24,6 @@ class CBinder:
         self.actor_dir = actor.actor_dir
         self.actor_name = actor.name
         self.main_sbrt_name = actor.name + '_wrapper'
-        self.is_mpi_code = actor.is_mpi_code
 
         self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
 
@@ -35,6 +34,18 @@ class CBinder:
         self.wrapper_init_func = None
         self.wrapper_main_func = None
         self.wrapper_finish_func = None
+
+    def is_standalone_run(self):
+        if self.actor.is_mpi_code:
+            return True
+
+        if self.runtime_settings.debug_mode is DebugMode.STANDALONE:
+            return True
+
+        if self.runtime_settings.run_mode is RunMode.STANDALONE:
+            return True
+
+        return False
 
     def save_data(self, ids):
         pass
@@ -52,51 +63,16 @@ class CBinder:
         if self.actor.code_description['subroutines'].get('finish'):
             self.wrapper_finish_func = self.__get_wrapper_function( 'finish_' + self.actor_name + "_wrapper")
 
-        if not self.wrapper_init_func:
-            return
-
-        c_arglist = []
-
-        # XML Code Params
-        if self.code_parameters.parameters:
-            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
-            c_arglist.append( param_c )
-
-        # DIAGNOSTIC INFO
-        status_info = StatusCType()
-        c_arglist.append( status_info.convert_to_native_type() )
-
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir( self.wrapper_dir )
-
-        self.wrapper_init_func( *c_arglist )
-
-        # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info )
+        if not self.is_standalone_run():
+            self.__run_init()
 
     def finalize(self):
-        if not self.wrapper_finish_func:
-            return
-
-        c_arglist = []
-        # DIAGNOSTIC INFO
-        status_info = StatusCType()
-        c_arglist.append( status_info.convert_to_native_type() )
-
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir( self.wrapper_dir )
-
-        self.wrapper_finish_func( *c_arglist )
-
-        # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info )
+        if not self.is_standalone_run():
+            self.__run_finalize()
 
     def __create_work_db(self):
         ids_storage = self.runtime_settings.ids_storage
-        is_standalone_run = self.runtime_settings.debug_mode is DebugMode.STANDALONE \
-                            or self.runtime_settings.run_mode is RunMode.STANDALONE
+        is_standalone_run = self.is_standalone_run()
 
         if is_standalone_run and ids_storage.backend is imas.imasdef.MEMORY_BACKEND:
             backend = ids_storage.persistent_backend
@@ -147,13 +123,56 @@ class CBinder:
                       ]
 
         proc = subprocess.Popen( tv_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
+
+    def __run_init(self, debug_mode=False):
+
+        if not self.wrapper_init_func:
+            return
+
+        c_arglist = []
+
+        # XML Code Params
+        if self.code_parameters.parameters:
+            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+            c_arglist.append( param_c )
+
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_init_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
+
+    def __run_finalize(self):
+        if not self.wrapper_finish_func:
+            return
+
+        c_arglist = []
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_finish_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
 
     def __run_normal(self, c_arglist, debug_mode=False):
         if debug_mode:
@@ -181,7 +200,7 @@ class CBinder:
 
         self.__save_input( full_arguments_list )
 
-        if self.is_mpi_code and mpi_settings:
+        if self.actor.is_mpi_code and mpi_settings:
             exec_command.append( 'mpiexec' )
             np = mpi_settings.number_of_processes
             if np and str( np ).isnumeric():
@@ -196,16 +215,16 @@ class CBinder:
 
         print( 'EXEC command: ', exec_command )
         proc = subprocess.Popen( exec_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
 
     # only input arguments, outputs are returned (as a list if more than 1)
-    def call_native_code(self, *input_idses):
+    def step(self, *input_idses):
         """
         """
         input_idses = list( input_idses )
@@ -241,17 +260,14 @@ class CBinder:
         print( 'RUN MODe: ', str( self.runtime_settings.run_mode ) )
 
         mpi_settings = self.runtime_settings.mpi
-        # call the NATIVE function
-        if self.runtime_settings.debug_mode is DebugMode.ATTACH:
-            self.__run_normal( c_arglist, debug_mode=True )
-        elif self.runtime_settings.debug_mode is DebugMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=True )
-        elif self.runtime_settings.run_mode is RunMode.NORMAL:
-            self.__run_normal( c_arglist, debug_mode=False )
-        elif self.runtime_settings.run_mode is RunMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=False )
+        is_standalone =  self.is_standalone_run()
+        debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
+
+        if is_standalone:
+            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=debug_mode )
         else:
-            raise ValueError( 'ERROR! Unknown "run_mode" value!' )
+            self.__run_normal( c_arglist, debug_mode=debug_mode )
+
 
         # go back from sandbox to original location
         os.chdir( cwd )

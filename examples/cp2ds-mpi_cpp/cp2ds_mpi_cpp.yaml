@@ -1,6 +1,7 @@
 --- !code_description
 programming_language: cpp
-code_name: cp2ds_mpi_cpp
+subroutines:
+    main:   cp2ds_mpi_cpp
 data_type: legacy
 arguments:
 -   name: core_profiles_in
