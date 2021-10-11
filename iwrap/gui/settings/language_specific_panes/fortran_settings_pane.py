@@ -13,17 +13,18 @@ from iwrap.settings.project import ProjectSettings
 
 
 class FortranPane( ttk.Frame, IWrapPane ):
-    """The FortranPane contains a combobox for selecting compiler and three tabs including feature frame, system library
-    frame, and custom library frame. Feature frame contains two Combobox widgets and enables the selection of MPI
-    Flavour and OpenMPI. Moreover, feature pane contains entry with browse button which enables the selection of module
-    path from the filedialog. System library frame contains the Table widget with system libraries and the custom library
-    frame contains the Table widget with custom libraries.
+    """The FortranPane contains a compiler cmd entry, module path entry which enables the selection od module path from
+    filedialog, two Combobox widgets that enables selection of MPI and OpenMP switch, and two tabs including system
+    library frame, and custom library frame. System library frame contains the Table widget with system libraries and
+    the custom library frame contains the Table widget with custom libraries.
 
     Attributes:
         language (string): The language related to the class.
         settings (LanguageSettingsManager): The project settings for fortran language pane.
-        compiler_combobox (ttk.Combobox): The compiler combobox.
-        feature_pane (FeaturesPane): The FeaturesPane class object.
+        compiler_cmd (tk.StringVar()): The compiler cmd.
+        openmp_switch_combobox (ttk.Combobox): The combobox enables switch openmp.
+        mpi_combobox (ttk.Combobox): The combobox contains mpi values.
+        module_path (tk.StringVar()): The value for include path.
         system_libraries_pane (SystemLibrariesPane): The SystemLibrariesPane class object.
         custom_libraries_pane (CustomLibrariesPane): The CustomLibrariesPane class object.
     """
@@ -113,8 +114,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
             self.module_path.set(filename)
 
     def reload(self):
-        """Reload system settings from the LanguageSettingsManager, set compiler to the Combobox widget as current value.
-        Call SystemLibrariesPane, CustomLibrariesPane, and FeaturesPane reload methods.
+        """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
+        Call SystemLibrariesPane and CustomLibrariesPane reload methods.
         """
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.module_path.set(self.settings.include_path or "")
@@ -125,8 +126,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.custom_libraries_pane.reload()
 
     def update_settings(self):
-        """Update compiler value in the ProjectSettings. Call SystemLibrariesPane, CustomLibrariesPane and
-         FeaturesPane update_settings methods.
+        """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call SystemLibrariesPane
+        and CustomLibrariesPane update_settings methods.
         """
         ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
         ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
@@ -390,85 +391,3 @@ class CustomLibrariesPane:
         """
         custom_libraries = self.get_list_of_custom_libraries()
         ProjectSettings.get_settings().code_description.language_specific.extra_libraries.lib_path = custom_libraries
-
-
-class FeaturesPane:
-    """The FeaturesPane contains two Combobox widgets and Entry with browse Button. Pane enables the selection of
-    module path, MPI Flavour and OpenMPI.
-
-    Attributes:
-        settings (LanguageSettingsManager): The project settings for fortran language pane.
-        mpi_flavour_combobox (ttk.Combobox): The combobox contains mpi flavour values.
-        open_mp_combobox (ttk.Combobox): The combobox contains open mpi values.
-        module_path (tk.StringVar()): The value for include path.
-    """
-
-    def __init__(self, master=None):
-        """Initialize the FeaturesPane class object.
-
-        Args:
-            master (ttk.Frame): The master frame.
-        """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-
-        # MODULE PATH
-        self.module_path = tk.StringVar()
-        self.module_path.set(self.settings.include_path or '')
-        module_frame = ttk.Frame(master)
-        ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
-        browse_button = ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10)
-        browse_button.bind("<FocusIn>", self.handle_focus)
-        browse_text = ttk.Entry(module_frame, textvariable=self.module_path)
-        module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
-        browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
-        browse_button.pack(side=tk.LEFT, padx=10)
-
-        # LABEL FRAME
-        labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
-        labelframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=5)
-
-        # COMBOBOX MPI Flavour
-        ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI", "None"]
-        self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
-        self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-        # COMBOBOX OpenMP
-        ttk.Label(labelframe, text="OpenMP:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.open_mp_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.open_mp_combobox['values'] = ["Yes", "No"]
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
-        self.open_mp_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-    @staticmethod
-    def handle_focus(event):
-        """Handle focus event and set focus to the next widget.
-
-        Args:
-            event: The focus event.
-        """
-        event.widget.tk_focusNext().focus()
-
-    def open_filedialog(self):
-        """Open the filedialog when the browse button is clicked and change the module path value to selected path.
-        """
-        filename = tk.filedialog.askopenfilename()
-        if filename not in ['', ()]:
-            self.module_path.set(filename)
-
-    def reload(self):
-        """Reload open_mpi, include path and mpi values from the LanguageSettingsManager and set them to the widgets.
-        """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
-        self.module_path.set(self.settings.include_path or '')
-        self.mpi_flavour_combobox.set([self.settings._mpi if self.settings._mpi not in [None, False, ''] else "None"])
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
-
-    def update_settings(self):
-        """Update open_mpi, include path and mpi values in the ProjectSettings.
-        """
-        ProjectSettings.get_settings().code_description.language_specific._mpi = self.mpi_flavour_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        open_mpi = True if self.open_mp_combobox.get() == 'Yes' else False
-        ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = open_mpi
