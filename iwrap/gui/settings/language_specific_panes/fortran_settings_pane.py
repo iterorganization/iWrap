@@ -404,5 +404,5 @@ class LibraryPathPane:
         """Update library paths in the ProjectSettings.
         """
         library_paths = self.get_list_of_paths()
-        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.lib_path = library_paths
+        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.path_defined = library_paths
 
