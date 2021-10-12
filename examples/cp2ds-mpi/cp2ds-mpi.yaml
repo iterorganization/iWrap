@@ -1,33 +1,33 @@
---- !code_description
-programming_language: Fortran
-subroutines:
-    init:
-    main:   coreprofiles2distsource_mpi
-    finish:
-data_type: legacy
-arguments:
--   name: core_profiles_in
-    type: core_profiles
-    intent: IN
--   name: distribution_sources_out
-    type: distribution_sources
-    intent: OUT
-code_path: ./native/libcp2ds-mpi.a
-code_parameters:
-    parameters:
-    schema:
-documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. '
-language_specific:
-    compiler_vendor: GNU
-    compiler_cmd: mpifort
-    include_path: ./native/mod_cp2ds_mpi.mod
-    mpi: true
-    open_mp_switch: false
-    extra_libraries:
-        pkg_config_defined:
-        lib_path:
+code_description:
+    programming_language: Fortran
+    subroutines:
+        init:
+        main:   coreprofiles2distsource_mpi
+        finish:
+    data_type: legacy
+    arguments:
+    -   name: core_profiles_in
+        type: core_profiles
+        intent: IN
+    -   name: distribution_sources_out
+        type: distribution_sources
+        intent: OUT
+    code_path: ./native/libcp2ds-mpi.a
+    code_parameters:
+        parameters:
+        schema:
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    language_specific:
+        compiler_vendor: GNU
+        compiler_cmd: mpifort
+        include_path: ./native/mod_cp2ds_mpi.mod
+        mpi: true
+        open_mp_switch: false
+        extra_libraries:
+            pkg_config_defined:
+            path_defined:
 
 

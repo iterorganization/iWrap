@@ -149,7 +149,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         include_path = self.feature_pane.module_path.get()
         extra_lib = ExtraLibraries()
         extra_lib.pkg_config_defined = system_libraries
-        extra_lib.lib_path = custom_libraries
+        extra_lib.path_defined = custom_libraries
         self.settings.from_dict({'compiler_cmd': compiler,
                                  'include_path': include_path,
                                  '_mpi': mpi,
@@ -360,8 +360,8 @@ class CustomLibrariesPane:
         """Add custom libraries from the ProjectSettings to the Table widget.
         """
         data = []
-        if self.settings.extra_libraries.lib_path is not None:
-            for cus_lib in self.settings.extra_libraries.lib_path:
+        if self.settings.extra_libraries.path_defined is not None:
+            for cus_lib in self.settings.extra_libraries.path_defined:
                 data.append([cus_lib])
         self.table.add_new_table_content(data)
 
@@ -390,4 +390,4 @@ class CustomLibrariesPane:
         """Update custom_libraries in the ProjectSettings.
         """
         custom_libraries = self.get_list_of_custom_libraries()
-        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.lib_path = custom_libraries
+        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.path_defined = custom_libraries
