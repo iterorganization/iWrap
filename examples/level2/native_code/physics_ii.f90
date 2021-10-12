@@ -31,7 +31,7 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   write(*,*) 'START OF PHYSICS CODE'
 
   ! CHECK IF INPUT IDS IS VALID
-  if (ids_is_valid(equilibrium_in%ids_properties%homogeneous_time).eq..True. &
+  if (ids_is_valid(equilibrium_in%ids_properties%homogeneous_time).eqv..True. &
        .and.size(equilibrium_in%time)>0) then
 
      call assign_codeparam(codeparam%parameters_value,codeparam_data)

@@ -1,9 +1,13 @@
+import logging
 import inspect
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict
 
 
 class Dictionarizable( ABC ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def _list_attributes(self):
         members_list = inspect.getmembers(self,  lambda member: not inspect.isroutine(member))

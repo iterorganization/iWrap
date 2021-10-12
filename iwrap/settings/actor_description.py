@@ -12,7 +12,6 @@ from iwrap.generation_engine.engine import Engine
 
 class ActorDescription( SettingsBaseClass ):
 
-    _yaml_tag = u'!actor_description'
     _logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
@@ -22,9 +21,6 @@ class ActorDescription( SettingsBaseClass ):
         self.install_dir: str = ''
 
         self.install_dir: str = ''
-
-        yaml.add_representer( self.__class__, representer=ActorDescription.representer )
-        yaml.add_constructor( self._yaml_tag, self.constructor )
 
     def validate(self, engine: Engine, project_root_dir, **kwargs) -> None:
 
@@ -83,17 +79,3 @@ class ActorDescription( SettingsBaseClass ):
         self.data_type = ''
         self.actor_type = ''
         self.install_dir = ''
-
-    @staticmethod
-    def representer(dumper, data):
-        # ...
-        return dumper.represent_mapping(
-            ActorDescription._yaml_tag,
-            data.to_dict() )
-
-    @staticmethod
-    def constructor(loader, value):
-        data_dict = loader.construct_mapping( value, deep=True )
-        obj = ActorDescription()
-        obj.from_dict( data_dict )
-        return obj

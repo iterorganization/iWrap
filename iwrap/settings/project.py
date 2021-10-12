@@ -1,3 +1,4 @@
+import logging
 import os
 
 from pathlib import Path
@@ -20,6 +21,9 @@ class ProjectSettings( SettingsBaseClass ):
 
         code_description (:obj:`CodeDescription`): description of the native code used for wrapping the code within an actor.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _settings = None
 
     @classmethod
@@ -38,6 +42,7 @@ class ProjectSettings( SettingsBaseClass ):
 
     def __init__(self):
         self.root_dir = os.getcwd()
+        self.project_file_path = ''
 
         self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
@@ -82,6 +87,7 @@ class ProjectSettings( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.root_dir = os.getcwd()
+        self.project_file_path = ''
         self.actor_description.clear()
         self.code_description.clear()
 
@@ -92,11 +98,11 @@ class ProjectSettings( SettingsBaseClass ):
             stream : an object responsible for storing data
         """
 
-        dumped = (self.actor_description, self.code_description,)
+        actor_description_dict = self.actor_description.to_dict()
+        code_description_dict = self.code_description.to_dict()
+        dumped = {'actor_description': actor_description_dict, 'code_description': code_description_dict}
 
-        yaml.dump_all( dumped, stream=stream,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
-
-
+        yaml.dump( dumped, stream=stream,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
 
 
     def load(self, file):
@@ -106,25 +112,19 @@ class ProjectSettings( SettingsBaseClass ):
             file: an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        objects_read = yaml.load_all( file, Loader=yaml.Loader )
+        dict_read = yaml.load( file, Loader=yaml.Loader )
 
-        for object in objects_read:
-            if isinstance(object, ActorDescription):
-                self.actor_description.__dict__ = object.__dict__
-            elif isinstance(object, CodeDescription):
-                code_description = object
-            else:
-                # unknown object
-                raise Exception(
-                    "The YAML file being looaded doesn't seem to contain valid description of the native code" )
+        actor_description_dict = dict_read.get('actor_description')
+        if actor_description_dict:
+            self.actor_description.from_dict(actor_description_dict)
 
-        # YAML file MUST contain at least code description document
-        if not code_description:
-            # YAML must contain documents
+        code_descritption_dict = dict_read.get('code_description')
+        if code_descritption_dict:
+            self.code_description.from_dict( code_descritption_dict )
+        else:
+            # YAML file MUST contain at least code description document
             raise Exception(
                 "The YAML file being looaded doesn't seem to contain valid description of the native code" )
-
-        self.code_description.__dict__ = object.__dict__
 
         file_real_path = os.path.realpath( file.name )
         self.root_dir = os.path.dirname( file_real_path )

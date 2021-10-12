@@ -1,3 +1,4 @@
+import logging
 import os
 import tkinter as tk
 from tkinter import filedialog
@@ -7,16 +8,22 @@ from iwrap.settings.project import ProjectSettings
 
 
 class MenuBar( tk.Menu ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master: IWrapPane):
         super().__init__( master )
         self.main_window = master
         self.code_description = ProjectSettings.get_settings().code_description
+        self.__save_and_open_initialdir = ProjectSettings.get_settings().root_dir
+        self.__import_and_export_initialdir = ProjectSettings.get_settings().root_dir
 
         file_menu = tk.Menu( self, tearoff=0 )
         file_menu.add_command( label='New', command=self.action_new )
         file_menu.add_command( label='Open...', command=self.action_open )
         file_menu.add_command( label='Save as...', command=self.action_save_as)
+        file_menu.add_command( label='Save', command=self.action_save)
 
         file_menu.add_separator()
 
@@ -38,7 +45,7 @@ class MenuBar( tk.Menu ):
         self.main_window.reload()
 
     def action_export(self):
-        file = filedialog.asksaveasfile( initialdir=None,
+        file = filedialog.asksaveasfile( initialdir=self.__import_and_export_initialdir,
                                        title=None,
                                        filetypes=(("YAML files",
                                                    "*.yaml"),))
@@ -47,10 +54,11 @@ class MenuBar( tk.Menu ):
 
         self.main_window.update_settings()
         ProjectSettings.get_settings().code_description.save(file)
+        self.__import_and_export_initialdir = os.path.dirname(file.name)
         file.close()
 
     def action_import(self):
-        file = filedialog.askopenfile( initialdir=None,
+        file = filedialog.askopenfile( initialdir=self.__import_and_export_initialdir,
                                          title=None,
                                          filetypes=(("YAML files",
                                                      "*.yaml"),),
@@ -62,11 +70,12 @@ class MenuBar( tk.Menu ):
         # Loading project settings from file
         ProjectSettings.get_settings().clear()
         ProjectSettings.get_settings().code_description.load(file)
+        self.__import_and_export_initialdir = os.path.dirname(file.name)
         file.close()
         self.main_window.reload()
 
     def action_save_as(self):
-        file = filedialog.asksaveasfile( initialdir=None,
+        file = filedialog.asksaveasfile( initialdir=self.__save_and_open_initialdir,
                                        title=None,
                                        filetypes=(("YAML files",
                                                    "*.yaml"),) )
@@ -77,8 +86,20 @@ class MenuBar( tk.Menu ):
         ProjectSettings.get_settings().save(file)
         file.close()
 
+        file_real_path = os.path.realpath( file.name )
+        ProjectSettings.get_settings().project_file_path = file_real_path
+        self.__save_and_open_initialdir = os.path.dirname(file.name)
+
+    def action_save(self):
+        filename = ProjectSettings.get_settings().project_file_path
+        if filename != '':
+            self.main_window.update_settings()
+            ProjectSettings.get_settings().save(open(filename, 'w'))
+        else:
+            self.action_save_as()
+
     def action_open(self):
-        file = filedialog.askopenfile( initialdir=None,
+        file = filedialog.askopenfile( initialdir=self.__save_and_open_initialdir,
                                          title=None,
                                          filetypes=(("YAML files",
                                                      "*.yaml"),),
@@ -90,6 +111,9 @@ class MenuBar( tk.Menu ):
         # Loading project settings from file
         ProjectSettings.get_settings().load(file)
         file.close()
+
         self.main_window.reload()
         file_real_path = os.path.realpath( file.name )
         ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
+        ProjectSettings.get_settings().project_file_path = file_real_path
+        self.__save_and_open_initialdir = os.path.dirname(file.name)

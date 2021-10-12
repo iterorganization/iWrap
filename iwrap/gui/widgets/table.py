@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -28,7 +29,13 @@ class Table( ttk.Frame ):
                 ['example3', 'Output', 'Output', 'example4']]
         Table(values, columns, master_frame)
     """
-    def __init__(self, rows, columns, master=None, lost_focus_listeners=[]):
+
+
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
+    def __init__(self, rows, columns, master=None, lost_focus_listeners=None):
+
         """Initialize the Table class object.
 
         Args:
@@ -275,6 +282,9 @@ class ArgumentWindow:
         master (Table): The master frame.
         new_cells (list): The list of column values from add/edit sheet.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the ArgumentWindow class object.
 
@@ -392,6 +402,9 @@ class Row:
         row_number (int): The row number to put cells in.
         row_cells (list): The list of cells related to row. A cell can be RowEntry or RowRadioButton object.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, row, data, master, columns):
         """Initialize the Row class object.
 
@@ -453,6 +466,9 @@ class RowRadioButton:
         value (str): The cell data.
         cell (Entry): The cell Entry placed in the table grid.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, row, column, value, master):
         """Initialize the RowRadioButton class object.
 
@@ -495,6 +511,9 @@ class RowEntry:
         row_text (StringVar): The cell data.
         cell (Entry): The cell Entry placed in the table grid.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, row, column, text, master):
         """Initialize the RowEntry class object.
 
@@ -543,6 +562,9 @@ class Column:
          in the Add/Edit window.
         data_label (str): The data label.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     TEXT = 'text'
     RADIOBUTTON = 'radiobutton'
     COMBOBOX = 'combobox'

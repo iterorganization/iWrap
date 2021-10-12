@@ -95,6 +95,7 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
     if args.file:
         with args.file as file:
             load_code_description( file )
+            ProjectSettings.get_settings().project_file_path = file.name
     if args.actor_name:
         ProjectSettings.get_settings().actor_description.actor_name = args.actor_name
 

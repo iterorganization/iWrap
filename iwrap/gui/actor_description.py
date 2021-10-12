@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -7,6 +8,9 @@ from iwrap.settings.project import ProjectSettings
 
 
 class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self, master: ttk.Widget):
         super().__init__( master, text='Actor:', borderwidth=2, relief="groove", height=100 )

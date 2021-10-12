@@ -1,3 +1,13 @@
+KNOWN ISSUES (to be corrected)
+- runtime settings must be set before initialize - misleading - to check if calls can be independent
+- input.txt - access denied  - to be run in sandbox
+
+REPORTED BY MIREILLE
+- Description of ‘module path’ missing, along with the description on how the fortran code has to be adapted to make it generate the mod file
+- The yaml file should be able to receive environment variables
+- Relative paths:
+- MPI actors need runtime standalone settings (to be done before initialize() )
+
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
@@ -5,7 +15,6 @@ Generated Py-F actors:
 + improve 'runwork' mechanism
 + OpenMP
 * "per patform" configuration
-+ INSTALLATION
 
 iWrap:
 ----------------
@@ -19,3 +28,7 @@ iWrap:
 Examples:
 -----------------
 + make all examples compilable using GCC and Intel
+
+Manual
+-----------------
+Describe adding libs more clearly

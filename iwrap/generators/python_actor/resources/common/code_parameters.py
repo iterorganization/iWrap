@@ -1,7 +1,11 @@
+import logging
 import os
 
 
 class CodeParameters:
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         self.parameters_file = None

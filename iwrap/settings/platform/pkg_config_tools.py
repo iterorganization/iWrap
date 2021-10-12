@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 
@@ -12,6 +13,9 @@ class PkgConfigTools:
         system_lib_dict (dict): The dictionary with all pkg configs. Keys are pkg configs names, dictionary values are
         info and descriptions.
     """
+    # Class logger
+    logger = logging.getLogger(__name__ + "." + __qualname__)
+
     PKG_CONFIG_CMD = "pkg-config"
     PKG_CONFIG_OPT_LIST_ALL = "--list-all"
     PKG_CONFIG_OPT_GET_LINKER_FLAGS = "--libs"

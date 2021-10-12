@@ -1,35 +1,27 @@
 # actor name
 ACTOR_NAME={{actor_settings.actor_name}}
 
-{% if code_description.language_specific.mpi %}
-FC=mpiifort
-{% else %}
-FC=ifort
-{% endif %}
-
-
+FC={{ code_description.language_specific.compiler_cmd }}
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-FLAGS=-g -fPIC
-OPENMP=NO
 OPENMPFLAG=
 
 MOD_DIR=./build/
 
 
-FLAGS=-g -fPIC -module $(MOD_DIR)
+XFLAGS=-g -fPIC -module $(MOD_DIR)
 
 # Compiler options for gfortran
-XFLAGS=-g -fPIC -fno-second-underscore -FCree-line-length-none -J$(MOD_DIR)
+FLAGS=-g -fPIC -J$(MOD_DIR)
 
 FCLAGS=$(FLAGS) $(OPENMPFLAG)
 CODE_LIB_FILE=$(notdir {{code_description.code_path}})
 CODE_LIB_DEF=../lib/$(CODE_LIB_FILE)
 
 # main IMAS libs to be used
-CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-ifort xmllib)
-CORE_LIBS=$(shell pkg-config --libs imas-ifort xmllib)
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-gfortran xmllib)
+CORE_LIBS=$(shell pkg-config --libs imas-gfortran xmllib)
 
 # required 'platform' libs (i.e. published using pkg-config mechanism)
 {% if code_description.language_specific.system_libraries %}
