@@ -13,7 +13,7 @@ class ExtraLibraries( SettingsBaseClass ):
 
     def __init__(self):
         self.pkg_config_defined = []
-        self.lib_path = []
+        self.path_defined = []
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
 
@@ -21,7 +21,7 @@ class ExtraLibraries( SettingsBaseClass ):
         # TODO Validate system libs against platform settings
 
         # custom_libraries
-        for library in self.lib_path or []:
+        for library in self.path_defined or []:
             __path = Path( project_root_dir, library )
             if not __path.exists():
                 raise ValueError( f'Path to library file is not valid! {str( __path )}' )
