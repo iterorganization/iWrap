@@ -18,23 +18,15 @@ LIBS+=`pkg-config xmllib --libs`
 INCLUDE+=`pkg-config xmllib --cflags`
 
 # LIST OF FORTRAN FILES
-OBJS_ACTOR = codeparam_input_physics.o physics_ii.o
+OBJS_ACTOR = code_lifecycle.o
 
 # LIBRARY COMPILATION
-libphysics_ii.a: ${OBJS_ACTOR}
-	rm -f libphysics_ii.a
+libcode_lifecycle.a: ${OBJS_ACTOR}
 	@ar -cr $@ *.o
 
-# TEST THE CONSISTENCY OF THE XML AND XSD FILES FOR INPUT PARAMETERS
-validate:
-	xmllint --noout input/input_wrapper.xsd input/input_wrapper.xml
-	xmllint --noout --schema input/input_wrapper.xsd input/input_wrapper.xml
-	xmllint --noout input/input_physics.xsd input/input_physics.xml
-	xmllint --noout --schema input/input_physics.xsd input/input_physics.xml
-
 # COMPILE THE IMAS ACTOR
-install: libphysics_ii.a
-	cp libphysics_ii.a ../physics_ii/native/lib
+install: libcode_lifecycle.a
+	cp libcode_lifecycle.a ../code_lifecycle/native/lib
 
 # RULES FOR ALL OBJECT FILES
 %.o:%.f90
@@ -42,7 +34,7 @@ install: libphysics_ii.a
 
 # CLEAN DIRECTORY
 clean:
-	rm -f *.exe *.a *.mod *.o physics_ii.xml
+	rm -f *.exe *.a *.mod *.o *~
 
 
 

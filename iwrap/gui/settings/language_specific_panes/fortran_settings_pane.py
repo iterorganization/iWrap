@@ -7,25 +7,27 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
+from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
 
 
 class FortranPane( ttk.Frame, IWrapPane ):
-    """The FortranPane contains a combobox for selecting compiler and three tabs including feature frame, system library
-    frame, and custom library frame. Feature frame contains two Combobox widgets and enables the selection of MPI
-    Flavour and OpenMPI. Moreover, feature pane contains entry with browse button which enables the selection of module
-    path from the filedialog. System library frame contains the Table widget with system libraries and the custom library
-    frame contains the Table widget with custom libraries.
+    """The FortranPane contains a compiler cmd entry, module path entry which enables the selection od module path from
+    filedialog, two Combobox widgets that enables selection of MPI and OpenMP switch, and two tabs including
+    PkgConfigPane, and LibraryPathPane. PkgConfigPane contains the Table widget with system libraries and the
+    LibraryPathPane frame contains the Table widget with library paths.
 
     Attributes:
         language (string): The language related to the class.
         settings (LanguageSettingsManager): The project settings for fortran language pane.
-        compiler_combobox (ttk.Combobox): The compiler combobox.
-        feature_pane (FeaturesPane): The FeaturesPane class object.
-        system_libraries_pane (SystemLibrariesPane): The SystemLibrariesPane class object.
-        custom_libraries_pane (CustomLibrariesPane): The CustomLibrariesPane class object.
+        compiler_cmd (tk.StringVar()): The compiler cmd.
+        openmp_switch_combobox (ttk.Combobox): The combobox enables switch openmp.
+        mpi_combobox (ttk.Combobox): The combobox contains mpi values.
+        module_path (tk.StringVar()): The value for include path.
+        pkg_config_pane (PkgConfigPane): The PkgConfigPane class object.
+        library_path_pane (LibraryPathPane): The LibraryPathPane class object.
     """
     # Class logger
     logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -47,19 +49,46 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
-        labelframe.pack(fill=tk.BOTH, expand=1)
+        labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
-        # COMBOBOX FRAME
-        combobox_frame = ttk.Frame(labelframe)
-        combobox_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
-        combobox_frame.grid_columnconfigure(1, weight=1)
+        # FRAME
+        frame = ttk.Frame(labelframe)
+        frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
+        frame.grid_columnconfigure(1, weight=1)
 
-        # COMBOBOX
-        ttk.Label(combobox_frame, text="Compiler:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.compiler_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.compiler_combobox['values'] = ['Intel Fortran (ifort)', 'GNU Compiler Collection (fortran)', 'Intel']
-        self.compiler_combobox.set(self.settings.compiler)
-        self.compiler_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        # COMPILER CMD
+        self.compiler_cmd = tk.StringVar()
+        ttk.Label(frame, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
+        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # MODULE PATH
+        self.module_path = tk.StringVar()
+        self.module_path.set(self.settings.include_path or '')
+        ttk.Label(frame, text="Module path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        browse_button = ttk.Button(frame, text="Browse...", command=self.open_filedialog, width=10)
+        browse_button.bind("<FocusIn>", self.handle_focus)
+        browse_text = ttk.Entry(frame, textvariable=self.module_path)
+        browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # COMBOBOX MPI
+        ttk.Label(frame, text="MPI:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.mpi_combobox = ttk.Combobox(frame, state='readonly')
+        self.mpi_combobox['values'] = ["Yes", "No"]
+        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
+        self.mpi_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # COMBOBOX OpenMP switch
+        ttk.Label(frame, text="OpenMP switch:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.switch = tk.StringVar()
+        self.switch.trace('w', self.change_switch)
+        self.openmp_switch_combobox = ttk.Combobox(frame, textvar=self.switch)
+        self.openmp_switch_combobox['values'] = [None]
+        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.openmp_switch_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", self.add_value)
+        self.current_switch = self.switch.get()
 
         # TABS FRAME
         tab_frame = ttk.Frame(labelframe)
@@ -69,60 +98,86 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control = ttk.Notebook(tab_frame)
         sys_lib_tab = ttk.Frame(tab_control)
         cus_lib_tab = ttk.Frame(tab_control)
-        feature_lib_tab = ttk.Frame(tab_control)
-        tab_control.add(feature_lib_tab, text="Features")
-        tab_control.add(sys_lib_tab, text="System libraries")
-        tab_control.add(cus_lib_tab, text="Custom libraries")
+        tab_control.add(sys_lib_tab, text="pkg-config defined:")
+        tab_control.add(cus_lib_tab, text="Path defined:")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
-        self.feature_pane = FeaturesPane(feature_lib_tab)
-        self.system_libraries_pane = SystemLibrariesPane(sys_lib_tab)
-        self.custom_libraries_pane = CustomLibrariesPane(cus_lib_tab)
+        self.pkg_config_pane = PkgConfigPane(sys_lib_tab)
+        self.library_path_pane = LibraryPathPane(cus_lib_tab)
+
+    @staticmethod
+    def handle_focus(event):
+        """Handle focus event and set focus to the next widget.
+
+        Args:
+            event: The focus event.
+        """
+        event.widget.tk_focusNext().focus()
+
+    def open_filedialog(self):
+        """Open the filedialog when the browse button is clicked and change the module path value to selected path.
+        """
+        filename = tk.filedialog.askopenfilename()
+        if filename:
+            self.module_path.set(filename)
+
+    def add_value(self, event) -> None:
+        if self.current_switch not in self.openmp_switch_combobox['value']:
+            self.openmp_switch_combobox['values'] += (self.current_switch,)
+
+    def change_switch(self, *args):
+        if self.switch.get() not in self.openmp_switch_combobox['values']:
+            self.current_switch = self.switch.get()
 
     def reload(self):
-        """Reload system settings from the LanguageSettingsManager, set compiler to the Combobox widget as current value.
-        Call SystemLibrariesPane, CustomLibrariesPane, and FeaturesPane reload methods.
+        """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
+        Call PkgConfigPane and LibraryPathPane reload methods.
         """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.compiler_cmd.set(self.settings.compiler_cmd)
+        self.module_path.set(self.settings.include_path or "")
+        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
+        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
 
-        self.compiler_combobox.set(self.settings.compiler)
-        self.feature_pane.reload()
-        self.system_libraries_pane.reload()
-        self.custom_libraries_pane.reload()
+        self.library_path_pane.reload()
+        self.pkg_config_pane.reload()
 
     def update_settings(self):
-        """Update compiler value in the ProjectSettings. Call SystemLibrariesPane, CustomLibrariesPane and
-         FeaturesPane update_settings methods.
+        """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
+        and LibraryPathPane update_settings methods.
         """
-        compiler = self.compiler_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific.compiler = compiler
+        ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
+        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
+        ProjectSettings.get_settings().code_description.language_specific.mpi = self.mpi_combobox.get() == 'yes' or ''
+        ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = self.openmp_switch_combobox.get()
 
-        self.system_libraries_pane.update_settings()
-        self.custom_libraries_pane.update_settings()
-        self.feature_pane.update_settings()
-
+        self.pkg_config_pane.update_settings()
+        self.library_path_pane.update_settings()
         self.settings = ProjectSettings.get_settings().code_description.language_specific
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
-        compiler = self.compiler_combobox.get()
-        system_libraries = self.system_libraries_pane.get_data_from_table()
-        custom_libraries = self.custom_libraries_pane.get_list_of_custom_libraries()
+        # compiler = self.compiler_combobox.get()
+        pkg_configs = self.pkg_config_pane.get_data_from_table()
+        library_paths = self.library_path_pane.get_list_of_custom_libraries()
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
         include_path = self.feature_pane.module_path.get()
-        self.settings.from_dict({'compiler': compiler,
+        extra_lib = ExtraLibraries()
+        extra_lib.pkg_config_defined = pkg_configs
+        extra_lib.lib_path = library_paths
+
+        self.settings.from_dict({'compiler_cmd': compiler,
                                  'include_path': include_path,
-                                 'mpi': mpi,
-                                 'open_mp': open_mpi,
-                                 'system_libraries': system_libraries,
-                                 'custom_libraries': custom_libraries})
+                                 '_mpi': mpi,
+                                 'open_mp_switch': open_mpi,
+                                 'extra_libraries': extra_lib.to_dict()})
 
 
-class SystemLibrariesPane:
-    """The SystemLibrariesPane contains the Table widget with system libraries. Add button opens new window and enables
-    to add system library from list of available system libraries. Remove button enables to delete selected library from the Table.
+class PkgConfigPane:
+    """The PkgConfigPane contains the Table widget with pkg configs. Add button opens new window and enables
+    to add system library from list of available pkg config. Remove button enables to delete selected element from the
+    Table.
 
     Attributes:
         settings (LanguageSettingsManager): The project settings for fortran language pane.
@@ -136,14 +191,14 @@ class SystemLibrariesPane:
     logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
-        """Initialize the SystemLibrariesPane class object.
+        """Initialize the PkgConfigPane class object.
 
         Args:
             master (ttk.Frame): The master frame.
         """
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-        self.system_lib = PkgConfigTools()
-        self.system_lib.initialize()
+        self.pkg_config = PkgConfigTools()
+        self.pkg_config.initialize()
         self.master = master
 
         # TABLE FRAME
@@ -167,21 +222,21 @@ class SystemLibrariesPane:
                         Column(Column.TEXT, "Info", "Info"),
                         Column(Column.TEXT, "Description", "Description")]
         self.table = Table([], self.columns, table_frame, [remove_button])
-        add_button['command'] = lambda: AddSystemLibraryWindow(self)
+        add_button['command'] = lambda: AddPkgConfigWindow(self)
         remove_button['command'] = self.table.delete_row
         self.__add_table_data()
 
     def __add_table_data(self):
-        """Add system libraries to the table.
+        """Add pkg config to the table.
         """
         self.table.delete_data_from_table()
-        if not self.settings.system_libraries:
+        if not self.settings.extra_libraries.pkg_config_defined:
             return
 
         data = []
-        for sys_lib in self.settings.system_libraries:
+        for sys_lib in self.settings.extra_libraries.pkg_config_defined:
             name = sys_lib
-            system_lib_dict = self.system_lib.get_pkg_config(name)
+            system_lib_dict = self.pkg_config.get_pkg_config(name)
             if system_lib_dict is None:
                 messagebox.showwarning("Warning", f"Unknown system library.")
                 continue
@@ -196,46 +251,46 @@ class SystemLibrariesPane:
         self.table.add_rows([data])
 
     def get_data_from_table(self):
-        """Get system libraries names from the table.
+        """Get pkg config names from the table.
 
-        Returns (list): The list with system libraries names from the table.
+        Returns (list): The list with pkg configs from the table.
         """
-        system_libraries = self.table.get_data_from_table()
-        libraries_name = []
-        for system_library in system_libraries:
-            libraries_name.append(system_library['Name'])
+        pkg_configs = self.table.get_data_from_table()
+        pkg_config_name = []
+        for pkg_config in pkg_configs:
+            pkg_config_name.append(pkg_config['Name'])
 
-        return libraries_name
+        return pkg_config_name
 
     def reload(self):
-        """Reload system settings from the LanguageSettingsManager and add system libraries to the Table widget.
+        """Reload settings from the LanguageSettingsManager and add system libraries to the Table widget.
         """
         self.settings = ProjectSettings.get_settings().code_description.language_specific
         self.__add_table_data()
 
     def update_settings(self):
-        """Update system libraries in the ProjectSettings.
+        """Update system library values in the ProjectSettings.
         """
-        system_libraries = self.get_data_from_table()
-        ProjectSettings.get_settings().code_description.language_specific.system_libraries = system_libraries
+        pkg_config = self.get_data_from_table()
+        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.pkg_config_defined = pkg_config
 
 
-class AddSystemLibraryWindow:
-    """Opens a new window with a table contains available system libraries. The table can be filtered by user.
+class AddPkgConfigWindow:
+    """Opens a new window with a table contains available pkg configs. The table can be filtered by user.
 
     Attributes:
-        master (SystemLibrariesPane): The master pane.
-        window (tk.Toplevel): The new window with system libraries table.
-        table (Table): The table contains system libraries.
+        master (PkgConfigPane): The master pane.
+        window (tk.Toplevel): The new window with system library table.
+        table (Table): The table contains system library.
     """
     # Class logger
     logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
-        """Initialize the AddSystemLibraryWindow class object.
+        """Initialize the AddPkgConfigWindow class object.
 
         Args:
-            master (SystemLibrariesPane): The master pane.
+            master (PkgConfigPane): The master pane.
         """
         self.master = master
 
@@ -263,7 +318,7 @@ class AddSystemLibraryWindow:
         filter_button.pack(side=tk.LEFT, padx=10, pady=10)
 
         # TABLE
-        system_lib_dict = master.system_lib.system_lib_dict
+        system_lib_dict = master.pkg_config.system_lib_dict
         data = []
         for key, value in system_lib_dict.items():
             data.append([key, value['info'], value['description']])
@@ -288,8 +343,8 @@ class AddSystemLibraryWindow:
         self.window.destroy()
 
 
-class CustomLibrariesPane:
-    """The CustomLibrariesPane contains the Table widget with the custom libraries. Add button enables to add library
+class LibraryPathPane:
+    """The PathPane contains the Table widget with the library paths. Add button enables to add library
     path from filedialog to the Table, remove button enables to delete selected library from the Table.
 
     Attributes:
@@ -326,14 +381,14 @@ class CustomLibrariesPane:
         columns = [Column(Column.TEXT, "Library path", "Library path")]
         self.table = Table([], columns, library_path_frame, [remove_button])
         remove_button['command'] = self.table.delete_row
-        self.__add_custom_lib_from_settings()
+        self.__add_path_from_settings()
 
-    def __add_custom_lib_from_settings(self):
+    def __add_path_from_settings(self):
         """Add custom libraries from the ProjectSettings to the Table widget.
         """
         data = []
-        if self.settings.custom_libraries is not None:
-            for cus_lib in self.settings.custom_libraries:
+        if self.settings.extra_libraries.path_defined is not None:
+            for cus_lib in self.settings.extra_libraries.path_defined:
                 data.append([cus_lib])
         self.table.add_new_table_content(data)
 
@@ -344,108 +399,23 @@ class CustomLibrariesPane:
         if path not in ['', ()]:
             self.table.add_rows([[path]])
 
-    def get_list_of_custom_libraries(self):
-        """Get the list of custom libraries from the table.
+    def get_list_of_paths(self):
+        """Get the list of library paths from the table.
 
-        Returns: The list of custom libraries.
+        Returns: The list of library paths.
         """
         data_table = self.table.get_data_from_table()
         return [data['Library path'] for data in data_table]
 
     def reload(self):
-        """Reload custom_libraries list from the LanguageSettingsManager and add it to the Table widget.
+        """Reload library paths list from the LanguageSettingsManager and add it to the Table widget.
         """
         self.settings = ProjectSettings.get_settings().code_description.language_specific
-        self.__add_custom_lib_from_settings()
+        self.__add_path_from_settings()
 
     def update_settings(self):
-        """Update custom_libraries in the ProjectSettings.
+        """Update library paths in the ProjectSettings.
         """
-        custom_libraries = self.get_list_of_custom_libraries()
-        ProjectSettings.get_settings().code_description.language_specific.custom_libraries = custom_libraries
+        library_paths = self.get_list_of_paths()
+        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.path_defined = library_paths
 
-
-class FeaturesPane:
-    """The FeaturesPane contains two Combobox widgets and Entry with browse Button. Pane enables the selection of
-    module path, MPI Flavour and OpenMPI.
-
-    Attributes:
-        settings (LanguageSettingsManager): The project settings for fortran language pane.
-        mpi_flavour_combobox (ttk.Combobox): The combobox contains mpi flavour values.
-        open_mp_combobox (ttk.Combobox): The combobox contains open mpi values.
-        module_path (tk.StringVar()): The value for include path.
-    """
-    # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
-
-
-    def __init__(self, master=None):
-        """Initialize the FeaturesPane class object.
-
-        Args:
-            master (ttk.Frame): The master frame.
-        """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-
-        # MODULE PATH
-        self.module_path = tk.StringVar()
-        self.module_path.set(self.settings.include_path or '')
-        module_frame = ttk.Frame(master)
-        ttk.Label(module_frame, text="Module path:").pack(side=tk.LEFT, padx=10)
-        browse_button = ttk.Button(module_frame, text="Browse...", command=self.open_filedialog, width=10)
-        browse_button.bind("<FocusIn>", self.handle_focus)
-        browse_text = ttk.Entry(module_frame, state='readonly',
-                                textvariable=self.module_path)
-        module_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
-        browse_text.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
-        browse_button.pack(side=tk.LEFT, padx=10)
-
-        # LABEL FRAME
-        labelframe = ttk.LabelFrame(master, text="Computation", borderwidth=2, relief="groove")
-        labelframe.pack(side=tk.LEFT, fill=tk.BOTH, expand=1, pady=5)
-
-        # COMBOBOX MPI Flavour
-        ttk.Label(labelframe, text="MPI Flavour:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.mpi_flavour_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.mpi_flavour_combobox['values'] = ["MPICH2", "OpenMPI", "None"]
-        self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
-        self.mpi_flavour_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-        # COMBOBOX OpenMP
-        ttk.Label(labelframe, text="OpenMP:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.open_mp_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.open_mp_combobox['values'] = ["Yes", "No"]
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
-        self.open_mp_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-    @staticmethod
-    def handle_focus(event):
-        """Handle focus event and set focus to the next widget.
-
-        Args:
-            event: The focus event.
-        """
-        event.widget.tk_focusNext().focus()
-
-    def open_filedialog(self):
-        """Open the filedialog when the browse button is clicked and change the module path value to selected path.
-        """
-        filename = tk.filedialog.askopenfilename()
-        if filename not in ['', ()]:
-            self.module_path.set(filename)
-
-    def reload(self):
-        """Reload open_mpi, include path and mpi values from the LanguageSettingsManager and set them to the widgets.
-        """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
-        self.module_path.set(self.settings.include_path or '')
-        self.mpi_flavour_combobox.set([self.settings.mpi if self.settings.mpi not in [None, False, ''] else "None"])
-        self.open_mp_combobox.set(["Yes" if self.settings.open_mp not in [None, False, ''] else "No"])
-
-    def update_settings(self):
-        """Update open_mpi, include path and mpi values in the ProjectSettings.
-        """
-        ProjectSettings.get_settings().code_description.language_specific.mpi = self.mpi_flavour_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        open_mpi = True if self.open_mp_combobox.get() == 'Yes' else False
-        ProjectSettings.get_settings().code_description.language_specific.open_mp = open_mpi

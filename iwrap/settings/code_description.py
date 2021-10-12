@@ -89,6 +89,56 @@ class Argument( SettingsBaseClass ):
                + 'Intent : ' + self.intent + '\n'
         return str_
 
+class Subroutines(SettingsBaseClass):
+    """The data class containing information about subroutines to be called from library provided by developer.
+
+    Attributes:
+        init (str): A name of subroutine that could be used to initialise the native code (optional)
+        main (str): A name of the main subroutine that will be called from actor (mandatory)
+        finish (str): A name of subroutine that could be used to finalise the native code (optional)
+    """
+
+    def __init__(self):
+        #: A name of subroutine that could be used to initialise the native code (optional)
+        self.init: str = ''
+
+        #: A name of the main subroutine that will be called from actor (mandatory)
+        self.main: str = ''
+
+        #: A name of subroutine that could be used to finalise the native code (optional)
+        self.finish: str = ''
+
+    def validate(self, engine: Engine, project_root_dir: str) -> None:
+
+        # validate correctness of XML
+
+        if not self.main:
+            raise ValueError( 'A name of the main subroutine must provided!' )
+
+
+    def clear(self):
+        """Clears class content, setting default values of class attributes
+        """
+        self.init = ''
+        self.main = ''
+        self.finish = ''
+
+    def from_dict(self, dictionary: Dict[str, Any]) -> None:
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
+        super().from_dict(dictionary)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
+        return super().to_dict()
+
 
 class CodeParameters(SettingsBaseClass):
     """The data class containing information about files defining code parameters.
@@ -197,7 +247,6 @@ class CodeDescription( SettingsBaseClass ):
     # Class logger
     logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    _yaml_tag = u'!code_description'
 
     @property
     def arguments(self):
@@ -245,15 +294,13 @@ class CodeDescription( SettingsBaseClass ):
 
     def __init__(self):
         self._programming_language: str = ''
-        self.code_name: str = None
+        self.subroutines: Subroutines = Subroutines()
         self.data_type: str = None
         self._arguments: List[Argument] = []
         self.code_path: str = None
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
         self.language_specific: dict = {}
-        yaml.add_representer(self.__class__, representer=CodeDescription.representer)
-        yaml.add_constructor( self._yaml_tag, self.constructor )
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
@@ -263,10 +310,8 @@ class CodeDescription( SettingsBaseClass ):
         else:
             engine.validate_programming_language(self.programming_language)
 
-
-        # code_name
-        if not self.code_name:
-            raise ValueError( 'Name of the code called by actor is not set!' )
+        # subroutines
+        self.subroutines.validate( engine, project_root_dir )
 
         # data_type
         if not self.data_type:
@@ -311,13 +356,13 @@ class CodeDescription( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.programming_language = None
-        self.code_name = None
         self.data_type = None
         self.arguments = []
         self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
         self.language_specific = {}
+        self.subroutines.clear()
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes given object to dictionary
@@ -327,45 +372,29 @@ class CodeDescription( SettingsBaseClass ):
         """
         return super().to_dict()
 
-
-
-    @staticmethod
-    def representer( dumper, data):
-        code_description_dict = data.to_dict()
-        return dumper.represent_mapping(
-            CodeDescription._yaml_tag,
-            code_description_dict)
-
-    @staticmethod
-    def constructor(loader, value):
-        data_dict = loader.construct_mapping( value, deep=True )
-        obj = CodeDescription()
-        obj.from_dict(data_dict)
-        return obj
-
-    def save(self, stream):
+    def save(self, file):
         """Stores code description in a file
 
         Args:
-            serializer (IWrapSerializer): an object responsible for storing dictionary to file of given format
+            file: an object responsible for storing dictionary from file of given format
         """
-        yaml.dump( self, stream=stream, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True )
+        code_description_dict = self.to_dict()
+        yaml.dump( {'code_description': code_description_dict}, stream=file, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True )
 
     def load(self, file):
         """Loads code description from a file
 
         Args:
-            serializer (IWrapSerializer): an object responsible for reading dictionary from file of given format
+            file: an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        objects_read = yaml.load_all( file, Loader=yaml.Loader )
-        objects_read = list(filter(lambda x : isinstance(x, CodeDescription), objects_read ))
+        dict_read = yaml.load( file, Loader=yaml.Loader )
+        code_description_dict = dict_read.get('code_description')
 
-        if len(objects_read) < 1:
-            raise Exception("The YAML file being looaded doesn't seem to contain valid description of the native code")
+        if not code_description_dict:
+            raise Exception("The YAML file being loaded doesn't seem to contain valid description of the native code")
 
-        code_description = objects_read[0]
-        self.__dict__ = code_description.__dict__
+        self.from_dict(code_description_dict)
 
         file_real_path = os.path.realpath( file.name )
         from iwrap.settings.project import ProjectSettings

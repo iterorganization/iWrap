@@ -2,31 +2,23 @@ import sys
 
 import imas,os
 
-from core2dist.actor import core2dist
-from core2dist.common.runtime_settings import RunMode, DebugMode
+from code_lifecycle_cpp.actor import code_lifecycle_cpp
 
+from code_lifecycle_cpp.common.runtime_settings import RunMode, DebugMode
 
 
 class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.actor_cp2ds = core2dist()
-        print(self.actor_cp2ds.actor_description['data_type'])
-        print(self.actor_cp2ds.code_description['subroutines'])
-        print(self.actor_cp2ds.code_description['language_specific']['include_path'])
-        for arg in self.actor_cp2ds.code_description['arguments']:
-            print(arg)
-        for arg in self.actor_cp2ds.arguments:
-            print(arg)
+        self.actor_code_lifecycle = code_lifecycle_cpp()
         self.input_entry = None
         self.output_entry = None
 
     def init_workflow(self):
-
         # INPUT/OUTPUT CONFIGURATION
-        shot                = 134174
-        run_in              = 37
+        shot                = 131024
+        run_in              = 1
         input_user_or_path  = 'public'
         input_database      = 'iter'
         run_out             = 10
@@ -44,43 +36,40 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
-        #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
-        #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
-        self.actor_cp2ds.initialize()
+            self.actor_code_lifecycle.runtime_settings.run_mode = RunMode.STANDALONE
+        self.actor_code_lifecycle.initialize() 
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
+        time_slice          = 200.
         print('=> Read input IDSs')
-        input_core_profiles = self.input_entry.get('core_profiles')
+        input_equilibrium = self.input_entry.get_slice('equilibrium', time_slice, 1)
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
 
-        output_distribution_sources = self.actor_cp2ds(input_core_profiles)
+        output_equilibrium = self.actor_code_lifecycle(input_equilibrium)
         
         
         # SAVE IDSS INTO OUTPUT FILE
         print('=> Export output IDSs to local database')
-        self.output_entry.put(output_distribution_sources)
+        self.output_entry.put(output_equilibrium)
         print('Done exporting.')
 
 
     def end_workflow(self):
         
         # Finalize ALL actors 
-        self.actor_cp2ds.finalize()
+        self.actor_code_lifecycle.finalize() 
 
 
-        output_ids = self.output_entry.get('distribution_sources')
+        output_ids = self.output_entry.get('equilibrium')
 
         with open( 'wf_output.txt', 'w' ) as file:
             file.write( str(output_ids.time) )
-
-
 
         #other finalizastion actions
         self.input_entry.close()

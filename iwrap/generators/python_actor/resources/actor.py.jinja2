@@ -16,7 +16,6 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     """
 
     NATIVE_LANGUAGE = '{{code_description.programming_language | lower}}'
-    CODE_NAME = '{{code_description.code_name}}'
     IS_MPI = {% if not code_description.language_specific.mpi or code_description.language_specific.mpi == 'None' %} False {% else %} True {% endif %}
     #  {{code_description.language_specific.mpi}}
 
@@ -27,7 +26,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
 
     def __init__(self):
         actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        super().__init__(actor_dir, self.NATIVE_LANGUAGE, self.CODE_NAME, self.IS_MPI)
+        super().__init__(actor_dir, self.NATIVE_LANGUAGE, self.IS_MPI)
 
         # Auto-generated list of arguments meta-data
     {% for argument in code_description.arguments %}
