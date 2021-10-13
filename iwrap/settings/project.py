@@ -22,7 +22,7 @@ class ProjectSettings( SettingsBaseClass ):
         code_description (:obj:`CodeDescription`): description of the native code used for wrapping the code within an actor.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     _settings = None
 

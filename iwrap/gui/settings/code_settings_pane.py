@@ -30,7 +30,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
          The code name is added automatically if the YAML file is imported.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     default_programming_language = 'fortran'
 

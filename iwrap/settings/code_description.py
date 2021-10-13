@@ -15,7 +15,7 @@ from iwrap.settings.language_specific.language_settings_mgmt import LanguageSett
 
 class Intent( Enum ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     IN = 'IN'  # input type of argument
     OUT = 'OUT'  # output type of an argument
@@ -29,7 +29,7 @@ class Argument( SettingsBaseClass ):
         intent : determines if argument is IN or OUT
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
 
@@ -148,7 +148,7 @@ class CodeParameters(SettingsBaseClass):
         schema (str): Path to a XSD file with schema definition for code parameters file
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self):
@@ -245,7 +245,7 @@ class CodeDescription( SettingsBaseClass ):
         language_specific (Dict[str, Any]): information specific for a given language of the native code
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     @property

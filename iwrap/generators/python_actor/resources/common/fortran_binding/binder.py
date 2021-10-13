@@ -17,8 +17,8 @@ from ..runtime_settings import RuntimeSettings, RunMode, DebugMode
 class CBinder:
 
     def __init__(self, actor):
-        self.logger = logging.getLogger( 'binding' )
-        self.logger.setLevel( logging.DEBUG )
+        self.__logger = logging.getLogger( 'binding' )
+        self.__logger.setLevel( logging.DEBUG )
 
         self.actor = actor
         self.actor_dir = actor.actor_dir
@@ -103,7 +103,7 @@ class CBinder:
                 + status_info.message + "'" )
 
         if status_info.code > 0:
-            self.logger.warning(
+            self.__logger.warning(
                 "Actor * '" + self.actor_name + "' * returned diagnostic info: \n     Output flag:      ",
                 status_info.code, "\n     Diagnostic info: ", status_info.message )
 

@@ -8,7 +8,7 @@ from ..code_parameters import CodeParameters
 
 class ActorBaseClass( ABC ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, actor_dir, native_language, is_mpi_code):

@@ -7,7 +7,7 @@ from iwrap.gui.generics import IWrapPane
 
 class PythonPane( ttk.Frame, IWrapPane ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         super().__init__( master )

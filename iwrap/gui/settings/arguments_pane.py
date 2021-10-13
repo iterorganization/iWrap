@@ -24,7 +24,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         data_type_combobox (ttk.Combobox): The data type combobox.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the ArgumentsPane class object.

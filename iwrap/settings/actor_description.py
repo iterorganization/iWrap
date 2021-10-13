@@ -12,7 +12,7 @@ from iwrap.generation_engine.engine import Engine
 
 class ActorDescription( SettingsBaseClass ):
 
-    _logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         self.actor_name: str = ''
@@ -31,7 +31,7 @@ class ActorDescription( SettingsBaseClass ):
         # actor_type
         if not self.actor_type:
             self.actor_type = engine.active_generator.name
-            self._logger.warning(
+            self.__logger.warning(
                 f'Type of the actor to be generated is not set! Using default one: "{self.actor_type}".' )
         else:
             engine.validate_actor_type( self.actor_type )
@@ -39,7 +39,7 @@ class ActorDescription( SettingsBaseClass ):
         # data_type
         if not self.data_type:
             self.data_type = engine.active_generator.actor_data_types[0]
-            ActorDescription._logger.warning(
+            ActorDescription.__logger.warning(
                 f'Data type handled by actor is not set!! Using default one: "{self.data_type}".' )
         else:
             engine.validate_actor_data_type( self.data_type )
@@ -47,7 +47,7 @@ class ActorDescription( SettingsBaseClass ):
         # install_dir
         if not self.install_dir:
             self.install_dir = PlatformSettings().actor_default_dir
-            ActorDescription._logger.warning(
+            ActorDescription.__logger.warning(
                 f'Actor installation directory is not set! Using default one: "{self.install_dir}".' )
 
         try:

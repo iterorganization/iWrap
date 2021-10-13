@@ -9,7 +9,7 @@ DEBUGGER_GDB = 20
 
 class DebugMode(Enum):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     NONE = auto()
     STANDALONE = auto()
@@ -17,7 +17,7 @@ class DebugMode(Enum):
 
 class RunMode(Enum):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     NORMAL = auto()
     STANDALONE = auto()
@@ -25,7 +25,7 @@ class RunMode(Enum):
 
 class IdsStorage:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
         self.db_name = 'tmp'
@@ -37,7 +37,7 @@ class IdsStorage:
 
 class SandboxSettings:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     LIFETIME_ACTOR = 10
     LIFETIME_SCENARIO = 20
@@ -45,7 +45,7 @@ class SandboxSettings:
 
 class RuntimeSettings:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
 
@@ -64,7 +64,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class BatchJob:
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.queue = None
@@ -73,7 +73,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class Debug:
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.debugger = None  # TotalView/gdb
@@ -83,7 +83,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class MPI:
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.number_of_processes = 1
@@ -92,7 +92,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class OpenMP:
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.TBD = None
@@ -100,7 +100,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class Sandbox:
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.path = None

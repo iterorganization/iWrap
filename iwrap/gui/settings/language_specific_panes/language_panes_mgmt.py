@@ -6,7 +6,7 @@ from iwrap.gui.settings.language_specific_panes.not_supported_language_settings_
 
 class LanguagePanesManager():
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     _registered_panes = {'fortran' : FortranPane, 'cpp': FortranPane, 'python': PythonPane}

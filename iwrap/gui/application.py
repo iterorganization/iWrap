@@ -15,7 +15,7 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 
 class ButtonPane(ttk.Frame):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master: ttk.Widget, update_method):
         super().__init__(master, borderwidth=1, relief="solid")
@@ -39,7 +39,7 @@ class ButtonPane(ttk.Frame):
 
 class MainWindow(tk.Tk, IWrapPane):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
         super().__init__()

@@ -20,7 +20,7 @@ from iwrap.settings.project import ProjectSettings
 
 class PythonActorGenerator(ActorGenerator):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     @property

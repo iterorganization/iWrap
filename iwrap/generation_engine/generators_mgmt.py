@@ -8,7 +8,7 @@ from iwrap.generation_engine.base_classes import ActorGenerator
 
 class GeneratorRegistry():
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     __registry_instance = None
 

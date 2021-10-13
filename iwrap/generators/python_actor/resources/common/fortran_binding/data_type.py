@@ -7,7 +7,7 @@ from ..definitions import Argument
 
 class LegacyIDS ( ctypes.Structure ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     _fields_ = (("ids_name_", ctypes.c_byte * 132),

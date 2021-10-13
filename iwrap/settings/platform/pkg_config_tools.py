@@ -14,7 +14,7 @@ class PkgConfigTools:
         info and descriptions.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     PKG_CONFIG_CMD = "pkg-config"
     PKG_CONFIG_OPT_LIST_ALL = "--list-all"

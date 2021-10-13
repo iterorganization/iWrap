@@ -9,7 +9,7 @@ from iwrap.common.misc import Dictionarizable
 
 class Debugger( Dictionarizable ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self):
@@ -38,7 +38,7 @@ class Debugger( Dictionarizable ):
 
 class MPIFlavor( Dictionarizable ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self):
@@ -68,7 +68,7 @@ class MPIFlavor( Dictionarizable ):
 
 class Compiler( Dictionarizable ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self):
@@ -100,7 +100,7 @@ class Compiler( Dictionarizable ):
 
 class ProgrammingLanguage( Dictionarizable ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self):
@@ -128,7 +128,7 @@ class PlatformSettings( Dictionarizable ):
     """ TO DO: Read a proper content from config file
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     __class_instance = None
 

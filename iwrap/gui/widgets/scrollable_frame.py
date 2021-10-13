@@ -20,7 +20,7 @@ class ScrollableFrame( ttk.Frame ):
 
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master):
         """ Initialize the scrollable frame.

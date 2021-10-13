@@ -14,7 +14,7 @@ from iwrap.gui.settings.signature_pane import SignaturePane
 
 class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, master=None):

@@ -15,7 +15,7 @@ class SignaturePane(ttk.Frame, IWrapPane):
             text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the SignaturePane frame.
@@ -59,7 +59,7 @@ class TextBox(ttk.LabelFrame):
             text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None) -> None:
         """Initialize the text box widget in readonly mode.
@@ -108,7 +108,7 @@ class TextBox(ttk.LabelFrame):
 
     class PopUpPane(tk.Menu):
         # Class logger
-        logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self, master: tk.Widget = None) -> None:
             """Initialize the popup menu widget.
@@ -180,7 +180,7 @@ class ButtonsBarPane(ttk.Frame):
     def __init__(self, master: ttk.Widget = None) -> None:
         """Initialize the ttk.Button widgets.
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         Args:
             master (ttk.Frame, optional): A parent widget.

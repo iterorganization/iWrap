@@ -12,7 +12,7 @@ from iwrap.settings.project import ProjectSettings
 
 class FortranWrapperGenerator(  ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     TEMPLATE_SUBDIR = 'fortran_wrapper'

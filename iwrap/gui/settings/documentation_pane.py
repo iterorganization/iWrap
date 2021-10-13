@@ -19,7 +19,7 @@ class DocumentationPane(ttk.LabelFrame, IWrapPane):
         that can later be exported to a YAML file or imports documentation to the editor.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the documentation pane tab.
@@ -60,7 +60,7 @@ class TextEditor:
         Losing focus affects ProjectSettings().
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master: ttk.Widget = None):
         """Initialize the scrollable text editor.

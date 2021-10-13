@@ -10,7 +10,7 @@ from iwrap.settings.platform.platform_settings import PlatformSettings
 
 class Engine:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     __class_instance = None
     _registry: GeneratorRegistry = GeneratorRegistry()

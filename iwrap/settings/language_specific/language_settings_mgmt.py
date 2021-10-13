@@ -5,7 +5,7 @@ from iwrap.settings.language_specific.fortran_settings import FortranSpecificSet
 
 class LanguageSettingsManager:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     _language_settings_handlers = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(),
                                    'python': None}

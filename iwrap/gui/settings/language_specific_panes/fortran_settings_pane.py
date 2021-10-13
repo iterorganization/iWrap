@@ -30,7 +30,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         library_path_pane (LibraryPathPane): The LibraryPathPane class object.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     language = 'fortran'
 
@@ -188,7 +188,7 @@ class PkgConfigPane:
 
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the PkgConfigPane class object.
@@ -355,7 +355,7 @@ class AddPkgConfigWindow:
         table (Table): The table contains system library.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the AddPkgConfigWindow class object.
@@ -427,7 +427,7 @@ class LibraryPathPane:
         table (Table): The Table contains custom libraries.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the CustomLibrariesPane class object.

@@ -32,7 +32,7 @@ class Table( ttk.Frame ):
 
 
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, rows, columns, master=None, lost_focus_listeners=None):
 
@@ -283,7 +283,7 @@ class ArgumentWindow:
         new_cells (list): The list of column values from add/edit sheet.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
         """Initialize the ArgumentWindow class object.
@@ -403,7 +403,7 @@ class Row:
         row_cells (list): The list of cells related to row. A cell can be RowEntry or RowRadioButton object.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, row, data, master, columns):
         """Initialize the Row class object.
@@ -467,7 +467,7 @@ class RowRadioButton:
         cell (Entry): The cell Entry placed in the table grid.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, row, column, value, master):
         """Initialize the RowRadioButton class object.
@@ -512,7 +512,7 @@ class RowEntry:
         cell (Entry): The cell Entry placed in the table grid.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, row, column, text, master):
         """Initialize the RowEntry class object.
@@ -563,7 +563,7 @@ class Column:
         data_label (str): The data label.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     TEXT = 'text'
     RADIOBUTTON = 'radiobutton'

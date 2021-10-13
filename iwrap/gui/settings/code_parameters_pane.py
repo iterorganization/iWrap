@@ -12,7 +12,7 @@ from iwrap.settings.project import ProjectSettings
 
 class CodeParametersPane(ttk.Frame, IWrapPane):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, master=None):
@@ -61,7 +61,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
 
 class CodeParameterPath:
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     _extension_description: Tuple[Tuple[Union[Tuple[str], None]]] = (("All files", "*.*"),
                                                                      ("XML files", "*.xml"),
@@ -105,7 +105,7 @@ class CodeParameterPath:
 
 class XMLPath(CodeParameterPath):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self) -> None:
         super(XMLPath, self).__init__()
@@ -126,7 +126,7 @@ class XMLPath(CodeParameterPath):
 
 class XSDPath(CodeParameterPath):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self) -> None:
         super(XSDPath, self).__init__()
@@ -147,7 +147,7 @@ class XSDPath(CodeParameterPath):
 
 class CodeParameterBrowserPane(ttk.Frame):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, master, file_type: str, label_text: str = "") -> None:
@@ -222,7 +222,7 @@ class XMLValidatorPane(ttk.Frame):
         warning or an error depending on the validation run.
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, master, xml: CodeParameterPath, xsd: CodeParameterPath) -> None:

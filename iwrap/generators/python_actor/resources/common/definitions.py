@@ -10,7 +10,7 @@ class Argument(  ):
         intent (`str`): determines if argument is IN or OUT
     """
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     IN = 'IN' # input type of argument
     OUT = 'OUT' # output type of an argument

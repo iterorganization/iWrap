@@ -9,7 +9,7 @@ from iwrap.settings.project import ProjectSettings
 
 class MenuBar( tk.Menu ):
     # Class logger
-    logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
     def __init__(self, master: IWrapPane):
