@@ -293,6 +293,7 @@ class CodeDescription( SettingsBaseClass ):
         pass
 
     def __init__(self):
+        self.root_dir = os.getcwd()
         self._programming_language: str = ''
         self.subroutines: Subroutines = Subroutines()
         self.data_type: str = None
@@ -302,8 +303,9 @@ class CodeDescription( SettingsBaseClass ):
         self.documentation: str = None
         self.language_specific: dict = {}
 
-    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+    def validate(self, engine: Engine, _not_used: str, **kwargs) -> None:
 
+        project_root_dir = self.root_dir
         # programming_language
         if not self.programming_language:
             raise ValueError( 'Programming language is not set!' )
@@ -355,6 +357,7 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
+        self.root_dir = None
         self.programming_language = None
         self.data_type = None
         self.arguments = []
@@ -397,5 +400,4 @@ class CodeDescription( SettingsBaseClass ):
         self.from_dict(code_description_dict)
 
         file_real_path = os.path.realpath( file.name )
-        from iwrap.settings.project import ProjectSettings
-        ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
+        self.root_dir = os.path.dirname( file_real_path )

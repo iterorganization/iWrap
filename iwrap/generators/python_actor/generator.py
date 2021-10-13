@@ -15,6 +15,7 @@ from iwrap.settings.code_description import CodeDescription
 import jinja2
 import sys
 
+from iwrap.settings.platform.platform_settings import PlatformSettings
 from iwrap.settings.project import ProjectSettings
 
 
@@ -54,6 +55,8 @@ class PythonActorGenerator(ActorGenerator):
 
     def initialize(self):
         install_dir =  ProjectSettings.get_settings().actor_description.install_dir
+        if not install_dir:
+            install_dir = PlatformSettings().actor_default_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
 
         self.wrapper_generator = FortranWrapperGenerator()
@@ -128,7 +131,7 @@ class PythonActorGenerator(ActorGenerator):
         code_description = ProjectSettings.get_settings().code_description
         native_lib_path = code_description.code_path
 
-        root_dir = ProjectSettings.get_settings().root_dir
+        root_dir = code_description.root_dir
         native_lib_abs_path = os.path.join( root_dir, native_lib_path )
 
         destination_dir = os.path.join( self.install_dir, 'lib' )
@@ -141,7 +144,7 @@ class PythonActorGenerator(ActorGenerator):
         code_description = ProjectSettings.get_settings().code_description
         include_path = code_description.language_specific.include_path
 
-        root_dir = ProjectSettings.get_settings().root_dir
+        root_dir = code_description.root_dir
         include_abs_path = os.path.join( root_dir, include_path )
 
         destination_dir = os.path.join( self.install_dir, self.wrapper_dir + '/include/' )
