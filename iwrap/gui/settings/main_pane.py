@@ -5,6 +5,7 @@ from tkinter import ttk
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.arguments_pane import ArgumentsPane
 from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
 from iwrap.gui.settings.code_settings_pane import CodeSettingsPane
@@ -21,6 +22,20 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         super().__init__( master, text="Wrapped code description:", relief="groove", borderwidth=2, height=100 )
 
         self.pack( pady=10 )
+
+        root_dir_frame = ttk.Frame(self)
+        root_dir_frame.pack(fill=tk.X, expand=tk.TRUE)
+        root_dir_frame.grid_columnconfigure(1, weight=1)
+
+
+        self.root_dir = tk.StringVar()
+        # BROWSE BUTTON AND ENTRY FOR PATH
+        ttk.Label(root_dir_frame, text="Root dir:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.browse_text = ttk.Entry(root_dir_frame, textvariable=self.root_dir)
+        self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(root_dir_frame, text="Browse...", command=self.on_click, width=10).grid(column=2, row=2, padx=10, pady=5)
+        root_dir_frame.grid_columnconfigure(1, weight=1)
+
         self.notebook = ttk.Notebook( self )
         self.notebook.pack( expand=True, fill=tk.BOTH)
 
@@ -31,7 +46,6 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.signature_pane = SignaturePane( self.notebook )
 
         self.language_settings_pane = None
-
         self.notebook.add( self.arguments_pane, text='Arguments' )
         self.notebook.add( self.code_settings_pane, text='Code settings' )
         self.notebook.add( self.code_parameters_pane, text='Code parameters' )
@@ -76,6 +90,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.notebook.insert(2, self.language_settings_pane, text="Language settings")
 
     def update_settings(self):
+        ProjectSettings.get_settings().root_dir = self.root_dir.get()
         self.arguments_pane.update_settings()
         self.code_settings_pane.update_settings()
         self.language_settings_pane.update_settings()
@@ -84,9 +99,17 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.signature_pane.update_settings()
 
     def reload(self):
+        self.root_dir.set(ProjectSettings.get_settings().root_dir)
         self.arguments_pane.reload()
         self.code_settings_pane.reload()
         self.language_settings_pane.reload()
         self.code_parameters_pane.reload()
         self.documentation_pane.reload()
         self.signature_pane.reload()
+
+    def on_click(self):
+        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """
+        filename = tk.filedialog.askopenfilename()
+        if filename:
+            self.root_dir.set(filename)

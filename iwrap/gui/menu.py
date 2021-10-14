@@ -114,6 +114,5 @@ class MenuBar( tk.Menu ):
 
         self.main_window.reload()
         file_real_path = os.path.realpath( file.name )
-        ProjectSettings.get_settings().root_dir = os.path.dirname( file_real_path )
         ProjectSettings.get_settings().project_file_path = file_real_path
         self.__save_and_open_initialdir = os.path.dirname(file.name)
