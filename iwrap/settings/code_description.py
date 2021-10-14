@@ -399,5 +399,6 @@ class CodeDescription( SettingsBaseClass ):
 
         self.from_dict(code_description_dict)
 
-        file_real_path = os.path.realpath( file.name )
-        self.root_dir = os.path.dirname( file_real_path )
+        file_real_path = os.path.realpath(file.name)
+        if not self.root_dir:
+            self.root_dir = os.path.dirname(file_real_path)

@@ -11,6 +11,7 @@ from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
 from iwrap.gui.settings.code_settings_pane import CodeSettingsPane
 from iwrap.gui.settings.documentation_pane import DocumentationPane
 from iwrap.gui.settings.signature_pane import SignaturePane
+from iwrap.gui.menu import MenuBar
 
 
 class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
@@ -90,7 +91,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.notebook.insert(2, self.language_settings_pane, text="Language settings")
 
     def update_settings(self):
-        ProjectSettings.get_settings().root_dir = self.root_dir.get()
+        ProjectSettings.get_settings().code_description.root_dir = self.root_dir.get()
         self.arguments_pane.update_settings()
         self.code_settings_pane.update_settings()
         self.language_settings_pane.update_settings()
@@ -99,7 +100,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.signature_pane.update_settings()
 
     def reload(self):
-        self.root_dir.set(ProjectSettings.get_settings().root_dir)
+        self.root_dir.set(ProjectSettings.get_settings().code_description.root_dir)
         self.arguments_pane.reload()
         self.code_settings_pane.reload()
         self.language_settings_pane.reload()
@@ -110,6 +111,12 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
-        filename = tk.filedialog.askopenfilename()
-        if filename:
-            self.root_dir.set(filename)
+        old_dir = self.root_dir.get()
+        dir_name = tk.filedialog.askdirectory()
+        print(old_dir)
+        if dir_name:
+            self.root_dir.set(dir_name)
+            if old_dir == MenuBar.save_and_open_initialdir:
+                MenuBar.save_and_open_initialdir = dir_name
+            if old_dir == MenuBar.import_and_export_initialdir:
+                MenuBar.import_and_export_initialdir = dir_name
