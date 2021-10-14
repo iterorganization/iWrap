@@ -20,8 +20,8 @@ CODE_LIB_FILE=$(notdir {{code_description.code_path}})
 CODE_LIB_DEF=../lib/$(CODE_LIB_FILE)
 
 # main IMAS libs to be used
-CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-gfortran xmllib)
-CORE_LIBS=$(shell pkg-config --libs imas-gfortran xmllib)
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-$(FC) xmllib)
+CORE_LIBS=$(shell pkg-config --libs imas-$(FC) xmllib)
 
 # required 'platform' libs (i.e. published using pkg-config mechanism)
 {% if code_description.language_specific.system_libraries %}
