@@ -41,9 +41,8 @@ class ProjectSettings( SettingsBaseClass ):
         return cls._settings
 
     def __init__(self):
-        self.root_dir = os.getcwd()
-        self.project_file_path = ''
 
+        self.project_file_path = ''
         self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
 
@@ -55,17 +54,16 @@ class ProjectSettings( SettingsBaseClass ):
     #def validate(self, engine: Engine) -> None:
     def validate(self, engine ) -> None:
 
-        project_root_dir = self.root_dir
 
         if not self.code_description:
             raise ValueError( 'Code description structure cannot be empty!')
 
-        self.code_description.validate(engine, project_root_dir)
+        self.code_description.validate(engine, None)
 
         if not self.actor_description:
             raise ValueError( 'Actor description structure cannot be empty!' )
 
-        self.actor_description.validate(engine, project_root_dir)
+        self.actor_description.validate(engine, None)
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -86,7 +84,6 @@ class ProjectSettings( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.root_dir = os.getcwd()
         self.project_file_path = ''
         self.actor_description.clear()
         self.code_description.clear()
@@ -127,6 +124,7 @@ class ProjectSettings( SettingsBaseClass ):
                 "The YAML file being looaded doesn't seem to contain valid description of the native code" )
 
         file_real_path = os.path.realpath( file.name )
-        self.root_dir = os.path.dirname( file_real_path )
+        if not self.code_description.root_dir:
+            self.code_description.root_dir = os.path.dirname( file_real_path )
 
 

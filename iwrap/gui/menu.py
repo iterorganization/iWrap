@@ -16,8 +16,8 @@ class MenuBar( tk.Menu ):
         super().__init__( master )
         self.main_window = master
         self.code_description = ProjectSettings.get_settings().code_description
-        self.__save_and_open_initialdir = ProjectSettings.get_settings().root_dir
-        self.__import_and_export_initialdir = ProjectSettings.get_settings().root_dir
+        self.__save_and_open_initialdir = self.code_description.root_dir
+        self.__import_and_export_initialdir = self.code_description.root_dir
 
         file_menu = tk.Menu( self, tearoff=0 )
         file_menu.add_command( label='New', command=self.action_new )
