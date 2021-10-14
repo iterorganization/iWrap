@@ -1,4 +1,4 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["setuptools>=43", "wheel"]
+requires = ["setuptools>=43", "wheel", "tomli"]
 build-backend = "setuptools.build_meta"

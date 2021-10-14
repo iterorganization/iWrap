@@ -5,6 +5,8 @@ import site
 
 # Allow importing local files, see https://snarky.ca/what-the-heck-is-pyproject-toml/
 import sys
+import subprocess
+from glob import glob
 
 # Import other stdlib packages
 from itertools import chain
@@ -12,10 +14,25 @@ from pathlib import Path
 
 # Use setuptools to build packages. Advised to import setuptools before distutils
 import tomli
-from setuptools import setup
+from setuptools import setup, find_packages,Command
 from setuptools.config import read_configuration
 
 from distutils.text_file import TextFile as DistTextFile
+
+
+class CleanCommand(Command):
+    """Custom clean command to tidy up the project root."""
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.run(['rm', '-vrf', './build', './dist']+glob('./*.pyc')+glob('./*.tgz')+glob('./*egg-info/'))
+
 
 # Workaround for https://github.com/pypa/pip/issues/7953
 # Cannot install into user site directory with editable source
@@ -52,14 +69,23 @@ if __name__ == "__main__":
     # [setuptools docs](https://setuptools.readthedocs.io/en/latest/userguide/quickstart.html#basic-use)
     # Rough logic setuptools_scm
     # See https://pypi.org/project/setuptools-scm/
-    # For allowed version strings, see https://packaging.python.org/specifications/core-metadata/ for allow version strings
+    # For allowed version strings, see:
+    # https://packaging.python.org/specifications/core-metadata/ for allow version strings
 
     setup(
         #use_scm_version={
         #    "fallback_version": os.getenv("IMASPY_VERSION", "0.0.0"),
         #},
+        version=subprocess.getoutput('git describe --abbrev=0'),
+        packages=find_packages(exclude=('tests*', 'testing*')),
         setup_requires=pyproject_data["build-system"]["requires"],
         install_requires=install_requires,
         extras_require=optional_reqs,
+        cmdclass={'clean': CleanCommand},
+        entry_points={
+            'console_scripts': [
+                'iwraps = bin.iwrap_gui:mains',
+            ]
+        }
     )
 
