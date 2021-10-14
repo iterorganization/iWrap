@@ -113,7 +113,6 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         """
         old_dir = self.root_dir.get()
         dir_name = tk.filedialog.askdirectory()
-        print(old_dir)
         if dir_name:
             self.root_dir.set(dir_name)
             if old_dir == MenuBar.save_and_open_initialdir:
