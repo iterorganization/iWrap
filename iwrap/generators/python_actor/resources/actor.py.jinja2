@@ -36,8 +36,10 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
 
     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
         # Static code parameters
-        self.code_parameters.parameters_file = '{{code_description.code_parameters.parameters.split('/')[-1]}}'
-        self.code_parameters.schema_file = '{{code_description.code_parameters.schema.split('/')[-1]}}'
+        default_parameters_file = '{{code_description.code_parameters.parameters.split('/')[-1]}}'
+        schema_file = '{{code_description.code_parameters.schema.split('/')[-1]}}'
+        self.code_parameters = CodeParameters(default_parameters_file, schema_file)
+
     {% endif %}
 
 

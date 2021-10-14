@@ -14,7 +14,7 @@ class ActorBaseClass( ABC ):
     def __init__(self, actor_dir, native_language, is_mpi_code):
         self.runtime_settings = RuntimeSettings()
         self.arguments = []
-        self.code_parameters = CodeParameters()
+        self.code_parameters = None
         self.actor_dir = actor_dir
         self.native_language = native_language
         self.name = self.__class__.__name__

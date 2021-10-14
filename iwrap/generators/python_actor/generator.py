@@ -164,7 +164,7 @@ class PythonActorGenerator(ActorGenerator):
         if parameters_file and not schema_file:
             raise Exception('Error! Code parameters schema file (XSD) is missing!')
 
-        root_dir = ProjectSettings.get_settings().root_dir
+        root_dir = code_description.root_dir
         parameters_file = os.path.join(root_dir, parameters_file)
         schema_file = os.path.join(root_dir,schema_file)
         destination_dir = os.path.join(self.install_dir, 'input')

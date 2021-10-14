@@ -28,7 +28,6 @@ class CBinder:
         self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
 
         self.runtime_settings = actor.runtime_settings
-        self.code_parameters = actor.code_parameters
         self.formal_arguments = actor.arguments
 
         self.wrapper_init_func = None
@@ -139,7 +138,7 @@ class CBinder:
         c_arglist = []
 
         # XML Code Params
-        if self.code_parameters.parameters:
+        if self.actor.code_parameters.parameters:
             param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
             c_arglist.append( param_c )
 
@@ -245,8 +244,8 @@ class CBinder:
         c_arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
 
         # XML Code Params
-        if self.code_parameters.parameters:
-            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+        if self.actor.code_parameters.parameters:
+            param_c = ParametersCType( self.actor.code_parameters ).convert_to_native_type()
             c_arglist.append( param_c )
 
         # DIAGNOSTIC INFO

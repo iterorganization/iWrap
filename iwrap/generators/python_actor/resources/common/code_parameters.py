@@ -7,9 +7,9 @@ class CodeParameters:
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
-    def __init__(self):
-        self.parameters_file = None
-        self.schema_file = None
+    def __init__(self, parameters_file, schema_file):
+        self.parameters_file = parameters_file
+        self.schema_file = schema_file
         self.schema = None  # file name or string or ... (?)
         self.parameters = None  # file name or string or... (?)
 
