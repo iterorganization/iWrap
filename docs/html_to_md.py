@@ -29,7 +29,7 @@ def simple_clean(markdown):
     return markdown
 
 
-os.chdir("iwrap_documentation/")
+os.chdir("iwrap_confluence_documentation/")
 
 for file in glob.glob("*.html"):
     html = open(file, "r").read()
