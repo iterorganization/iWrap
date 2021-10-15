@@ -1,3 +1,4 @@
+import logging
 import ctypes
 
 from ..code_parameters import CodeParameters
@@ -6,6 +7,9 @@ from ..code_parameters import CodeParameters
 # # # # # # # #
 class StatusCType( ctypes.Structure ):
     '''IDSRef reference structure'''
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _fields_ = (("_code", ctypes.c_int),
                 ("_message", ctypes.c_char_p),
                 )
@@ -41,6 +45,9 @@ class StatusCType( ctypes.Structure ):
 # # # # # # # #
 class ParametersCType( ctypes.Structure ):
     '''IDSRef reference structure'''
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _fields_ = (("params_", ctypes.c_char_p),
                 ("params_size_", ctypes.c_int),
                 ("schema_", ctypes.c_char_p),

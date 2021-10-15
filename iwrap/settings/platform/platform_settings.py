@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Dict, Any
 
@@ -7,6 +8,9 @@ from iwrap.common.misc import Dictionarizable
 
 
 class Debugger( Dictionarizable ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         self.name: str = ''
@@ -33,6 +37,9 @@ class Debugger( Dictionarizable ):
 
 
 class MPIFlavor( Dictionarizable ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         self.flavor: str = ''
@@ -60,6 +67,9 @@ class MPIFlavor( Dictionarizable ):
 
 
 class Compiler( Dictionarizable ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         self.description: str = ''
@@ -89,6 +99,9 @@ class Compiler( Dictionarizable ):
 
 
 class ProgrammingLanguage( Dictionarizable ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         self.name: str = ''
@@ -114,6 +127,9 @@ class ProgrammingLanguage( Dictionarizable ):
 class PlatformSettings( Dictionarizable ):
     """ TO DO: Read a proper content from config file
     """
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     __class_instance = None
 
     def __new__(cls):

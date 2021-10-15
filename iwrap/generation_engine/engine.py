@@ -1,3 +1,4 @@
+import logging
 import sys
 from typing import Set, List
 
@@ -8,6 +9,9 @@ from iwrap.generation_engine.generators_mgmt import GeneratorRegistry
 from iwrap.settings.platform.platform_settings import PlatformSettings
 
 class Engine:
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     __class_instance = None
     _registry: GeneratorRegistry = GeneratorRegistry()
     _active_generator: ActorGenerator = None

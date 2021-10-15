@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -13,6 +14,9 @@ class SignaturePane(ttk.Frame, IWrapPane):
         Attributes:
             text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None):
         """Initialize the SignaturePane frame.
         Args:
@@ -54,6 +58,9 @@ class TextBox(ttk.LabelFrame):
         Attributes:
             text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master=None) -> None:
         """Initialize the text box widget in readonly mode.
         Args:
@@ -100,6 +107,9 @@ class TextBox(ttk.LabelFrame):
         self.pack(expand=True, fill=tk.BOTH)
 
     class PopUpPane(tk.Menu):
+        # Class logger
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
+
         def __init__(self, master: tk.Widget = None) -> None:
             """Initialize the popup menu widget.
             Args:
@@ -169,6 +179,9 @@ class ButtonsBarPane(ttk.Frame):
     """Widget which is a bar of control buttons."""
     def __init__(self, master: ttk.Widget = None) -> None:
         """Initialize the ttk.Button widgets.
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
         Args:
             master (ttk.Frame, optional): A parent widget.
         """

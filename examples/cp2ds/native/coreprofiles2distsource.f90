@@ -47,7 +47,8 @@ allocate(distsourceout%code%version(1))   ! For a string of 132 characters max.
 distsourceout%code%version(1)   = '1.0'
 allocate(distsourceout%code%parameters(1))   ! For a string of 132 characters max.
 distsourceout%code%parameters(1) = 'my_code_specific_parameters'
-distsourceout%code%output_flag = 0   ! Integer output flag, 0 means the run was successful and can be used in the rest of the workflow, <0 means failure
+allocate(distsourceout%code%output_flag(1))
+distsourceout%code%output_flag(1) = 0   ! Integer output flag, 0 means the run was successful and can be used in the rest of the workflow, <0 means failure
 
 write(0,*) 'End Subroutine'
 

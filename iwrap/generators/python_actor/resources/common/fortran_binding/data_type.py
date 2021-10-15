@@ -1,9 +1,14 @@
+import logging
 import ctypes
 import imas
 
 from ..definitions import Argument
 
+
 class LegacyIDS ( ctypes.Structure ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     _fields_ = (("ids_name_", ctypes.c_byte * 132),
                 ("shot", ctypes.c_int),

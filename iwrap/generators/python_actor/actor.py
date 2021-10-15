@@ -1,3 +1,4 @@
+import logging
 import shutil
 import tempfile
 
@@ -12,6 +13,9 @@ from iwrap.settings.project import ProjectSettings
 
 
 class ActorScriptGenerator( ActorGenerator ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         pass

@@ -14,36 +14,64 @@ from .data_c_binding import ParametersCType, StatusCType
 from ..runtime_settings import RuntimeSettings, RunMode, DebugMode
 
 
-class FortranBinder:
+class CBinder:
 
-    def __init__(self, actor_dir, actor_name, native_language, code_name, is_mpi_code):
-        self.logger = logging.getLogger( 'binding' )
-        self.logger.setLevel( logging.DEBUG )
+    def __init__(self, actor):
+        self.__logger = logging.getLogger( 'binding' )
+        self.__logger.setLevel( logging.DEBUG )
 
-        self.actor_dir = actor_dir
-        self.actor_name = actor_name
-        self.code_name = code_name + '_wrapper'
-        self.is_mpi_code = is_mpi_code
+        self.actor = actor
+        self.actor_dir = actor.actor_dir
+        self.actor_name = actor.name
+        self.main_sbrt_name = actor.name + '_wrapper'
 
-        self.wrapper_dir = self.actor_dir + '/' + native_language + '_wrapper'
+        self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
+
+        self.runtime_settings = actor.runtime_settings
+        self.formal_arguments = actor.arguments
+
+        self.wrapper_init_func = None
+        self.wrapper_main_func = None
+        self.wrapper_finish_func = None
+
+    def is_standalone_run(self):
+        if self.actor.is_mpi_code:
+            return True
+
+        if self.runtime_settings.debug_mode is DebugMode.STANDALONE:
+            return True
+
+        if self.runtime_settings.run_mode is RunMode.STANDALONE:
+            return True
+
+        return False
+
     def save_data(self, ids):
         pass
 
     def read_data(self, ids):
         pass
 
-    def initialize(self, runtime_settings: RuntimeSettings, arguments, codeparams: CodeParameters):
-        self.runtime_settings = runtime_settings
-        self.code_parameters = codeparams
-        self.formal_arguments = arguments
-
+    def initialize(self):
         self.work_db = self.__create_work_db()
-        self.wrapper_func = self.__get_wrapper_function()
+
+        if self.actor.code_description['subroutines'].get('init'):
+            self.wrapper_init_func = self.__get_wrapper_function( 'init_' + self.actor_name + "_wrapper")
+        self.wrapper_main_func = self.__get_wrapper_function(self.main_sbrt_name)
+
+        if self.actor.code_description['subroutines'].get('finish'):
+            self.wrapper_finish_func = self.__get_wrapper_function( 'finish_' + self.actor_name + "_wrapper")
+
+        if not self.is_standalone_run():
+            self.__run_init()
+
+    def finalize(self):
+        if not self.is_standalone_run():
+            self.__run_finalize()
 
     def __create_work_db(self):
         ids_storage = self.runtime_settings.ids_storage
-        is_standalone_run = self.runtime_settings.debug_mode is DebugMode.STANDALONE \
-                            or self.runtime_settings.run_mode is RunMode.STANDALONE
+        is_standalone_run = self.is_standalone_run()
 
         if is_standalone_run and ids_storage.backend is imas.imasdef.MEMORY_BACKEND:
             backend = ids_storage.persistent_backend
@@ -58,12 +86,12 @@ class FortranBinder:
         db_entry.create()
         return db_entry
 
-    def __get_wrapper_function(self):
+    def __get_wrapper_function(self, function_name: str):
 
         lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr( wrapper_lib, self.code_name )
+        wrapper_fun = getattr( wrapper_lib, function_name )
         return wrapper_fun
 
     def __status_check(self, status_info):
@@ -74,7 +102,7 @@ class FortranBinder:
                 + status_info.message + "'" )
 
         if status_info.code > 0:
-            self.logger.warning(
+            self.__logger.warning(
                 "Actor * '" + self.actor_name + "' * returned diagnostic info: \n     Output flag:      ",
                 status_info.code, "\n     Diagnostic info: ", status_info.message )
 
@@ -87,20 +115,63 @@ class FortranBinder:
                       '-e', 'dset TV::dll_read_loader_symbols_only *',
                       '-e', 'dset TV::GUI::pop_at_breakpoint true',
                       '-e', f'dattach python {process_id}',
-                      '-e', f'dbreak -pending {self.code_name}',
+                      '-e', f'dbreak -pending {self.main_sbrt_name}',
                       '-e', 'puts  "\n\nTotalView attached to a running Python process.\n"',
                       '-e', 'puts  "Press any key to continue!\n"',
                       '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',
                       ]
 
         proc = subprocess.Popen( tv_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
+
+    def __run_init(self, debug_mode=False):
+
+        if not self.wrapper_init_func:
+            return
+
+        c_arglist = []
+
+        # XML Code Params
+        if self.actor.code_parameters.parameters:
+            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+            c_arglist.append( param_c )
+
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_init_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
+
+    def __run_finalize(self):
+        if not self.wrapper_finish_func:
+            return
+
+        c_arglist = []
+        # DIAGNOSTIC INFO
+        status_info = StatusCType()
+        c_arglist.append( status_info.convert_to_native_type() )
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( self.wrapper_dir )
+
+        self.wrapper_finish_func( *c_arglist )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info )
 
     def __run_normal(self, c_arglist, debug_mode=False):
         if debug_mode:
@@ -109,7 +180,7 @@ class FortranBinder:
             t.start()
             input()  # just to wait until debugger starts
 
-        self.wrapper_func( *c_arglist )
+        self.wrapper_main_func( *c_arglist )
 
     def __save_input(self, full_arguments_list):
 
@@ -128,31 +199,31 @@ class FortranBinder:
 
         self.__save_input( full_arguments_list )
 
-        if self.is_mpi_code and mpi_settings:
+        if self.actor.is_mpi_code and mpi_settings:
             exec_command.append( 'mpiexec' )
             np = mpi_settings.number_of_processes
-            if np and str(np).isnumeric():
+            if np and str( np ).isnumeric():
                 exec_command.append( '-np' )
-                exec_command.append( str(np) )
+                exec_command.append( str( np ) )
             if debug_mode:
                 exec_command.append( '-tv' )
         elif debug_mode:
-                exec_command.append( 'totalview' )
+            exec_command.append( 'totalview' )
 
         exec_command.append( './bin/' + self.actor_name + '.exe' )
 
-        print('EXEC command: ', exec_command)
+        print( 'EXEC command: ', exec_command )
         proc = subprocess.Popen( exec_command,
-                                 encoding='utf-8', text=True,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
         for line in proc.stdout:
+            line = line.decode(errors='replace')
             print( line, end='' )
 
         return_code = proc.wait()
 
     # only input arguments, outputs are returned (as a list if more than 1)
-    def call_native_code(self, *input_idses):
+    def step(self, *input_idses):
         """
         """
         input_idses = list( input_idses )
@@ -173,8 +244,8 @@ class FortranBinder:
         c_arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
 
         # XML Code Params
-        if self.code_parameters.parameters:
-            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+        if self.actor.code_parameters.parameters:
+            param_c = ParametersCType( self.actor.code_parameters ).convert_to_native_type()
             c_arglist.append( param_c )
 
         # DIAGNOSTIC INFO
@@ -183,30 +254,25 @@ class FortranBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.wrapper_dir)
+        os.chdir( self.wrapper_dir )
 
-        print('RUN MODe: ' , str(self.runtime_settings.run_mode))
+        print( 'RUN MODe: ', str( self.runtime_settings.run_mode ) )
 
         mpi_settings = self.runtime_settings.mpi
-        # call the NATIVE function
-        if self.runtime_settings.debug_mode is DebugMode.ATTACH:
-            self.__run_normal( c_arglist, debug_mode=True )
-        elif self.runtime_settings.debug_mode is DebugMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=True )
-        elif self.runtime_settings.run_mode is RunMode.NORMAL:
-            self.__run_normal( c_arglist, debug_mode=False )
-        elif self.runtime_settings.run_mode is RunMode.STANDALONE:
-            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=False )
+        is_standalone =  self.is_standalone_run()
+        debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
+
+        if is_standalone:
+            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=debug_mode )
         else:
-            raise ValueError( 'ERROR! Unknown "run_mode" value!' )
+            self.__run_normal( c_arglist, debug_mode=debug_mode )
+
 
         # go back from sandbox to original location
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info )
-
-
 
         # get output data
         results = []

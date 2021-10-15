@@ -1,3 +1,4 @@
+import logging
 import pkgutil
 from typing import Set, List
 
@@ -6,6 +7,9 @@ from iwrap.generation_engine.base_classes import ActorGenerator
 
 
 class GeneratorRegistry():
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     __registry_instance = None
 
     def __new__(cls):

@@ -1,8 +1,12 @@
+import logging
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 
 
 
 class LanguageSettingsManager:
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     _language_settings_handlers = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(),
                                    'python': None}
 
@@ -22,8 +26,6 @@ class LanguageSettingsManager:
 
         if values and isinstance( values, dict ):
             language_handler.from_dict( values )
-        else:
-            language_handler = values or {}
 
         return language_handler
 

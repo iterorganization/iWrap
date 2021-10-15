@@ -1,17 +1,25 @@
+import logging
 from abc import ABC
 
 from ..runtime_settings import RuntimeSettings
-from ..fortran_binding.binder import FortranBinder
+from ..fortran_binding.binder import CBinder
 from ..code_parameters import CodeParameters
 
 
 class ActorBaseClass( ABC ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    def __init__(self, actor_dir, native_language, code_name, is_mpi_code):
+
+    def __init__(self, actor_dir, native_language, is_mpi_code):
         self.runtime_settings = RuntimeSettings()
-        self.formal_arguments = []
-        self.code_parameters = CodeParameters()
-        self.binder = FortranBinder( actor_dir, self.__class__.__name__, native_language, code_name, is_mpi_code )
+        self.arguments = []
+        self.code_parameters = None
+        self.actor_dir = actor_dir
+        self.native_language = native_language
+        self.name = self.__class__.__name__
+        self.is_mpi_code = is_mpi_code
+        self.__binder = CBinder( actor=self )
 
     # # #  Actor lifecycle methods # # #
 
@@ -19,8 +27,7 @@ class ActorBaseClass( ABC ):
         self.code_parameters.read()
         self.code_parameters.validate()
 
-        self.binder.initialize( self.runtime_settings,
-                                self.formal_arguments, self.code_parameters )
+        self.__binder.initialize( )
 
         pass
 
@@ -28,8 +35,8 @@ class ActorBaseClass( ABC ):
         return self.run( *args )
 
     def run(self, *args):
-        out = self.binder.call_native_code( *args )
+        out = self.__binder.step( *args )
         return out
 
     def finalize(self):
-        pass
+        self.__binder.finalize()

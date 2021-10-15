@@ -1,7 +1,7 @@
-F90=mpiifort
-COPTS = -g -O0 -assume no2underscore -fPIC -shared-intel
-LIBS =   `pkg-config --libs imas-ifort`
-INCLUDES = `pkg-config --cflags imas-ifort`
+F90=mpifort
+COPTS = -g -fPIC
+LIBS =   `pkg-config --libs imas-gfortran`
+INCLUDES = `pkg-config --cflags imas-gfortran`
 
 all: libcp2ds-mpi.a
 

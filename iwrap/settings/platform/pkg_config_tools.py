@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 
@@ -12,8 +13,13 @@ class PkgConfigTools:
         system_lib_dict (dict): The dictionary with all pkg configs. Keys are pkg configs names, dictionary values are
         info and descriptions.
     """
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     PKG_CONFIG_CMD = "pkg-config"
     PKG_CONFIG_OPT_LIST_ALL = "--list-all"
+    PKG_CONFIG_OPT_GET_LINKER_FLAGS = "--libs"
+    PKG_CONFIG_OPT_GET_CFLAGS = "--cflags"
 
     def __init__(self):
         """Initialize the PkgConfigTools class object.
@@ -66,3 +72,27 @@ class PkgConfigTools:
         if system_library in self.system_lib_dict.keys():
             return self.system_lib_dict[system_library]
         return None
+
+    def get_linker_flags(self, system_library):
+        try:
+            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
+                                        PkgConfigTools.PKG_CONFIG_OPT_GET_LINKER_FLAGS,
+                                        system_library],
+                                       encoding='utf-8', text=True,  stdout=subprocess.PIPE)
+            linker_flags = "".join(process.stdout.readlines())
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            linker_flags = ''
+
+        return linker_flags
+
+    def get_c_flags(self, system_library):
+        try:
+            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
+                                        PkgConfigTools.PKG_CONFIG_OPT_GET_CFLAGS,
+                                        system_library],
+                                       encoding='utf-8', text=True,  stdout=subprocess.PIPE)
+            cflags_flags = "".join(process.stdout.readlines())
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            cflags_flags = ''
+
+        return cflags_flags

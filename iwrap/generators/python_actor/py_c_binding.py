@@ -1,5 +1,9 @@
+import logging
 
 class PythonBinderGenerator(  ):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
 
     def __init__(self):
         pass
