@@ -19,10 +19,11 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
-        compiler_vendor: GNU
-        compiler_cmd: mpicxx
+        compiler_cmd: g++
         include_path: ./native/cp2ds_mpi.h
-        mpi: true
+        mpi:
+            mpi_compiler_cmd: mpicxx
+            mpi_runner: mpiexec
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

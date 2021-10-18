@@ -1,7 +1,7 @@
 
 #include <string.h>
 
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
 #include <mpi.h>
 {% endif %}
 
@@ -89,7 +89,7 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
 
     IdsNs::IDS *db_entry;
 
-    {% if code_description.language_specific.mpi %}
+    {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI  ----
     int mpi_rank;
     int was_mpi_initialized, was_mpi_finalized;
@@ -146,7 +146,7 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
 {% endfor %}
 
 
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI Finalization ----
     MPI_Finalized(&was_mpi_finalized);
     if (!was_mpi_finalized)
