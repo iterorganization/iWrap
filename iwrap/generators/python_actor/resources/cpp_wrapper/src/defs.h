@@ -16,19 +16,19 @@ typedef struct
 
 typedef struct
 {
-  const char* params;
-  int params_size;
+  const char* params = NULL;
+  int params_size = 0;
 
-  const char* schema;
-  int schema_size;
+  const char* schema = NULL;
+  int schema_size = 0;
 
 } code_parameters_t;
 
 
 typedef struct
 {
-    int code;
-    char* message;
+    int code = 0;
+    char* message = NULL;
 
 } status_t;
 

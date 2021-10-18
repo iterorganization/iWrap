@@ -60,8 +60,8 @@ class ParametersCType( ctypes.Structure ):
 
     @params.setter
     def params(self, params):
-        self.params_ = ctypes.c_char_p(params)
-        str_size = len( params )
+        self.params_ = ctypes.c_char_p(params.encode('utf-8'))
+        str_size = len( self.params_ )
         self.params_size_ =  ctypes.c_int(str_size)
 
     @property
@@ -70,8 +70,8 @@ class ParametersCType( ctypes.Structure ):
 
     @schema.setter
     def schema(self, schema):
-        self.schema_ = ctypes.c_char_p( schema )
-        str_size = len( schema )
+        self.schema_ = ctypes.c_char_p( schema.encode('utf-8') )
+        str_size = len( self.schema_ )
         self.schema_size_ = ctypes.c_int( str_size )
 
     def convert_to_native_type(self):

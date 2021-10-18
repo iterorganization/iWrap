@@ -1,5 +1,7 @@
 import logging
-import os
+from pathlib import Path
+
+from lxml import etree
 
 
 class CodeParameters:
@@ -7,33 +9,71 @@ class CodeParameters:
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
-    def __init__(self, parameters_file, schema_file):
-        self.parameters_file = parameters_file
-        self.schema_file = schema_file
-        self.schema = None  # file name or string or ... (?)
-        self.parameters = None  # file name or string or... (?)
+    @property
+    def schema(self):
+        return self.__schema_str
 
-        self._code_parameters_dir = os.path.dirname( os.path.realpath( __file__ ) ) + '/../input/'
+    @property
+    def parameters(self):
+        return self.__parameters_str
 
-    def _read_file(self, file_name):
-        file_path = self._code_parameters_dir + file_name
-        file = open( file_path, 'r' )
-        file_str = file.read()
-        file_str = str( file_str ).encode( 'utf-8' )
-        file.close()
+    def __init__(self, default_parameters_path:str, schema_path:str):
+
+        self.__default_params_dir = Path( Path( __file__ ).parent, '../input/')
+        self.__default_parameters_path = default_parameters_path
+        self.__schema_path = schema_path
+
+        self.parameters_path = None
+
+        self.__schema_str = None
+        self.__parameters_str = None
+
+    def _read_file(self, file_path):
+        with open( file_path, mode='rt', encoding='utf-8' ) as file:
+            file_str = file.read()
+
         return file_str
 
     def initialize(self):
-        self.read()
-        self.validate()
-
-    def read(self):
-        if not self.parameters_file:
+        if not self.__default_parameters_path:
             return
 
-        self.parameters = self._read_file( self.parameters_file )
-        self.schema = self._read_file( self.schema_file )
+        schema_path = Path( self.__default_params_dir, Path(self.__schema_path))
+        self.__schema_str = self._read_file( schema_path )
+
+        if self.parameters_path:
+            self.__parameters_str = self._read_file( self.parameters_path )
+        else:
+            default_parameters_path = Path( self.__default_params_dir, Path( self.__default_parameters_path ) )
+            self.__parameters_str = self._read_file( default_parameters_path )
+
+        self.validate()
 
     def validate(self):
-        # TBD
-        pass
+        xml_schema_tree = etree.fromstring( self.__schema_str )
+        xml_schema_validator = etree.XMLSchema( xml_schema_tree )
+
+        # Parse XML file:
+        xml_tree = etree.fromstring( self.__parameters_str )
+
+        # Perform validation:
+        xml_schema_validator.assertValid( xml_tree )
+
+
+    def save(self, stream ):
+        stream.write( " Code Parameters ".center(70, '=') )
+        stream.write( "\n" )
+        stream.write( 'Length:' )
+        stream.write( "\n" )
+        if self.__parameters_str:
+            stream.write( str(len(self.__parameters_str)) )
+        else:
+            stream.write( '0\n' )
+            return
+        stream.write( "\n" )
+        stream.write( ' Value: '.center(20, '-') )
+        stream.write( "\n" )
+        stream.write( self.__parameters_str )
+        stream.write( "\n" )
+
+
