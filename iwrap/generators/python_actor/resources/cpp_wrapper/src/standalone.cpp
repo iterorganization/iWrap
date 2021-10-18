@@ -24,15 +24,26 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 {% endif %}
 
+  //----  Code parameters  ----
+      char *xml_string;
+
+  read_input(db_entry_desc_array, IDS_ARGS_NO, &xml_string);
+
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-    //----  Code parameters  ----
-    const char* PARAM_DIR = "../input/";
-    const char* XML_FILE = "{{code_description.code_parameters.parameters.split('/')[-1]}}";
-    const char* XSD_FILE = "{{code_description.code_parameters.schema.split('/')[-1]}}";
+    char *xsd_string;
+    const char* XSD_FILE = "../input/{{code_description.code_parameters.schema.split('/')[-1]}}";
     code_parameters_t code_params;
 
-    code_params = read_codeparams(PARAM_DIR, XML_FILE, XSD_FILE);
+    xsd_string = read_codeparams_schema( XSD_FILE);
+
+        code_params.params = xml_string;
+    code_params.params_size = strlen(xml_string);
+
+
+    code_params.schema = xsd_string;
+    code_params.schema_size = strlen(xsd_string);
 {% endif %}
+
 
      {% if code_description.subroutines.init %}
     // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -43,7 +54,7 @@ int main(int argc, char **argv)
                 &status_info);
     {% endif %}
 
-    read_input(db_entry_desc_array, IDS_ARGS_NO);
+
 
     db_entry_array = open_db_entries(db_entry_desc_array, IDS_ARGS_NO);
 

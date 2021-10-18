@@ -23,6 +23,10 @@ void read_data(std::ifstream *stream, int *var) {
   stream->ignore(INT_MAX, '\n');
 }
 
+void read_data(std::ifstream *stream, char *str, int size) {
+  stream->read(str, size);
+  stream->ignore(INT_MAX, '\n');
+}
 
 
 void write_data(std::ofstream *stream, int var) {

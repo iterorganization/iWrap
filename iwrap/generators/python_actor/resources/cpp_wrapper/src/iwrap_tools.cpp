@@ -5,15 +5,18 @@
 #include "serialization_tools.h"
 
 
-int read_input(ids_description_t db_entry_desc_array[], int array_expected_size)
+int read_input(ids_description_t db_entry_desc_array[], int array_expected_size, char** xml_string)
 {
     ifstream fin;
     int array_read_size = -1;
+    int xml_read_size = -1;
 
     if (array_expected_size < 1)
         return 0;
 
     fin.open("input.txt");
+    fin.ignore(INT_MAX, '\n'); // skip line " === Arguments ===="
+    fin.ignore(INT_MAX, '\n'); // skip line " Length:"
     read_data(&fin, &array_read_size);
 
     if ( array_expected_size != array_read_size)
@@ -27,7 +30,24 @@ int read_input(ids_description_t db_entry_desc_array[], int array_expected_size)
         read_data(&fin, &db_entry_desc_array[i]);
     }
     
-    
+    fin.ignore(INT_MAX, '\n'); // skip line " == Code Parameters =="
+    fin.ignore(INT_MAX, '\n'); // skip line " Length:"
+    // read size of xml_string
+    read_data(&fin, &xml_read_size);
+
+    if (xml_read_size < 0)
+    {
+        fin.close();
+        return 0;
+    }
+
+
+    fin.ignore(INT_MAX, '\n'); // skip line " Length:"
+    *xml_string = (char*)malloc(xml_read_size + 1);
+
+    read_data(&fin, *xml_string, xml_read_size);
+
+
     fin.close();
 
     return 0;
@@ -70,30 +90,21 @@ int handle_status_info(status_t status_info, const char* actor_name)
       }
 }
 
-code_parameters_t read_codeparams(const char* param_dir, const char* xml_file, const char* xsd_file)
+ char* read_codeparams_schema(const char* xsd_file)
 {
     code_parameters_t code_params;
 
-    std::string str;
+    char* xsd_str;
 
 
-    if ( param_dir == NULL || strlen(param_dir) < 1
-        || xml_file == NULL || strlen(xml_file) < 1
-        || xsd_file == NULL || strlen(xsd_file) < 1
-        ) return code_params;
+    if ( xsd_file == NULL || strlen(xsd_file) < 1 )
+        return "";
 
-    str.append(param_dir);
-    str.append(xml_file);
-    code_params.params = read_file(str.c_str());
-    code_params.params_size = strlen(code_params.params);
+    xsd_str= read_file(xsd_file);
 
-    str.clear();
-    str.append(param_dir);
-    str.append(xsd_file);
-    code_params.schema = read_file(str.c_str());
-    code_params.schema_size = strlen(code_params.schema);
 
-    return code_params;
+
+    return xsd_str;
 }
 
 IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size)
