@@ -24,11 +24,3 @@ iWrap:
 + introduce a proper logging
 + set iWrap version based on GIT
 + INSTALLATION
-
-Examples:
------------------
-+ make all examples compilable using GCC and Intel
-
-Manual
------------------
-Describe adding libs more clearly
