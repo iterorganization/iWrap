@@ -4,6 +4,7 @@ module rwtool
    interface readfile
        module procedure &
           readids,&
+          read_string,&
           readint
    end interface
 
@@ -82,13 +83,38 @@ FUNCTION read_file(filename) RESULT (str)
 
     end function read_file
    !---------------------------------------------------
-   subroutine readtabint(var)
+   subroutine read_string(var, isize)
+    implicit none
+     !character,dimension(:),intent(inout) :: var
+     character(len=:), allocatable :: var
+     integer :: isize
+     character(1000)                 :: line
+     integer :: k, i, line_length, read_count
+     var(:) = ''
+     read_count = 1
 
-      integer,dimension(:),intent(inout) :: var
-      integer :: i
-      do i=1,size(var)
-        read(10,*) var(i)
-      enddo
+     DO WHILE (read_count < isize)
+       line = ""
+       read(10,"(a)")  line
+
+
+       line_length = len_trim(line)
+       if(read_count + line_length > isize) then
+        line_length = isize - read_count
+       endif
+
+       ! -- convert string -> array
+       do i = 1, line_length
+           var(read_count:read_count) = line(i : i)
+           read_count= read_count + 1
+       enddo
+
+       ! -- add a new line at the end of line
+       var(read_count:read_count) = char(10)
+       read_count = read_count + 1
+    END DO
+
+
    end subroutine
 
 

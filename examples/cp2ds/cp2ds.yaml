@@ -1,3 +1,8 @@
+actor_description:
+    actor_name: core2dist
+    actor_type: python
+    data_type: legacy
+
 code_description:
     programming_language: Fortran
     subroutines:

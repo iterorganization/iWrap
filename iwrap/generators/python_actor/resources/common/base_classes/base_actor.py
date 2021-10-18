@@ -24,8 +24,8 @@ class ActorBaseClass( ABC ):
     # # #  Actor lifecycle methods # # #
 
     def initialize(self):
-        self.code_parameters.read()
-        self.code_parameters.validate()
+        if self.code_parameters:
+            self.code_parameters.initialize()
 
         self.__binder.initialize( )
 

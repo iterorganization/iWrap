@@ -38,10 +38,10 @@ class CBinder:
         if self.actor.is_mpi_code:
             return True
 
-        if self.runtime_settings.debug_mode is DebugMode.STANDALONE:
+        if self.runtime_settings.debug_mode == DebugMode.STANDALONE:
             return True
 
-        if self.runtime_settings.run_mode is RunMode.STANDALONE:
+        if self.runtime_settings.run_mode == RunMode.STANDALONE:
             return True
 
         return False
@@ -129,6 +129,8 @@ class CBinder:
             print( line, end='' )
 
         return_code = proc.wait()
+        if return_code:
+            raise RuntimeError(f'ERROR [{return_code}] while executing command: {tv_command}')
 
     def __run_init(self, debug_mode=False):
 
@@ -138,8 +140,8 @@ class CBinder:
         c_arglist = []
 
         # XML Code Params
-        if self.actor.code_parameters.parameters:
-            param_c = ParametersCType( self.code_parameters ).convert_to_native_type()
+        if self.actor.code_parameters and self.actor.code_parameters.parameters:
+            param_c = ParametersCType( self.actor.code_parameters ).convert_to_native_type()
             c_arglist.append( param_c )
 
         # DIAGNOSTIC INFO
@@ -184,12 +186,18 @@ class CBinder:
 
     def __save_input(self, full_arguments_list):
 
-        file = open( 'input.txt', "w" )
-        file.write( str( len( full_arguments_list ) ) + "\n" )
-        for arg in full_arguments_list:
-            arg.save( file )
+        with open( 'input.txt', "wt" ) as file:
+            # Save IDS arguments
+            file.write( ' Arguments '.center(70, '=') )
+            file.write( "\n" )
+            file.write( 'Length:' )
+            file.write( "\n" )
+            file.write( str( len( full_arguments_list ) ) + "\n" )
+            for arg in full_arguments_list:
+                arg.save( file )
+            self.actor.code_parameters.save(file)
 
-        file.close()
+
 
     def __run_standalone(self, full_arguments_list, mpi_settings=None, debug_mode=False):
 
@@ -221,6 +229,8 @@ class CBinder:
             print( line, end='' )
 
         return_code = proc.wait()
+        if return_code:
+            raise RuntimeError(f'ERROR [{return_code}] while executing command: {exec_command}')
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def step(self, *input_idses):
@@ -244,7 +254,7 @@ class CBinder:
         c_arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
 
         # XML Code Params
-        if self.actor.code_parameters.parameters:
+        if self.actor.code_parameters and self.actor.code_parameters.parameters:
             param_c = ParametersCType( self.actor.code_parameters ).convert_to_native_type()
             c_arglist.append( param_c )
 

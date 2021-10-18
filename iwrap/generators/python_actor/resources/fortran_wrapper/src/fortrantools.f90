@@ -80,15 +80,20 @@ END FUNCTION create_ids_full_name
     END SUBROUTINE handle_status_info
 
 
-    FUNCTION read_input(db_entry_desc_array) RESULT(status)
+    FUNCTION read_input(db_entry_desc_array, xml_string) RESULT(status)
         use rwtool
         type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
+        character(len=:), allocatable, intent(OUT) :: xml_string
         integer :: i, status
-        integer :: ids_array_size, array_read_size
+        integer :: ids_array_size, array_read_size, xml_read_size
 
+        status = 0
         ids_array_size = SIZE(db_entry_desc_array)
 
         open(10,file='input.txt',form='formatted',access='sequential',status='old', iostat=status)
+
+        read(10,*) ! skip line " === Arguments ===="
+        read(10,*) ! skip line " Length:"
 
         read(10,*) array_read_size
 
@@ -102,8 +107,23 @@ END FUNCTION create_ids_full_name
              call readids(db_entry_desc_array(i))
         end do
 
+        read(10,*) ! skip line " == Code Parameters =="
+        read(10,*) ! skip line " Length:"
+
+        read(10,*) xml_read_size
+
+        if ( xml_read_size < 1)  then
+            close(10)
+            return
+        end if
+
+        read(10,*) ! skip line " --- Value: ---"
+
+
+        allocate( character(len=xml_read_size) :: xml_string )
+        call read_string(xml_string, xml_read_size)
         close(10)
-        status = 0
+
     END FUNCTION read_input
 
 
@@ -182,31 +202,18 @@ END FUNCTION create_ids_full_name
    end do
     END SUBROUTINE close_db_entries
 
-FUNCTION read_codeparams(param_dir, xml_file, xsd_file)  RESULT (code_params)
-    use iso_c_binding, ONLY: C_PTR
+FUNCTION read_codeparams_schema(xsd_file)  RESULT (xsd_string)
     use rwtool
     implicit none
 
-    character(len=*), intent(IN) :: param_dir
-    character(len=*), intent(IN) :: xml_file
     character(len=*), intent(IN) :: xsd_file
-    type(code_parameters_t) :: code_params
-
-    character(len=:), allocatable :: xml_string
     character(len=:), allocatable :: xsd_string
 
-    if ( LEN(xml_file) < 1 .OR. LEN(xsd_file) < 1 ) return
+    if ( LEN(xsd_file) < 1 ) return
 
-    xml_string = read_file(param_dir // xml_file)
-    xsd_string = read_file(param_dir // xsd_file)
+    xsd_string = read_file(xsd_file)
 
-    code_params%params = convert2Cptr(xml_string)
-    code_params%params_size = LEN(xml_string)
-
-    code_params%schema = convert2Cptr(xsd_string)
-    code_params%schema_size = LEN(xsd_string)
-
-END FUNCTION read_codeparams
+END FUNCTION read_codeparams_schema
 
 
 FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)    
