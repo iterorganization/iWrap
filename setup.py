@@ -76,9 +76,10 @@ if __name__ == "__main__":
         #use_scm_version={
         #    "fallback_version": os.getenv("IMASPY_VERSION", "0.0.0"),
         #},
-        version=subprocess.getoutput('git describe --abbrev=0'),
+        version=subprocess.getoutput('git describe --dirty'),
         packages=find_packages(exclude=('tests*', 'testing*')),
         setup_requires=pyproject_data["build-system"]["requires"],
+        include_package_data=True,
         install_requires=install_requires,
         extras_require=optional_reqs,
         cmdclass={'clean': CleanCommand},

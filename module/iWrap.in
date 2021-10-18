@@ -1,0 +1,17 @@
+#%Module ###############################
+##
+##		$name modulefile
+##
+##	Copyright (c) 2021, PCSS
+
+set name __IWRAP_NAME__
+set ver __VERSION__
+
+module-whatis "iWrap - a modular component generator, implemented in Python, used for creating IMAS actors from physics models."
+proc ModulesHelp { } {
+	puts stderr "\tThis module sets the environment for $name version $ver"
+}
+
+conflict $name
+
+prepend-path PATH
