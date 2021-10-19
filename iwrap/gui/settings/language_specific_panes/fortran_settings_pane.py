@@ -56,12 +56,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
         frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
         frame.grid_columnconfigure(1, weight=1)
 
-        # COMPILER CMD
-        self.compiler_cmd = tk.StringVar()
-        ttk.Label(frame, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
-        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
-
         # MODULE PATH
         self.module_path = tk.StringVar()
         self.module_path.set(self.settings.include_path or '')
@@ -73,51 +67,62 @@ class FortranPane( ttk.Frame, IWrapPane ):
         browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # FRAME MPI
-        frame_mpi = ttk.LabelFrame(labelframe, text="MPI settings", borderwidth=2, relief="groove")
-        frame_mpi.pack(fill=tk.BOTH, expand=1, pady=10)
-        frame_mpi.grid_columnconfigure(1, weight=1)
-        frame_mpi.grid_columnconfigure(3, weight=1)
+        main_frame = ttk.Frame(labelframe)
+        main_frame.pack(fill=tk.BOTH, expand=1)
 
-        ttk.Label(frame_mpi, text="MPI compiler cmd:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        frame_mpi = ttk.LabelFrame(main_frame, text="MPI settings", borderwidth=2, relief="groove")
+        frame_mpi.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        frame_mpi.grid_columnconfigure(1, weight=1)
+
+        frame_settings = ttk.Frame(main_frame)
+        frame_settings.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
+        frame_settings.grid_columnconfigure(1, weight=1)
 
         # COMBOBOX MPI COMPILER
+        ttk.Label(frame_mpi, text="MPI compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.mpi = tk.StringVar()
         self.current_mpi = tk.StringVar()
         self.mpi.trace('w', self.change_mpi)
         self.current_mpi.set(self.mpi.get())
-        self.mpi_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi)
+        self.mpi_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi, width=15)
         self.mpi_combobox['values'] = [None]
         self.mpi_combobox.set(self.settings.open_mp_switch or "")
-        self.mpi_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.mpi_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
         self.mpi_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
 
-        # COMBOBOX OpenMP switch
-        ttk.Label(frame_mpi, text="OpenMP switch:").grid(column=2, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.switch = tk.StringVar()
-        self.current_switch = tk.StringVar()
-        self.switch.trace('w', self.change_switch)
-        self.current_switch.set(self.switch.get())
-        self.openmp_switch_combobox = ttk.Combobox(frame_mpi, textvar=self.switch)
-        self.openmp_switch_combobox['values'] = [None]
-        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.openmp_switch_combobox.grid(column=3, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_switch, y=self.openmp_switch_combobox: self.add_value(x, y))
-
         # COMBOBOX MPI RUNNER
-        ttk.Label(frame_mpi, text="MPI runner:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame_mpi, text="MPI runner:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.mpi_runner = tk.StringVar()
         self.current_mpi_runner = tk.StringVar()
         self.mpi_runner.trace('w', self.change_mpi_runner)
         self.current_mpi_runner.set(self.mpi_runner.get())
-        self.mpi_runner_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi_runner)
+        self.mpi_runner_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi_runner, width=15)
         self.mpi_runner_combobox['values'] = [None]
         self.mpi_runner_combobox.set(self.settings.open_mp_switch or "")
-        self.mpi_runner_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.mpi_runner_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner, y=self.mpi_runner_combobox: self.add_value(x, y))
+
+        # COMPILER CMD
+        self.compiler_cmd = tk.StringVar()
+        ttk.Label(frame_settings, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        compiler_text = ttk.Entry(frame_settings, textvariable=self.compiler_cmd)
+        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # COMBOBOX OpenMP switch
+        ttk.Label(frame_settings, text="OpenMP switch:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.switch = tk.StringVar()
+        self.current_switch = tk.StringVar()
+        self.switch.trace('w', self.change_switch)
+        self.current_switch.set(self.switch.get())
+        self.openmp_switch_combobox = ttk.Combobox(frame_settings, textvar=self.switch)
+        self.openmp_switch_combobox['values'] = [None]
+        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.openmp_switch_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_switch, y=self.openmp_switch_combobox: self.add_value(x, y))
 
         # TABS FRAME
         tab_frame = ttk.Frame(labelframe)
-        tab_frame.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
+        tab_frame.pack(fill=tk.BOTH, side = tk.BOTTOM, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
         tab_control = ttk.Notebook(tab_frame)
