@@ -1,11 +1,9 @@
-.PHONY: build-iwrap install help clean docs
-
 # Check the version from the git tag
 VERSION := $(shell git describe --abbrev=4 --dirty)-b
 
 # Site configuration
 IWRAP_NAME ?= iwrap
-IWRAP_HOME ?= $(HOME)/iwrap
+IWRAP_HOME ?= $(HOME)/$(IWRAP_NAME)
 
 # Check for the existence of the Python interpreter and its absolute path
 PYTHON_CMD ?= python
@@ -19,35 +17,40 @@ INSTALL_MOD ?= $(IWRAP_HOME)/etc/modulefiles
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
 
 all: iwrap_build module
+install: install_iwrap install_module
+uninstall: uninstall_iwrap uninstall_module
+module: $(MODULEFILE)
+
+.PHONY: $(MODULEFILE) iwrap_build iwrap_deps help clean docs
 
 iwrap_build: | iwrap_deps
-ifdef INSTALL_DIR
 	$(PY_CMD) setup.py bdist_wheel
-	@echo $(VERSION)
-	@echo $(PYTHON_CMD)
-	@echo $(PY_CMD)
-	@echo $(PY_VER)
-	@echo $(INSTALL_DIR)
-else
-	@echo "Please provide INSTALL_DIR=? argument!" >&2
-endif
 
-install:
+install_iwrap: iwrap_build
 ifdef INSTALL_DIR
-	@echo $(INSTALL_DIR)
-else
-	@echo "USAGE: make $@ INSTALL_DIR=[PATH]"
-	@echo -e " !ERROR: INSTALL_DIR=? unknown!" >&2
+	$(INSTALL_PREFIX) = $(INSTALL_DIR)/$(VERSION)
+	$(INSTALL_PY) = $(INSTALL_PREFIX)/lib/python$(PY_VER)
 endif
+	install -d $(INSTALL_PREFIX)
+	install -d $(INSTALL_PY)
+	$(PYCMD)
 
-module/$(MODULEFILE):
-	echo %@
+install_module: module/$(MODULEFILE)
+
+module/$(MODULEFILE): iwrap/resources/module/iWrap.in
+	install -d $(dir $@)
+	sed -e "s:__VERSION__;$(VERSION);" \
+		-e "s;__PY_VER__;$(PY_VER);" \
+		-e "s;__INSTALL_PREFIX__;$(INSTALL_PREFIX);" \
+		-e "s;__INSTALL_PY__;$(INSTALL_PY);" \
+		-e "s;__IWRAP_NAME__;$(IWRAP_NAME);" \
+		$< > $@
 
 iwrap_deps:
 	$(if $(wildcard $(PY_CMD)),,$(error No $(PYTHON_CMD) ($$PYTHON_CMD) executable found in path, did you load any python module?))
 
 help:
-
+	echo
 
 clean:
 	find . -type d -name '__pycache__' | xargs rm -r
