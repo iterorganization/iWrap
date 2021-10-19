@@ -80,7 +80,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         ttk.Label(frame_mpi, text="MPI compiler cmd:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
 
-        # COMBOBOX MPI
+        # COMBOBOX MPI COMPILER
         self.mpi = tk.StringVar()
         self.current_mpi = tk.StringVar()
         self.mpi.trace('w', self.change_mpi)
@@ -170,7 +170,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.module_path.set(self.settings.include_path or "")
         self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner)
+        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
@@ -181,7 +181,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
         ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi = self.mpi_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
         ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = self.openmp_switch_combobox.get()
         ProjectSettings.get_settings().code_description.language_specific.mpi.mpi_runner = self.mpi_runner_combobox.get()
 
