@@ -72,23 +72,48 @@ class FortranPane( ttk.Frame, IWrapPane ):
         browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
+        # FRAME MPI
+        frame_mpi = ttk.LabelFrame(labelframe, text="MPI settings", borderwidth=2, relief="groove")
+        frame_mpi.pack(fill=tk.BOTH, expand=1, pady=10)
+        frame_mpi.grid_columnconfigure(1, weight=1)
+        frame_mpi.grid_columnconfigure(3, weight=1)
+
+        ttk.Label(frame_mpi, text="MPI compiler cmd:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+
         # COMBOBOX MPI
-        ttk.Label(frame, text="MPI:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.mpi_combobox = ttk.Combobox(frame, state='readonly')
-        self.mpi_combobox['values'] = ["Yes", "No"]
-        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
+        self.mpi = tk.StringVar()
+        self.current_mpi = tk.StringVar()
+        self.mpi.trace('w', self.change_mpi)
+        self.current_mpi.set(self.mpi.get())
+        self.mpi_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi)
+        self.mpi_combobox['values'] = [None]
+        self.mpi_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.mpi_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
 
         # COMBOBOX OpenMP switch
-        ttk.Label(frame, text="OpenMP switch:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame_mpi, text="OpenMP switch:").grid(column=2, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.switch = tk.StringVar()
+        self.current_switch = tk.StringVar()
         self.switch.trace('w', self.change_switch)
-        self.openmp_switch_combobox = ttk.Combobox(frame, textvar=self.switch)
+        self.current_switch.set(self.switch.get())
+        self.openmp_switch_combobox = ttk.Combobox(frame_mpi, textvar=self.switch)
         self.openmp_switch_combobox['values'] = [None]
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.openmp_switch_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", self.add_value)
-        self.current_switch = self.switch.get()
+        self.openmp_switch_combobox.grid(column=3, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_switch, y=self.openmp_switch_combobox: self.add_value(x, y))
+
+        # COMBOBOX MPI RUNNER
+        ttk.Label(frame_mpi, text="MPI runner:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.mpi_runner = tk.StringVar()
+        self.current_mpi_runner = tk.StringVar()
+        self.mpi_runner.trace('w', self.change_mpi_runner)
+        self.current_mpi_runner.set(self.mpi_runner.get())
+        self.mpi_runner_combobox = ttk.Combobox(frame_mpi, textvar=self.mpi_runner)
+        self.mpi_runner_combobox['values'] = [None]
+        self.mpi_runner_combobox.set(self.settings.open_mp_switch or "")
+        self.mpi_runner_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner, y=self.mpi_runner_combobox: self.add_value(x, y))
 
         # TABS FRAME
         tab_frame = ttk.Frame(labelframe)
@@ -121,13 +146,21 @@ class FortranPane( ttk.Frame, IWrapPane ):
         if filename:
             self.module_path.set(filename)
 
-    def add_value(self, event) -> None:
-        if self.current_switch not in self.openmp_switch_combobox['value']:
-            self.openmp_switch_combobox['values'] += (self.current_switch,)
+    def add_value(self, value, combobox):
+        if value.get() not in combobox['value'] and value.get() is not '':
+            combobox['values'] += (value.get(),)
 
     def change_switch(self, *args):
         if self.switch.get() not in self.openmp_switch_combobox['values']:
-            self.current_switch = self.switch.get()
+            self.current_switch.set(self.switch.get())
+
+    def change_mpi_runner(self, *args):
+        if self.mpi_runner.get() not in self.mpi_runner_combobox['values']:
+            self.current_mpi_runner.set(self.mpi_runner.get())
+
+    def change_mpi(self, *args):
+        if self.mpi.get() not in self.mpi_combobox['values']:
+            self.current_mpi.set(self.mpi.get())
 
     def reload(self):
         """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
@@ -135,8 +168,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.module_path.set(self.settings.include_path or "")
-        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
+        self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner)
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
@@ -147,8 +181,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
         ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        ProjectSettings.get_settings().code_description.language_specific.mpi = self.mpi_combobox.get() == 'yes' or ''
+        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi = self.mpi_combobox.get()
         ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = self.openmp_switch_combobox.get()
+        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi_runner = self.mpi_runner_combobox.get()
 
         self.pkg_config_pane.update_settings()
         self.library_path_pane.update_settings()
