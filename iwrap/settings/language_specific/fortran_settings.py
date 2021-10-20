@@ -16,9 +16,25 @@ class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
 
 class MPI( SettingsBaseClass ):
 
+    @property
+    def mpi_compiler_cmd(self):
+        return self._mpi_compiler_cmd
+
+    @mpi_compiler_cmd.setter
+    def mpi_compiler_cmd(self, value):
+        self._mpi_compiler_cmd = value if value != "None" else None
+
+    @property
+    def mpi_runner(self):
+        return self._mpi_runner
+
+    @mpi_runner.setter
+    def mpi_runner(self, value):
+        self._mpi_runner = value if value != "None" else None
+
     def __init__(self):
-        self.mpi_compiler_cmd = ''
-        self.mpi_runner = ''
+        self._mpi_compiler_cmd = ''
+        self._mpi_runner = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
 
@@ -38,6 +54,7 @@ class MPI( SettingsBaseClass ):
 
     def to_dict(self):
         return super().to_dict()
+
 
 class ExtraLibraries( SettingsBaseClass ):
 
@@ -70,11 +87,19 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
+    @property
+    def open_mp_switch(self):
+        return self._open_mp_switch
+
+    @open_mp_switch.setter
+    def open_mp_switch(self, value):
+        self._open_mp_switch = value if value != "None" else None
+
     def __init__(self):
         self.compiler_cmd = ''
         self.include_path = ''
         self.mpi = MPI()
-        self.open_mp_switch = False
+        self._open_mp_switch = False
         self.extra_libraries = ExtraLibraries()
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:

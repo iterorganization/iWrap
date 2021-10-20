@@ -70,7 +70,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, expand=1)
 
-        frame_mpi = ttk.LabelFrame(main_frame, text="MPI settings", borderwidth=2, relief="groove")
+        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
         frame_mpi.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         frame_mpi.grid_columnconfigure(1, weight=1)
 
@@ -184,11 +184,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
         and LibraryPathPane update_settings methods.
         """
-        ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
-        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = self.openmp_switch_combobox.get()
-        ProjectSettings.get_settings().code_description.language_specific.mpi.mpi_runner = self.mpi_runner_combobox.get()
+        self.settings.compiler_cmd = self.compiler_cmd.get()
+        self.settings.include_path = self.module_path.get()
+        self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
+        self.settings.open_mp_switch = self.openmp_switch_combobox.get()
+        self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
 
         self.pkg_config_pane.update_settings()
         self.library_path_pane.update_settings()
@@ -197,7 +197,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
-        # compiler = self.compiler_combobox.get()
         pkg_configs = self.pkg_config_pane.get_data_from_table()
         library_paths = self.library_path_pane.get_list_of_custom_libraries()
         mpi = self.feature_pane.mpi_flavour_combobox.get()
