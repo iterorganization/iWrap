@@ -1,4 +1,4 @@
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
 #include <mpi.h>
 {% endif %}
 #include "iwrap_tools.h"
@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     //----  Status info  ----
     status_t status_info;
 
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI  ----
     int mpi_rank;
     int was_mpi_finalized, was_mpi_initialized;
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
     xsd_string = read_codeparams_schema( XSD_FILE);
 
-        code_params.params = xml_string;
+    code_params.params = xml_string;
     code_params.params_size = strlen(xml_string);
 
 
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
                 &status_info);
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-   {% if code_description.language_specific.mpi %}
+   {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     if (mpi_rank == 0)
     {
        // --- called only for RANK 0 process
@@ -80,7 +80,7 @@ int main(int argc, char **argv)
     //-----------Writing output data to file ---------------------
     write_output(status_info);
 
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     } //The end of section called only for RANK 0 process
 {% endif %}
     close_db_entries(db_entry_array, IDS_ARGS_NO);
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     handle_status_info(status_info, "{{actor_settings.actor_name}}");
     {% endif %}
 
-{% if code_description.language_specific.mpi %}
+{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI Finalization ----
     MPI_Finalized(&was_mpi_finalized);
     if (!was_mpi_finalized)

@@ -41,6 +41,7 @@ class ExampleWorkflowManager:
             print('Running STANDALONE version.')
             self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
 
+        self.actor_physics_ii.code_parameters.parameters_path= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
         self.actor_physics_ii.initialize() 
     
     def execute_workflow(self):

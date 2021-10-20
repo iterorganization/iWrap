@@ -15,6 +15,49 @@ class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
     pass
 
 
+
+class MPI( SettingsBaseClass ):
+
+    @property
+    def mpi_compiler_cmd(self):
+        return self._mpi_compiler_cmd
+
+    @mpi_compiler_cmd.setter
+    def mpi_compiler_cmd(self, value):
+        self._mpi_compiler_cmd = value if value != "None" else None
+
+    @property
+    def mpi_runner(self):
+        return self._mpi_runner
+
+    @mpi_runner.setter
+    def mpi_runner(self, value):
+        self._mpi_runner = value if value != "None" else None
+
+    def __init__(self):
+        self._mpi_compiler_cmd = ''
+        self._mpi_runner = ''
+
+    def validate(self, engine: Engine, project_root_dir: str) -> None:
+
+        # mpi_compiler_cmd
+        # mpi_runner
+        if self.mpi_runner and not self.mpi_compiler_cmd:
+            raise ValueError('MPI compiler command is not set')
+
+        if self.mpi_compiler_cmd and not self.mpi_runner:
+            raise ValueError('MPI runner is not set')
+
+    def clear(self):
+        self.__init__()
+
+    def from_dict(self, dictionary: dict):
+        super().from_dict( dictionary )
+
+    def to_dict(self):
+        return super().to_dict()
+
+
 class ExtraLibraries( SettingsBaseClass ):
 
     def __init__(self):
@@ -56,27 +99,19 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-
     @property
-    def mpi(self):
-        if not self._mpi:
-            return None
-        else:
-            return self._mpi
+    def open_mp_switch(self):
+        return self._open_mp_switch
 
-    @mpi.setter
-    def mpi(self, value):
-        if value == 'None':
-            self._mpi = False
-        else:
-            self._mpi = value
+    @open_mp_switch.setter
+    def open_mp_switch(self, value):
+        self._open_mp_switch = value if value != "None" else None
 
     def __init__(self):
-        self.compiler_vendor = ''
         self.compiler_cmd = ''
         self.include_path = ''
-        self._mpi = ''
-        self.open_mp_switch = False
+        self.mpi = MPI()
+        self._open_mp_switch = False
         self.extra_libraries = ExtraLibraries()
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
@@ -95,7 +130,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
             raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
         # mpi
-        # TODO Validate MPI against platform settings
+        self.mpi.validate(engine, project_root_dir)
 
         # open_mp
         # TODO validate open mp

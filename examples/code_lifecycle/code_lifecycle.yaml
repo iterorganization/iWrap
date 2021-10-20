@@ -21,10 +21,11 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
-        compiler_vendor: GNU
         compiler_cmd: gfortran
         include_path: ./native_code/mod_code_lifecycle.mod
-        mpi: false
+        mpi:
+            mpi_compiler_cmd:
+            mpi_runner:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

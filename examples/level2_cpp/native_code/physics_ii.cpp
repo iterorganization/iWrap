@@ -37,7 +37,8 @@ void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
         strcpy (*status_message, ERROR_MESSAGE);
         return;
     }
-    
+
+    printf("XXX: %s", *(codeparam.parameters));
     assign_codeparam( *(codeparam.parameters), codeparam_data);
     
     printf( "------------------------------------\n");
