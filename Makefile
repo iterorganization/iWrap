@@ -33,7 +33,7 @@ iwrap_build: build_deps
 	@echo -e "\n\tIWRAP_BUILD FINISHED\n"
 
 install_iwrap: install_dir iwrap_build
-	install -d $(dir $INSTALL_PREFIX)
+	install -d $(dir $(INSTALL_PREFIX))
 	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --prefix $(INSTALL_PREFIX)
 	@echo -e "\n\tIWRAP_INSTALL FINISHED\n"
 	@echo -e "\t iWrap installed in: $(INSTALL_PREFIX)\n"
