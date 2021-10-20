@@ -3,10 +3,13 @@ import sys
 from iwrap.iwrap_main import main
 
 
-def mains():
-    print('IN MAINS')
+def gui():
     return main(is_commandline_mode=False)
 
 
+def cmd_line():
+    return main()
+
+
 if __name__ == '__main__':
-    mains()
+    gui()

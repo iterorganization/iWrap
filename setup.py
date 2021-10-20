@@ -73,9 +73,6 @@ if __name__ == "__main__":
     # https://packaging.python.org/specifications/core-metadata/ for allow version strings
 
     setup(
-        #use_scm_version={
-        #    "fallback_version": os.getenv("IMASPY_VERSION", "0.0.0"),
-        #},
         version=subprocess.getoutput('git describe --dirty'),
         packages=find_packages(exclude=('tests*', 'testing*')),
         setup_requires=pyproject_data["build-system"]["requires"],
@@ -85,7 +82,8 @@ if __name__ == "__main__":
         cmdclass={'clean': CleanCommand},
         entry_points={
             'console_scripts': [
-                'iwraps = bin.iwrap_gui:mains',
+                'iwraps = bin.run:gui',
+                'iwrapc = bin.run:cmd_line'
             ]
         }
     )

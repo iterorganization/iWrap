@@ -1,4 +1,3 @@
 recursive-include bin *
-include iwrap/resources/imas_logo.gif
 recursive-include iwrap *
 include requirements*
