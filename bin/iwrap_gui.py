@@ -9,6 +9,4 @@ def mains():
 
 
 if __name__ == '__main__':
-    # sys.exit(main(is_commandline_mode=False))
-    print('IN __main__')
     mains()
