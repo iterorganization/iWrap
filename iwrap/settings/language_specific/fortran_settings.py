@@ -1,7 +1,9 @@
 import logging
 from abc import ABC
 from pathlib import Path
+from typing import Dict, Any
 
+from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
 
@@ -26,7 +28,7 @@ class ExtraLibraries( SettingsBaseClass ):
 
         # custom_libraries
         for library in self.path_defined or []:
-            __path = Path( project_root_dir, library )
+            __path = utils.resolve_path(library, project_root_dir)
             if not __path.exists():
                 raise ValueError( f'Path to library file is not valid! {str( __path )}' )
 
@@ -36,8 +38,18 @@ class ExtraLibraries( SettingsBaseClass ):
     def from_dict(self, dictionary: dict):
         super().from_dict( dictionary )
 
-    def to_dict(self):
-        return super().to_dict()
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+
+        if resolve_path:
+            # include_path
+            resolved_libs = []
+            for library in self.path_defined or []:
+                __path = utils.resolve_path( library, project_root_dir )
+                resolved_libs.append(__path)
+            ret_dict.update( {'path_defined': resolved_libs} )
+
+        return ret_dict
 
 
 class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
@@ -78,8 +90,8 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         if not self.include_path:
             raise ValueError( 'Path to include/module file is not set!' )
 
-        __path = Path( project_root_dir, self.include_path )
-        if not __path.exists():
+        __path = utils.resolve_path( self.include_path, project_root_dir)
+        if not Path(__path).exists():
             raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
         # mpi
@@ -97,7 +109,14 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     def from_dict(self, dictionary: dict):
         super().from_dict( dictionary )
 
-    def to_dict(self):
-        return super().to_dict()
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+
+        if resolve_path:
+            # include_path
+            __path = utils.resolve_path( self.include_path, project_root_dir )
+            ret_dict.update( {'include_path': __path} )
+
+        return ret_dict
 
     pass

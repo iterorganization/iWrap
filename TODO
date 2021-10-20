@@ -4,14 +4,12 @@ KNOWN ISSUES (to be corrected)
 
 REPORTED BY MIREILLE
 - Description of ‘module path’ missing, along with the description on how the fortran code has to be adapted to make it generate the mod file
-- The yaml file should be able to receive environment variables
 - Relative paths:
 - MPI actors need runtime standalone settings (to be done before initialize() )
 
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
-+ introduce a proper logging
 + improve 'runwork' mechanism
 + OpenMP
 * "per patform" configuration
@@ -19,8 +17,6 @@ Generated Py-F actors:
 iWrap:
 ----------------
 + language specific panes plugin discovery mechanism based on implicit namespace packages
-+ handle $SYSTEM_VARS while resolving paths
 + make paths relative while saving the project
-+ introduce a proper logging
 + set iWrap version based on GIT
 + INSTALLATION

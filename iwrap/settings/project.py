@@ -73,13 +73,13 @@ class ProjectSettings( SettingsBaseClass ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
 
     def clear(self):
         """Clears class content, setting default values of class attributes
