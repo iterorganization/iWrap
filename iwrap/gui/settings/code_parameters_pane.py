@@ -118,9 +118,7 @@ class XMLPath(CodeParameterPath):
     def reload(self) -> None:
         super(XMLPath, self).reload()
         path_to_set = self._project_settings.parameters
-        if not self.is_path_correct(path_to_set):
-            return
-
+        path_to_set = "" if path_to_set is None else path_to_set
         self.path.set(path_to_set)
 
 
@@ -139,9 +137,7 @@ class XSDPath(CodeParameterPath):
     def reload(self) -> None:
         super(XSDPath, self).reload()
         path_to_set = self._project_settings.schema
-        if not self.is_path_correct(path_to_set):
-            return
-
+        path_to_set = "" if path_to_set is None else path_to_set
         self.path.set(path_to_set)
 
 
