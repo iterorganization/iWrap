@@ -27,8 +27,9 @@ ifdef INSTALL_DIR
 	$(eval INSTALL_PY = $(INSTALL_PREFIX)/lib/python$(PY_VER))
 endif
 
-iwrap_build:
+iwrap_build: build_deps
 	$(PY_CMD) setup.py bdist_wheel --dist-dir=./dist/$(VERSION)
+	@$(MAKE) build_deps_clear --no-print-directory
 	@echo -e "\n\tIWRAP_BUILD FINISHED\n"
 
 install_iwrap: install_dir iwrap_build
@@ -49,6 +50,12 @@ module/$(MODULEFILE): iwrap/resources/module/iWrap.in
 		-e "s;__INSTALL_PY__;$(INSTALL_PY);" \
   		-e "s;__IWRAP_NAME__;$(IWRAP_NAME);" \
 		$< > $(INSTALL_PREFIX)/$@
+
+build_deps:
+	@$(PY_CMD) -m pip install -r requirements_build.txt --user
+
+build_deps_clear:
+	@$(PY_CMD) -m pip uninstall -r requirements_build.txt -y
 
 uninstall_iwrap: install_dir
 	rm -rf $(INSTALL_PREFIX)
@@ -74,8 +81,9 @@ help: install_dir
 	@echo -e "Version of the package - iWrap version:"
 	@echo -e "\tVERSION: [$(VERSION)]"
 
-clean:
+clean: build_deps
 	$(PY_CMD) setup.py clean
+	@$(MAKE) build_deps_clear --no-print-directory
 	find . -type d -name '__pycache__' | xargs rm -r
 
 docs:
