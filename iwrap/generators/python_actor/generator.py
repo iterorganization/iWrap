@@ -10,13 +10,13 @@ from typing import Set, List
 from iwrap.generation_engine.base_classes import ActorGenerator
 from iwrap.generation_engine.utils.jinja2_template_processing import process_template_dir
 from iwrap.generators.python_actor.fortran_wrapping import FortranWrapperGenerator
-from iwrap.settings.code_description import CodeDescription
+from iwrap.settings.project import ProjectSettings
 
 import jinja2
 import sys
 
 from iwrap.settings.platform.platform_settings import PlatformSettings
-from iwrap.settings.project import ProjectSettings
+
 
 
 class PythonActorGenerator(ActorGenerator):
@@ -68,11 +68,11 @@ class PythonActorGenerator(ActorGenerator):
         self.temp_dir = tempfile.TemporaryDirectory().name
         install_dir = ProjectSettings.get_settings().actor_description.install_dir
         self.install_dir = str( Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
-
+        code_description = ProjectSettings.get_settings().code_description
         generation_env = {'temp_dir': self.install_dir}
-        actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict()
-        code_description =  ProjectSettings.get_settings().code_description
-        code_description_dict = code_description.to_dict()
+        actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict(resolve_path=True, project_root_dir=code_description.root_dir)
+
+        code_description_dict = code_description.to_dict(resolve_path=True, project_root_dir=code_description.root_dir)
         dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
         native_language = code_description.programming_language.lower()
@@ -101,9 +101,10 @@ class PythonActorGenerator(ActorGenerator):
         #self.wrapper_generator.init(dictionary, generation_env)
 
         #self.wrapper_generator.generate()
-        self.__copy_code_params_files()
-        self.__copy_native_lib()
-        self.__copy_include()
+        self.__copy_code_params_files(code_description_dict)
+
+        self.__copy_native_lib(code_description_dict)
+        self.__copy_include(code_description_dict)
 
 
     def build(self):
@@ -127,36 +128,31 @@ class PythonActorGenerator(ActorGenerator):
         if os.path.isdir( self.install_dir ):
             shutil.rmtree( self.install_dir )
 
-    def __copy_native_lib(self):
-        code_description = ProjectSettings.get_settings().code_description
-        native_lib_path = code_description.code_path
-
-        root_dir = code_description.root_dir
-        native_lib_abs_path = os.path.join( root_dir, native_lib_path )
-
+    def __copy_native_lib(self, code_description_dict:dict):
         destination_dir = os.path.join( self.install_dir, 'lib' )
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
-        shutil.copy( native_lib_abs_path, destination_dir )
+        native_lib_path = code_description_dict.get( 'code_path' )
+        shutil.copy( native_lib_path, destination_dir )
 
-    def __copy_include(self):
-        code_description = ProjectSettings.get_settings().code_description
-        include_path = code_description.language_specific.include_path
-
-        root_dir = code_description.root_dir
-        include_abs_path = os.path.join( root_dir, include_path )
+    def __copy_include(self, code_description_dict:dict):
 
         destination_dir = os.path.join( self.install_dir, self.wrapper_dir + '/include/' )
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
-        shutil.copy( include_abs_path, destination_dir )
+        include_path = code_description_dict['language_specific']['include_path']
+        shutil.copy( include_path, destination_dir )
 
-    def __copy_code_params_files(self):
-        code_description = ProjectSettings.get_settings().code_description
-        parameters_file = code_description.code_parameters.parameters
-        schema_file = code_description.code_parameters.schema
+    def __copy_code_params_files(self, code_description_dict:dict):
+
+        code_parameters = code_description_dict.get('code_parameters')
+        if not code_parameters:
+            return
+
+        parameters_file = code_parameters.get('parameters')
+        schema_file = code_parameters.get('schema')
 
         if not parameters_file:
             return
@@ -164,9 +160,6 @@ class PythonActorGenerator(ActorGenerator):
         if parameters_file and not schema_file:
             raise Exception('Error! Code parameters schema file (XSD) is missing!')
 
-        root_dir = code_description.root_dir
-        parameters_file = os.path.join(root_dir, parameters_file)
-        schema_file = os.path.join(root_dir,schema_file)
         destination_dir = os.path.join(self.install_dir, 'input')
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )

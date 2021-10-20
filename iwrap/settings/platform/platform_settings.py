@@ -27,7 +27,7 @@ class Debugger( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -57,7 +57,7 @@ class MPIFlavor( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -89,7 +89,7 @@ class Compiler( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -115,7 +115,7 @@ class ProgrammingLanguage( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -155,7 +155,7 @@ class PlatformSettings( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
