@@ -65,8 +65,8 @@ build_deps_clear:
 uninstall_iwrap: install_dir
 	rm -rf $(INSTALL_PREFIX)
 
-uninstall_module: install_dir
-	rm -rf $(INSTALL_PREFIX)/module/$(MODULEFILE)
+uninstall_module:
+	rm -rf $(INSTALL_MOD)/$(MODULEFILE)
 
 help: install_dir
 	@echo "USAGE: Run 'make all' to build iWrap. Run 'make install' to install."
