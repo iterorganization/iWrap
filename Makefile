@@ -4,6 +4,8 @@ VERSION := $(shell git describe --abbrev=4 --dirty)-b
 # Site configuration
 IWRAP_NAME ?= iwrap
 IWRAP_HOME ?= $(HOME)/$(IWRAP_NAME)
+# Environment variable usually set by imas module, if not set: $HOME/imas/
+IMAS_HOME ?= $(HOME)/imas
 
 # Check for the existence of the Python interpreter and its absolute path
 PYTHON_CMD ?= python
@@ -14,12 +16,13 @@ PY_VER := $(if $(PY_CMD),$(shell $(PY_CMD) -c 'print(".".join(str(i) for i in __
 INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
+INSTALL_MOD ?= $(IMAS_HOME)/etc/modulefiles
 
 all: iwrap_build
 install: install_dir install_iwrap install_module
 uninstall: uninstall_module uninstall_iwrap
 
-.PHONY: module/$(MODULEFILE) iwrap_build help clean docs
+.PHONY: build/module/$(MODULEFILE) iwrap_build help clean docs
 
 install_dir:
 ifdef INSTALL_DIR
@@ -36,20 +39,22 @@ install_iwrap: install_dir iwrap_build
 	install -d $(dir $(INSTALL_PREFIX))
 	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --prefix $(INSTALL_PREFIX)
 	@echo -e "\n\tIWRAP_INSTALL FINISHED\n"
-	@echo -e "\t iWrap installed in: $(INSTALL_PREFIX)\n"
+	@echo -e "\t iWrap installed in:\n\t$(INSTALL_PREFIX)\n"
 
-install_module: install_dir module/$(MODULEFILE)
+install_module: build/module/$(MODULEFILE)
+	install -d $(dir $(INSTALL_MOD)/$(MODULEFILE))
+	install $< $(INSTALL_MOD)/$(MODULEFILE)
 	@echo -e "\n\tINSTALL_MODULE FINISHED\n"
-	@echo -e "\t iWrap ENVIRONMENT MODULE installed in : $(INSTALL_PREFIX)/module/$(MODULEFILE)\n"
+	@echo -e "\t iWrap ENVIRONMENT MODULE installed in:\n\t$(INSTALL_MOD)$(MODULEFILE)\n"
 
-module/$(MODULEFILE): iwrap/resources/module/iWrap.in
-	install -d $(dir $(INSTALL_PREFIX)/$@)
+build/module/$(MODULEFILE): iwrap/resources/module/iWrap.in
+	install -d $(dir $@)
 	@sed -e "s;__VERSION__;$(VERSION);" \
 		-e "s;__PY_VER__;$(PY_VER);" \
 		-e "s;__INSTALL_PREFIX__;$(INSTALL_PREFIX);" \
 		-e "s;__INSTALL_PY__;$(INSTALL_PY);" \
   		-e "s;__IWRAP_NAME__;$(IWRAP_NAME);" \
-		$< > $(INSTALL_PREFIX)/$@
+		$< > $@
 
 build_deps:
 	@$(PY_CMD) -m pip install -r requirements_build.txt --user
@@ -78,6 +83,8 @@ help: install_dir
 	@echo -e "\tINSTALL_PY: [$(INSTALL_PY)]"
 	@echo -e "Environment module file:"
 	@echo -e "\tMODULEFILE: [$(MODULEFILE)]"
+	@echo -e "Installation path for environment module file:"
+	@echo -e "\tINSTALL_MOD: [$(INSTALL_MOD)]"
 	@echo -e "Version of the package - iWrap version:"
 	@echo -e "\tVERSION: [$(VERSION)]"
 
