@@ -12,7 +12,7 @@ PYTHON_CMD ?= python
 PY_CMD := $(if $(PYTHON_CMD),$(shell command -v $(PYTHON_CMD) 2>/dev/null))
 PY_VER := $(if $(PY_CMD),$(shell $(PY_CMD) -c 'print(".".join(str(i) for i in __import__("sys").version_info[:2]))' 2>/dev/null))
 
-# Installation paths
+# Default installation paths
 INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
@@ -22,7 +22,7 @@ all: iwrap_build
 install: install_dir install_iwrap install_module
 uninstall: uninstall_module uninstall_iwrap
 
-.PHONY: build/module/$(MODULEFILE) iwrap_build help clean docs
+.PHONY: build/module/$(MODULEFILE) iwrap_build build_deps build_deps_clear help clean docs
 
 install_dir:
 ifdef INSTALL_DIR

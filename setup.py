@@ -82,8 +82,8 @@ if __name__ == "__main__":
         cmdclass={'clean': CleanCommand},
         entry_points={
             'console_scripts': [
-                'iwraps = bin.run:gui',
-                'iwrapc = bin.run:cmd_line'
+                'iwrap-gui = bin.run:gui',
+                'iwrap = bin.run:cmd_line'
             ]
         }
     )
