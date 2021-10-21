@@ -36,6 +36,9 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
     generation_group.add_argument( '-f', '--file', type=argparse.FileType( 'r' ),
                                    help="a path to code/actor description *.yaml file" )
 
+    generation_group.add_argument( '-i', '--install-dir', type=str, required=False,
+                                   help="actor installation directory" )
+
     information_group = parser.add_argument_group( 'Additional information' )
     information_group.add_argument( '--list-actor-types',
                                     action='store_true',
@@ -96,6 +99,10 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         with args.file as file:
             load_code_description( file )
             ProjectSettings.get_settings().project_file_path = file.name
+
+    if args.install_dir:
+        ProjectSettings.get_settings().actor_description.install_dir = args.install_dir
+
     if args.actor_name:
         ProjectSettings.get_settings().actor_description.actor_name = args.actor_name
 
