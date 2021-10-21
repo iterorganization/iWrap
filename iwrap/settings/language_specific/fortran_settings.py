@@ -54,7 +54,8 @@ class MPI( SettingsBaseClass ):
     def from_dict(self, dictionary: dict):
         super().from_dict( dictionary )
 
-    def to_dict(self):
+    def to_dict(self, resolve_path: bool = False, make_relative: str = False, project_root_dir: str = None) -> Dict[
+        str, Any]:
         return super().to_dict()
 
 
