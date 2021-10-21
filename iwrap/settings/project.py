@@ -110,6 +110,8 @@ class ProjectSettings( SettingsBaseClass ):
         """
         self.clear()
         dict_read = yaml.load( file, Loader=yaml.Loader )
+        if not dict_read:
+            raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
         actor_description_dict = dict_read.get('actor_description')
         if actor_description_dict:
