@@ -289,6 +289,7 @@ class CBinder:
         for arg in full_arguments_list:
             if arg.intent == Argument.OUT:
                 results.append( arg.convert_to_actor_type() )
+            arg.release()
 
         # final output
         if not results:
