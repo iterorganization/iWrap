@@ -65,7 +65,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # FRAME
         frame = ttk.Frame(labelframe)
-        frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
+        frame.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         frame.grid_columnconfigure(1, weight=1)
 
         # MODULE PATH
@@ -79,9 +79,16 @@ class FortranPane( ttk.Frame, IWrapPane ):
         browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # FRAME MPI
-        frame_mpi = ttk.LabelFrame(labelframe, text="MPI", borderwidth=2, relief="groove")
-        frame_mpi.pack(fill=tk.BOTH, expand=1)
+        main_frame = ttk.Frame(labelframe)
+        main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
+
+        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
+        frame_mpi.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
         frame_mpi.grid_columnconfigure(1, weight=1)
+
+        frame_settings = ttk.Frame(main_frame)
+        frame_settings.pack(side=tk.BOTTOM, fill=tk.X, expand=0)
+        frame_settings.grid_columnconfigure(1, weight=1)
 
         # COMBOBOX MPI COMPILER
         ttk.Label(frame_mpi, text="MPI compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -93,7 +100,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.mpi_combobox['values'] = [None]
         self.mpi_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.mpi_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
+        self.mpi_combobox.bind("<<ComboboxSelected>>",
+                               lambda event, x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
 
         # COMBOBOX MPI RUNNER
         ttk.Label(frame_mpi, text="MPI runner:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -105,25 +113,27 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.mpi_runner_combobox['values'] = [None]
         self.mpi_runner_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_runner_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner, y=self.mpi_runner_combobox: self.add_value(x, y))
+        self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner,
+                                                                     y=self.mpi_runner_combobox: self.add_value(x, y))
 
         # COMPILER CMD
         self.compiler_cmd = tk.StringVar()
-        ttk.Label(frame, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
-        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Label(frame_settings, text="Compiler cmd:").grid(column=0, row=0, padx=10, sticky=(tk.S, tk.W), pady=2)
+        compiler_text = ttk.Entry(frame_settings, textvariable=self.compiler_cmd)
+        compiler_text.grid(column=1, row=0, padx=10, sticky=tk.S, pady=2)
 
         # COMBOBOX OpenMP switch
-        ttk.Label(frame, text="OpenMP switch:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame_settings, text="OpenMP switch:").grid(column=0, row=1, padx=10, pady=8, sticky=(tk.S, tk.W))
         self.switch = tk.StringVar()
         self.current_switch = tk.StringVar()
         self.switch.trace('w', self.change_switch)
         self.current_switch.set(self.switch.get())
-        self.openmp_switch_combobox = ttk.Combobox(frame, textvar=self.switch)
+        self.openmp_switch_combobox = ttk.Combobox(frame_settings, textvar=self.switch)
         self.openmp_switch_combobox['values'] = [None]
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.openmp_switch_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_switch, y=self.openmp_switch_combobox: self.add_value(x, y))
+        self.openmp_switch_combobox.grid(column=1, row=1, padx=10, pady=8)
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_switch,
+                                                                        y=self.openmp_switch_combobox: self.add_value(x,y))
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
@@ -176,30 +186,28 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
-        pass
-        # self.compiler_cmd.set(self.settings.compiler_cmd)
-        # self.module_path.set(self.settings.include_path or "")
-        # self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
+        self.compiler_cmd.set(self.settings.compiler_cmd)
+        self.module_path.set(self.settings.include_path or "")
+        self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         # self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        # self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
-        #
-        # self.library_path_pane.reload()
-        # self.pkg_config_pane.reload()
+        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
+
+        self.library_path_pane.reload()
+        self.pkg_config_pane.reload()
 
     def update_settings(self):
         """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
         and LibraryPathPane update_settings methods.
         """
-        pass
-        # self.settings.compiler_cmd = self.compiler_cmd.get()
-        # self.settings.include_path = self.module_path.get()
-        # self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
-        # self.settings.open_mp_switch = self.openmp_switch_combobox.get()
-        # self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
-        #
-        # self.pkg_config_pane.update_settings()
-        # self.library_path_pane.update_settings()
-        # self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings.compiler_cmd = self.compiler_cmd.get()
+        self.settings.include_path = self.module_path.get()
+        self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
+        self.settings.open_mp_switch = self.openmp_switch_combobox.get()
+        self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
+
+        self.pkg_config_pane.update_settings()
+        self.library_path_pane.update_settings()
+        self.settings = ProjectSettings.get_settings().code_description.language_specific
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
