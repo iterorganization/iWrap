@@ -6,6 +6,7 @@ from tkinter.constants import S, SEL_FIRST
 
 from typing import Tuple, Union, List
 
+from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 
@@ -194,6 +195,7 @@ class CodeParameterBrowserPane(ttk.Frame):
         self._master._browser_dir = '/'.join(filename.split('/')[:-1])
 
         # Save loaded path.
+        filename = utils.make_relative(filename, ProjectSettings.get_settings().root_dir_path)
         self.file_path.path.set(filename)
         self.update_settings()
 

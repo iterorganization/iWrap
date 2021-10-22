@@ -48,7 +48,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
         self.arguments.append(argument)
     {% endfor %}
 
-    # Static code parameters
+        # Static code parameters
     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
         default_parameters_file = '{{code_description.code_parameters.parameters.split('/')[-1]}}'
         schema_file = '{{code_description.code_parameters.schema.split('/')[-1]}}'

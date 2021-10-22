@@ -70,9 +70,12 @@ class PythonActorGenerator(ActorGenerator):
         self.install_dir = str( Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
         code_description = ProjectSettings.get_settings().code_description
         generation_env = {'temp_dir': self.install_dir}
-        actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict(resolve_path=True, project_root_dir=code_description.root_dir)
 
-        code_description_dict = code_description.to_dict(resolve_path=True, project_root_dir=code_description.root_dir)
+        project_root_dir = ProjectSettings.get_settings().root_dir_path
+        actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict(resolve_path=True,
+                                                                                       project_root_dir=project_root_dir)
+
+        code_description_dict = code_description.to_dict(resolve_path=True, project_root_dir=project_root_dir)
         dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
         native_language = code_description.programming_language.lower()

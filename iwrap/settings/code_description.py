@@ -177,7 +177,7 @@ class CodeParameters( SettingsBaseClass ):
 
         # validate correctness of XML
         if self.parameters and self.schema:
-            self.validate_xml( self.parameters, self.schema )
+            xml = self.validate_xml( self.parameters, self.schema, project_root_dir )
 
     def clear(self):
         """Clears class content, setting default values of class attributes
@@ -214,7 +214,7 @@ class CodeParameters( SettingsBaseClass ):
 
         return ret_dict
 
-    def validate_xml(self, parameters_xml_path: str = None, schema_xsd_path: str = None) -> None:
+    def validate_xml(self, parameters_xml_path: str, schema_xsd_path:str, root_dir:str) -> None:
         """Self validation of XML file against given schema file (XSD).
 
         Args:
@@ -232,12 +232,12 @@ class CodeParameters( SettingsBaseClass ):
             schema = self.schema
 
         # Parse XSD file:
-        schema_xsd_path = utils.resolve_path(schema_xsd_path)
+        schema_xsd_path = utils.resolve_path(schema_xsd_path, root_dir)
         xmlschema_file = etree.parse( schema_xsd_path )
         xmlschema = etree.XMLSchema( xmlschema_file )
 
         # Parse XML file:
-        parameters_xml_path = utils.resolve_path(parameters_xml_path)
+        parameters_xml_path = utils.resolve_path(parameters_xml_path, root_dir)
         xml_file = etree.parse( parameters_xml_path )
 
         # Perform validation:
@@ -304,7 +304,7 @@ class CodeDescription( SettingsBaseClass ):
         pass
 
     def __init__(self):
-        self.root_dir = os.getcwd()
+        self.root_dir = '.'
         self._programming_language: str = ''
         self.subroutines: Subroutines = Subroutines()
         self.data_type: str = None
@@ -314,9 +314,9 @@ class CodeDescription( SettingsBaseClass ):
         self.documentation: str = None
         self.language_specific: dict = {}
 
-    def validate(self, engine: Engine, _not_used: str, **kwargs) -> None:
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
-        project_root_dir = self.root_dir
+
         # programming_language
         if not self.programming_language:
             raise ValueError( 'Programming language is not set!' )
@@ -367,7 +367,7 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.root_dir = None
+        self.root_dir = '.'
         self.programming_language = None
         self.data_type = None
         self.arguments = []
