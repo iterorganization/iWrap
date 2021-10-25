@@ -23,19 +23,6 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         super().__init__( master, text="Code description:", relief="groove", borderwidth=2, height=100 )
 
         self.pack( pady=10 )
-
-        root_dir_frame = ttk.Frame(self)
-        root_dir_frame.pack(fill=tk.X)
-        root_dir_frame.grid_columnconfigure(1, weight=1)
-
-        self.root_dir = tk.StringVar()
-        # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(root_dir_frame, text="Root dir:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = ttk.Entry(root_dir_frame, textvariable=self.root_dir)
-        self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(root_dir_frame, text="Browse...", command=self.on_click, width=10).grid(column=2, row=2, padx=10, pady=5)
-        root_dir_frame.grid_columnconfigure(1, weight=1)
-
         self.notebook = ttk.Notebook( self )
         self.notebook.pack( expand=True, fill=tk.BOTH)
 
@@ -90,7 +77,6 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.notebook.insert(2, self.language_settings_pane, text="Language specific")
 
     def update_settings(self):
-        ProjectSettings.get_settings().code_description.root_dir = self.root_dir.get()
         self.arguments_pane.update_settings()
         self.code_settings_pane.update_settings()
         self.language_settings_pane.update_settings()
@@ -99,22 +85,9 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.signature_pane.update_settings()
 
     def reload(self):
-        self.root_dir.set(ProjectSettings.get_settings().code_description.root_dir)
         self.arguments_pane.reload()
         self.code_settings_pane.reload()
         self.language_settings_pane.reload()
         self.code_parameters_pane.reload()
         self.documentation_pane.reload()
         self.signature_pane.reload()
-
-    def on_click(self):
-        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
-        """
-        old_dir = self.root_dir.get()
-        dir_name = tk.filedialog.askdirectory()
-        if dir_name:
-            self.root_dir.set(dir_name)
-            if old_dir == MenuBar.save_and_open_initialdir:
-                MenuBar.save_and_open_initialdir = dir_name
-            if old_dir == MenuBar.import_and_export_initialdir:
-                MenuBar.import_and_export_initialdir = dir_name

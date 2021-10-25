@@ -10,6 +10,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.gui.menu import MenuBar
 
 
 class CodeSettingsPane(ttk.Frame, IWrapPane):
@@ -45,6 +46,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
+        self.data_type = None
         self.main = tk.StringVar()
         self.init = tk.StringVar()
         self.finish = tk.StringVar()
@@ -71,6 +73,20 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
             .grid(column=2, row=2, padx=10, pady=5)
 
+        # DATA TYPE COMBOBOX
+        ttk.Label(labelframe, text="Data type:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.data_type_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
+        self.data_type_combobox.current(0)
+        self.data_type_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        self.root_dir = tk.StringVar()
+        # BROWSE BUTTON AND ENTRY FOR PATH
+        ttk.Label(labelframe, text="Root dir:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.browse_text = ttk.Entry(labelframe, textvariable=self.root_dir)
+        self.browse_text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=4, padx=10,
+                                                                                           pady=5)
         # SUBROUTINES LABEL FRAME
         labelframe_sub = ttk.LabelFrame(self, text="Subroutines", borderwidth=2, relief="groove", height=100)
         labelframe_sub.pack(fill=tk.X, pady=5)
@@ -100,6 +116,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description.subroutines.main = self.main.get()
         code_description.subroutines.finish = self.finish.get()
         code_description.subroutines.init = self.init.get()
+        code_description.data_type = self.data_type_combobox.get()
+        code_description.root_dir = self.root_dir.get()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -122,6 +140,18 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
                                               f"{CodeSettingsPane.default_programming_language}.")
         self.programming_language_combobox.set('')
         self.programming_language_combobox.set(programming_language.lower())
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
+
+        if self.data_type not in self.data_type_combobox['values']:
+            self.data_type_combobox.current(0)
+        elif self.data_type not in self.data_type_combobox['values'] and self.data_type is not None:
+            messagebox.showwarning("Warning", f"Unknown data type. "
+                                              f"The data type set to "
+                                              f"{self.data_type_combobox.get()}.")
+        else:
+            self.data_type_combobox.set(self.data_type)
+
+        self.root_dir.set(ProjectSettings.get_settings().code_description.root_dir)
 
         self.browse_text.delete(0, tk.END)
         self.code_path.set(code_path)
@@ -140,3 +170,14 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             filename = utils.make_relative( filename, root_dir_path)
             self.code_path.set(filename)
 
+    def on_click_dir(self):
+        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """
+        old_dir = self.root_dir.get()
+        dir_name = tk.filedialog.askdirectory()
+        if dir_name:
+            self.root_dir.set(dir_name)
+            if old_dir == MenuBar.save_and_open_initialdir:
+                MenuBar.save_and_open_initialdir = dir_name
+            if old_dir == MenuBar.import_and_export_initialdir:
+                MenuBar.import_and_export_initialdir = dir_name

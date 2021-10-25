@@ -34,22 +34,10 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         """
         super().__init__( master )
         self.arguments_settings = None
-        self.data_type = None
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Arguments", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, pady=10, expand=1)
-
-        # COMBOBOX FRAME
-        combobox_frame = ttk.Frame(labelframe)
-        combobox_frame.pack(fill=tk.X, side=tk.TOP, pady=5)
-
-        # COMBOBOX
-        ttk.Label(combobox_frame, text="Data type:").pack(fill=tk.X, side=tk.LEFT, padx=10)
-        self.data_type_combobox = ttk.Combobox(combobox_frame, state='readonly')
-        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
-        self.data_type_combobox.current(0)
-        self.data_type_combobox.pack(fill=tk.X, side=tk.RIGHT, expand=1, padx=10)
 
         # MAIN CONTENT FRAME
         main_content_frame = ttk.Frame(labelframe)
@@ -109,27 +97,14 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         from the ProjectSettings is not available in combobox warning message box will be shown and the default value
         of data type will be selected in combobox.
         """
-        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         self.arguments_settings = ProjectSettings.get_settings().code_description.arguments
-        self.data_type = ProjectSettings.get_settings().code_description.data_type
         self.set_data_to_table()
-
-        if self.data_type not in self.data_type_combobox['values']:
-            self.data_type_combobox.current(0)
-        elif self.data_type not in self.data_type_combobox['values'] and self.data_type is not None:
-            messagebox.showwarning("Warning", f"Unknown data type. "
-                                              f"The data type set to "
-                                              f"{self.data_type_combobox.get()}.")
-        else:
-            self.data_type_combobox.set(self.data_type)
 
     def update_settings(self):
         """Update arguments and data type in the ProjectSettings.
         """
         arguments = self.get_data_from_table()
-        data_type = self.data_type_combobox.get()
         ProjectSettings.get_settings().code_description.arguments = arguments
-        ProjectSettings.get_settings().code_description.data_type = data_type
 
     def set_data_to_table(self):
         """Set data from arguments settings to the table.
