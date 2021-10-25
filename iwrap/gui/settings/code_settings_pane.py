@@ -50,7 +50,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.finish = tk.StringVar()
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="User code settings", borderwidth=2, relief="groove", height=100)
+        labelframe = ttk.LabelFrame(self, text="Settings", borderwidth=2, relief="groove", height=100)
         labelframe.pack(fill=tk.X, pady=10)
         labelframe.grid_columnconfigure(1, weight=1)
 
@@ -58,7 +58,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.selected_programming_language.set(CodeSettingsPane.default_programming_language)
 
         # LANGUAGE COMBOBOX
-        ttk.Label(labelframe, text="Language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Programming language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)

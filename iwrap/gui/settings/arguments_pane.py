@@ -68,7 +68,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         # TABLE
         IDS = [ids.value for ids in list(imas.IDSName)] # pylint: disable=no-member
 
-        self.columns = [Column(Column.TEXT, "Label", "Name"),
+        self.columns = [Column(Column.TEXT, "Name", "Name"),
                         Column(Column.RADIOBUTTON, "Input", "Intent"),
                         Column(Column.RADIOBUTTON, "Output", "Intent"),
                         Column(Column.COMBOBOX, "Type", "Type", IDS)]

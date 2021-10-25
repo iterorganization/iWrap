@@ -20,7 +20,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
 
 
     def __init__(self, master=None):
-        super().__init__( master, text="Wrapped code description:", relief="groove", borderwidth=2, height=100 )
+        super().__init__( master, text="Code description:", relief="groove", borderwidth=2, height=100 )
 
         self.pack( pady=10 )
 
@@ -48,7 +48,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
 
         self.language_settings_pane = None
         self.notebook.add( self.arguments_pane, text='Arguments' )
-        self.notebook.add( self.code_settings_pane, text='Code settings' )
+        self.notebook.add( self.code_settings_pane, text='Settings' )
         self.notebook.add( self.code_parameters_pane, text='Code parameters' )
         self.notebook.add( self.documentation_pane, text='Documentation' )
         self.add_language_pane()
@@ -88,7 +88,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         selected_language = self.code_settings_pane.selected_programming_language.get()
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
         self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
-        self.notebook.insert(2, self.language_settings_pane, text="Language settings")
+        self.notebook.insert(2, self.language_settings_pane, text="Language specific")
 
     def update_settings(self):
         ProjectSettings.get_settings().code_description.root_dir = self.root_dir.get()

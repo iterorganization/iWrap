@@ -49,7 +49,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
             ProjectSettings.get_settings().code_description.language_specific = self.settings
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(self, text="Language specific", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # FRAME
@@ -60,7 +60,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         # MODULE PATH
         self.module_path = tk.StringVar()
         self.module_path.set(self.settings.include_path or '')
-        ttk.Label(frame, text="Module path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame, text="Include path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         browse_button = ttk.Button(frame, text="Browse...", command=self.open_filedialog, width=10)
         browse_button.bind("<FocusIn>", self.handle_focus)
         browse_text = ttk.Entry(frame, textvariable=self.module_path)
