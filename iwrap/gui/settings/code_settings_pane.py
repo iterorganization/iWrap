@@ -60,32 +60,31 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.selected_programming_language.set(CodeSettingsPane.default_programming_language)
 
         # LANGUAGE COMBOBOX
-        ttk.Label(labelframe, text="Programming language:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Programming language:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)
-        self.programming_language_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.programming_language_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+
+        # DATA TYPE COMBOBOX
+        ttk.Label(labelframe, text="Data type:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.data_type_combobox = ttk.Combobox(labelframe, state='readonly')
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
+        self.data_type_combobox.current(0)
+        self.data_type_combobox.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.browse_text = ttk.Entry(labelframe, textvariable=self.code_path)
         self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10)\
-            .grid(column=2, row=2, padx=10, pady=5)
-
-        # DATA TYPE COMBOBOX
-        ttk.Label(labelframe, text="Data type:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.data_type_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
-        self.data_type_combobox.current(0)
-        self.data_type_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10).grid(column=2, row=2, padx=10, pady=5)
 
         self.root_dir = tk.StringVar()
         # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(labelframe, text="Root dir:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Root dir:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.browse_text = ttk.Entry(labelframe, textvariable=self.root_dir)
-        self.browse_text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=4, padx=10,
+        self.browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=1, padx=10,
                                                                                            pady=5)
         # SUBROUTINES LABEL FRAME
         labelframe_sub = ttk.LabelFrame(self, text="Subroutines", borderwidth=2, relief="groove", height=100)
