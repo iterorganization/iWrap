@@ -25,9 +25,8 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.pack( pady=10 )
 
         root_dir_frame = ttk.Frame(self)
-        root_dir_frame.pack(fill=tk.X, expand=tk.TRUE)
+        root_dir_frame.pack(fill=tk.X)
         root_dir_frame.grid_columnconfigure(1, weight=1)
-
 
         self.root_dir = tk.StringVar()
         # BROWSE BUTTON AND ENTRY FOR PATH
