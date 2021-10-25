@@ -23,6 +23,21 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     code_description = CODE_DESCRIPTION
     # {{ "".center(80, '=') }}
 
+    __instance_index = 0
+
+    @property
+    def unique_id(self):
+        class_name = self.__class__.__name__
+        idx = self.__instance_index
+        pid = os.getpid()
+        uid = f'{class_name}_{idx}#{pid}'
+        return uid
+
+    def __new__(cls):
+        new_object =  object.__new__(cls)
+        cls.__instance_index +=  1
+        return new_object
+
     def __init__(self):
         actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
         super().__init__(actor_dir, self.NATIVE_LANGUAGE, self.IS_MPI)
@@ -33,7 +48,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
         self.arguments.append(argument)
     {% endfor %}
 
-    # Static code parameters
+        # Static code parameters
     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
         default_parameters_file = '{{code_description.code_parameters.parameters.split('/')[-1]}}'
         schema_file = '{{code_description.code_parameters.schema.split('/')[-1]}}'

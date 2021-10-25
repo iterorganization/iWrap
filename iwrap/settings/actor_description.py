@@ -20,8 +20,6 @@ class ActorDescription( SettingsBaseClass ):
         self.actor_type: str = ''
         self.install_dir: str = ''
 
-        self.install_dir: str = ''
-
     def validate(self, engine: Engine, project_root_dir, **kwargs) -> None:
 
         # actor_name

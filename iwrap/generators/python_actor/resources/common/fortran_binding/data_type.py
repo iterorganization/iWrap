@@ -48,7 +48,7 @@ class LegacyIDS ( ctypes.Structure ):
         self.version = db_entry.data_version
 
     def convert_to_native_type(self):
-        # check conflicting occurences and store data
+        # check conflicting occurrences and store data
 
         LegacyIDS.occ_dict[self.ids_name] = 1 + LegacyIDS.occ_dict.get( self.ids_name, -1 )
         self.occurrence = LegacyIDS.occ_dict[self.ids_name]
@@ -62,6 +62,8 @@ class LegacyIDS ( ctypes.Structure ):
         ids = self.db_entry.get( self.ids_name, self.occurrence )
         return ids
 
+    def release(self):
+        LegacyIDS.occ_dict[self.ids_name] -= 1
 
     @property
     def ids_name(self):

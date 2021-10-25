@@ -4,6 +4,7 @@ from tkinter import ttk
 import tkinter.filedialog
 from tkinter import messagebox
 
+from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
@@ -135,5 +136,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """
         filename = tk.filedialog.askopenfilename()
         if filename:
+            root_dir_path = ProjectSettings.get_settings().root_dir_path
+            filename = utils.make_relative( filename, root_dir_path)
             self.code_path.set(filename)
 

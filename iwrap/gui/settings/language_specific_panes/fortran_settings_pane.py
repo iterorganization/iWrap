@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.filedialog
 
+from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
@@ -164,6 +165,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         filename = tk.filedialog.askopenfilename()
         if filename:
+            root_dir_path = ProjectSettings.get_settings().root_dir_path
+            filename = utils.make_relative( filename, root_dir_path )
             self.module_path.set(filename)
 
     def add_value(self, value, combobox):
@@ -526,6 +529,8 @@ class LibraryPathPane:
         """
         path = tk.filedialog.askopenfilename()
         if path not in ['', ()]:
+            root_dir_path = ProjectSettings.get_settings().root_dir_path
+            path = utils.make_relative( path, root_dir_path )
             self.table.add_rows([[path]])
 
     def get_list_of_paths(self):
