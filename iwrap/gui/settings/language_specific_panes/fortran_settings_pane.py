@@ -216,7 +216,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
         pkg_configs = self.pkg_config_pane.get_data_from_table()
-        library_paths = self.library_path_pane.get_list_of_custom_libraries()
+        library_paths = self.library_path_pane.get_list_of_paths()
         mpi = self.feature_pane.mpi_flavour_combobox.get()
         open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
         include_path = self.feature_pane.module_path.get()

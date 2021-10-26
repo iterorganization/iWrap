@@ -110,13 +110,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """Update code_path, main and programming_language values in ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_description.programming_language = self.selected_programming_language.get()
-        code_description.code_path = self.code_path.get()
+        code_description.settings.programming_language = self.selected_programming_language.get()
+        code_description.settings.code_path = self.code_path.get()
         code_description.subroutines.main = self.main.get()
         code_description.subroutines.finish = self.finish.get()
         code_description.subroutines.init = self.init.get()
-        code_description.data_type = self.data_type_combobox.get()
-        code_description.root_dir = self.root_dir.get()
+        code_description.settings.data_type = self.data_type_combobox.get()
+        code_description.settings.root_dir = self.root_dir.get()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -126,8 +126,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         project_settings = ProjectSettings.get_settings()
         code_description = project_settings.code_description
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
-        programming_language = code_description.programming_language or CodeSettingsPane.default_programming_language
-        code_path = code_description.code_path or ''
+        programming_language = code_description.settings.programming_language or CodeSettingsPane.default_programming_language
+        code_path = code_description.settings.code_path or ''
         main = code_description.subroutines.main or ''
         init = code_description.subroutines.init or ''
         finish = code_description.subroutines.finish or ''
@@ -150,7 +150,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         else:
             self.data_type_combobox.set(self.data_type)
 
-        self.root_dir.set(ProjectSettings.get_settings().code_description.root_dir)
+        self.root_dir.set(ProjectSettings.get_settings().code_description.settings.root_dir)
 
         self.browse_text.delete(0, tk.END)
         self.code_path.set(code_path)
@@ -158,7 +158,9 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.finish.set(finish)
         self.init.set(init)
 
-        ProjectSettings.get_settings().code_description.programming_language = self.programming_language_combobox.get()
+        ProjectSettings.get_settings().code_description.settings.programming_language = self.programming_language_combobox.get()
+
+        print(ProjectSettings.get_settings())
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.

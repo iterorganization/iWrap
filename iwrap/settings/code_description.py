@@ -141,6 +141,77 @@ class Subroutines( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
 
+class Settings( SettingsBaseClass ):
+
+    @property
+    def programming_language(self):
+        return self._programming_language
+
+    @programming_language.setter
+    def programming_language(self, value: str):
+        self._programming_language = ''
+
+        if value:
+            self._programming_language = value.lower()
+            # language specific settings depends on language chosen
+            # language was not set while language specific settings were read so they need
+            # to be set here 'again' converting from dict to a proper object
+            if CodeDescription.language_specific is not None and isinstance(CodeDescription.language_specific, dict ):
+                CodeDescription.language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
+                                                                                        CodeDescription.language_specific )
+
+    def __init__(self, CodeDescription=None):
+        self.root_dir = '.'
+        self._programming_language: str = ''
+        self.data_type: str = None
+        self.code_path: str = None
+
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+        # programming_language
+        if not self.programming_language:
+            raise ValueError( 'Programming language is not set!' )
+        else:
+            engine.validate_programming_language( self.programming_language )
+
+        # data_type
+        if not self.data_type:
+            raise ValueError( 'Type of data handled by native code is not set!' )
+        else:
+            engine.validate_code_data_type( self.data_type )
+
+        # code path
+        if not self.code_path:
+            raise ValueError( 'Path to native code is not set!' )
+
+        __path = utils.resolve_path( self.code_path, project_root_dir )
+        if not Path(__path).exists():
+            raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
+
+    def from_dict(self, dictionary: Dict[str, Any]) -> None:
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
+        super().from_dict( dictionary )
+
+    def clear(self):
+        """Clears class content, setting default values of class attributes
+        """
+        self.root_dir = '.'
+        self.programming_language = None
+        self.data_type = None
+        self.code_path = None
+
+    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
+
+
 class CodeParameters( SettingsBaseClass ):
     """The data class containing information about files defining code parameters.
 
@@ -274,23 +345,23 @@ class CodeDescription( SettingsBaseClass ):
                 value = Argument( value )
             self._arguments.append( value )
 
-    @property
-    def programming_language(self):
-        return self._programming_language
-
-    @programming_language.setter
-    def programming_language(self, value: str):
-        self._programming_language = ''
-
-        if value:
-            self._programming_language = value.lower()
-            # language specific settings depends on language chosen
-            # language was not set while language specific settings were read so they need
-            # to be set here 'again' converting from dict to a proper object
-            if self._language_specific is not None and isinstance( self._language_specific, dict ):
-                self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
-                                                                                        self._language_specific )
-
+    # @property
+    # def programming_language(self):
+    #     return self._programming_language
+    #
+    # @programming_language.setter
+    # def programming_language(self, value: str):
+    #     self._programming_language = ''
+    #
+    #     if value:
+    #         self._programming_language = value.lower()
+    #         # language specific settings depends on language chosen
+    #         # language was not set while language specific settings were read so they need
+    #         # to be set here 'again' converting from dict to a proper object
+    #         if self._language_specific is not None and isinstance( self._language_specific, dict ):
+    #             self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
+    #                                                                                     self._language_specific )
+    #
     @property
     def language_specific(self):
         return self._language_specific
@@ -300,16 +371,17 @@ class CodeDescription( SettingsBaseClass ):
 
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language, values )
+        self._language_specific = LanguageSettingsManager.get_settings_handler( self.settings.programming_language, values )
         pass
 
     def __init__(self):
-        self.root_dir = '.'
-        self._programming_language: str = ''
+        # self.root_dir = '.'
+        # self._programming_language: str = ''
         self.subroutines: Subroutines = Subroutines()
-        self.data_type: str = None
+        # self.data_type: str = None
         self._arguments: List[Argument] = []
-        self.code_path: str = None
+        # self.code_path: str = None
+        self.settings: Settings = Settings(CodeDescription)
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
         self.language_specific: dict = {}
@@ -317,35 +389,38 @@ class CodeDescription( SettingsBaseClass ):
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
 
-        # programming_language
-        if not self.programming_language:
-            raise ValueError( 'Programming language is not set!' )
-        else:
-            engine.validate_programming_language( self.programming_language )
-
-        # subroutines
-        self.subroutines.validate( engine, project_root_dir )
-
-        # data_type
-        if not self.data_type:
-            raise ValueError( 'Type of data handled by native code is not set!' )
-        else:
-            engine.validate_code_data_type( self.data_type )
+        # # programming_language
+        # if not self.programming_language:
+        #     raise ValueError( 'Programming language is not set!' )
+        # else:
+        #     engine.validate_programming_language( self.programming_language )
+        #
+        # # subroutines
+        # self.subroutines.validate( engine, project_root_dir )
+        #
+        # # data_type
+        # if not self.data_type:
+        #     raise ValueError( 'Type of data handled by native code is not set!' )
+        # else:
+        #     engine.validate_code_data_type( self.data_type )
 
         # arguments
         for argument in self.arguments or []:
             argument.validate( engine, project_root_dir, **{'data_type': self.data_type} )
 
-        # code path
-        if not self.code_path:
-            raise ValueError( 'Path to native code is not set!' )
-
-        __path = utils.resolve_path( self.code_path, project_root_dir )
-        if not Path(__path).exists():
-            raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
+        # # code path
+        # if not self.code_path:
+        #     raise ValueError( 'Path to native code is not set!' )
+        #
+        # __path = utils.resolve_path( self.code_path, project_root_dir )
+        # if not Path(__path).exists():
+        #     raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
 
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
+
+        #settings
+        self.settings.validate(engine, project_root_dir)
 
         # documentation
         if self.documentation and not isinstance( self.documentation, str ):
@@ -367,13 +442,14 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.root_dir = '.'
-        self.programming_language = None
-        self.data_type = None
+        # self.root_dir = '.'
+        # self.programming_language = None
+        # self.data_type = None
         self.arguments = []
-        self.code_path = None
+        # self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
+        self.settings.clear()
         self.language_specific = {}
         self.subroutines.clear()
 
@@ -388,7 +464,8 @@ class CodeDescription( SettingsBaseClass ):
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
         if resolve_path:
             # code_path
-            __path = utils.resolve_path( self.code_path, project_root_dir )
+            code_path = self.settings.code_path
+            __path = utils.resolve_path( code_path, project_root_dir )
             ret_dict.update( {'code_path': __path} )
 
         return ret_dict
@@ -415,12 +492,11 @@ class CodeDescription( SettingsBaseClass ):
             raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
         code_description_dict = dict_read.get( 'code_description' )
-
         if not code_description_dict:
             raise Exception( "The YAML file being loaded doesn't seem to contain valid description of the native code" )
 
         self.from_dict( code_description_dict )
 
         file_real_path = os.path.realpath( file.name )
-        if not self.root_dir:
-            self.root_dir = os.path.dirname( file_real_path )
+        if not self.settings.root_dir:
+            self.settings.root_dir = os.path.dirname( file_real_path )
