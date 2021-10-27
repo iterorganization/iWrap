@@ -5,8 +5,6 @@ module iwrap_defs
     type, BIND(C)::code_parameters_t
         type(C_PTR) :: params  = C_NULL_PTR
         integer     :: params_size = 0
-        type(C_PTR) :: schema  = C_NULL_PTR
-        integer     :: schema_size = 0
     end type
 
 !--------------------------------------------------

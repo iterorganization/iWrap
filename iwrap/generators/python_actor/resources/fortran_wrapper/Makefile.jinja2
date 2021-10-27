@@ -53,12 +53,11 @@ FC=$(MPIFC)
 {% endif %}
 
 
-all: bin/$(ACTOR_NAME).exe   lib/lib$(ACTOR_NAME).so
-#all: lib/lib$(ACTOR_NAME).so
+all: ../bin/$(ACTOR_NAME).exe   ../lib/lib$(ACTOR_NAME).so
 
-bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
+../bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
-	@mkdir -p ./bin
+	@mkdir -p ../bin
 	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/defs.o: src/defs.f90
@@ -74,9 +73,9 @@ build/fortrantools.o: src/fortrantools.f90 build/defs.o
 	@echo "  * $^ -> $@"
 	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
+../lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
 	@echo "   * $^ -> $@"
-	@mkdir -p ./lib
+	@mkdir -p ../lib
 	$(FC) $(FCLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
 build/fortran_wrapper.o: src/fortran_wrapper.f90 build/fortrantools.o
@@ -84,4 +83,4 @@ build/fortran_wrapper.o: src/fortran_wrapper.f90 build/fortrantools.o
 	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 clean:
-	-rm -f *.o build/* lib/*.so bin/*
+	-rm -f *.o build/* ../lib/*.so ../bin/*
