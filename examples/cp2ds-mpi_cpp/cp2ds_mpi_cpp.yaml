@@ -1,8 +1,10 @@
 code_description:
-    programming_language: cpp
     subroutines:
         main:   cp2ds_mpi_cpp
-    data_type: legacy
+    settings:
+        data_type: legacy
+        programming_language: cpp
+        code_path: ./native/libcp2ds_mpi_cpp.a
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -10,7 +12,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds_mpi_cpp.a
     code_parameters:
         parameters:
         schema:

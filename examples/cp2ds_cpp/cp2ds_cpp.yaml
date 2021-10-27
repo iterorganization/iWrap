@@ -1,10 +1,12 @@
 code_description:
-    programming_language: cpp
     subroutines:
         init:
         main:   coreprofiles2distsource_cpp
         finish:
-    data_type: legacy
+    settings:
+        programming_language: cpp
+        data_type: legacy
+        code_path: ./native/libcp2ds_cpp.a
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -12,7 +14,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds_cpp.a
     code_parameters:
         parameters:
         schema:

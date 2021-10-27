@@ -1,10 +1,12 @@
 code_description:
-    programming_language: Fortran
     subroutines:
         init:
         main:   coreprofiles2distsource_mpi
         finish:
-    data_type: legacy
+    settings:
+        programming_language: Fortran
+        code_path: ./native/libcp2ds-mpi.a
+        data_type: legacy
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -12,7 +14,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds-mpi.a
     code_parameters:
         parameters:
         schema:
