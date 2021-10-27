@@ -48,13 +48,25 @@ class FortranPane( ttk.Frame, IWrapPane ):
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
 
+        # TABS FRAME
+        tab_frame = ttk.Frame(self)
+        tab_frame.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW)
+
+        # NOTEBOOK WITH TABS
+        tab_control = ttk.Notebook(tab_frame)
+        settings_lib_tab = ttk.Frame(tab_control)
+        libraries_lib_tab = ttk.Frame(tab_control)
+        tab_control.add(settings_lib_tab, text="Settings:")
+        tab_control.add(libraries_lib_tab, text="External libraries:")
+        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
+
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(settings_lib_tab, text="Language specific settings", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # FRAME
         frame = ttk.Frame(labelframe)
-        frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
+        frame.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         frame.grid_columnconfigure(1, weight=1)
 
         # MODULE PATH
@@ -69,14 +81,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # FRAME MPI
         main_frame = ttk.Frame(labelframe)
-        main_frame.pack(fill=tk.BOTH, expand=1)
+        main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
         frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
-        frame_mpi.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        frame_mpi.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
         frame_mpi.grid_columnconfigure(1, weight=1)
 
         frame_settings = ttk.Frame(main_frame)
-        frame_settings.pack(side=tk.RIGHT, fill=tk.BOTH, expand=1)
+        frame_settings.pack(side=tk.BOTTOM, fill=tk.X, expand=0)
         frame_settings.grid_columnconfigure(1, weight=1)
 
         # COMBOBOX MPI COMPILER
@@ -89,7 +101,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.mpi_combobox['values'] = [None]
         self.mpi_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_combobox.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.mpi_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
+        self.mpi_combobox.bind("<<ComboboxSelected>>",
+                               lambda event, x=self.current_mpi, y=self.mpi_combobox: self.add_value(x, y))
 
         # COMBOBOX MPI RUNNER
         ttk.Label(frame_mpi, text="MPI runner:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -101,16 +114,17 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.mpi_runner_combobox['values'] = [None]
         self.mpi_runner_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_runner_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner, y=self.mpi_runner_combobox: self.add_value(x, y))
+        self.mpi_runner_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_mpi_runner,
+                                                                     y=self.mpi_runner_combobox: self.add_value(x, y))
 
         # COMPILER CMD
         self.compiler_cmd = tk.StringVar()
-        ttk.Label(frame_settings, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame_settings, text="Compiler cmd:").grid(column=0, row=0, padx=10, sticky=(tk.S, tk.W), pady=2)
         compiler_text = ttk.Entry(frame_settings, textvariable=self.compiler_cmd)
-        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
+        compiler_text.grid(column=1, row=0, padx=10, sticky=tk.S, pady=2)
 
         # COMBOBOX OpenMP switch
-        ttk.Label(frame_settings, text="OpenMP switch:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame_settings, text="OpenMP switch:").grid(column=0, row=1, padx=10, pady=8, sticky=(tk.S, tk.W))
         self.switch = tk.StringVar()
         self.current_switch = tk.StringVar()
         self.switch.trace('w', self.change_switch)
@@ -118,11 +132,12 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.openmp_switch_combobox = ttk.Combobox(frame_settings, textvar=self.switch)
         self.openmp_switch_combobox['values'] = [None]
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.openmp_switch_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event,  x=self.current_switch, y=self.openmp_switch_combobox: self.add_value(x, y))
+        self.openmp_switch_combobox.grid(column=1, row=1, padx=10, pady=8)
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_switch,
+                                                                        y=self.openmp_switch_combobox: self.add_value(x,y))
 
         # TABS FRAME
-        tab_frame = ttk.Frame(labelframe)
+        tab_frame = ttk.Frame(libraries_lib_tab)
         tab_frame.pack(fill=tk.BOTH, side = tk.BOTTOM, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
@@ -177,7 +192,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.module_path.set(self.settings.include_path or "")
         self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
-        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        # self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
 
         self.library_path_pane.reload()
