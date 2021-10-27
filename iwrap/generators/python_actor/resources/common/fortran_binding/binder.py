@@ -2,33 +2,33 @@ import ctypes
 import os
 import logging
 import subprocess
+from pathlib import Path
 from threading import Thread
 
 import imas
 
+from iwrap.common import utils
 from ..definitions import Argument
-from ..code_parameters import CodeParameters
 
 from .data_type import LegacyIDS
 from .data_c_binding import ParametersCType, StatusCType
-from ..runtime_settings import RuntimeSettings, RunMode, DebugMode
+from ..runtime_settings import RuntimeSettings, RunMode, DebugMode, SandboxLifeTime
+from ..sandbox import Sandbox
 
 
 class CBinder:
 
-    def __init__(self, actor):
+    def __init__(self):
         self.__logger = logging.getLogger( 'binding' )
         self.__logger.setLevel( logging.DEBUG )
 
-        self.actor = actor
-        self.actor_dir = actor.actor_dir
-        self.actor_name = actor.name
-        self.main_sbrt_name = actor.name + '_wrapper'
+        self.work_db = None
+        self.actor = None
+        self.sandbox = None
+        self.actor_dir = None
 
-        self.wrapper_dir = self.actor_dir + '/' + actor.native_language + '_wrapper'
-
-        self.runtime_settings = actor.runtime_settings
-        self.formal_arguments = actor.arguments
+        self.runtime_settings : RuntimeSettings = None
+        self.formal_arguments = None
 
         self.wrapper_init_func = None
         self.wrapper_main_func = None
@@ -52,15 +52,27 @@ class CBinder:
     def read_data(self, ids):
         pass
 
-    def initialize(self):
+    def initialize(self, actor):
+        self.actor = actor
+        self.sandbox = Sandbox(self.actor)
+        self.runtime_settings = actor.runtime_settings
+        self.formal_arguments = actor.arguments
+        self.actor_dir = actor.actor_dir
         self.work_db = self.__create_work_db()
 
+        actor_name = self.actor.name
         if self.actor.code_description['subroutines'].get('init'):
-            self.wrapper_init_func = self.__get_wrapper_function( 'init_' + self.actor_name + "_wrapper")
-        self.wrapper_main_func = self.__get_wrapper_function(self.main_sbrt_name)
+            sbrt_name = 'init_' + actor_name + "_wrapper"
+            self.wrapper_init_func = self.__get_wrapper_function(sbrt_name)
+
+        sbrt_name = actor_name + "_wrapper"
+        self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
         if self.actor.code_description['subroutines'].get('finish'):
-            self.wrapper_finish_func = self.__get_wrapper_function( 'finish_' + self.actor_name + "_wrapper")
+            sbrt_name = 'finish_' + actor_name + "_wrapper"
+            self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
+
+        self.sandbox.initialize()
 
         if not self.is_standalone_run():
             self.__run_init()
@@ -68,6 +80,9 @@ class CBinder:
     def finalize(self):
         if not self.is_standalone_run():
             self.__run_finalize()
+
+        self.sandbox.remove()
+
 
     def __create_work_db(self):
         ids_storage = self.runtime_settings.ids_storage
@@ -88,7 +103,9 @@ class CBinder:
 
     def __get_wrapper_function(self, function_name: str):
 
-        lib_path = self.wrapper_dir + '/lib/lib' + self.actor_name + '.so'
+        actor_name = self.actor.name
+        wrapper_dir = self.actor_dir + '/' + self.actor.native_language + '_wrapper'
+        lib_path = wrapper_dir + '/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
         wrapper_fun = getattr( wrapper_lib, function_name )
@@ -96,14 +113,15 @@ class CBinder:
 
     def __status_check(self, status_info):
 
+        actor_name = self.actor.name
         if status_info.code < 0:
             raise Exception(
-                "Actor *** '" + self.actor_name + "' *** returned an error (" + str( status_info.code ) + "): '"
+                "Actor *** '" + actor_name + "' *** returned an error (" + str( status_info.code ) + "): '"
                 + status_info.message + "'" )
 
         if status_info.code > 0:
             self.__logger.warning(
-                "Actor * '" + self.actor_name + "' * returned diagnostic info: \n     Output flag:      ",
+                "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      ",
                 status_info.code, "\n     Diagnostic info: ", status_info.message )
 
     def __attach_debugger(self):
@@ -115,7 +133,7 @@ class CBinder:
                       '-e', 'dset TV::dll_read_loader_symbols_only *',
                       '-e', 'dset TV::GUI::pop_at_breakpoint true',
                       '-e', f'dattach python {process_id}',
-                      '-e', f'dbreak -pending {self.main_sbrt_name}',
+                      #'-e', f'dbreak -pending {self.main_sbrt_name}',
                       '-e', 'puts  "\n\nTotalView attached to a running Python process.\n"',
                       '-e', 'puts  "Press any key to continue!\n"',
                       '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',
@@ -150,9 +168,13 @@ class CBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.wrapper_dir )
+        os.chdir(self.sandbox.path)
 
+        # call INIT
         self.wrapper_init_func( *c_arglist )
+
+        # go back to initial dir
+        os.chdir(cwd)
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info )
@@ -168,12 +190,18 @@ class CBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.wrapper_dir )
+        os.chdir(self.sandbox.path)
 
+        # call FINISH
         self.wrapper_finish_func( *c_arglist )
+
+        # go back to initial dir
+        os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info )
+
+        self.sandbox.clean()
 
     def __run_normal(self, c_arglist, debug_mode=False):
         if debug_mode:
@@ -186,7 +214,8 @@ class CBinder:
 
     def __save_input(self, full_arguments_list):
 
-        with open( 'input.txt', "wt" ) as file:
+        file_path = Path(self.sandbox.path, 'input.txt')
+        with open( file_path, "wt" ) as file:
             # Save IDS arguments
             file.write( ' Arguments '.center(70, '=') )
             file.write( "\n" )
@@ -197,15 +226,11 @@ class CBinder:
                 arg.save( file )
             self.actor.code_parameters.save(file)
 
-
-
     def __run_standalone(self, full_arguments_list, mpi_settings=None, debug_mode=False):
 
-        print( "RUNNING STDL" )
+        self.__logger.debug( "RUNNING STDL" )
 
         exec_command = []
-
-        self.__save_input( full_arguments_list )
 
         if self.actor.is_mpi_code and mpi_settings:
             exec_command.append( 'mpiexec' )
@@ -218,9 +243,14 @@ class CBinder:
         elif debug_mode:
             exec_command.append( 'totalview' )
 
-        exec_command.append( './bin/' + self.actor_name + '.exe' )
+        exec_command.append( self.actor_dir + '/bin/' + self.actor.name + '.exe' )
 
-        print( 'EXEC command: ', exec_command )
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir(self.sandbox.path)
+        self.__save_input( full_arguments_list )
+
+        self.__logger.debug( 'EXECUTING command: ', exec_command )
         proc = subprocess.Popen( exec_command,
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
@@ -231,6 +261,9 @@ class CBinder:
         return_code = proc.wait()
         if return_code:
             raise RuntimeError(f'ERROR [{return_code}] while executing command: {exec_command}')
+
+        # go back to initial dir
+        os.chdir(cwd)
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def step(self, *input_idses):
@@ -264,9 +297,9 @@ class CBinder:
 
         # go to sandbox
         cwd = os.getcwd()
-        os.chdir( self.wrapper_dir )
+        os.chdir(self.sandbox.path)
 
-        print( 'RUN MODe: ', str( self.runtime_settings.run_mode ) )
+        print( 'RUN MODE: ', str( self.runtime_settings.run_mode ) )
 
         mpi_settings = self.runtime_settings.mpi
         is_standalone =  self.is_standalone_run()
@@ -291,6 +324,10 @@ class CBinder:
                 results.append( arg.convert_to_actor_type() )
             arg.release()
 
+
+        if self.runtime_settings.sandbox.life_time == SandboxLifeTime.ACTOR_RUN:
+            self.sandbox.clean()
+
         # final output
         if not results:
             return None
@@ -298,3 +335,4 @@ class CBinder:
             return results[0]
         else:
             return tuple( results )
+

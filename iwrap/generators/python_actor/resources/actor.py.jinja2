@@ -15,32 +15,18 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
 
-    NATIVE_LANGUAGE = '{{code_description.programming_language | lower}}'
-    IS_MPI = {% if not code_description.language_specific.mpi.mpi_compiler_cmd or code_description.language_specific.mpi.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
-
     # Provenance info
     actor_description = ACTOR_DESCRIPTION
     code_description = CODE_DESCRIPTION
     # {{ "".center(80, '=') }}
 
-    __instance_index = 0
 
-    @property
-    def unique_id(self):
-        class_name = self.__class__.__name__
-        idx = self.__instance_index
-        pid = os.getpid()
-        uid = f'{class_name}_{idx}#{pid}'
-        return uid
-
-    def __new__(cls):
-        new_object =  object.__new__(cls)
-        cls.__instance_index +=  1
-        return new_object
 
     def __init__(self):
-        actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        super().__init__(actor_dir, self.NATIVE_LANGUAGE, self.IS_MPI)
+        super().__init__()
+        self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
+        self.native_language = '{{code_description.programming_language | lower}}'
+        self.is_mpi_code = {% if not code_description.language_specific.mpi.mpi_compiler_cmd or code_description.language_specific.mpi.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
         # Auto-generated list of arguments meta-data
     {% for argument in code_description.arguments %}
@@ -57,6 +43,8 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
         schema_file = ''
     {% endif %}
         self.code_parameters = CodeParameters(default_parameters_file, schema_file)
+
+        self.sandbox_default_dir = '{{ platform_settings.sandbox_default_dir }}'
 
 
 

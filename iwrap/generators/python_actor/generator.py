@@ -76,7 +76,8 @@ class PythonActorGenerator(ActorGenerator):
                                                                                        project_root_dir=project_root_dir)
 
         code_description_dict = code_description.to_dict(resolve_path=True, project_root_dir=project_root_dir)
-        dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
+        platform_settings = PlatformSettings().to_dict(resolve_path=True, project_root_dir=project_root_dir)
+        dictionary = {'platform_settings': platform_settings, 'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
         native_language = code_description.programming_language.lower()
 
