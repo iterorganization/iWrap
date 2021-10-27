@@ -545,6 +545,7 @@ class LibraryPathPane:
         """Reload library paths list from the LanguageSettingsManager and add it to the Table widget.
         """
         self.settings = ProjectSettings.get_settings().code_description.language_specific
+
         self.__add_path_from_settings()
 
     def update_settings(self):

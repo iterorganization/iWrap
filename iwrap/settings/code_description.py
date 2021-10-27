@@ -142,7 +142,6 @@ class Subroutines( SettingsBaseClass ):
 
 
 class Settings( SettingsBaseClass ):
-
     @property
     def programming_language(self):
         return self._programming_language
@@ -150,17 +149,13 @@ class Settings( SettingsBaseClass ):
     @programming_language.setter
     def programming_language(self, value: str):
         self._programming_language = ''
-
         if value:
             self._programming_language = value.lower()
-            # language specific settings depends on language chosen
-            # language was not set while language specific settings were read so they need
-            # to be set here 'again' converting from dict to a proper object
-            if CodeDescription.language_specific is not None and isinstance(CodeDescription.language_specific, dict ):
-                CodeDescription.language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
-                                                                                        CodeDescription.language_specific )
+            #if self._language_specific is not None and isinstance( self._language_specific, dict ):
+            #   self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
+            #                                                                           self._language_specific )
 
-    def __init__(self, CodeDescription=None):
+    def __init__(self, master):
         self.root_dir = '.'
         self._programming_language: str = ''
         self.data_type: str = None
@@ -345,76 +340,29 @@ class CodeDescription( SettingsBaseClass ):
                 value = Argument( value )
             self._arguments.append( value )
 
-    # @property
-    # def programming_language(self):
-    #     return self._programming_language
-    #
-    # @programming_language.setter
-    # def programming_language(self, value: str):
-    #     self._programming_language = ''
-    #
-    #     if value:
-    #         self._programming_language = value.lower()
-    #         # language specific settings depends on language chosen
-    #         # language was not set while language specific settings were read so they need
-    #         # to be set here 'again' converting from dict to a proper object
-    #         if self._language_specific is not None and isinstance( self._language_specific, dict ):
-    #             self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
-    #                                                                                     self._language_specific )
-    #
     @property
     def language_specific(self):
         return self._language_specific
 
     @language_specific.setter
     def language_specific(self, values):
-
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
         self._language_specific = LanguageSettingsManager.get_settings_handler( self.settings.programming_language, values )
-        pass
 
     def __init__(self):
-        # self.root_dir = '.'
-        # self._programming_language: str = ''
         self.subroutines: Subroutines = Subroutines()
-        # self.data_type: str = None
         self._arguments: List[Argument] = []
-        # self.code_path: str = None
-        self.settings: Settings = Settings(CodeDescription)
+        self.settings: Settings = Settings(self)
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
         self.language_specific: dict = {}
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
-
-        # # programming_language
-        # if not self.programming_language:
-        #     raise ValueError( 'Programming language is not set!' )
-        # else:
-        #     engine.validate_programming_language( self.programming_language )
-        #
-        # # subroutines
-        # self.subroutines.validate( engine, project_root_dir )
-        #
-        # # data_type
-        # if not self.data_type:
-        #     raise ValueError( 'Type of data handled by native code is not set!' )
-        # else:
-        #     engine.validate_code_data_type( self.data_type )
-
         # arguments
         for argument in self.arguments or []:
             argument.validate( engine, project_root_dir, **{'data_type': self.data_type} )
-
-        # # code path
-        # if not self.code_path:
-        #     raise ValueError( 'Path to native code is not set!' )
-        #
-        # __path = utils.resolve_path( self.code_path, project_root_dir )
-        # if not Path(__path).exists():
-        #     raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
 
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
@@ -442,11 +390,7 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        # self.root_dir = '.'
-        # self.programming_language = None
-        # self.data_type = None
         self.arguments = []
-        # self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
         self.settings.clear()

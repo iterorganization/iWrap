@@ -160,8 +160,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         ProjectSettings.get_settings().code_description.settings.programming_language = self.programming_language_combobox.get()
 
-        print(ProjectSettings.get_settings())
-
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
