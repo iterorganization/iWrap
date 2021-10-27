@@ -52,8 +52,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.finish = tk.StringVar()
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="Settings", borderwidth=2, relief="groove", height=100)
-        labelframe.pack(fill=tk.X, pady=10)
+        labelframe = ttk.LabelFrame(self, text="Settings", borderwidth=2, relief="groove")
+        labelframe.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW, pady=10)
         labelframe.grid_columnconfigure(1, weight=1)
 
         # LANGUAGE
@@ -86,25 +86,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         self.browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=1, padx=10,
                                                                                            pady=5)
-        # SUBROUTINES LABEL FRAME
-        labelframe_sub = ttk.LabelFrame(self, text="Subroutines", borderwidth=2, relief="groove", height=100)
-        labelframe_sub.pack(fill=tk.X, pady=5)
-        labelframe_sub.grid_columnconfigure(1, weight=1)
-
-        # INIT
-        ttk.Label(labelframe_sub, text="Init:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.main_text = ttk.Entry(labelframe_sub, textvariable=self.init)
-        self.main_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-        # MAIN
-        ttk.Label(labelframe_sub, text="Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.main_text = ttk.Entry(labelframe_sub, textvariable=self.main)
-        self.main_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
-
-        # FINISH
-        ttk.Label(labelframe_sub, text="Finish:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.main_text = ttk.Entry(labelframe_sub, textvariable=self.finish)
-        self.main_text.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def update_settings(self, *args):
         """Update code_path, main and programming_language values in ProjectSettings.
@@ -112,9 +93,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description = ProjectSettings.get_settings().code_description
         code_description.settings.programming_language = self.selected_programming_language.get()
         code_description.settings.code_path = self.code_path.get()
-        code_description.subroutines.main = self.main.get()
-        code_description.subroutines.finish = self.finish.get()
-        code_description.subroutines.init = self.init.get()
         code_description.settings.data_type = self.data_type_combobox.get()
         code_description.settings.root_dir = self.root_dir.get()
 
@@ -123,14 +101,10 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         project settings is not available in combobox warning message box will be shown and the default value of
         programming language will be selected in combobox.
         """
-        project_settings = ProjectSettings.get_settings()
-        code_description = project_settings.code_description
+        code_description = ProjectSettings.get_settings().code_description
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         programming_language = code_description.settings.programming_language or CodeSettingsPane.default_programming_language
         code_path = code_description.settings.code_path or ''
-        main = code_description.subroutines.main or ''
-        init = code_description.subroutines.init or ''
-        finish = code_description.subroutines.finish or ''
 
         if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = CodeSettingsPane.default_programming_language
@@ -154,9 +128,6 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         self.browse_text.delete(0, tk.END)
         self.code_path.set(code_path)
-        self.main.set(main)
-        self.finish.set(finish)
-        self.init.set(init)
 
         ProjectSettings.get_settings().code_description.settings.programming_language = self.programming_language_combobox.get()
 

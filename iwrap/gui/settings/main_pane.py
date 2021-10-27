@@ -11,6 +11,7 @@ from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
 from iwrap.gui.settings.code_settings_pane import CodeSettingsPane
 from iwrap.gui.settings.documentation_pane import DocumentationPane
 from iwrap.gui.settings.signature_pane import SignaturePane
+from iwrap.gui.settings.subroutines_pane import SubroutinesPane
 from iwrap.gui.menu import MenuBar
 
 
@@ -28,6 +29,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
 
         self.arguments_pane = ArgumentsPane( self.notebook )
         self.code_settings_pane = CodeSettingsPane( self.notebook )
+        self.subroutines_pane = SubroutinesPane( self.notebook )
         self.code_parameters_pane = CodeParametersPane( self.notebook )
         self.documentation_pane = DocumentationPane( self.notebook )
         self.signature_pane = SignaturePane( self.notebook )
@@ -35,6 +37,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.language_settings_pane = None
         self.notebook.add( self.arguments_pane, text='Arguments' )
         self.notebook.add( self.code_settings_pane, text='Settings' )
+        self.notebook.add (self.subroutines_pane, text='Subroutines' )
         self.notebook.add( self.code_parameters_pane, text='Code parameters' )
         self.notebook.add( self.documentation_pane, text='Documentation' )
         self.add_language_pane()
@@ -74,11 +77,12 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         selected_language = self.code_settings_pane.selected_programming_language.get()
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
         self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
-        self.notebook.insert(2, self.language_settings_pane, text="Language specific")
+        self.notebook.insert(3, self.language_settings_pane, text="Language specific")
 
     def update_settings(self):
         self.arguments_pane.update_settings()
         self.code_settings_pane.update_settings()
+        self.subroutines_pane.update_settings()
         self.language_settings_pane.update_settings()
         self.code_parameters_pane.update_settings()
         self.documentation_pane.update_settings()
@@ -87,6 +91,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
     def reload(self):
         self.arguments_pane.reload()
         self.code_settings_pane.reload()
+        self.subroutines_pane.reload()
         self.language_settings_pane.reload()
         self.code_parameters_pane.reload()
         self.documentation_pane.reload()
