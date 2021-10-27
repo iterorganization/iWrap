@@ -151,15 +151,14 @@ class Settings( SettingsBaseClass ):
         self._programming_language = ''
         if value:
             self._programming_language = value.lower()
-            #if self._language_specific is not None and isinstance( self._language_specific, dict ):
-            #   self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
-            #                                                                           self._language_specific )
+            self._master.change_language_specific()
 
     def __init__(self, master):
         self.root_dir = '.'
         self._programming_language: str = ''
         self.data_type: str = None
         self.code_path: str = None
+        self._master = master
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         # programming_language
@@ -358,6 +357,11 @@ class CodeDescription( SettingsBaseClass ):
         self.documentation: str = None
         self.language_specific: dict = {}
 
+    def change_language_specific(self):
+        if self._language_specific is not None and isinstance(self._language_specific, dict):
+            self._language_specific = LanguageSettingsManager.get_settings_handler(self.settings.programming_language,
+                                                                                          self._language_specific)
+
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
         # arguments
@@ -444,3 +448,5 @@ class CodeDescription( SettingsBaseClass ):
         file_real_path = os.path.realpath( file.name )
         if not self.settings.root_dir:
             self.settings.root_dir = os.path.dirname( file_real_path )
+
+

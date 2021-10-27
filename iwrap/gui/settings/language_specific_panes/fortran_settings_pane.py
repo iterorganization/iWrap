@@ -9,6 +9,7 @@ from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
+from iwrap.settings.language_specific.fortran_settings import MPI
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -192,7 +193,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.module_path.set(self.settings.include_path or "")
         self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
-        # self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
 
         self.library_path_pane.reload()
@@ -215,19 +216,27 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
+
+        compiler_cmd = self.compiler_cmd.get()
+        open_mp_switch = self.openmp_switch_combobox.get()
+        include_path = self.module_path.get()
+
+        mpi = MPI()
+        mpi_runner = self.mpi_runner_combobox.get()
+        mpi_compiler_cmd = self.mpi_combobox.get()
+        mpi.mpi_runner = mpi_runner
+        mpi.mpi_compiler_cmd = mpi_compiler_cmd
+
+        extra_lib = ExtraLibraries()
         pkg_configs = self.pkg_config_pane.get_data_from_table()
         library_paths = self.library_path_pane.get_list_of_paths()
-        mpi = self.feature_pane.mpi_flavour_combobox.get()
-        open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
-        include_path = self.feature_pane.module_path.get()
-        extra_lib = ExtraLibraries()
         extra_lib.pkg_config_defined = pkg_configs
-        extra_lib.lib_path = library_paths
+        extra_lib.path_defined = library_paths
 
-        self.settings.from_dict({'compiler_cmd': compiler,
+        self.settings.from_dict({'compiler_cmd': compiler_cmd,
                                  'include_path': include_path,
-                                 '_mpi': mpi,
-                                 'open_mp_switch': open_mpi,
+                                 'mpi': mpi.to_dict(),
+                                 'open_mp_switch': open_mp_switch,
                                  'extra_libraries': extra_lib.to_dict()})
 
 
