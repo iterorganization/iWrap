@@ -139,7 +139,7 @@ class PlatformSettings( Dictionarizable ):
 
     def __init__(self):
         self.actor_default_dir = str( Path( Path.home(), 'IWRAP_ACTORS' ) )  # TODO: Read install dir from platform settings
-        self.sandbox_path: str = ''
+        self.sandbox_default_dir: str = str( Path( Path.home(), 'IWRAP_SANDBOX' ) )  # TODO: Read install dir from platform settings
         self.programming_languages = []
         self.debuggers = []
 
@@ -155,7 +155,7 @@ class PlatformSettings( Dictionarizable ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root:str = None) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns

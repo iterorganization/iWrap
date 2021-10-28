@@ -50,9 +50,15 @@ class PythonActorGenerator(ActorGenerator):
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
+        self.install_dir: str = None
         self.wrapper_dir = None
 
     def initialize(self):
+        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
+        if not install_dir:
+            install_dir = PlatformSettings().actor_default_dir
+        self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
+
         self.wrapper_generator = FortranWrapperGenerator()
 
     def configure(self, info_output_stream=sys.stdout):
@@ -60,16 +66,20 @@ class PythonActorGenerator(ActorGenerator):
 
     def generate(self):
         self.temp_dir = tempfile.TemporaryDirectory().name
+        install_dir = ProjectSettings.get_settings().actor_description.install_dir
+        self.install_dir = str( Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
         code_description = ProjectSettings.get_settings().code_description
+        generation_env = {'temp_dir': self.install_dir}
 
         project_root_dir = ProjectSettings.get_settings().root_dir_path
         actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict(resolve_path=True,
                                                                                        project_root_dir=project_root_dir)
 
         code_description_dict = code_description.to_dict(resolve_path=True, project_root_dir=project_root_dir)
-        dictionary = {'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
+        platform_settings = PlatformSettings().to_dict(resolve_path=True, project_root_dir=project_root_dir)
+        dictionary = {'platform_settings': platform_settings, 'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
-        native_language = code_description.programming_language.lower()
+        native_language = code_description.settings.programming_language.lower()
 
         self.wrapper_dir = native_language + '_wrapper'
         # TO BE CHECKED!!!!
@@ -107,6 +117,7 @@ class PythonActorGenerator(ActorGenerator):
 
         proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/' + self.wrapper_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
 
         for line in proc.stdout:
             print( line, file=self.__info_output_stream, end='' )
