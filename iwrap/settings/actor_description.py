@@ -18,7 +18,6 @@ class ActorDescription( SettingsBaseClass ):
         self.actor_name: str = ''
         self.data_type: str = ''
         self.actor_type: str = ''
-        self.install_dir: str = ''
 
     def validate(self, engine: Engine, project_root_dir, **kwargs) -> None:
 
@@ -41,12 +40,6 @@ class ActorDescription( SettingsBaseClass ):
                 f'Data type handled by actor is not set!! Using default one: "{self.data_type}".' )
         else:
             engine.validate_actor_data_type( self.data_type )
-
-        # install_dir
-        if not self.install_dir:
-            self.install_dir = PlatformSettings().actor_default_dir
-            ActorDescription.__logger.warning(
-                f'Actor installation directory is not set! Using default one: "{self.install_dir}".' )
 
         try:
             __path = os.path.expandvars(self.install_dir)
@@ -83,4 +76,3 @@ class ActorDescription( SettingsBaseClass ):
         self.actor_name = ''
         self.data_type = ''
         self.actor_type = ''
-        self.install_dir = ''

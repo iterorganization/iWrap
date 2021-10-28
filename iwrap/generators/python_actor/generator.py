@@ -50,15 +50,9 @@ class PythonActorGenerator(ActorGenerator):
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.wrapper_generator = FortranWrapperGenerator()
-        self.install_dir: str = None
         self.wrapper_dir = None
 
     def initialize(self):
-        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
-        if not install_dir:
-            install_dir = PlatformSettings().actor_default_dir
-        self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
-
         self.wrapper_generator = FortranWrapperGenerator()
 
     def configure(self, info_output_stream=sys.stdout):
@@ -66,10 +60,7 @@ class PythonActorGenerator(ActorGenerator):
 
     def generate(self):
         self.temp_dir = tempfile.TemporaryDirectory().name
-        install_dir = ProjectSettings.get_settings().actor_description.install_dir
-        self.install_dir = str( Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
         code_description = ProjectSettings.get_settings().code_description
-        generation_env = {'temp_dir': self.install_dir}
 
         project_root_dir = ProjectSettings.get_settings().root_dir_path
         actor_settings_dict = ProjectSettings.get_settings().actor_description.to_dict(resolve_path=True,
