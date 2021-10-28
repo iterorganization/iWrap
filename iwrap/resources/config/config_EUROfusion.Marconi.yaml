@@ -1,0 +1,6 @@
+---
+platform_settings:
+    default_directories:
+        actor_default_install_dir: $ITMWORK/IWRAP_ACTORS
+        sandbox_default_dir: $ITMWORK/IWRAP_SANDBOX
+...

@@ -44,7 +44,7 @@ class ActorDescription( SettingsBaseClass ):
 
         # install_dir
         if not self.install_dir:
-            self.install_dir = PlatformSettings().actor_default_dir
+            self.install_dir = PlatformSettings().default_directories.actor_default_install_dir
             ActorDescription.__logger.warning(
                 f'Actor installation directory is not set! Using default one: "{self.install_dir}".' )
 
