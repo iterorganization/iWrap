@@ -22,14 +22,10 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
          programming language combobox, code path entry, code name entry, and browse button.
         code_path(StringVar): Value for code path from filedialog or the YAML file.
-        main(StringVar): Value for code name, can be added and changed by users or imported from the YAML file.
         selected_programming_language(StringVar): Value for programming language selected in combobox.
         programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values. Enables
          user to select preferable programming language or value is selected automatically if the YAML file is imported.
-        browse_text(Entry): A place for code path value. Users can search their filedialog and select code path using
-         the browse button or the code path is added automatically if the YAML file is imported.
-        main_text(Entry): An editable place for code name value. Value can be added and changed manually by users.
-         The code name is added automatically if the YAML file is imported.
+        root_dir(StringVar): Value for rood dir path from filedialog or the YAML file.
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -46,10 +42,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         self.code_path = tk.StringVar()
         self.selected_programming_language = tk.StringVar()
+        self.root_dir = tk.StringVar()
         self.data_type = None
-        self.main = tk.StringVar()
-        self.init = tk.StringVar()
-        self.finish = tk.StringVar()
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Settings", borderwidth=2, relief="groove")
@@ -75,20 +69,19 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = ttk.Entry(labelframe, textvariable=self.code_path)
-        self.browse_text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.code_path_entry = ttk.Entry(labelframe, textvariable=self.code_path)
+        self.code_path_entry.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10).grid(column=2, row=2, padx=10, pady=5)
 
-        self.root_dir = tk.StringVar()
-        # BROWSE BUTTON AND ENTRY FOR PATH
+        # BROWSE BUTTON AND ENTRY FOR ROOT DIR
         ttk.Label(labelframe, text="Root dir:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.browse_text = ttk.Entry(labelframe, textvariable=self.root_dir)
-        self.browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        self.root_dir_entry = ttk.Entry(labelframe, textvariable=self.root_dir)
+        self.root_dir_entry.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=1, padx=10,
                                                                                            pady=5)
 
     def update_settings(self, *args):
-        """Update code_path, main and programming_language values in ProjectSettings.
+        """Update settings in ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
         code_description.settings.programming_language = self.selected_programming_language.get()
@@ -102,9 +95,9 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         programming language will be selected in combobox.
         """
         code_description = ProjectSettings.get_settings().code_description
+
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         programming_language = code_description.settings.programming_language or CodeSettingsPane.default_programming_language
-        code_path = code_description.settings.code_path or ''
 
         if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = CodeSettingsPane.default_programming_language
@@ -113,8 +106,8 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
                                               f"{CodeSettingsPane.default_programming_language}.")
         self.programming_language_combobox.set('')
         self.programming_language_combobox.set(programming_language.lower())
-        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
 
+        self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         if self.data_type not in self.data_type_combobox['values']:
             self.data_type_combobox.current(0)
         elif self.data_type not in self.data_type_combobox['values'] and self.data_type is not None:
@@ -124,12 +117,13 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         else:
             self.data_type_combobox.set(self.data_type)
 
-        self.root_dir.set(ProjectSettings.get_settings().code_description.settings.root_dir)
+        self.code_path_entry.delete(0, tk.END)
+        self.code_path.set(code_description.settings.code_path or '')
 
-        self.browse_text.delete(0, tk.END)
-        self.code_path.set(code_path)
+        self.root_dir_entry.delete(0, tk.END)
+        self.root_dir.set(code_description.settings.root_dir or '')
 
-        ProjectSettings.get_settings().code_description.settings.programming_language = self.programming_language_combobox.get()
+        code_description.settings.programming_language = self.programming_language_combobox.get()
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.

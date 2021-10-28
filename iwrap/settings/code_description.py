@@ -366,7 +366,7 @@ class CodeDescription( SettingsBaseClass ):
 
         # arguments
         for argument in self.arguments or []:
-            argument.validate( engine, project_root_dir, **{'data_type': self.data_type} )
+            argument.validate( engine, project_root_dir, **{'data_type': self.settings.data_type} )
 
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
