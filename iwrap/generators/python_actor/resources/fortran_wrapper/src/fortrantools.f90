@@ -234,7 +234,7 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     
     !  xml parameters
     c_str_ptr = code_params%params
-    string_size = code_params%params_size
+    string_size = c_str_length(c_str_ptr)
     iloopmax=string_size/132
     if (mod(string_size,132)/=0) then
     iloopmax = iloopmax + 1
@@ -247,22 +247,7 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     if(mod(string_size,132)/=0) then
     xmllib_code_params%parameters_value(iloopmax)(mod(string_size,132)+1:132) = ' '
     endif
-    
-    !get xsd
-    c_str_ptr = code_params%schema
-    string_size = code_params%schema_size
-    iloopmax=string_size/132
-    if (mod(string_size,132)/=0) then
-    iloopmax = iloopmax + 1
-    endif
-    allocate(xmllib_code_params%parameters_default(iloopmax))
-    
-    call C_F_POINTER(c_str_ptr, f_char_arr, (/string_size/))
-    xmllib_code_params%parameters_default = transfer(f_char_arr, xmllib_code_params%parameters_default)
-    
-    if (mod(string_size,132)/=0) then
-    xmllib_code_params%parameters_default(iloopmax)(mod(string_size,132)+1:132) = ' '
-    endif
+
 END FUNCTION convert_codeparams
 
 

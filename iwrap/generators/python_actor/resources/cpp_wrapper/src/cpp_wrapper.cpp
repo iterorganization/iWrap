@@ -14,28 +14,23 @@
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_settings.actor_name}}_wrapper(
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters   %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info)
 {
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
-{% endif %}
-
-     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-    // ------------------ code parameters ----------------------------
-    //imas_code_params = convert(code_params)
-    (imas_code_params.parameters) = (char**)&(code_params->params);
-    (imas_code_params.default_param) = (char**)&(code_params->params);
-    (imas_code_params.schema) = (char**)&(code_params->schema);
+    imas_code_params.parameters = (char**)&(code_params->params);
+    imas_code_params.default_param = NULL;
+    imas_code_params.schema = NULL;
 
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
     {{code_description.subroutines.init}}(
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
             &(status_info->code), &(status_info->message) );
@@ -73,7 +68,7 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info)
@@ -82,7 +77,7 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
     IdsNs::IDS::{{ argument.type}} {{ argument.name }};
 {% endfor %}
 
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
 {% endif %}
@@ -111,13 +106,11 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
 
     {% endfor %}
 
-        {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+        {% if code_description.code_parameters.parameters  %}
     // ------------------ code parameters ----------------------------
-    //imas_code_params = convert(code_params)
-    (imas_code_params.parameters) = (char**)&(code_params->params);
-    (imas_code_params.default_param) = (char**)&(code_params->params);
-    (imas_code_params.schema) = (char**)&(code_params->schema);
-
+    imas_code_params.parameters = (char**)&(code_params->params);
+    imas_code_params.default_param = NULL;
+    imas_code_params.schema = NULL;
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
@@ -125,7 +118,7 @@ extern "C" void {{actor_settings.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
             {{ argument.name }},
 {% endfor %}
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
             &(status_info->code), &(status_info->message) );

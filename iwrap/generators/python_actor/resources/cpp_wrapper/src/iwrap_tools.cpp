@@ -90,23 +90,6 @@ int handle_status_info(status_t status_info, const char* actor_name)
       }
 }
 
- char* read_codeparams_schema(const char* xsd_file)
-{
-    code_parameters_t code_params;
-
-    char* xsd_str;
-
-
-    if ( xsd_file == NULL || strlen(xsd_file) < 1 )
-        return "";
-
-    xsd_str= read_file(xsd_file);
-
-
-
-    return xsd_str;
-}
-
 IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size)
 {
     if ( array_size < 1 )

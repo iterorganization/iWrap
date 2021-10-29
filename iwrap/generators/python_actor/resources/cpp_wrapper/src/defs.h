@@ -18,10 +18,6 @@ typedef struct
 {
   const char* params = NULL;
   int params_size = 0;
-
-  const char* schema = NULL;
-  int schema_size = 0;
-
 } code_parameters_t;
 
 

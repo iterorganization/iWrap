@@ -19,11 +19,7 @@ program standalone
 
     !----  Code parameters  ----
     character(len=:), allocatable :: xml_string
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-    character(len=*), parameter :: XSD_FILE = "../input/{{code_description.code_parameters.schema.split('/')[-1]}}"
-    character(len=:), allocatable :: xsd_string
     type(code_parameters_t) :: code_params
-{% endif %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     !----  MPI  ----
@@ -37,23 +33,15 @@ program standalone
     status = read_input(db_entry_desc_array, xml_string)
     if (status /= 0) STOP -1
 
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-    ! Read code parameters to structure
-    xsd_string = read_codeparams_schema(XSD_FILE)
-
+{% if code_description.code_parameters.parameters %}
     code_params%params = convert2Cptr(xml_string)
     code_params%params_size = LEN(xml_string)
-
-    code_params%schema = convert2Cptr(xsd_string)
-    code_params%schema_size = LEN(xsd_string)
-
 {% endif %}
-
 
      {% if code_description.subroutines.init %}
     ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call init_{{actor_settings.actor_name}}_wrapper(&
-        {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+        {% if code_description.code_parameters.parameters %}
                 code_params,  &
         {% endif %}
                 status_info)
@@ -70,7 +58,7 @@ program standalone
 {% for argument in code_description.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.code_parameters.parameters %}
                 code_params,  &
 {% endif %}
                 status_info)

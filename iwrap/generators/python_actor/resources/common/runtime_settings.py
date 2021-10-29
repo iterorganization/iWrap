@@ -7,25 +7,30 @@ DEBUGGER_TOTALVIEW = 10
 DEBUGGER_GDB = 20
 
 
-class DebugMode(Enum):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
+class DebugMode( Enum ):
     NONE = auto()
     STANDALONE = auto()
     ATTACH = auto()
 
-class RunMode(Enum):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
+class RunMode( Enum ):
     NORMAL = auto()
     STANDALONE = auto()
 
 
+class SandboxMode( Enum ):
+    AUTOMATIC = auto()
+    MANUAL = auto()
+
+class SandboxLifeTime( Enum ):
+    ACTOR_RUN = auto()
+    WORKFLOW_RUN = auto()
+    PERSISTENT = auto()
+
+
 class IdsStorage:
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         self.db_name = 'tmp'
@@ -35,20 +40,11 @@ class IdsStorage:
         self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
 
 
-class SandboxSettings:
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-    LIFETIME_ACTOR = 10
-    LIFETIME_SCENARIO = 20
-
-
 class RuntimeSettings:
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
-
         # handled/implemented
         self.run_mode = RunMode.NORMAL
         self.debug_mode = DebugMode.NONE
@@ -58,13 +54,13 @@ class RuntimeSettings:
         # not implemented yet
         self.batch_job = self.BatchJob()
         self.open_mp = self.OpenMP()
-        self.sandbox = self.Sandbox()
+        self.sandbox = self.SandboxSettings()
         self.TBD = None  # any other info needed?
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class BatchJob:
         # Class logger
-        __logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
             self.queue = None
@@ -73,7 +69,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class Debug:
         # Class logger
-        __logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
             self.debugger = None  # TotalView/gdb
@@ -83,7 +79,7 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class MPI:
         # Class logger
-        __logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
             self.number_of_processes = 1
@@ -92,17 +88,17 @@ class RuntimeSettings:
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class OpenMP:
         # Class logger
-        __logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
             self.TBD = None
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class Sandbox:
+    class SandboxSettings:
         # Class logger
-        __logger = logging.getLogger(__name__ + "." + __qualname__)
+        __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
-            self.path = None
-            self.lifetime = None
-            self.TBD = None
+            self.path: str = ''
+            self.life_time: SandboxLifeTime = SandboxLifeTime.ACTOR_RUN
+            self.mode: SandboxMode = SandboxMode.AUTOMATIC

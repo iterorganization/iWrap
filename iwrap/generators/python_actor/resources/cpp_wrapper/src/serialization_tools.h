@@ -8,6 +8,4 @@ void read_data(std::ifstream *stream, char *str, int size) ;
 void write_data(ofstream *stream, int var);
 void write_data(ofstream *stream, char *var);
 
-char* read_file(const char* file_path) ;
-
 #endif // _SERIALIZATION_TOOLS

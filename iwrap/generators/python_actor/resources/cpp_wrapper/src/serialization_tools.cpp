@@ -33,31 +33,10 @@ void write_data(std::ofstream *stream, int var) {
     *stream << var << std::endl;
 }
 
-
-
 void write_data(std::ofstream *stream, char *var) {
     *stream << *var << std::endl;
 }
 
-char* read_file(const char* file_path) {
 
-    std::ifstream file(file_path);
-
-    if (!file.is_open()) {
-        std::cerr << "Could not open the file: '" << file_path << "'" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-
-    std::string str = buffer.str();
-
-    char * cstr = new char [str.length()+1];
-    std::strcpy (cstr, str.c_str());
-
-    file.close();
-    return cstr;
-}
 
 

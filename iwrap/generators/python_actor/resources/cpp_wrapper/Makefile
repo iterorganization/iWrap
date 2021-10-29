@@ -44,16 +44,16 @@ INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
 LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS) $(CODE_LIB_DEF)
 
 
-all:  lib/lib$(ACTOR_NAME).so  bin/$(ACTOR_NAME).exe
+all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
 
-bin/$(ACTOR_NAME).exe: src/standalone.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
+../bin/$(ACTOR_NAME).exe: src/standalone.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
-	@mkdir -p ./bin
+	@mkdir -p ../bin
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
-lib/lib$(ACTOR_NAME).so: build/cpp_wrapper.o
+../lib/lib$(ACTOR_NAME).so: build/cpp_wrapper.o
 	@echo "   * $^ -> $@"
-	@mkdir -p ./lib
+	@mkdir -p ../lib
 	$(CXX) $(CXXFLAGS) -shared -o $@  -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/ -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/opt/
 
 build/cpp_wrapper.o: src/cpp_wrapper.cpp
@@ -73,5 +73,5 @@ build/serialization_tools.o: src/serialization_tools.cpp
 
 
 clean: 
-	-rm -f *.o build/* lib/*.so bin/*
+	-rm -f *.o build/* ../lib/*.so ../bin/*
 

@@ -29,19 +29,11 @@ int main(int argc, char **argv)
 
   read_input(db_entry_desc_array, IDS_ARGS_NO, &xml_string);
 
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-    char *xsd_string;
-    const char* XSD_FILE = "../input/{{code_description.code_parameters.schema.split('/')[-1]}}";
+{% if code_description.code_parameters.parameters %}
     code_parameters_t code_params;
-
-    xsd_string = read_codeparams_schema( XSD_FILE);
 
     code_params.params = xml_string;
     code_params.params_size = strlen(xml_string);
-
-
-    code_params.schema = xsd_string;
-    code_params.schema_size = strlen(xsd_string);
 {% endif %}
 
 
