@@ -15,7 +15,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
 
-    NATIVE_LANGUAGE = '{{code_description.programming_language | lower}}'
+    NATIVE_LANGUAGE = '{{code_description.settings.programming_language | lower}}'
     IS_MPI = {% if not code_description.language_specific.mpi.mpi_compiler_cmd or code_description.language_specific.mpi.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
     # Provenance info
