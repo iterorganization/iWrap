@@ -7,7 +7,6 @@ from threading import Thread
 
 import imas
 
-from iwrap.common import utils
 from ..definitions import Argument
 
 from .data_type import LegacyIDS

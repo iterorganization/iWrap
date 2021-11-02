@@ -3,7 +3,7 @@ import logging
 from abc import ABC
 
 from ..runtime_settings import RuntimeSettings
-from ..fortran_binding.binder import CBinder
+from ..cpp_binding.binder import CBinder
 from ..code_parameters import CodeParameters
 
 
