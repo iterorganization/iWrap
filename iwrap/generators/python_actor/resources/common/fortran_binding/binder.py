@@ -105,7 +105,7 @@ class CBinder:
 
         actor_name = self.actor.name
         wrapper_dir = self.actor_dir + '/' + self.actor.native_language + '_wrapper'
-        lib_path = wrapper_dir + '/lib/lib' + actor_name + '.so'
+        lib_path =  self.actor_dir + '/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
         wrapper_fun = getattr( wrapper_lib, function_name )

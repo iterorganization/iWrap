@@ -11,4 +11,4 @@ setenv PYTHONPATH ${PWD}:${PYTHONPATH}
 module load xmllib/3.3.1/gcc
 imasdb iter
 imasdb tmp
-setenv PYTHONPATH $HOME/IWRAP_ACTORS:$PYTHONPATH
+setenv PYTHONPATH $ITMWORK/IWRAP_ACTORS:$PYTHONPATH
