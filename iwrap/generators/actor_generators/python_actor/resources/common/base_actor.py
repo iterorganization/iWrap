@@ -2,9 +2,8 @@ import os
 import logging
 from abc import ABC
 
-from ..runtime_settings import RuntimeSettings
-from ..cpp_binding.binder import CBinder
-from ..code_parameters import CodeParameters
+from .runtime_settings import RuntimeSettings
+from ..binding.binder import CBinder
 
 
 class ActorBaseClass( ABC ):
@@ -40,10 +39,12 @@ class ActorBaseClass( ABC ):
 
     def initialize(self):
 
-        self.__binder.initialize(actor=self)
-
         if self.code_parameters:
             self.code_parameters.initialize()
+
+        self.__binder.initialize(actor=self)
+
+
 
 
     def __call__(self, *args):

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 
      {% if code_description.subroutines.init %}
     // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    init_{{actor_settings.actor_name}}_wrapper(
+    init_{{actor_description.actor_name}}_wrapper(
         {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
                 &code_params,
         {% endif %}
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     db_entry_array = open_db_entries(db_entry_desc_array, IDS_ARGS_NO);
 
     //!!!!!!!!! Cpp wrapper !!!!!!!!!!!!!!!
-    {{actor_settings.actor_name}}_wrapper(
+    {{actor_description.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
        // --- called only for RANK 0 process
 {% endif %}
 
-    handle_status_info(status_info, "{{actor_settings.actor_name}}");
+    handle_status_info(status_info, "{{actor_description.actor_name}}");
 
     //-----------Writing output data to file ---------------------
     write_output(status_info);
@@ -80,8 +80,8 @@ int main(int argc, char **argv)
 
      {% if code_description.subroutines.finish %}
     // - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    finish_{{actor_settings.actor_name}}_wrapper(&status_info);
-    handle_status_info(status_info, "{{actor_settings.actor_name}}");
+    finish_{{actor_description.actor_name}}_wrapper(&status_info);
+    handle_status_info(status_info, "{{actor_description.actor_name}}");
     {% endif %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}

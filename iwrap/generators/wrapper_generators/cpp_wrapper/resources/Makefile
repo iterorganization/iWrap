@@ -1,5 +1,5 @@
 # actor name
-ACTOR_NAME={{actor_settings.actor_name}}
+ACTOR_NAME={{actor_description.actor_name}}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd   %}
 CXX={{ code_description.language_specific.mpi.mpi_compiler_cmd }}
@@ -16,7 +16,7 @@ CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG)
 
 
 CODE_LIB_FILE=$(notdir {{code_description.code_path}})
-CODE_LIB_DEF=../lib/$(CODE_LIB_FILE)
+CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 
 # main IMAS libs to be used

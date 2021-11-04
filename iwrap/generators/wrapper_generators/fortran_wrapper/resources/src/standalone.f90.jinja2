@@ -40,7 +40,7 @@ program standalone
 
      {% if code_description.subroutines.init %}
     ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    call init_{{actor_settings.actor_name}}_wrapper(&
+    call init_{{actor_description.actor_name}}_wrapper(&
         {% if code_description.code_parameters.parameters %}
                 code_params,  &
         {% endif %}
@@ -54,7 +54,7 @@ program standalone
     call open_db_entries(db_entry_desc_array)
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
-    call {{actor_settings.actor_name}}_wrapper(&
+    call {{actor_description.actor_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
@@ -70,7 +70,7 @@ program standalone
 {% endif %}
 
     !-----------Check status info ---------------------
-    call handle_status_info(status_info, "{{actor_settings.actor_name}}")
+    call handle_status_info(status_info, "{{actor_description.actor_name}}")
 
     !-----------Writing output data to file ---------------------
     call write_output(status_info)
@@ -84,7 +84,7 @@ program standalone
 
      {% if code_description.subroutines.finish %}
     ! - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    call finish_{{actor_settings.actor_name}}_wrapper(status_info)
+    call finish_{{actor_description.actor_name}}_wrapper(status_info)
     {% endif %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}

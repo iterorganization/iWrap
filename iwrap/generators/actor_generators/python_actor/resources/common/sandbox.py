@@ -28,6 +28,8 @@ class Sandbox:
         else:
             actor_id = self.actor.unique_id
             sandbox_dir = self.actor.sandbox_default_dir
+            sandbox_dir = os.path.expandvars( sandbox_dir )
+            sandbox_dir = os.path.expanduser( sandbox_dir )
             sandbox_path = Path( sandbox_dir, actor_id )
             self.path = sandbox_path
 

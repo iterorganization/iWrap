@@ -28,9 +28,6 @@ class DefaultDirectories(Dictionarizable):
         if self.actor_default_install_dir:
             self.actor_default_install_dir = utils.resolve_path(self.actor_default_install_dir)
 
-        if self.sandbox_default_dir:
-            self.sandbox_default_dir = utils.resolve_path(self.sandbox_default_dir)
-
     def to_dict(self, resolve_path: bool = False, make_relative: str = False,
                 project_root: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary

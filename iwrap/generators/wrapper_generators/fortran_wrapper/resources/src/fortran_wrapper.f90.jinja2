@@ -9,7 +9,7 @@ contains
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE INIT SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine init_{{actor_settings.actor_name}}_wrapper(&
+subroutine init_{{actor_description.actor_name}}_wrapper(&
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
                 code_params,  &
 {% endif %}
@@ -53,7 +53,7 @@ end
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE FINISH SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine finish_{{actor_settings.actor_name}}_wrapper(status_info) BIND(C)
+subroutine finish_{{actor_description.actor_name}}_wrapper(status_info) BIND(C)
     use ids_schemas
     use iwrap_defs
     use iwrap_tools
@@ -81,7 +81,7 @@ end
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE MAIN SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine {{actor_settings.actor_name}}_wrapper(&
+subroutine {{actor_description.actor_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}

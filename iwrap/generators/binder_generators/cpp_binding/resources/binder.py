@@ -7,12 +7,12 @@ from threading import Thread
 
 import imas
 
-from ..definitions import Argument
+from iwrap.generators.actor_generators.python_actor.resources.common.definitions import Argument
 
 from .data_type import LegacyIDS
 from .data_c_binding import ParametersCType, StatusCType
-from ..runtime_settings import RuntimeSettings, RunMode, DebugMode, SandboxLifeTime
-from ..sandbox import Sandbox
+from ..common.runtime_settings import RuntimeSettings, RunMode, DebugMode, SandboxLifeTime
+from ..common.sandbox import Sandbox
 
 
 class CBinder:
@@ -67,6 +67,7 @@ class CBinder:
         sbrt_name = actor_name + "_wrapper"
         self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
+
         if self.actor.code_description['subroutines'].get('finish'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
@@ -103,8 +104,7 @@ class CBinder:
     def __get_wrapper_function(self, function_name: str):
 
         actor_name = self.actor.name
-        wrapper_dir = self.actor_dir + '/' + self.actor.native_language + '_wrapper'
-        lib_path = wrapper_dir + '/lib/lib' + actor_name + '.so'
+        lib_path = self.actor_dir + '/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
         wrapper_fun = getattr( wrapper_lib, function_name )
@@ -126,13 +126,13 @@ class CBinder:
     def __attach_debugger(self):
 
         process_id = os.getpid()
-
+        sbrt_name = self.actor.name + "_wrapper"
         tv_command = ['totalview',
                       '-e', 'dset VERBOSE warning',
                       '-e', 'dset TV::dll_read_loader_symbols_only *',
                       '-e', 'dset TV::GUI::pop_at_breakpoint true',
                       '-e', f'dattach python {process_id}',
-                      #'-e', f'dbreak -pending {self.main_sbrt_name}',
+                      '-e', f'dbreak -pending {sbrt_name}',
                       '-e', 'puts  "\n\nTotalView attached to a running Python process.\n"',
                       '-e', 'puts  "Press any key to continue!\n"',
                       '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',

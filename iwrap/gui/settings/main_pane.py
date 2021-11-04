@@ -105,7 +105,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.language_settings_pane.reload()
         self.code_parameters_pane.reload()
         self.documentation_pane.reload()
-        self.signature_pane.reload()
+        # self.signature_pane.reload()
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.

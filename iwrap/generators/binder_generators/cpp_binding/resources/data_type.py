@@ -2,7 +2,7 @@ import logging
 import ctypes
 import imas
 
-from ..definitions import Argument
+from iwrap.generators.actor_generators.python_actor.resources.common.definitions import Argument
 
 
 class LegacyIDS ( ctypes.Structure ):

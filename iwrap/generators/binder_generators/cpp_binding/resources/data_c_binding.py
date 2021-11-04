@@ -1,7 +1,7 @@
 import logging
 import ctypes
 
-from ..code_parameters import CodeParameters
+from iwrap.generators.actor_generators.python_actor.resources.common.code_parameters import CodeParameters
 
 
 # # # # # # # #

@@ -1,17 +1,17 @@
 import os
 
-from .common.base_classes.base_actor import ActorBaseClass
+from .common.base_actor import ActorBaseClass
 from .common.definitions import Argument
 from .common.code_parameters import CodeParameters
 
 # {{ " PROVENANCE INFO ".center(80, '=') }}
-ACTOR_DESCRIPTION = {{actor_settings | pprint | wordwrap(width=80, wrapstring='\n\t\t')}}
+ACTOR_DESCRIPTION = {{actor_description | pprint | wordwrap(width=80, wrapstring='\n\t\t')}}
 
 CODE_DESCRIPTION = {{code_description | pprint | indent(width=8)}}
 # {{ "".center(80, '=') }}
 
 
-class {{actor_settings.actor_name}}(ActorBaseClass):
+class {{actor_description.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
 
@@ -44,7 +44,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     {% endif %}
         self.code_parameters = CodeParameters(default_parameters_file, schema_file)
 
-        self.sandbox_default_dir = '{{ platform_settings.sandbox_default_dir }}'
+        self.sandbox_default_dir = '{{ platform_settings.default_directories.sandbox_default_dir }}'
 
 
 
