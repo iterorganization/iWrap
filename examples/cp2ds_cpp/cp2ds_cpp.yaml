@@ -27,6 +27,9 @@ code_description:
         mpi:
             mpi_compiler_cmd:
             mpi_runner:
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
