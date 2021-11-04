@@ -44,7 +44,7 @@ clean:
 	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
 
 make html_to_md:
-	python3 $(SOURCEDIR)/html_to_md.py
+	python3 $(SOURCEDIR)/html_to_rst.py
 
 docs:
 	make clean

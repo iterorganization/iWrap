@@ -18,7 +18,7 @@ Welcome to iWrap's documentation!
    :maxdepth: 1
    :caption: iWrap documentation:
 
-   /iwrap_confluence_documentation/index.md
+   /iwrap_confluence_documentation/index.rst
 
 
 
