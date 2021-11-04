@@ -1,14 +1,11 @@
-KNOWN ISSUES (to be corrected)
-
-REPORTED BY MIREILLE
-
+* Python 3.7 is outdated - to use Python 3.9 (3.10) as min ver
 
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
 + improve 'runwork' mechanism
 + OpenMP
-* "per patform" configuration
+
 
 iWrap:
 ----------------
