@@ -70,7 +70,7 @@ class CppWrapperGenerator(WrapperGenerator):
         code_description = ProjectSettings.get_settings().code_description
         generation_env = {'temp_dir': self.install_dir}
 
-        native_language = code_description.programming_language.lower()
+        native_language = code_description.settings.programming_language.lower()
 
         # TO BE CHECKED!!!!
 

@@ -142,13 +142,19 @@ class CBinder:
         t.start()
         input()  # just to wait until debugger starts
 
-    def __run_normal(self, c_arglist, debug_mode=False):
+    def __run_normal(self, c_arglist, sandbox_dir:str, debug_mode=False):
 
         sbrt_name = self.actor.name + "_wrapper"
         if debug_mode:
             self.__attach_debugger(sbrt_name)
 
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir(sandbox_dir)
+
         self.wrapper_main_func( *c_arglist )
+        # go back to initial dir
+        os.chdir(cwd)
 
     def __save_input(self, full_arguments_list, sandbox_dir):
 
@@ -253,10 +259,6 @@ class CBinder:
         status_info = StatusCType()
         c_arglist.append( status_info.convert_to_native_type() )
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
-
         print( 'RUN MODE: ', str( self.runtime_settings.run_mode ) )
 
         mpi_settings = self.runtime_settings.mpi
@@ -264,13 +266,10 @@ class CBinder:
         debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
 
         if is_standalone:
-            self.__run_standalone( full_arguments_list, mpi_settings=mpi_settings, debug_mode=debug_mode )
+            self.__run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
+                                   mpi_settings=mpi_settings, debug_mode=debug_mode )
         else:
-            self.__run_normal( c_arglist, debug_mode=debug_mode )
-
-
-        # go back from sandbox to original location
-        os.chdir( cwd )
+            self.__run_normal( c_arglist,  sandbox_dir=sandbox_dir, debug_mode=debug_mode )
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info )
