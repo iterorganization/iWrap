@@ -1,13 +1,20 @@
+Improvements:
+-----------------
 * Python 3.7 is outdated - to use Python 3.9 (3.10) as min ver
+* Handling of different 'code parameter' types (strings, F namelist)
 
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
 + improve 'runwork' mechanism
-+ OpenMP
 
 
 iWrap:
 ----------------
 + language specific panes plugin discovery mechanism based on implicit namespace packages
 + set iWrap version based on GIT
+
+Open points:
+* Should 'call_init' be a part of actor API ?
+* Effective memory usage: what about a NUMBER of HUGE IDSes?
+* init/step/finish in standalone mode (?)
