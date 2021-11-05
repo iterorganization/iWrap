@@ -105,22 +105,18 @@ class FortranPane( ttk.Frame, IWrapPane ):
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
-        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
-        frame_mpi.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
-        frame_mpi.grid_columnconfigure(1, weight=1)
-
         frame_batch = ttk.LabelFrame(main_frame, text="Batch", borderwidth=2, relief="groove")
-        frame_batch.pack(side=tk.BOTTOM, fill=tk.X, expand=0, padx=10)
+        frame_batch.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
         frame_batch.grid_columnconfigure(1, weight=1)
 
+        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
+        frame_mpi.pack(side=tk.LEFT, fill=tk.X, expand=1, padx=10)
+        frame_mpi.grid_columnconfigure(1, weight=1)
+
         self.mpi_combobox = BatchMpiCombo(frame_mpi, 0, 0, "Mpi compiler cmd:", self.settings.mpi.mpi_compiler_cmd)
-        self.mpi_combobox.add_combobox()
         self.mpi_runner_combobox = BatchMpiCombo(frame_mpi, 0, 1, "MPI runner:", self.settings.mpi.mpi_runner)
-        self.mpi_runner_combobox.add_combobox()
         self.batch_default_queue_combobox = BatchMpiCombo(frame_batch, 0, 0, "Batch default queue:", self.settings.batch.batch_default_queue)
-        self.batch_default_queue_combobox.add_combobox()
         self.batch_runner_combobox = BatchMpiCombo(frame_batch, 0, 1, "Batch runner", self.settings.batch.batch_runner)
-        self.batch_runner_combobox.add_combobox()
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
@@ -230,6 +226,7 @@ class BatchMpiCombo:
         self.value = tk.StringVar()
         self.current_value = tk.StringVar()
         self.combobox = None
+        self.add_combobox()
 
     def add_combobox(self):
         ttk.Label(self.frame, text=self.text).grid(column=self.column, row=self.row, padx=5, pady=5, sticky=(tk.W, tk.N))
