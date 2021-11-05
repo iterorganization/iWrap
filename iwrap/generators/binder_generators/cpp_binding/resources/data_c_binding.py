@@ -66,5 +66,5 @@ class ParametersCType( ctypes.Structure ):
         return ctypes.byref( self )
 
 
-    def __init__(self, codeparams: CodeParameters):
-        self.params = codeparams.parameters
+    def __init__(self, code_parameters: str):
+        self.params = code_parameters

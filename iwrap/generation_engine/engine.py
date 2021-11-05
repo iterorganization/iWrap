@@ -86,12 +86,13 @@ class Engine:
 
         for generator in generators:
             try:
+                generator_name = generator.__class__.__name__
                 generator.configure(info_output_stream = info_output_stream)
-                print(text_decoration, 'GENERATING AN ACTOR', text_decoration, file=info_output_stream)
+                print(text_decoration, f'{generator_name} : GENERATING', text_decoration, file=info_output_stream)
                 generator.generate(project_settings_dict)
-                print(text_decoration, 'BUILDING AN ACTOR', text_decoration, file=info_output_stream )
+                print(text_decoration, f'{generator_name} : BUILDING', text_decoration, file=info_output_stream )
                 generator.build()
-                print(text_decoration, 'GENERATION COMPLETE!', text_decoration, file=info_output_stream)
+                print(text_decoration, f'{generator_name} : GENERATION COMPLETE!', text_decoration, file=info_output_stream)
 
             except Exception as exc:
                 print( 'GENERATION FAILED!', file=info_output_stream )
