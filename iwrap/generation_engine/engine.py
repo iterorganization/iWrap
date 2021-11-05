@@ -73,26 +73,27 @@ class Engine:
 
         project_settings_dict.update({'platform_settings': platform_settings_dict})
         actor_language = Engine._active_generator.actor_language
-        code_language = ProjectSettings.get_settings().code_description.programming_language
+        code_language = ProjectSettings.get_settings().code_description.settings.programming_language
         binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
         binder_generator.initialize()
         wrapper_generator = WrapperGeneratorRegistry.get_generator(code_language)
         wrapper_generator.initialize()
 
         generators = Engine._active_generator, binder_generator, wrapper_generator
-        text_decoration = 20 * "="
+        text_decoration = 20 * "-"
         print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
         ProjectSettings.get_settings().validate( self )
 
         for generator in generators:
             try:
-                generator_name = generator.__class__.__name__
+                generator_name: str = generator.__class__.__name__
+                print(f'  {generator_name}  '.center(80, '='))
                 generator.configure(info_output_stream = info_output_stream)
-                print(text_decoration, f'{generator_name} : GENERATING', text_decoration, file=info_output_stream)
+                print(text_decoration, 'GENERATING', text_decoration, file=info_output_stream)
                 generator.generate(project_settings_dict)
-                print(text_decoration, f'{generator_name} : BUILDING', text_decoration, file=info_output_stream )
+                print(text_decoration, 'BUILDING', text_decoration, file=info_output_stream )
                 generator.build()
-                print(text_decoration, f'{generator_name} : GENERATION COMPLETE!', text_decoration, file=info_output_stream)
+                print(text_decoration, 'GENERATION COMPLETE!', text_decoration, file=info_output_stream)
 
             except Exception as exc:
                 print( 'GENERATION FAILED!', file=info_output_stream )
