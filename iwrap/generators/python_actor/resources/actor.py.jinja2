@@ -25,7 +25,7 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
     def __init__(self):
         super().__init__()
         self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        self.native_language = '{{code_description.programming_language | lower}}'
+        self.native_language = '{{code_description.settings.programming_language | lower}}'
         self.is_mpi_code = {% if not code_description.language_specific.mpi.mpi_compiler_cmd or code_description.language_specific.mpi.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
         # Auto-generated list of arguments meta-data
@@ -45,7 +45,6 @@ class {{actor_settings.actor_name}}(ActorBaseClass):
         self.code_parameters = CodeParameters(default_parameters_file, schema_file)
 
         self.sandbox_default_dir = '{{ platform_settings.sandbox_default_dir }}'
-
 
 
 

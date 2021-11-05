@@ -4,12 +4,14 @@ actor_description:
     data_type: legacy
 
 code_description:
-    programming_language: Fortran
     subroutines:
         init:
         main:   coreprofiles2distsource
         finish:
-    data_type: legacy
+    settings:
+        programming_language: Fortran
+        data_type: legacy
+        code_path: ./native/libcp2ds.a
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -17,7 +19,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds.a
     code_parameters:
         parameters:
         schema:
@@ -31,6 +32,9 @@ code_description:
         mpi:
             mpi_compiler_cmd:
             mpi_runner:
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch:
         extra_libraries:
             pkg_config_defined:

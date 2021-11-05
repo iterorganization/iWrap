@@ -79,7 +79,7 @@ class PythonActorGenerator(ActorGenerator):
         platform_settings = PlatformSettings().to_dict(resolve_path=True, project_root_dir=project_root_dir)
         dictionary = {'platform_settings': platform_settings, 'actor_settings': actor_settings_dict, 'code_description': code_description_dict}
 
-        native_language = code_description.programming_language.lower()
+        native_language = code_description.settings.programming_language.lower()
 
         self.wrapper_dir = native_language + '_wrapper'
         # TO BE CHECKED!!!!
@@ -117,6 +117,7 @@ class PythonActorGenerator(ActorGenerator):
 
         proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir + '/' + self.wrapper_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
 
         for line in proc.stdout:
             print( line, file=self.__info_output_stream, end='' )

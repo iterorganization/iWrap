@@ -1,10 +1,12 @@
 code_description:
-    programming_language: Fortran
     subroutines:
         init:   init_code
         main:   code_lifecycle
         finish: clean_up
-    data_type: legacy
+    settings:
+        programming_language: Fortran
+        data_type: legacy
+        code_path: ./native_code/libcode_lifecycle.a
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -12,7 +14,6 @@ code_description:
     -   name: equilibrium_out
         type: equilibrium
         intent: OUT
-    code_path: ./native_code/libcode_lifecycle.a
     code_parameters:
         parameters: ./input/input_physics.xml
         schema: ./input/input_physics.xsd
@@ -26,6 +27,9 @@ code_description:
         mpi:
             mpi_compiler_cmd:
             mpi_runner:
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

@@ -40,13 +40,11 @@ class MPI( SettingsBaseClass ):
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
 
-        # mpi_compiler_cmd
-        # mpi_runner
         if self.mpi_runner and not self.mpi_compiler_cmd:
-            raise ValueError('MPI compiler command is not set')
+            raise ValueError('MPI runner command is not set')
 
         if self.mpi_compiler_cmd and not self.mpi_runner:
-            raise ValueError('MPI runner is not set')
+            raise ValueError('MPI compiler is not set')
 
     def clear(self):
         self.__init__()
@@ -56,6 +54,44 @@ class MPI( SettingsBaseClass ):
 
     def to_dict(self, resolve_path: bool = False, make_relative: str = False, project_root_dir: str = None) -> Dict[
         str, Any]:
+        return super().to_dict()
+
+
+class Batch( SettingsBaseClass ):
+    @property
+    def batch_runner(self):
+        return self._batch_runner
+
+    @batch_runner.setter
+    def batch_runner(self, value):
+        self._batch_runner = value if value != "None" else None
+
+    @property
+    def batch_default_queue(self):
+        return self._batch_default_queue
+
+    @batch_default_queue.setter
+    def batch_default_queue(self, value):
+        self._batch_default_queue = value if value != "None" else None
+
+    def __init__(self):
+        self._batch_runner = ''
+        self._batch_default_queue = ''
+
+    def validate(self, engine: Engine, project_root_dir: str) -> None:
+        if self.batch_runner and not self.batch_runner:
+            raise ValueError('Batch runner command is not set')
+
+        if self.batch_default_queue and not self.batch_default_queue:
+            raise ValueError('Batch queue is not set')
+
+    def clear(self):
+        self.__init__()
+
+    def from_dict(self, dictionary: dict):
+        super().from_dict( dictionary )
+
+    def to_dict(self, resolve_path: bool = False, make_relative: str = False, project_root_dir: str = None) -> Dict[str, Any]:
         return super().to_dict()
 
 
@@ -112,6 +148,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         self.compiler_cmd = ''
         self.include_path = ''
         self.mpi = MPI()
+        self.batch = Batch()
         self._open_mp_switch = False
         self.extra_libraries = ExtraLibraries()
 
@@ -132,6 +169,9 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
         # mpi
         self.mpi.validate(engine, project_root_dir)
+
+        # mpi
+        self.batch.validate(engine, project_root_dir)
 
         # open_mp
         # TODO validate open mp
