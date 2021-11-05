@@ -1,7 +1,7 @@
 import sys
 from typing import Set, List
 
-from iwrap.generation_engine.base_classes import ActorGenerator
+from iwrap.generators.actor_generators import ActorGenerator
 
 
 class EmptyGenerator( ActorGenerator ):
@@ -13,6 +13,10 @@ class EmptyGenerator( ActorGenerator ):
     @property
     def description(self) -> str:
         return 'An empty actor generator'
+
+    @property
+    def actor_language(self) -> str:
+        return 'actor_language_1'
 
     @property
     def actor_data_types(self) -> List[str]:

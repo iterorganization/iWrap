@@ -95,4 +95,4 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.language_settings_pane.reload()
         self.code_parameters_pane.reload()
         self.documentation_pane.reload()
-        self.signature_pane.reload()
+        # self.signature_pane.reload()

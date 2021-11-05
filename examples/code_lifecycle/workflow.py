@@ -37,6 +37,7 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        self.actor_code_lifecycle.runtime_settings.debug = DebugMode.ATTACH
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
             self.actor_code_lifecycle.runtime_settings.debug = DebugMode.STANDALONE
