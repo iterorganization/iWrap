@@ -40,9 +40,13 @@ class ProjectSettings( SettingsBaseClass ):
 
         return cls._settings
 
-    def __init__(self):
+    @property
+    def root_dir_path(self):
+        return str( Path( self.project_dir, self.code_description.settings.root_dir ) )
 
-        self.project_file_path = ''
+    def __init__(self):
+        self.project_dir = os.getcwd()
+        self.project_file = ''
         self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
 
@@ -54,11 +58,10 @@ class ProjectSettings( SettingsBaseClass ):
     #def validate(self, engine: Engine) -> None:
     def validate(self, engine ) -> None:
 
-
         if not self.code_description:
             raise ValueError( 'Code description structure cannot be empty!')
 
-        self.code_description.validate(engine, None)
+        self.code_description.validate(engine, self.root_dir_path )
 
         if not self.actor_description:
             raise ValueError( 'Actor description structure cannot be empty!' )
@@ -73,34 +76,38 @@ class ProjectSettings( SettingsBaseClass ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
 
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.project_file_path = ''
+        self.project_dir = os.getcwd()
+        self.project_file = ''
         self.actor_description.clear()
         self.code_description.clear()
 
-    def save(self, stream):
+    def save(self, file):
         """Stores code description in a file
 
         Args:
-            stream : an object responsible for storing data
+            file : an object responsible for storing data
         """
 
         actor_description_dict = self.actor_description.to_dict()
         code_description_dict = self.code_description.to_dict()
         dumped = {'actor_description': actor_description_dict, 'code_description': code_description_dict}
 
-        yaml.dump( dumped, stream=stream,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
+        yaml.dump( dumped, stream=file,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
 
+        file_real_path = os.path.realpath( file.name )
+        self.project_dir = os.path.dirname( file_real_path )
+        self.project_file = file.name
 
     def load(self, file):
         """Loads code description from a file
@@ -110,6 +117,8 @@ class ProjectSettings( SettingsBaseClass ):
         """
         self.clear()
         dict_read = yaml.load( file, Loader=yaml.Loader )
+        if not dict_read:
+            raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
         actor_description_dict = dict_read.get('actor_description')
         if actor_description_dict:
@@ -124,7 +133,7 @@ class ProjectSettings( SettingsBaseClass ):
                 "The YAML file being looaded doesn't seem to contain valid description of the native code" )
 
         file_real_path = os.path.realpath( file.name )
-        if not self.code_description.root_dir:
-            self.code_description.root_dir = os.path.dirname( file_real_path )
+        self.project_dir = os.path.dirname( file_real_path )
+        self.project_file = file.name
 
 

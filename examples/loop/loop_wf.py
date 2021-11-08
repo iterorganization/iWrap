@@ -53,12 +53,19 @@ class ExampleWorkflowManager:
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
-
+        self.actor_loop.initialize()
         for i in range( 10 ):
             print(f' ITERATION: {i} '.center(50, '='))
-            self.actor_loop.initialize()
+            '''
+            if i % 2 == 0:
+                self.actor_loop.code_parameters.parameters_path = '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
+            else:
+                self.actor_loop.code_parameters.parameters_path = None
+            '''
+
             self.equilibrium = self.actor_loop( self.equilibrium )
-            self.actor_loop.finalize()
+
+        self.actor_loop.finalize()
 
     def end_workflow(self):
         

@@ -1,8 +1,10 @@
 code_description:
-    programming_language: Fortran
     subroutines:
         main:   physics_ii
-    data_type: legacy
+    settings:
+        data_type: legacy
+        programming_language: Fortran
+        code_path: ./native_code/libphysics_ii.a
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -10,7 +12,6 @@ code_description:
     -   name: equilibrium_out
         type: equilibrium
         intent: OUT
-    code_path: ./native_code/libphysics_ii.a
     code_parameters:
         parameters: ./input/input_physics.xml
         schema: ./input/input_physics.xsd
@@ -19,10 +20,14 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
-        compiler_vendor: GNU
         compiler_cmd: gfortran
         include_path: ./native_code/mod_physics_ii.mod
-        mpi: false
+        mpi:
+            mpi_compiler_cmd:
+            mpi_runner:
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

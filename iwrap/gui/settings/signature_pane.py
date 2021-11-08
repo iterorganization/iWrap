@@ -139,7 +139,6 @@ class TextBox(ttk.LabelFrame):
         def copy(self) -> None:
             """Copies the selection."""
             self.master.event_generate("<<Copy>>")
-            print()
 
         def refresh(self) -> None:
             """Calls external refresh method."""

@@ -1,8 +1,10 @@
 code_description:
-    programming_language: cpp
     subroutines:
         main:   cp2ds_mpi_cpp
-    data_type: legacy
+    settings:
+        data_type: legacy
+        programming_language: cpp
+        code_path: ./native/libcp2ds_mpi_cpp.a
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -10,7 +12,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds_mpi_cpp.a
     code_parameters:
         parameters:
         schema:
@@ -19,10 +20,14 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
-        compiler_vendor: GNU
-        compiler_cmd: mpicxx
+        compiler_cmd: g++
         include_path: ./native/cp2ds_mpi.h
-        mpi: true
+        mpi:
+            mpi_compiler_cmd: mpicxx
+            mpi_runner: mpiexec
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

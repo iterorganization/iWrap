@@ -6,6 +6,7 @@ from tkinter.constants import S, SEL_FIRST
 
 from typing import Tuple, Union, List
 
+from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 
@@ -33,9 +34,9 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # Common reference for directory browsers.
-        self._browser_dir = ProjectSettings.get_settings().code_description.root_dir
+        self._browser_dir = ProjectSettings.get_settings().code_description.settings.root_dir
         # XML file path browser dialog
-        self.xml_browser = CodeParameterBrowserPane(self, label_text="Code parameters file:", file_type="XML")
+        self.xml_browser = CodeParameterBrowserPane(self, label_text="Parameters file:", file_type="XML")
 
         # XSD file path browser dialog
         self.xsd_browser = CodeParameterBrowserPane(self, label_text="Schema file:", file_type="XSD")
@@ -118,9 +119,7 @@ class XMLPath(CodeParameterPath):
     def reload(self) -> None:
         super(XMLPath, self).reload()
         path_to_set = self._project_settings.parameters
-        if not self.is_path_correct(path_to_set):
-            return
-
+        path_to_set = "" if path_to_set is None else path_to_set
         self.path.set(path_to_set)
 
 
@@ -139,9 +138,7 @@ class XSDPath(CodeParameterPath):
     def reload(self) -> None:
         super(XSDPath, self).reload()
         path_to_set = self._project_settings.schema
-        if not self.is_path_correct(path_to_set):
-            return
-
+        path_to_set = "" if path_to_set is None else path_to_set
         self.path.set(path_to_set)
 
 
@@ -198,6 +195,7 @@ class CodeParameterBrowserPane(ttk.Frame):
         self._master._browser_dir = '/'.join(filename.split('/')[:-1])
 
         # Save loaded path.
+        filename = utils.make_relative(filename, ProjectSettings.get_settings().root_dir_path)
         self.file_path.path.set(filename)
         self.update_settings()
 

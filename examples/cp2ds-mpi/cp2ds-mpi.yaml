@@ -1,10 +1,12 @@
 code_description:
-    programming_language: Fortran
     subroutines:
         init:
         main:   coreprofiles2distsource_mpi
         finish:
-    data_type: legacy
+    settings:
+        programming_language: Fortran
+        code_path: ./native/libcp2ds-mpi.a
+        data_type: legacy
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -12,7 +14,6 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_path: ./native/libcp2ds-mpi.a
     code_parameters:
         parameters:
         schema:
@@ -21,10 +22,14 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
-        compiler_vendor: GNU
-        compiler_cmd: mpifort
+        compiler_cmd: gfortran
         include_path: ./native/mod_cp2ds_mpi.mod
-        mpi: true
+        mpi:
+            mpi_compiler_cmd: mpifort
+            mpi_runner: mpiexec
+        batch:
+            batch_runner:
+            batch_default_queue:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

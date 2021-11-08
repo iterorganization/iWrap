@@ -1,9 +1,9 @@
 import logging
+import os
 from typing import Any, Dict
 from pathlib import Path
 
-import yaml
-
+from iwrap.common import utils
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.platform.platform_settings import PlatformSettings
 
@@ -18,8 +18,6 @@ class ActorDescription( SettingsBaseClass ):
         self.actor_name: str = ''
         self.data_type: str = ''
         self.actor_type: str = ''
-        self.install_dir: str = ''
-
         self.install_dir: str = ''
 
     def validate(self, engine: Engine, project_root_dir, **kwargs) -> None:
@@ -46,15 +44,17 @@ class ActorDescription( SettingsBaseClass ):
 
         # install_dir
         if not self.install_dir:
-            self.install_dir = PlatformSettings().actor_default_dir
+            self.install_dir = PlatformSettings().default_directories.actor_default_install_dir
             ActorDescription.__logger.warning(
                 f'Actor installation directory is not set! Using default one: "{self.install_dir}".' )
 
         try:
-            Path( self.install_dir ).mkdir( parents=True, exist_ok=True )
+            __path = os.path.expandvars(self.install_dir)
+            __path = os.path.expanduser(__path)
+            Path( __path ).mkdir( parents=True, exist_ok=True )
         except Exception as exc:
             raise ValueError(
-                'Installation directory path is incorrect or dir cannot be created ["' + self.install_dir + "]" + exc )
+                'Installation directory path is incorrect or dir cannot be created ["' + __path or self.install_dir + "]" + exc )
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -64,13 +64,18 @@ class ActorDescription( SettingsBaseClass ):
            """
         super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative=False,  project_root_dir:str=None )-> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+        if resolve_path:
+            # install_dir
+            __path = utils.resolve_path(self.install_dir)
+            ret_dict.update({'install_dir': __path})
+        return ret_dict
 
     def clear(self):
         """Clears class content, setting default values of class attributes

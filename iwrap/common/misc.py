@@ -34,8 +34,12 @@ class Dictionarizable( ABC ):
                 setattr( self, name, value )
 
     @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
+
+        Args:
+            resolve_path (bool): Determines if paths with system variables should be 'expanded' or left as they are
+            project_root (str): The root of all relative paths
 
         Returns
             Dict[str, Any]: Dictionary containing object data
@@ -44,9 +48,9 @@ class Dictionarizable( ABC ):
         dict_ = {}
         for key, value in self._list_attributes():
             if isinstance( value, Dictionarizable ):
-                dict_[key] = value.to_dict()
+                dict_[key] = value.to_dict(resolve_path, make_relative, project_root_dir)
             elif isinstance( value, List ):
-                dict_[key] = [item.to_dict() if isinstance( item, Dictionarizable ) else item for item in value]
+                dict_[key] = [item.to_dict(resolve_path, make_relative, project_root_dir) if isinstance( item, Dictionarizable ) else item for item in value]
             else:
                 dict_[key] = value
 

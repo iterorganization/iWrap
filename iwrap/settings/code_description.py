@@ -7,7 +7,7 @@ import yaml
 from pathlib import Path
 from enum import Enum
 
-
+from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
@@ -15,10 +15,11 @@ from iwrap.settings.language_specific.language_settings_mgmt import LanguageSett
 
 class Intent( Enum ):
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     IN = 'IN'  # input type of argument
     OUT = 'OUT'  # output type of an argument
+
 
 class Argument( SettingsBaseClass ):
     """The data class containing information about argument of the native code
@@ -29,9 +30,7 @@ class Argument( SettingsBaseClass ):
         intent : determines if argument is IN or OUT
     """
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     @property
     def intent(self):
@@ -59,7 +58,7 @@ class Argument( SettingsBaseClass ):
             raise ValueError( 'Argument IDS type is not set!' )
 
         data_type = kwargs['data_type']
-        ids_list = Engine.get_ids_types(data_type)
+        ids_list = Engine.get_ids_types( data_type )
         if self.type not in ids_list:
             raise ValueError( f'Incorrect IDS type {self.type} of argument {self.name}!' )
 
@@ -75,13 +74,13 @@ class Argument( SettingsBaseClass ):
 
         super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
 
     def __str__(self):
         str_ = 'Name : ' + self.name + '\n' \
@@ -89,7 +88,8 @@ class Argument( SettingsBaseClass ):
                + 'Intent : ' + self.intent + '\n'
         return str_
 
-class Subroutines(SettingsBaseClass):
+
+class Subroutines( SettingsBaseClass ):
     """The data class containing information about subroutines to be called from library provided by developer.
 
     Attributes:
@@ -99,22 +99,23 @@ class Subroutines(SettingsBaseClass):
     """
 
     def __init__(self):
-        #: A name of subroutine that could be used to initialise the native code (optional)
+        # A name of subroutine that could be used to initialise the native code (optional)
+        # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.init: str = ''
 
-        #: A name of the main subroutine that will be called from actor (mandatory)
+        # A name of the main subroutine that will be called from actor (mandatory)
+        # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.main: str = ''
 
-        #: A name of subroutine that could be used to finalise the native code (optional)
+        # A name of subroutine that could be used to finalise the native code (optional)
+        # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.finish: str = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
-
         # validate correctness of XML
 
         if not self.main:
             raise ValueError( 'A name of the main subroutine must provided!' )
-
 
     def clear(self):
         """Clears class content, setting default values of class attributes
@@ -129,18 +130,83 @@ class Subroutines(SettingsBaseClass):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
-        super().from_dict(dictionary)
+        super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
 
 
-class CodeParameters(SettingsBaseClass):
+class Settings( SettingsBaseClass ):
+    @property
+    def programming_language(self):
+        return self._programming_language
+
+    @programming_language.setter
+    def programming_language(self, value: str):
+        self._programming_language = ''
+        if value:
+            self._programming_language = value.lower()
+            self._master.change_language_specific()
+
+    def __init__(self, master):
+        self.root_dir = '.'
+        self._programming_language: str = ''
+        self.data_type: str = None
+        self.code_path: str = None
+        self._master = master
+
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+        # programming_language
+        if not self.programming_language:
+            raise ValueError( 'Programming language is not set!' )
+        else:
+            engine.validate_programming_language( self.programming_language )
+
+        # data_type
+        if not self.data_type:
+            raise ValueError( 'Type of data handled by native code is not set!' )
+        else:
+            engine.validate_code_data_type( self.data_type )
+
+        # code path
+        if not self.code_path:
+            raise ValueError( 'Path to native code is not set!' )
+
+        __path = utils.resolve_path( self.code_path, project_root_dir )
+        if not Path(__path).exists():
+            raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
+
+    def from_dict(self, dictionary: Dict[str, Any]) -> None:
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
+        super().from_dict( dictionary )
+
+    def clear(self):
+        """Clears class content, setting default values of class attributes
+        """
+        self.root_dir = '.'
+        self.programming_language = None
+        self.data_type = None
+        self.code_path = None
+
+    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
+
+
+class CodeParameters( SettingsBaseClass ):
     """The data class containing information about files defining code parameters.
 
     Attributes:
@@ -148,8 +214,7 @@ class CodeParameters(SettingsBaseClass):
         schema (str): Path to a XSD file with schema definition for code parameters file
     """
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         #: A path to XML file containing native code parameters
@@ -165,19 +230,19 @@ class CodeParameters(SettingsBaseClass):
 
         # parameters
         if self.parameters:
-            __path = Path(project_root_dir, self.parameters)
-            if not __path.exists():
-                raise ValueError( f'Path to XML parameters file is invalid! {str(__path)}' )
+            __path = utils.resolve_path( self.parameters, project_root_dir )
+            if not Path(__path).exists():
+                raise ValueError( f'Path to XML parameters file is invalid! {str( __path )}' )
 
         # schema
         if self.schema:
-            __path = Path(project_root_dir, self.schema)
-            if not __path.exists():
-                raise ValueError( f'Path to XSD schema file is invalid! {str(__path)}' )
+            __path = utils.resolve_path( self.schema, project_root_dir )
+            if not Path(__path).exists():
+                raise ValueError( f'Path to XSD schema file is invalid! {str( __path )}' )
 
         # validate correctness of XML
         if self.parameters and self.schema:
-            self.validate_xml(self.parameters, self.schema)
+            xml = self.validate_xml( self.parameters, self.schema, project_root_dir )
 
     def clear(self):
         """Clears class content, setting default values of class attributes
@@ -191,17 +256,30 @@ class CodeParameters(SettingsBaseClass):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
-        super().from_dict(dictionary)
+        super().from_dict( dictionary )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
 
-    def validate_xml(self, parameters_xml_path: str = None, schema_xsd_path: str = None) -> None:
+        if resolve_path:
+            # parameters
+            if self.parameters:
+                __path = utils.resolve_path( self.parameters, project_root_dir )
+                ret_dict.update( {'parameters': __path} )
+
+            # schema
+            if self.schema:
+                __path = utils.resolve_path( self.schema, project_root_dir )
+                ret_dict.update( {'schema': __path} )
+
+        return ret_dict
+
+    def validate_xml(self, parameters_xml_path: str, schema_xsd_path:str, root_dir:str) -> None:
         """Self validation of XML file against given schema file (XSD).
 
         Args:
@@ -219,14 +297,16 @@ class CodeParameters(SettingsBaseClass):
             schema = self.schema
 
         # Parse XSD file:
-        xmlschema_file = etree.parse(schema_xsd_path)
-        xmlschema = etree.XMLSchema(xmlschema_file)
+        schema_xsd_path = utils.resolve_path(schema_xsd_path, root_dir)
+        xmlschema_file = etree.parse( schema_xsd_path )
+        xmlschema = etree.XMLSchema( xmlschema_file )
 
         # Parse XML file:
-        xml_file = etree.parse(parameters_xml_path)
+        parameters_xml_path = utils.resolve_path(parameters_xml_path, root_dir)
+        xml_file = etree.parse( parameters_xml_path )
 
         # Perform validation:
-        xmlschema.assertValid(xml_file)
+        xmlschema.assertValid( xml_file )
 
 
 class CodeDescription( SettingsBaseClass ):
@@ -234,8 +314,7 @@ class CodeDescription( SettingsBaseClass ):
 
     Attributes:
         programming_language (`str`): language of native physics code
-        code_name (str): name of user method / subroutine to be called, used also as an actor name (Please note: must be *exactly the same* as name
-            of called method / subroutine!)
+        subroutines (:obj:`Subroutines`): name of user method / subroutine to be called, used also as an actor name
         data_type (:obj:`str`):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
         arguments (list [:obj:`Arguments`]): list of native code in/out arguments
         code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
@@ -245,8 +324,7 @@ class CodeDescription( SettingsBaseClass ):
         language_specific (Dict[str, Any]): information specific for a given language of the native code
     """
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     @property
     def arguments(self):
@@ -257,28 +335,9 @@ class CodeDescription( SettingsBaseClass ):
         self._arguments = []
 
         for value in values or []:
-           if not isinstance(value, Argument):
-               value = Argument(value)
-           self._arguments.append(value)
-
-    @property
-    def programming_language(self):
-        return self._programming_language
-
-    @programming_language.setter
-    def programming_language(self, value: str):
-        self._programming_language = ''
-
-        if value:
-            self._programming_language = value.lower()
-            # language specific settings depends on language chosen
-            # language was not set while language specific settings were read so they need
-            # to be set here 'again' converting from dict to a proper object
-            if  self._language_specific is not None and isinstance(self._language_specific, dict):
-                self._language_specific = LanguageSettingsManager.get_settings_handler( self._programming_language,
-                                                                                        self._language_specific )
-
-
+            if not isinstance( value, Argument ):
+                value = Argument( value )
+            self._arguments.append( value )
 
     @property
     def language_specific(self):
@@ -286,65 +345,43 @@ class CodeDescription( SettingsBaseClass ):
 
     @language_specific.setter
     def language_specific(self, values):
-
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._language_specific = LanguageSettingsManager.get_settings_handler(self._programming_language, values)
-        pass
+        self._language_specific = LanguageSettingsManager.get_settings_handler( self.settings.programming_language, values )
 
     def __init__(self):
-        self.root_dir = os.getcwd()
-        self._programming_language: str = ''
         self.subroutines: Subroutines = Subroutines()
-        self.data_type: str = None
         self._arguments: List[Argument] = []
-        self.code_path: str = None
+        self.settings: Settings = Settings(self)
         self.code_parameters: CodeParameters = CodeParameters()
         self.documentation: str = None
         self.language_specific: dict = {}
 
-    def validate(self, engine: Engine, _not_used: str, **kwargs) -> None:
+    def change_language_specific(self):
+        if self._language_specific is not None and isinstance(self._language_specific, dict):
+            self._language_specific = LanguageSettingsManager.get_settings_handler(self.settings.programming_language,
+                                                                                          self._language_specific)
 
-        project_root_dir = self.root_dir
-        # programming_language
-        if not self.programming_language:
-            raise ValueError( 'Programming language is not set!' )
-        else:
-            engine.validate_programming_language(self.programming_language)
-
-        # subroutines
-        self.subroutines.validate( engine, project_root_dir )
-
-        # data_type
-        if not self.data_type:
-            raise ValueError( 'Type of data handled by native code is not set!' )
-        else:
-            engine.validate_code_data_type(self.data_type)
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
         # arguments
         for argument in self.arguments or []:
-            argument.validate(engine, project_root_dir, **{'data_type' : self.data_type})
-
-        # code path
-        if not self.code_path:
-            raise ValueError( 'Path to native code is not set!' )
-
-        from iwrap.settings.project import ProjectSettings
-        __path = Path(project_root_dir, self.code_path)
-        if not __path.exists():
-            raise ValueError( 'Path to native code points to not existing location ["' + str(__path) + '"]' )
+            argument.validate( engine, project_root_dir, **{'data_type': self.settings.data_type} )
 
         # code parameters
-        self.code_parameters.validate(engine, project_root_dir)
+        self.code_parameters.validate( engine, project_root_dir )
+
+        #settings
+        self.settings.validate(engine, project_root_dir)
 
         # documentation
-        if self.documentation and not isinstance(self.documentation, str):
+        if self.documentation and not isinstance( self.documentation, str ):
             raise ValueError( 'Documentation must be a string (and it is not)!' )
 
         if not self.language_specific:
             raise ValueError( 'Language specific data are not set!' )
-        elif isinstance(self.language_specific, SettingsBaseClass):
-            self.language_specific.validate(engine, project_root_dir) # pylint: disable=no-member
+        elif isinstance( self.language_specific, SettingsBaseClass ):
+            self.language_specific.validate( engine, project_root_dir )  # pylint: disable=no-member
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -357,23 +394,29 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.root_dir = None
-        self.programming_language = None
-        self.data_type = None
         self.arguments = []
-        self.code_path = None
         self.code_parameters.clear()
         self.documentation = None
+        self.settings.clear()
         self.language_specific = {}
         self.subroutines.clear()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, resolve_path: bool = False,
+                make_relative: bool = False,
+                project_root_dir: str = None) -> Dict[ str, Any]:
         """Serializes given object to dictionary
 
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+        if resolve_path:
+            # code_path
+            code_path = self.settings.code_path
+            __path = utils.resolve_path( code_path, project_root_dir )
+            ret_dict.update( {'code_path': __path} )
+
+        return ret_dict
 
     def save(self, file):
         """Stores code description in a file
@@ -382,7 +425,8 @@ class CodeDescription( SettingsBaseClass ):
             file: an object responsible for storing dictionary from file of given format
         """
         code_description_dict = self.to_dict()
-        yaml.dump( {'code_description': code_description_dict}, stream=file, default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True )
+        yaml.dump( {'code_description': code_description_dict}, stream=file, default_flow_style=False, sort_keys=False,
+                   indent=4, explicit_start=True, explicit_end=True )
 
     def load(self, file):
         """Loads code description from a file
@@ -392,13 +436,17 @@ class CodeDescription( SettingsBaseClass ):
         """
         self.clear()
         dict_read = yaml.load( file, Loader=yaml.Loader )
-        code_description_dict = dict_read.get('code_description')
+        if not dict_read:
+            raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
+        code_description_dict = dict_read.get( 'code_description' )
         if not code_description_dict:
-            raise Exception("The YAML file being loaded doesn't seem to contain valid description of the native code")
+            raise Exception( "The YAML file being loaded doesn't seem to contain valid description of the native code" )
 
-        self.from_dict(code_description_dict)
+        self.from_dict( code_description_dict )
 
-        file_real_path = os.path.realpath(file.name)
-        if not self.root_dir:
-            self.root_dir = os.path.dirname(file_real_path)
+        file_real_path = os.path.realpath( file.name )
+        if not self.settings.root_dir:
+            self.settings.root_dir = os.path.dirname( file_real_path )
+
+

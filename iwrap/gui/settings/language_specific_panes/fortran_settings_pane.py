@@ -3,11 +3,14 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import tkinter.filedialog
 
+from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
 from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
+from iwrap.settings.language_specific.fortran_settings import MPI
+from iwrap.settings.language_specific.fortran_settings import Batch
 from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -16,7 +19,7 @@ from iwrap.settings.project import ProjectSettings
 class FortranPane( ttk.Frame, IWrapPane ):
     """The FortranPane contains a compiler cmd entry, module path entry which enables the selection od module path from
     filedialog, two Combobox widgets that enables selection of MPI and OpenMP switch, and two tabs including
-    PkgConfigPane, and LibraryPathPane. PkgConfigPane contains the Table widget with system libraries and the
+    PkgConfigPane, and LibraryPathPane. PkgConfigPane  contains the Table widget with system libraries and the
     LibraryPathPane frame contains the Table widget with library paths.
 
     Attributes:
@@ -47,52 +50,77 @@ class FortranPane( ttk.Frame, IWrapPane ):
         if not ProjectSettings.get_settings().code_description.language_specific:
             ProjectSettings.get_settings().code_description.language_specific = self.settings
 
+        # TABS FRAME
+        tab_frame = ttk.Frame(self)
+        tab_frame.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW)
+
+        # NOTEBOOK WITH TABS
+        tab_control = ttk.Notebook(tab_frame)
+        settings_lib_tab = ttk.Frame(tab_control)
+        libraries_lib_tab = ttk.Frame(tab_control)
+        tab_control.add(settings_lib_tab, text="Settings:")
+        tab_control.add(libraries_lib_tab, text="External libraries:")
+        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
+
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(self, text="Language specific settings", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(settings_lib_tab, text="Language specific", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # FRAME
         frame = ttk.Frame(labelframe)
-        frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW)
+        frame.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         frame.grid_columnconfigure(1, weight=1)
-
-        # COMPILER CMD
-        self.compiler_cmd = tk.StringVar()
-        ttk.Label(frame, text="Compiler cmd:").grid(column=0, row=0, padx=10, pady=5, sticky=(tk.W, tk.N))
-        compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
-        compiler_text.grid(column=1, row=0, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # MODULE PATH
         self.module_path = tk.StringVar()
         self.module_path.set(self.settings.include_path or '')
-        ttk.Label(frame, text="Module path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame, text="Include path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         browse_button = ttk.Button(frame, text="Browse...", command=self.open_filedialog, width=10)
         browse_button.bind("<FocusIn>", self.handle_focus)
         browse_text = ttk.Entry(frame, textvariable=self.module_path)
         browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
-        # COMBOBOX MPI
-        ttk.Label(frame, text="MPI:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.mpi_combobox = ttk.Combobox(frame, state='readonly')
-        self.mpi_combobox['values'] = ["Yes", "No"]
-        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
-        self.mpi_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        # COMPILER CMD
+        self.compiler_cmd = tk.StringVar()
+        ttk.Label(frame, text="Compiler cmd:").grid(column=0, row=2, padx=10, sticky=(tk.S, tk.W), pady=5)
+        compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
+        compiler_text.grid(column=1, row=2, padx=10, sticky=(tk.W, tk.E), pady=5)
 
         # COMBOBOX OpenMP switch
-        ttk.Label(frame, text="OpenMP switch:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(frame, text="OpenMP switch:").grid(column=0, row=3, padx=10, pady=10, sticky=(tk.S, tk.W))
         self.switch = tk.StringVar()
+        self.current_switch = tk.StringVar()
         self.switch.trace('w', self.change_switch)
+        self.current_switch.set(self.switch.get())
         self.openmp_switch_combobox = ttk.Combobox(frame, textvar=self.switch)
         self.openmp_switch_combobox['values'] = [None]
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.openmp_switch_combobox.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
-        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", self.add_value)
-        self.current_switch = self.switch.get()
+        self.openmp_switch_combobox.grid(column=1, row=3, padx=10, pady=10, sticky=(tk.W, tk.E))
+        self.openmp_switch_combobox.bind("<<ComboboxSelected>>", lambda event, x=self.current_switch,
+                                                                        y=self.openmp_switch_combobox: self.add_value(x,
+                                                                                                                      y))
+
+        # FRAME MPI
+        main_frame = ttk.Frame(labelframe)
+        main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
+
+        frame_batch = ttk.LabelFrame(main_frame, text="Batch", borderwidth=2, relief="groove")
+        frame_batch.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
+        frame_batch.grid_columnconfigure(1, weight=1)
+
+        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
+        frame_mpi.pack(side=tk.LEFT, fill=tk.X, expand=1, padx=10)
+        frame_mpi.grid_columnconfigure(1, weight=1)
+
+        self.mpi_combobox = BatchMpiCombo(frame_mpi, 0, 0, "Mpi compiler cmd:", self.settings.mpi.mpi_compiler_cmd)
+        self.mpi_runner_combobox = BatchMpiCombo(frame_mpi, 0, 1, "MPI runner:", self.settings.mpi.mpi_runner)
+        self.batch_default_queue_combobox = BatchMpiCombo(frame_batch, 0, 0, "Batch default queue:", self.settings.batch.batch_default_queue)
+        self.batch_runner_combobox = BatchMpiCombo(frame_batch, 0, 1, "Batch runner", self.settings.batch.batch_runner)
 
         # TABS FRAME
-        tab_frame = ttk.Frame(labelframe)
-        tab_frame.pack(fill=tk.BOTH, expand=1, anchor=tk.NW)
+        tab_frame = ttk.Frame(libraries_lib_tab)
+        tab_frame.pack(fill=tk.BOTH, side = tk.BOTTOM, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
         tab_control = ttk.Notebook(tab_frame)
@@ -119,15 +147,13 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         filename = tk.filedialog.askopenfilename()
         if filename:
+            root_dir_path = ProjectSettings.get_settings().root_dir_path
+            filename = utils.make_relative( filename, root_dir_path )
             self.module_path.set(filename)
-
-    def add_value(self, event) -> None:
-        if self.current_switch not in self.openmp_switch_combobox['value']:
-            self.openmp_switch_combobox['values'] += (self.current_switch,)
 
     def change_switch(self, *args):
         if self.switch.get() not in self.openmp_switch_combobox['values']:
-            self.current_switch = self.switch.get()
+            self.current_switch.set(self.switch.get())
 
     def reload(self):
         """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
@@ -135,8 +161,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.module_path.set(self.settings.include_path or "")
-        self.mpi_combobox.set(["Yes" if self.settings.open_mp_switch not in [None, False, ''] else "No"])
+        self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
+        self.batch_default_queue_combobox.set(self.settings.batch.batch_default_queue or "")
+        self.batch_runner_combobox.set(self.settings.batch.batch_runner or "")
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
@@ -145,10 +174,13 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
         and LibraryPathPane update_settings methods.
         """
-        ProjectSettings.get_settings().code_description.language_specific.compiler_cmd = self.compiler_cmd.get()
-        ProjectSettings.get_settings().code_description.language_specific.include_path = self.module_path.get()
-        ProjectSettings.get_settings().code_description.language_specific.mpi = self.mpi_combobox.get() == 'yes' or ''
-        ProjectSettings.get_settings().code_description.language_specific.open_mp_switch = self.openmp_switch_combobox.get()
+        self.settings.compiler_cmd = self.compiler_cmd.get()
+        self.settings.include_path = self.module_path.get()
+        self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
+        self.settings.open_mp_switch = self.openmp_switch_combobox.get()
+        self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
+        self.settings.batch.batch_runner = self.batch_runner_combobox.get()
+        self.settings.batch.batch_default_queue = self.batch_default_queue_combobox.get()
 
         self.pkg_config_pane.update_settings()
         self.library_path_pane.update_settings()
@@ -157,21 +189,75 @@ class FortranPane( ttk.Frame, IWrapPane ):
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
-        # compiler = self.compiler_combobox.get()
-        pkg_configs = self.pkg_config_pane.get_data_from_table()
-        library_paths = self.library_path_pane.get_list_of_custom_libraries()
-        mpi = self.feature_pane.mpi_flavour_combobox.get()
-        open_mpi = True if self.feature_pane.open_mp_combobox.get() == 'Yes' else False
-        include_path = self.feature_pane.module_path.get()
-        extra_lib = ExtraLibraries()
-        extra_lib.pkg_config_defined = pkg_configs
-        extra_lib.lib_path = library_paths
 
-        self.settings.from_dict({'compiler_cmd': compiler,
+        compiler_cmd = self.compiler_cmd.get()
+        open_mp_switch = self.openmp_switch_combobox.get()
+        include_path = self.module_path.get()
+
+        mpi = MPI()
+        mpi.mpi_runner = self.mpi_runner_combobox.get()
+        mpi.mpi_compiler_cmd = self.mpi_combobox.get()
+
+        batch = Batch()
+        batch.batch_runner = self.batch_runner_combobox.get()
+        batch.batch_default_queue = self.batch_default_queue_combobox.get()
+
+        extra_lib = ExtraLibraries()
+        pkg_configs = self.pkg_config_pane.get_data_from_table()
+        library_paths = self.library_path_pane.get_list_of_paths()
+        extra_lib.pkg_config_defined = pkg_configs
+        extra_lib.path_defined = library_paths
+
+        self.settings.from_dict({'compiler_cmd': compiler_cmd,
                                  'include_path': include_path,
-                                 '_mpi': mpi,
-                                 'open_mp_switch': open_mpi,
+                                 'mpi': mpi.to_dict(),
+                                 'batch': batch.to_dict(),
+                                 'open_mp_switch': open_mp_switch,
                                  'extra_libraries': extra_lib.to_dict()})
+
+
+class BatchMpiCombo:
+    def __init__(self, frame, column, row, text, settings):
+        self.frame = frame
+        self.column = column
+        self.row = row
+        self.text = text
+        self.settings = settings
+        self.value = tk.StringVar()
+        self.current_value = tk.StringVar()
+        self.combobox = None
+        self.add_combobox()
+
+    def add_combobox(self):
+        ttk.Label(self.frame, text=self.text).grid(column=self.column, row=self.row, padx=5, pady=5, sticky=(tk.W, tk.N))
+        self.value.set(self.settings)
+        self.value.trace('w', self.change_current_value)
+        self.current_value.set(self.value.get())
+        self.combobox = ttk.Combobox(self.frame, textvar=self.value, width=15)
+        self.combobox['values'] = [None]
+        self.combobox.set(self.settings or "")
+        self.combobox.grid(column=self.column+1, row=self.row, padx=5, pady=5, sticky=(tk.W, tk.E))
+        self.combobox.bind("<<ComboboxSelected>>", self.add_settings_to_combo)
+
+    def reload(self):
+        self.combobox.set(self.settings)
+
+    def update_settings(self):
+        self.settings = self.combobox.get()
+
+    def add_settings_to_combo(self, *args):
+        if self.current_value.get() not in self.combobox['value'] and self.current_value.get() is not '':
+            self.combobox['values'] += (self.current_value.get(),)
+
+    def get(self):
+        return self.combobox.get()
+
+    def set(self, value):
+        self.combobox.set(value)
+
+    def change_current_value(self, *args):
+        if self.value.get() not in self.combobox['values']:
+            self.current_value.set(self.value.get())
 
 
 class PkgConfigPane:
@@ -472,6 +558,8 @@ class LibraryPathPane:
         """
         path = tk.filedialog.askopenfilename()
         if path not in ['', ()]:
+            root_dir_path = ProjectSettings.get_settings().root_dir_path
+            path = utils.make_relative( path, root_dir_path )
             self.table.add_rows([[path]])
 
     def get_list_of_paths(self):
@@ -486,6 +574,7 @@ class LibraryPathPane:
         """Reload library paths list from the LanguageSettingsManager and add it to the Table widget.
         """
         self.settings = ProjectSettings.get_settings().code_description.language_specific
+
         self.__add_path_from_settings()
 
     def update_settings(self):

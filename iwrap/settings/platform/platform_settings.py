@@ -2,22 +2,20 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
+import iwrap
 import yaml
+from iwrap.common import utils
 
 from iwrap.common.misc import Dictionarizable
 
 
-class Debugger( Dictionarizable ):
+class DefaultDirectories(Dictionarizable):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-
     def __init__(self):
-        self.name: str = ''
-        self.cmd: str = ''
-        self.attach_cmd: str = ''
-
-        # self.debugger_switches = {}
+        self.actor_default_install_dir = str(Path(Path.home(), 'IWRAP_ACTORS'))
+        self.sandbox_default_dir: str = str(Path(Path.home(), 'IWRAP_SANDBOX'))
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -25,9 +23,13 @@ class Debugger( Dictionarizable ):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
-        super().from_dict( dictionary )
+        super().from_dict(dictionary)
 
-    def to_dict(self) -> None:
+        if self.actor_default_install_dir:
+            self.actor_default_install_dir = utils.resolve_path(self.actor_default_install_dir)
+
+    def to_dict(self, resolve_path: bool = False, make_relative: str = False,
+                project_root: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -36,115 +38,41 @@ class Debugger( Dictionarizable ):
         return super().to_dict()
 
 
-class MPIFlavor( Dictionarizable ):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-
-    def __init__(self):
-        self.flavor: str = ''
-        self.description: str = ''
-        self.compiler_cmd: str = ''
-        self.launcher_cmd: str = ''
-
-        # self.debugger_switches = {}
-
-    def from_dict(self, dictionary: Dict[str, Any]) -> None:
-        """Restores given object from dictionary.
-
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
-
-    def to_dict(self) -> None:
-        """Serializes given object to dictionary
-
-        Returns
-            Dict[str, Any]: Dictionary containing object data
-        """
-        return super().to_dict()
-
-
-class Compiler( Dictionarizable ):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-
-    def __init__(self):
-        self.description: str = ''
-        self.cmd: str = ''
-        self.compiler_flags: str = ''
-        self.linker_flags: str = ''
-        self.imas_compiler_flags: str = ''
-        self.imas_linker_flags: str = ''
-        self.open_mp_switch: str = ''
-        self.mpi_flavors = []
-
-    def from_dict(self, dictionary: Dict[str, Any]) -> None:
-        """Restores given object from dictionary.
-
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
-
-    def to_dict(self) -> None:
-        """Serializes given object to dictionary
-
-        Returns
-            Dict[str, Any]: Dictionary containing object data
-        """
-        return super().to_dict()
-
-
-class ProgrammingLanguage( Dictionarizable ):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-
-    def __init__(self):
-        self.name: str = ''
-        self.compilers = []
-
-    def from_dict(self, dictionary: Dict[str, Any]) -> None:
-        """Restores given object from dictionary.
-
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
-
-    def to_dict(self) -> None:
-        """Serializes given object to dictionary
-
-        Returns
-            Dict[str, Any]: Dictionary containing object data
-        """
-        return super().to_dict()
-
-
-class PlatformSettings( Dictionarizable ):
+class PlatformSettings(Dictionarizable):
     """ TO DO: Read a proper content from config file
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     __class_instance = None
+    __was_inited = False
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if cls.__class_instance is None:
-            cls.__class_instance = object.__new__( cls )
+            cls.__class_instance = super().__new__(cls, *args, **kwargs)
         return cls.__class_instance
 
     def __init__(self):
-        self.actor_default_dir = str( Path( Path.home(), 'IWRAP_ACTORS' ) )  # TODO: Read install dir from platform settings
-        self.sandbox_path: str = ''
-        self.programming_languages = []
-        self.debuggers = []
+        if self.__was_inited:
+            return
+
+        self.default_directories = DefaultDirectories()
+        self.__was_inited = True
+
+    def __read_config_file(self):
+        env = {'IMAS_CONFIG_PREFIX': 'config_', 'IMAS_CONFIG_SUFFIX': '.yaml'}
+        config_file_dir = Path(iwrap.IWRAP_DIR, 'resources')
+        file_name = utils.exec_system_cmd('imas-config-fc2k',
+                                          working_directory=config_file_dir,
+                                          environment=env,
+                                          return_output=True)
+        file_path = Path(config_file_dir, file_name)
+        self.__logger.debug(f'Configuration read from: {file_path}')
+        self.load(file_path)
+        pass
 
     def initialize(self):
-        # TODO: Load platform settings from file
+        self.__read_config_file()
         pass
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
@@ -153,9 +81,10 @@ class PlatformSettings( Dictionarizable ):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
-        super().from_dict( dictionary )
+        super().from_dict(dictionary)
 
-    def to_dict(self) -> None:
+    def to_dict(self, resolve_path: bool = False, make_relative: str = False,
+                project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -170,42 +99,45 @@ class PlatformSettings( Dictionarizable ):
             stream : an object responsible for storing data
         """
 
-        yaml.dump( self.to_dict(), stream=stream, default_flow_style=False, sort_keys=False, indent=4,
-                   explicit_start=True, explicit_end=True )
+        dict_to_store = {'platform_settings': self.to_dict()}
+        yaml.dump(dict_to_store, stream=stream, default_flow_style=False, sort_keys=False, indent=4,
+                  explicit_start=True, explicit_end=True)
 
-    def load(self, file):
+    def load(self, file_path):
         """Loads code description from a file
 
         Args:
-            serializer (IWrapSerializer): an object responsible for reading dictionary from file of given format
+            file_path (Path): a path to file containing YAML
         """
 
-        read_dict = yaml.load( file, Loader=yaml.Loader )
-        import pprint
-        pprint.pprint(read_dict)
-        self.from_dict(read_dict)
+        with open(file_path) as yaml_file:
+            read_dict = yaml.load(yaml_file, Loader=yaml.Loader)
+
+        if not read_dict:
+            raise Exception(f"The file being loaded doesn't seem to be a valid YAML: {file_path}")
+
+        platform_settings_dict = read_dict.get('platform_settings')
+
+        if not platform_settings_dict:
+            raise Exception(f"The YAML file being loaded doesn't seem to contain platform properties: {file_path}")
+
+        self.from_dict(platform_settings_dict)
 
 
 if __name__ == "__main__":
     settings = PlatformSettings()
-    language = ProgrammingLanguage()
-    language.name = 'Fortran'
+    settings.initialize()
+    import sys
+    sys.exit()
 
-    compiler = Compiler()
-    compiler.mpi_flavors.append( MPIFlavor() )
-
-    language.compilers.append( compiler )
-
-    settings.programming_languages.append( language )
-
-    settings.debuggers.append(Debugger())
-
-    file = open( "./platf.yaml", '+w' )
-    settings.save( file )
+    '''
+    print(os.path.realpath(os.curdir))
+    file = open("./platf.yaml", '+w')
+    settings.save(file)
     file.close()
     del settings
-
+    '''
     settings = PlatformSettings()
-    file = open( "./platf-2.yaml", '+r' )
-    settings.load( file )
+    file = open("./platf.yaml", '+r')
+    settings.load(file)
     file.close()
