@@ -2,7 +2,7 @@ code_description:
     subroutines:
         init:   init_code
         main:   code_lifecycle
-        finish: clean_up
+        finalize: clean_up
     settings:
         data_type: legacy
         code_path: ./native_code/libcode_lifecycle_cpp.a

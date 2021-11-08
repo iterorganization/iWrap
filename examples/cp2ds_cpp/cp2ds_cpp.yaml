@@ -7,7 +7,7 @@ code_description:
     subroutines:
         init:
         main:   coreprofiles2distsource_cpp
-        finish:
+        finalize:
     settings:
         programming_language: cpp
         data_type: legacy

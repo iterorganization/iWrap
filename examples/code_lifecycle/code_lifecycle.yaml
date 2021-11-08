@@ -2,7 +2,7 @@ code_description:
     subroutines:
         init:   init_code
         main:   code_lifecycle
-        finish: clean_up
+        finalize: clean_up
     settings:
         programming_language: Fortran
         data_type: legacy

@@ -2,7 +2,7 @@ code_description:
     subroutines:
         init:
         main:   coreprofiles2distsource_mpi
-        finish:
+        finalize:
     settings:
         programming_language: Fortran
         code_path: ./native/libcp2ds-mpi.a
