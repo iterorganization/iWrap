@@ -59,7 +59,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         settings_lib_tab = ttk.Frame(tab_control)
         libraries_lib_tab = ttk.Frame(tab_control)
         tab_control.add(settings_lib_tab, text="Settings:")
-        tab_control.add(libraries_lib_tab, text="External libraries:")
+        tab_control.add(libraries_lib_tab, text="Extra libraries:")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         # LABEL FRAME
