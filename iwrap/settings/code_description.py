@@ -109,7 +109,7 @@ class Subroutines( SettingsBaseClass ):
 
         # A name of subroutine that could be used to finalise the native code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.finish: str = ''
+        self.finalize: str = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         # validate correctness of XML
