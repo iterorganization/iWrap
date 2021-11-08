@@ -1,13 +1,13 @@
 Improvements:
 -----------------
 * Python 3.7 is outdated - to use Python 3.9 (3.10) as min ver
-* Handling of different 'code parameter' types (strings, F namelist)
+* Handling of different 'code parameter' types (ALtype, strings, F namelist, JSON)
+* Using URI to describe data entries
 
 Generated Py-F actors:
 -----------------------
 + extract codes common to all actors to separate 'space' (system module?)
 + improve 'runwork' mechanism
-
 
 iWrap:
 ----------------
