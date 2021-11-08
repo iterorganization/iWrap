@@ -170,7 +170,7 @@ class CBinder:
                 arg.save( file )
             self.actor.code_parameters.save(file)
 
-    def __run_standalone(self, full_arguments_list, sandbox_dir:str, mpi_settings=None, debug_mode=False):
+    def run_standalone(self, full_arguments_list, sandbox_dir:str, mpi_settings=None, debug_mode=False):
 
         self.__logger.debug( "RUNNING STDL" )
 
@@ -266,8 +266,8 @@ class CBinder:
         debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
 
         if is_standalone:
-            self.__run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
-                                   mpi_settings=mpi_settings, debug_mode=debug_mode )
+            self.run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
+                                 mpi_settings=mpi_settings, debug_mode=debug_mode )
         else:
             self.__run_normal( c_arglist,  sandbox_dir=sandbox_dir, debug_mode=debug_mode )
 
