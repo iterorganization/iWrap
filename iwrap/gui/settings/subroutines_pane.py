@@ -5,6 +5,7 @@ from tkinter import ttk
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 
+
 class SubroutinesPane(ttk.Frame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -16,7 +17,7 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         self.finalize = tk.StringVar()
 
         # SUBROUTINES LABEL FRAME
-        labelframe_sub = ttk.LabelFrame(self, text="Subroutines", borderwidth=2, relief="groove", height=100)
+        labelframe_sub = ttk.Frame(self, height=100)
         labelframe_sub.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW, pady=10)
         labelframe_sub.grid_columnconfigure(1, weight=1)
 
@@ -37,12 +38,12 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
 
     def update_settings(self, *args):
         code_description = ProjectSettings.get_settings().code_description
-        code_description.subroutines.main = self.main.get()
-        code_description.subroutines.finalize = self.finalize.get()
-        code_description.subroutines.init = self.init.get()
+        code_description.implementation.subroutines.main = self.main.get()
+        code_description.implementation.subroutines.finalize = self.finalize.get()
+        code_description.implementation.subroutines.init = self.init.get()
 
     def reload(self):
         code_description = ProjectSettings.get_settings().code_description
-        self.main.set(code_description.subroutines.main or '')
-        self.finalize.set(code_description.subroutines.finalize or '')
-        self.init.set(code_description.subroutines.init or '')
+        self.main.set(code_description.implementation.subroutines.main or '')
+        self.finalize.set(code_description.implementation.subroutines.finalize or '')
+        self.init.set(code_description.implementation.subroutines.init or '')

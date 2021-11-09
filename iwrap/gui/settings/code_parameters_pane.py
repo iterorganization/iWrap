@@ -34,7 +34,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # Common reference for directory browsers.
-        self._browser_dir = ProjectSettings.get_settings().code_description.settings.root_dir
+        self._browser_dir = ProjectSettings.get_settings().code_description.implementation.root_dir
         # XML file path browser dialog
         self.xml_browser = CodeParameterBrowserPane(self, label_text="Parameters file:", file_type="XML")
 
@@ -101,7 +101,7 @@ class CodeParameterPath:
 
     @property
     def _project_settings(self):
-        return ProjectSettings.get_settings().code_description.code_parameters
+        return ProjectSettings.get_settings().code_description.implementation.code_parameters
 
 
 class XMLPath(CodeParameterPath):

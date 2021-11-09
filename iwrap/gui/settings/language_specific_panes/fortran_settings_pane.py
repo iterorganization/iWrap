@@ -71,15 +71,15 @@ class FortranPane( ttk.Frame, IWrapPane ):
         frame.pack(fill=tk.X, side=tk.TOP, expand=0, anchor=tk.NW)
         frame.grid_columnconfigure(1, weight=1)
 
-        # MODULE PATH
-        self.module_path = tk.StringVar()
-        self.module_path.set(self.settings.include_path or '')
-        ttk.Label(frame, text="Include path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        browse_button = ttk.Button(frame, text="Browse...", command=self.open_filedialog, width=10)
-        browse_button.bind("<FocusIn>", self.handle_focus)
-        browse_text = ttk.Entry(frame, textvariable=self.module_path)
-        browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
-        browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        # # MODULE PATH
+        # self.module_path = tk.StringVar()
+        # self.module_path.set(ProjectSettings.get_settings().code_description.implementation.include_path or '')
+        # ttk.Label(frame, text="Include path:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        # browse_button = ttk.Button(frame, text="Browse...", command=self.open_filedialog, width=10)
+        # browse_button.bind("<FocusIn>", self.handle_focus)
+        # browse_text = ttk.Entry(frame, textvariable=self.module_path)
+        # browse_text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        # browse_button.grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # COMPILER CMD
         self.compiler_cmd = tk.StringVar()
@@ -160,7 +160,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
         self.compiler_cmd.set(self.settings.compiler_cmd)
-        self.module_path.set(self.settings.include_path or "")
+        # self.module_path.set(ProjectSettings.get_settings().code_description.implementation.include_path or "")
         self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
         self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
@@ -175,7 +175,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         and LibraryPathPane update_settings methods.
         """
         self.settings.compiler_cmd = self.compiler_cmd.get()
-        self.settings.include_path = self.module_path.get()
+        # self.settings.include_path = self.module_path.get()
         self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
         self.settings.open_mp_switch = self.openmp_switch_combobox.get()
         self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
