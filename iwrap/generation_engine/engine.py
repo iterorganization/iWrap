@@ -87,7 +87,7 @@ class Engine:
         for generator in generators:
             try:
                 generator_name: str = generator.__class__.__name__
-                print(f'  {generator_name}  '.center(80, '='))
+                print(f'  {generator_name}  '.center(80, '='), file=info_output_stream)
                 generator.configure(info_output_stream = info_output_stream)
                 print(text_decoration, 'GENERATING', text_decoration, file=info_output_stream)
                 generator.generate(project_settings_dict)

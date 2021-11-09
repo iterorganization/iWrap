@@ -1,4 +1,5 @@
 import logging
+import sys
 import tempfile
 from pathlib import Path
 from typing import Set
@@ -44,6 +45,9 @@ class CppBinderGenerator( BinderGenerator ):
         self.temp_dir: tempfile.TemporaryDirectory = None
         self.jinja_env: jinja2.Environment = None
         self.install_dir: str = None
+
+    def configure(self, info_output_stream=sys.stdout):
+        self.__info_output_stream = info_output_stream
 
     def initialize(self):
         install_dir = ProjectSettings.get_settings().actor_description._install_dir
