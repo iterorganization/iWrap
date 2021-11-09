@@ -84,10 +84,10 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         """Update settings in ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_description.settings.programming_language = self.selected_programming_language.get()
-        code_description.settings.code_path = self.code_path.get()
-        code_description.settings.data_type = self.data_type_combobox.get()
-        code_description.settings.root_dir = self.root_dir.get()
+        code_description.implementation.programming_language = self.selected_programming_language.get()
+        code_description.implementation.code_path = self.code_path.get()
+        code_description.implementation.data_type = self.data_type_combobox.get()
+        code_description.implementation.root_dir = self.root_dir.get()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -97,7 +97,7 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
         code_description = ProjectSettings.get_settings().code_description
 
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
-        programming_language = code_description.settings.programming_language or CodeSettingsPane.default_programming_language
+        programming_language = code_description.implementation.programming_language or CodeSettingsPane.default_programming_language
 
         if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = CodeSettingsPane.default_programming_language
@@ -118,12 +118,12 @@ class CodeSettingsPane(ttk.Frame, IWrapPane):
             self.data_type_combobox.set(self.data_type)
 
         self.code_path_entry.delete(0, tk.END)
-        self.code_path.set(code_description.settings.code_path or '')
+        self.code_path.set(code_description.implementation.code_path or '')
 
         self.root_dir_entry.delete(0, tk.END)
-        self.root_dir.set(code_description.settings.root_dir or '')
+        self.root_dir.set(code_description.implementation.root_dir or '')
 
-        code_description.settings.programming_language = self.programming_language_combobox.get()
+        code_description.implementation.programming_language = self.programming_language_combobox.get()
 
     def on_click(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
