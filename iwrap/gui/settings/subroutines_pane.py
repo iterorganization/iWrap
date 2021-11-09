@@ -7,10 +7,22 @@ from iwrap.settings.project import ProjectSettings
 
 
 class SubroutinesPane(ttk.Frame, IWrapPane):
+    """Subroutines pane contains main, init and finalize values.
+
+    Attributes:
+        main(tk.StringVar()): String value for main.
+        init(tk.StringVar()): String value for init.
+        finalize(tk.StringVar()): String value for finalize.
+    """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
+        """Initialize the subroutines pane.
+
+        Args:
+            master: Parent widget from Tkinter class. Default to None.
+        """
         super().__init__(master)
         self.main = tk.StringVar()
         self.init = tk.StringVar()
@@ -37,12 +49,16 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         text.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def update_settings(self, *args):
+        """Update settings in the ProjectSettings.
+        """
         code_description = ProjectSettings.get_settings().code_description
         code_description.implementation.subroutines.main = self.main.get()
         code_description.implementation.subroutines.finalize = self.finalize.get()
         code_description.implementation.subroutines.init = self.init.get()
 
     def reload(self):
+        """Reload init, main, and finalize values then the project settings are changed".
+        """
         code_description = ProjectSettings.get_settings().code_description
         self.main.set(code_description.implementation.subroutines.main or '')
         self.finalize.set(code_description.implementation.subroutines.finalize or '')

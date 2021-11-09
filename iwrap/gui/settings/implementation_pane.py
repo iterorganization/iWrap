@@ -19,13 +19,17 @@ class ImplementationPane(ttk.Frame, IWrapPane):
 
     Attributes:
         default_programming_language(str): Value for default programming language. Default to Fortran.
-        labelframe(LabelFrame): Main label frame for user code settings. This label frame is a place for
-         programming language combobox, code path entry, code name entry, and browse button.
         code_path(StringVar): Value for code path from filedialog or the YAML file.
         selected_programming_language(StringVar): Value for programming language selected in combobox.
         programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values. Enables
          user to select preferable programming language or value is selected automatically if the YAML file is imported.
         root_dir(StringVar): Value for rood dir path from filedialog or the YAML file.
+        data_type_combobox(Combobox): Combobox contains data type. Enables user to select preferable data type.
+        code_path_entry(Entry): Entry for code path.
+        root_dir_entry(Entry): Entry for root dir.
+        include_path(StringVar): StringVar for include path.
+        subroutines_pane(SubroutinesPane): Pane contains subroutines.
+        code_parameters_pane(CodeParametersPane): Pane contains code parameters.
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -108,7 +112,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.code_parameters_pane.pack(fill=tk.BOTH, anchor=tk.SW)
 
     def update_settings(self, *args):
-        """Update settings in ProjectSettings.
+        """Update settings in the ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
         code_description.implementation.programming_language = self.selected_programming_language.get()
@@ -159,7 +163,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         code_description.implementation.programming_language = self.programming_language_combobox.get()
 
     def on_click_file(self, path):
-        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """Open the filedialog when the browse button is clicked and insert selected path to the entry.
         """
         filename = tk.filedialog.askopenfilename()
         if filename:
@@ -168,7 +172,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
             path.set(filename)
 
     def on_click_dir(self):
-        """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
+        """Open the filedialog when the browse button is clicked and insert selected path to the entry.
         """
         old_dir = self.root_dir.get()
         dir_name = tk.filedialog.askdirectory()

@@ -19,9 +19,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
     Attributes:
         arguments_settings ([dict]): The list of arguments from the ProjectSettings.
         columns ([Column]): The list of the Column class objects.
-        data_type (string): The data type value from the ProjectSettings.
         table (Table): The table widget.
-        data_type_combobox (ttk.Combobox): The data type combobox.
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
