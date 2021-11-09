@@ -8,8 +8,6 @@ from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
-from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
-from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
 from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
 from iwrap.gui.settings.subroutines_pane import SubroutinesPane
 from iwrap.gui.menu import MenuBar
@@ -73,7 +71,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         ttk.Label(labelframe, text="Code path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.code_path_entry = ttk.Entry(labelframe, textvariable=self.code_path)
         self.code_path_entry.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=self.on_click, width=10).grid(column=2, row=4, padx=10, pady=5)
+        ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.code_path), width=10).grid(column=2, row=4, padx=10, pady=5)
 
         # BROWSE BUTTON AND ENTRY FOR ROOT DIR
         ttk.Label(labelframe, text="Root dir:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -86,7 +84,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.include_path = tk.StringVar()
         self.include_path.set(ProjectSettings.get_settings().code_description.implementation.include_path or '')
         ttk.Label(labelframe, text="Include path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
-        browse_button = ttk.Button(labelframe, text="Browse...", command=self.open_filedialog, width=10)
+        browse_button = ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.include_path), width=10)
         browse_button.bind("<FocusIn>", self.handle_focus)
         browse_text = ttk.Entry(labelframe, textvariable=self.include_path)
         browse_text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
@@ -160,14 +158,14 @@ class ImplementationPane(ttk.Frame, IWrapPane):
 
         code_description.implementation.programming_language = self.programming_language_combobox.get()
 
-    def on_click(self):
+    def on_click_file(self, path):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
         """
         filename = tk.filedialog.askopenfilename()
         if filename:
             root_dir_path = ProjectSettings.get_settings().root_dir_path
             filename = utils.make_relative( filename, root_dir_path)
-            self.code_path.set(filename)
+            path.set(filename)
 
     def on_click_dir(self):
         """Open the filedialog when the browse button is clicked and insert selected path to the browse_text entry.
@@ -189,12 +187,3 @@ class ImplementationPane(ttk.Frame, IWrapPane):
             event: The focus event.
         """
         event.widget.tk_focusNext().focus()
-
-    def open_filedialog(self):
-        """Open the filedialog when the browse button is clicked and change the module path value to selected path.
-        """
-        filename = tk.filedialog.askopenfilename()
-        if filename:
-            root_dir_path = ProjectSettings.get_settings().root_dir_path
-            filename = utils.make_relative( filename, root_dir_path )
-            self.module_path.set(filename)
