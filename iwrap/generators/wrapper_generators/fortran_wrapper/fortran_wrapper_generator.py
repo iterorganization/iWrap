@@ -56,7 +56,7 @@ class FortranWrapperGenerator(WrapperGenerator):
         self.wrapper_dir = 'wrapper'
 
     def initialize(self):
-        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
+        install_dir =  ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
             install_dir = PlatformSettings().default_directories.actor_default_install_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name, self.wrapper_dir))
