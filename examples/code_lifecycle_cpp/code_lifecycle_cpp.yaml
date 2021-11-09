@@ -1,12 +1,16 @@
 code_description:
-    subroutines:
-        init:   init_code
-        main:   code_lifecycle
-        finalize: clean_up
-    settings:
+    implementation:
+        subroutines:
+            init:   init_code
+            main:   code_lifecycle
+            finalize: clean_up
         data_type: legacy
         code_path: ./native_code/libcode_lifecycle_cpp.a
+        include_path: ./native_code/code_lifecycle.h
         programming_language: cpp
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -14,16 +18,12 @@ code_description:
     -   name: equilibrium_out
         type: equilibrium
         intent: OUT
-    code_parameters:
-        parameters: ./input/input_physics.xml
-        schema: ./input/input_physics.xsd
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
         compiler_cmd: g++
-        include_path: ./native_code/code_lifecycle.h
         mpi:
             mpi_compiler_cmd:
             mpi_runner:

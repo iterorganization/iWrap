@@ -1,10 +1,14 @@
 code_description:
-    subroutines:
-        main:   physics_ii_cpp
-    settings:
+    implementation:
+        subroutines:
+            main:   physics_ii_cpp
         data_type: legacy
         programming_language: cpp
         code_path: ./native_code/libphysics_ii_cpp.a
+        include_path: ./native_code/physics_ii.h
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -12,16 +16,12 @@ code_description:
     -   name: equilibrium_out
         type: equilibrium
         intent: OUT
-    code_parameters:
-        parameters: ./input/input_physics.xml
-        schema: ./input/input_physics.xsd
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     language_specific:
         compiler_cmd: g++
-        include_path: ./native_code/physics_ii.h
         mpi:
             mpi_compiler_cmd:
             mpi_runner:
