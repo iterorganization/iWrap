@@ -25,7 +25,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     def __init__(self):
         super().__init__()
         self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        self.native_language = '{{code_description.settings.programming_language | lower}}'
+        self.native_language = '{{code_description.implementation.programming_language | lower}}'
         self.is_mpi_code = {% if not code_description.language_specific.mpi.mpi_compiler_cmd or code_description.language_specific.mpi.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
         # Auto-generated list of arguments meta-data
@@ -35,9 +35,9 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     {% endfor %}
 
         # Static code parameters
-    {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
-        default_parameters_file = '{{code_description.code_parameters.parameters.split('/')[-1]}}'
-        schema_file = '{{code_description.code_parameters.schema.split('/')[-1]}}'
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+        default_parameters_file = '{{code_description.implementation.code_parameters.parameters.split('/')[-1]}}'
+        schema_file = '{{code_description.implementation.code_parameters.schema.split('/')[-1]}}'
     {% else %}
         default_parameters_file = ''
         schema_file = ''

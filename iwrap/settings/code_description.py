@@ -95,7 +95,7 @@ class Subroutines( SettingsBaseClass ):
     Attributes:
         init (str): A name of subroutine that could be used to initialise the native code (optional)
         main (str): A name of the main subroutine that will be called from actor (mandatory)
-        finish (str): A name of subroutine that could be used to finalise the native code (optional)
+        finalize (str): A name of subroutine that could be used to finalise the native code (optional)
     """
 
     def __init__(self):
@@ -122,7 +122,7 @@ class Subroutines( SettingsBaseClass ):
         """
         self.init = ''
         self.main = ''
-        self.finish = ''
+        self.finalize = ''
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -141,7 +141,7 @@ class Subroutines( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
 
-class Settings( SettingsBaseClass ):
+class Implementation( SettingsBaseClass ):
     @property
     def programming_language(self):
         return self._programming_language
@@ -158,7 +158,10 @@ class Settings( SettingsBaseClass ):
         self._programming_language: str = ''
         self.data_type: str = None
         self.code_path: str = None
+        self.include_path = ''
         self._master = master
+        self.code_parameters: CodeParameters = CodeParameters()
+        self.subroutines: Subroutines = Subroutines()
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         # programming_language
@@ -181,6 +184,17 @@ class Settings( SettingsBaseClass ):
         if not Path(__path).exists():
             raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
 
+        # code parameters
+        self.code_parameters.validate( engine, project_root_dir )
+
+        # include_path
+        if not self.include_path:
+            raise ValueError( 'Path to include/module file is not set!' )
+
+        __path = utils.resolve_path( self.include_path, project_root_dir)
+        if not Path(__path).exists():
+            raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
+
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
@@ -196,6 +210,8 @@ class Settings( SettingsBaseClass ):
         self.programming_language = None
         self.data_type = None
         self.code_path = None
+        self.subroutines.clear()
+        self.code_parameters.clear()
 
     def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
@@ -203,7 +219,14 @@ class Settings( SettingsBaseClass ):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict(resolve_path, make_relative, project_root_dir)
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+
+        if resolve_path:
+            # include_path
+            __path = utils.resolve_path( self.include_path, project_root_dir )
+            ret_dict.update( {'include_path': __path} )
+
+        return ret_dict
 
 
 class CodeParameters( SettingsBaseClass ):
@@ -347,32 +370,27 @@ class CodeDescription( SettingsBaseClass ):
     def language_specific(self, values):
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._language_specific = LanguageSettingsManager.get_settings_handler( self.settings.programming_language, values )
+        self._language_specific = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
 
     def __init__(self):
-        self.subroutines: Subroutines = Subroutines()
         self._arguments: List[Argument] = []
-        self.settings: Settings = Settings(self)
-        self.code_parameters: CodeParameters = CodeParameters()
+        self.implementation: Implementation = Implementation(self)
         self.documentation: str = None
         self.language_specific: dict = {}
 
     def change_language_specific(self):
         if self._language_specific is not None and isinstance(self._language_specific, dict):
-            self._language_specific = LanguageSettingsManager.get_settings_handler(self.settings.programming_language,
+            self._language_specific = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
                                                                                           self._language_specific)
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
         # arguments
         for argument in self.arguments or []:
-            argument.validate( engine, project_root_dir, **{'data_type': self.settings.data_type} )
-
-        # code parameters
-        self.code_parameters.validate( engine, project_root_dir )
+            argument.validate( engine, project_root_dir, **{'data_type': self.implementation.data_type} )
 
         #settings
-        self.settings.validate(engine, project_root_dir)
+        self.implementation.validate(engine, project_root_dir)
 
         # documentation
         if self.documentation and not isinstance( self.documentation, str ):
@@ -395,11 +413,10 @@ class CodeDescription( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.arguments = []
-        self.code_parameters.clear()
         self.documentation = None
-        self.settings.clear()
+        self.implementation.clear()
         self.language_specific = {}
-        self.subroutines.clear()
+
 
     def to_dict(self, resolve_path: bool = False,
                 make_relative: bool = False,
@@ -412,7 +429,7 @@ class CodeDescription( SettingsBaseClass ):
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
         if resolve_path:
             # code_path
-            code_path = self.settings.code_path
+            code_path = self.implementation.code_path
             __path = utils.resolve_path( code_path, project_root_dir )
             ret_dict.update( {'code_path': __path} )
 
@@ -446,7 +463,7 @@ class CodeDescription( SettingsBaseClass ):
         self.from_dict( code_description_dict )
 
         file_real_path = os.path.realpath( file.name )
-        if not self.settings.root_dir:
-            self.settings.root_dir = os.path.dirname( file_real_path )
+        if not self.implementation.root_dir:
+            self.implementation.root_dir = os.path.dirname( file_real_path )
 
 

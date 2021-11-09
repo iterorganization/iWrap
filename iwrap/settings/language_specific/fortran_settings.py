@@ -146,7 +146,6 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
     def __init__(self):
         self.compiler_cmd = ''
-        self.include_path = ''
         self.mpi = MPI()
         self.batch = Batch()
         self._open_mp_switch = False
@@ -159,13 +158,13 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
             raise ValueError( 'Compiler to be used is not set!' )
         # TODO Validate compiler against platform settings
 
-        # include_path
-        if not self.include_path:
-            raise ValueError( 'Path to include/module file is not set!' )
-
-        __path = utils.resolve_path( self.include_path, project_root_dir)
-        if not Path(__path).exists():
-            raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
+        # # include_path
+        # if not self.include_path:
+        #     raise ValueError( 'Path to include/module file is not set!' )
+        #
+        # __path = utils.resolve_path( self.include_path, project_root_dir)
+        # if not Path(__path).exists():
+        #     raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
         # mpi
         self.mpi.validate(engine, project_root_dir)
@@ -186,13 +185,14 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         super().from_dict( dictionary )
 
     def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
-        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+        return super().to_dict()
+    #     ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+    #
+    #     if resolve_path:
+    #         # include_path
+    #         __path = utils.resolve_path( self.include_path, project_root_dir )
+    #         ret_dict.update( {'include_path': __path} )
+    #
+    #     return ret_dict
 
-        if resolve_path:
-            # include_path
-            __path = utils.resolve_path( self.include_path, project_root_dir )
-            ret_dict.update( {'include_path': __path} )
-
-        return ret_dict
-
-    pass
+    # pass

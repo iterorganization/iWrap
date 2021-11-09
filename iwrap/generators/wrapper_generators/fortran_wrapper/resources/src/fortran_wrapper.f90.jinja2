@@ -2,22 +2,22 @@ module wrapper
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     use mpi
 {% endif %}
-    use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
+    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
 contains
 
-        {% if code_description.subroutines.init %}
+        {% if code_description.implementation.subroutines.init %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE INIT SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 subroutine init_{{actor_description.actor_name}}_wrapper(&
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
                 code_params,  &
 {% endif %}
                 status_info) BIND(C)
     use ids_schemas
     use iwrap_defs
     use iwrap_tools
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
     type(code_parameters_t) :: code_params
@@ -27,14 +27,14 @@ subroutine init_{{actor_description.actor_name}}_wrapper(&
 	 character(len=:), pointer :: diagnosticInfo
 	 integer :: wrap_out_outputFlag
 
-        {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+        {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
     ! ------------------ code parameters ----------------------------
     imas_code_params = convert(code_params)
     {% endif %}
 
         ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.subroutines.init}}( &
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+    call  {{code_description.implementation.subroutines.init}}( &
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
             imas_code_params,  &
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
@@ -49,7 +49,7 @@ subroutine init_{{actor_description.actor_name}}_wrapper(&
 end
 {% endif %}
 
-{% if code_description.subroutines.finish %}
+{% if code_description.implementation.subroutines.finalize %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE FINISH SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -64,7 +64,7 @@ subroutine finish_{{actor_description.actor_name}}_wrapper(status_info) BIND(C)
 
 
         ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.subroutines.finish}}( &
+    call  {{code_description.implementation.subroutines.finalize}}( &
             wrap_out_outputFlag, diagnosticInfo)
 
         ! ------------ Output data conversion [ISO_C_BINDING] --------------
@@ -85,7 +85,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% for argument in code_description.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
                 code_params,  &
 {% endif %}
                 status_info) BIND(C)
@@ -94,7 +94,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     use iwrap_defs
     use iwrap_tools
     use ids_routines
-    use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
+    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
 
     implicit none
     character(132):: ids_full_name
@@ -105,7 +105,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     type (ids_{{ argument.type }}) :: {{ argument.name }}
 {% endfor %}
 
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
     type(code_parameters_t) :: code_params
@@ -132,7 +132,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     call ids_get({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
     {% endfor %}
 
-    {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
     ! ------------------ code parameters ----------------------------
     imas_code_params = convert(code_params)
     {% endif %}
@@ -141,11 +141,11 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
     ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.subroutines.main}}( &
+    call  {{code_description.implementation.subroutines.main}}( &
 {% for argument in code_description.arguments %}
             {{ argument.name }}, &
 {% endfor %}
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
             imas_code_params,  &
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
@@ -173,7 +173,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
    endif
    allocate({{ argument.name }}%code%name(1))
    allocate({{ argument.name }}%code%version(1))
-   {{ argument.name }}%code%name(1) = "{{code_description.subroutines.main}}"
+   {{ argument.name }}%code%name(1) = "{{code_description.implementation.subroutines.main}}"
    {{ argument.name }}%code%version(1) = ""
     {% endfor %}
 

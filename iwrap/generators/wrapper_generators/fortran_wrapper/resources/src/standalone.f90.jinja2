@@ -33,15 +33,15 @@ program standalone
     status = read_input(db_entry_desc_array, xml_string)
     if (status /= 0) STOP -1
 
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
     code_params%params = convert2Cptr(xml_string)
     code_params%params_size = LEN(xml_string)
 {% endif %}
 
-     {% if code_description.subroutines.init %}
+     {% if code_description.implementation.subroutines.init %}
     ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call init_{{actor_description.actor_name}}_wrapper(&
-        {% if code_description.code_parameters.parameters %}
+        {% if code_description.implementation.code_parameters.parameters %}
                 code_params,  &
         {% endif %}
                 status_info)
@@ -58,7 +58,7 @@ program standalone
 {% for argument in code_description.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
                 code_params,  &
 {% endif %}
                 status_info)
@@ -82,7 +82,7 @@ program standalone
     call close_db_entries(db_entry_desc_array)
 
 
-     {% if code_description.subroutines.finish %}
+     {% if code_description.implementation.subroutines.finalize %}
     ! - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call finish_{{actor_description.actor_name}}_wrapper(status_info)
     {% endif %}

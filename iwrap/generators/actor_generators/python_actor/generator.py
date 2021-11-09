@@ -109,8 +109,7 @@ class PythonActorGenerator(ActorGenerator):
 
 
     def __copy_code_params_files(self, project_settings:dict):
-
-        code_parameters = project_settings['code_description']['code_parameters']
+        code_parameters = project_settings['code_description']['implementation']['code_parameters']
         if not code_parameters:
             return
 

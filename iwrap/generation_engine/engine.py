@@ -73,7 +73,7 @@ class Engine:
 
         project_settings_dict.update({'platform_settings': platform_settings_dict})
         actor_language = Engine._active_generator.actor_language
-        code_language = ProjectSettings.get_settings().code_description.settings.programming_language
+        code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
         binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
         binder_generator.initialize()
         wrapper_generator = WrapperGeneratorRegistry.get_generator(code_language)
