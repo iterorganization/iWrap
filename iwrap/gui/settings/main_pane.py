@@ -2,6 +2,7 @@ import logging
 import tkinter as tk
 from tkinter import ttk
 
+import iwrap.gui.settings.main_pane
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
 from iwrap.gui.settings.arguments_pane import ArgumentsPane
@@ -67,6 +68,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
         self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
         self.notebook.insert(2, self.language_settings_pane, text="Language specific")
+        self.language_settings_pane.reload()
 
     def update_settings(self):
         self.arguments_pane.update_settings()
@@ -76,7 +78,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
 
     def reload(self):
         self.arguments_pane.reload()
-        self.language_settings_pane.reload()
         self.implementation_pane.reload()
+        self.language_settings_pane.reload()
         self.documentation_pane.reload()
 

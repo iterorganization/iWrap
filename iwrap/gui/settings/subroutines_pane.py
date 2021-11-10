@@ -39,7 +39,7 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # MAIN
-        ttk.Label(labelframe_sub, text="Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe_sub, text="*Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.main)
         text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
 

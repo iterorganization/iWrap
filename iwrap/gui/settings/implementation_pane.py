@@ -58,21 +58,21 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.selected_programming_language.set(ImplementationPane.default_programming_language)
 
         # LANGUAGE COMBOBOX
-        ttk.Label(labelframe, text="Programming language:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Programming language:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)
         self.programming_language_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # DATA TYPE COMBOBOX
-        ttk.Label(labelframe, text="Data type:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Data type:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.data_type_combobox = ttk.Combobox(labelframe, state='readonly')
         self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         self.data_type_combobox.current(0)
         self.data_type_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(labelframe, text="Code path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Code path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.code_path_entry = ttk.Entry(labelframe, textvariable=self.code_path)
         self.code_path_entry.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.code_path), width=10).grid(column=2, row=4, padx=10, pady=5)
@@ -87,12 +87,12 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         # MODULE PATH
         self.include_path = tk.StringVar()
         self.include_path.set(ProjectSettings.get_settings().code_description.implementation.include_path or '')
-        ttk.Label(labelframe, text="Include path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Include path:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
         browse_button = ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.include_path), width=10)
         browse_button.bind("<FocusIn>", self.handle_focus)
         browse_text = ttk.Entry(labelframe, textvariable=self.include_path)
-        browse_text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
-        browse_button.grid(column=2, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
+        browse_text.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
+        browse_button.grid(column=2, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
         tab_frame = ttk.Frame(self)
