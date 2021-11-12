@@ -67,6 +67,8 @@ class CppBinderGenerator( BinderGenerator ):
 
         print(project_settings)
         process_template_dir('iwrap.generators.binder_generators.python.cpp_binding', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
+        process_template_dir( 'iwrap.generators.binder_generators.python', 'common', self.install_dir,
+                              project_settings, filter_func=filter_func, output_stream=self.__info_output_stream, )
 
         #print('TMP2: ', self.jinja_env.loader.provider.module_path)
 

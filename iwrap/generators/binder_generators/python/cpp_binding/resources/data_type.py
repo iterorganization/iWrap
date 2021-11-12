@@ -1,14 +1,21 @@
 import logging
 import ctypes
+from abc import ABC
+from typing import Set
+
 import imas
+from .data_storages import IDSConverter
+from .data_storages.generic_storage import LegacyIDSStorage
 
-from iwrap.generators.actor_generators.python_actor.resources.common.definitions import Argument
+from ..common.definitions import Argument
+from ..common.runtime_settings import IdsStorageSettings
 
 
-class LegacyIDS ( ctypes.Structure ):
+class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
     # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
+    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
+    __data_storage = LegacyIDSStorage
 
     _fields_ = (("ids_name_", ctypes.c_byte * 132),
                 ("shot", ctypes.c_int),
@@ -20,38 +27,56 @@ class LegacyIDS ( ctypes.Structure ):
                 ("version_", ctypes.c_byte * 132),
                 )
 
-    occ_dict = {}
+    @classmethod
+    def initialize(cls, is_standalone: bool, storage_settings: IdsStorageSettings) -> None:
 
-    def __init__(self, db_entry:imas.DBEntry, formal_desc, ids_value):
+        db_name = storage_settings.db_name
+        if is_standalone:
+            backend_id = storage_settings.persistent_backend
+        else:
+            backend_id = storage_settings.backend
+        cls.__data_storage.initialize(db_name,  backend_id)
 
 
-        if formal_desc.intent == Argument.IN:
+    @classmethod
+    def data_type(cls) -> str:
+        return 'legacy'
+
+    @classmethod
+    def code_languages(cls) -> Set[str]:
+        return {'cpp', 'fortran'}
+
+    def __init__(self, ids_name, intent, ids_value):
+
+        if intent == Argument.IN:
             self.value = ids_value
-            if formal_desc.type != self.value.__name__:
-                raise RuntimeError("ERROR! Argument passed doesn't match arguments list: ", formal_desc.type, ' vs ', self.value.__name__ )
-            self.ids_name = self.value.__name__
+            if ids_name != self.value.__name__:
+                raise RuntimeError( "ERROR! Argument passed doesn't match arguments list: ", ids_name, ' vs ',
+                                    self.value.__name__ )
         else:
             self.value = None
 
-        self.intent = formal_desc.intent
+        self.intent = intent
+        self.ids_name = ids_name
 
-        self.ids_name = formal_desc.type
         self.occurrence = 0
 
-        self.db_entry = db_entry
+        self.db_entry = None
         # these fields are redundant
-        self.idx = db_entry.db_ctx
-        self.shot = db_entry.shot
-        self.run = db_entry.run
-        self.machine = db_entry.db_name
-        self.user = db_entry.user_name
-        self.version = db_entry.data_version
+
 
     def convert_to_native_type(self):
         # check conflicting occurrences and store data
 
-        LegacyIDS.occ_dict[self.ids_name] = 1 + LegacyIDS.occ_dict.get( self.ids_name, -1 )
-        self.occurrence = LegacyIDS.occ_dict[self.ids_name]
+        self.db_entry, self.occurrence =  self.__data_storage.prepare_data(self.ids_name)
+
+        self.idx = self.db_entry.db_ctx
+        self.shot = self.db_entry.shot
+        self.run = self.db_entry.run
+        self.machine = self.db_entry.db_name
+        self.user = self.db_entry.user_name
+        self.version = self.db_entry.data_version
+
         # store input data
         if self.intent == Argument.IN:
             self.db_entry.put( self.value, self.occurrence )
@@ -63,7 +88,7 @@ class LegacyIDS ( ctypes.Structure ):
         return ids
 
     def release(self):
-        LegacyIDS.occ_dict[self.ids_name] -= 1
+        self.__data_storage.release_data(self.ids_name)
 
     @property
     def ids_name(self):
@@ -101,22 +126,21 @@ class LegacyIDS ( ctypes.Structure ):
         self.version_[:] = len( self.version_ ) * [ord( ' ' )]
         self.version_[:len( version_ )] = [ord( x ) for x in version_]
 
-    def save(self, stream ):
+    def save(self, stream):
         stream.write( "------- IDS -------\n" )
         stream.write( self.ids_name )
         stream.write( "\n" )
-        stream.write( str(self.shot) )
+        stream.write( str( self.shot ) )
         stream.write( "\n" )
-        stream.write( str(self.run) )
+        stream.write( str( self.run ) )
         stream.write( "\n" )
-        stream.write( str(self.occurrence ))
+        stream.write( str( self.occurrence ) )
         stream.write( "\n" )
-        stream.write( str(self.idx) )
+        stream.write( str( self.idx ) )
         stream.write( "\n" )
-        stream.write( self.machine)
+        stream.write( self.machine )
         stream.write( "\n" )
         stream.write( self.user )
         stream.write( "\n" )
         stream.write( self.version )
         stream.write( "\n" )
-
