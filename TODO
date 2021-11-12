@@ -3,6 +3,8 @@ Improvements:
 * Python 3.7 is outdated - to use Python 3.9 (3.10) as min ver
 * Handling of different 'code parameter' types (ALtype, strings, F namelist, JSON)
 * Using URI to describe data entries
+* To add HDC as IDS type
+* To use HDC objects for passing IDSes (or their parts) between actor layers
 
 Generated Py-F actors:
 -----------------------
