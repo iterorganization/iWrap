@@ -1,0 +1,26 @@
+{% macro imports() -%}
+    #include "UALClasses.h"
+{%- endmacro -%}
+
+{% macro declare(ids_name, ids_var_name) -%}
+    IdsNs::IDS::{{ ids_name }} {{ ids_var_name }};
+     db_entry =   new IdsNs::IDS({{ ids_var_name }}_desc->idx);
+    {{ ids_var_name }} = db_entry->_{{ ids_name }};
+{%- endmacro -%}
+
+{% macro get(ids_var_name) -%}
+	{{ ids_var_name }}.get({{ ids_var_name }}_desc->occurrence);
+{%- endmacro -%}
+
+{%- macro provenance(ids_var_name, sbrt_name) -%}
+   {{ ids_var_name }}.code.name = "{{sbrt_name}}";
+   {{ ids_var_name }}.code.version = "";
+{%- endmacro -%}
+
+{% macro put(ids_var_name) -%}
+	{{ ids_var_name }}.put({{ ids_var_name }}_desc->occurrence);
+{%- endmacro -%}
+
+{% macro deallocate(ids_var_name) -%}
+  call ids_deallocate({{ ids_var_name }})
+{%- endmacro -%}

@@ -1,3 +1,5 @@
+{% import './macros/%s_ids.jinja2' % code_description.settings.data_type as ids_macro %}
+
 module wrapper
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     use mpi
@@ -14,7 +16,7 @@ subroutine init_{{actor_description.actor_name}}_wrapper(&
                 code_params,  &
 {% endif %}
                 status_info) BIND(C)
-    use ids_schemas
+    {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
@@ -54,7 +56,7 @@ end
 !                                   NATIVE FINISH SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 subroutine finish_{{actor_description.actor_name}}_wrapper(status_info) BIND(C)
-    use ids_schemas
+    {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
     !----  Diagnostic info  ----
@@ -90,10 +92,9 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% endif %}
                 status_info) BIND(C)
 
-    use ids_schemas
+    {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
-    use ids_routines
     use {{code_description.language_specific.include_path.split('/')[-1].replace('.mod','')}}
 
     implicit none
@@ -101,8 +102,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 
 {% for argument in code_description.arguments %}
     ! {{ argument.name }}
-    type(ids_description_t) :: {{ argument.name }}_desc
-    type (ids_{{ argument.type }}) :: {{ argument.name }}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
 {% endfor %}
 
 {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
@@ -128,8 +128,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 
     {% for argument in code_description.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
-    ids_full_name = create_ids_full_name({{ argument.name }}_desc)
-    call ids_get({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
+    {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
     {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
@@ -165,22 +164,13 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 
    ! ------------ Provenance information --------------
  {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-   if (associated({{ argument.name }}%code%name)) then
-      deallocate({{ argument.name }}%code%name)
-   endif
-   if (associated({{ argument.name }}%code%version)) then
-      deallocate({{ argument.name }}%code%version)
-   endif
-   allocate({{ argument.name }}%code%name(1))
-   allocate({{ argument.name }}%code%version(1))
-   {{ argument.name }}%code%name(1) = "{{code_description.subroutines.main}}"
-   {{ argument.name }}%code%version(1) = ""
+
+    {{ ids_macro.provenance( argument.name , code_description.subroutines.main) }}
     {% endfor %}
 
      {% for argument in code_description.arguments if argument.intent == 'OUT' %}
     !--------- PUT IDS : {{ argument.name }} ------------------------
-    ids_full_name = create_ids_full_name({{ argument.name }}_desc)
-    call ids_put({{ argument.name }}_desc%idx, ids_full_name, {{ argument.name }})
+    {{ ids_macro.put( argument.name) }}
     {% endfor %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
@@ -188,7 +178,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% endif %}
     !--------- Dealloacting IDSes ------------------------
     {% for argument in code_description.arguments %}
-    call ids_deallocate({{ argument.name }})
+     {{ ids_macro.deallocate( argument.name) }}
     {% endfor %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}

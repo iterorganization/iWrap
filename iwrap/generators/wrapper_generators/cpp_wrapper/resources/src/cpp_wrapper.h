@@ -1,7 +1,8 @@
+{% import './macros/%s_ids.jinja2' % code_description.settings.data_type as ids_macro %}
 #ifndef _CPP_WRAPPER
 #define _CPP_WRAPPER
 
-#include "UALClasses.h"
+{{ ids_macro.imports() }}
 #include "defs.h"
 
 {% if code_description.subroutines.init %}
