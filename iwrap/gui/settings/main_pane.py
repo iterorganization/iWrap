@@ -67,7 +67,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         selected_language = self.implementation_pane.selected_programming_language.get()
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
         self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
-        self.notebook.insert(2, self.language_settings_pane, text="Language specific")
+        self.notebook.insert(2, self.language_settings_pane, text="Settings")
         self.language_settings_pane.reload()
 
     def update_settings(self):

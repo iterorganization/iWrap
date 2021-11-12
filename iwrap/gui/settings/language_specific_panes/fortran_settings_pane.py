@@ -62,7 +62,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(settings_lib_tab, text="Language specific", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(settings_lib_tab, text="Settings", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # FRAME
