@@ -44,8 +44,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self, xml=self.xml_browser.file_path, xsd=self.xsd_browser.file_path)
 
-        #: The frame is set up with a padding 20 on the top
-        self.configure(padding=(0, 20, 0, 0))
 
     def update_settings(self):
         """Force an update of ProjectSettings from CodeParameterBrowserPane.
