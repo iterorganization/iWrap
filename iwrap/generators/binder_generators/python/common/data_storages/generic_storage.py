@@ -91,3 +91,6 @@ class LegacyIDSStorage( GenericIDSStorage ):
     def release_data(cls, ids_name):
         cls.__release_occurrence( ids_name )
 
+    @classmethod
+    def finalize(cls):
+        cls.__db_entry.close()

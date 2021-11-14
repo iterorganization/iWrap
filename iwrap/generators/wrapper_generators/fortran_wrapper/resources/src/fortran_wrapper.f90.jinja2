@@ -181,6 +181,11 @@ subroutine {{actor_description.actor_name}}_wrapper(&
      {{ ids_macro.deallocate( argument.name) }}
     {% endfor %}
 
+    {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+    ! ------Deallocating code parameters ----------------------------
+    deallocate(imas_code_params%parameters_value)
+    {% endif %}
+
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     !----  MPI Finalization ----
     call MPI_finalized(was_mpi_finalized, ierr)

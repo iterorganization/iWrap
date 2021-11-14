@@ -22,5 +22,6 @@
 {%- endmacro -%}
 
 {% macro deallocate(ids_var_name) -%}
-  call ids_deallocate({{ ids_var_name }})
+   // Should not be called until IMAS-3937 will be resolved
+   // {{ ids_var_name }}.clear();
 {%- endmacro -%}

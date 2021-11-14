@@ -35,6 +35,7 @@ program standalone
 
 {% if code_description.code_parameters.parameters %}
     code_params%params = convert2Cptr(xml_string)
+    deallocate(xml_string)
     code_params%params_size = LEN(xml_string)
 {% endif %}
 

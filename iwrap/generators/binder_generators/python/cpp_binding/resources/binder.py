@@ -81,7 +81,7 @@ class CBinder:
 
 
     def finalize(self):
-        ...
+        self.ids_converter_class.finalize()
 
     def __get_wrapper_function(self, function_name: str):
 

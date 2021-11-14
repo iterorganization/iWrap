@@ -37,6 +37,9 @@ class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
             backend_id = storage_settings.backend
         cls.__data_storage.initialize(db_name,  backend_id)
 
+    @classmethod
+    def finalize(cls) -> None:
+        cls.__data_storage.finalize()
 
     @classmethod
     def data_type(cls) -> str:

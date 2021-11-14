@@ -133,6 +133,10 @@ IdsNs::IDS *db_entry;
     {{ ids_macro.put( argument.name) }}
 {% endfor %}
 
+{% for argument in code_description.arguments %}
+    //--------- PUT IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.deallocate( argument.name) }}
+{% endfor %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI Finalization ----
