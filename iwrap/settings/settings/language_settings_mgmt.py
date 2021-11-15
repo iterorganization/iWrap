@@ -1,5 +1,5 @@
 import logging
-from iwrap.settings.language_specific.fortran_settings import FortranSpecificSettings
+from iwrap.settings.settings.fortran_settings import FortranSpecificSettings
 
 
 

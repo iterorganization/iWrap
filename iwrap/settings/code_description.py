@@ -10,7 +10,7 @@ from enum import Enum
 from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
-from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
 
 
 class Intent( Enum ):
@@ -363,25 +363,25 @@ class CodeDescription( SettingsBaseClass ):
             self._arguments.append( value )
 
     @property
-    def language_specific(self):
-        return self._language_specific
+    def settings(self):
+        return self._settings
 
-    @language_specific.setter
-    def language_specific(self, values):
+    @settings.setter
+    def settings(self, values):
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._language_specific = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
+        self._settings = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
 
     def __init__(self):
         self._arguments: List[Argument] = []
         self.implementation: Implementation = Implementation(self)
         self.documentation: str = None
-        self.language_specific: dict = {}
+        self._settings: dict = {}
 
     def change_language_specific(self):
-        if self._language_specific is not None and isinstance(self._language_specific, dict):
-            self._language_specific = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
-                                                                                          self._language_specific)
+        if self._settings is not None and isinstance(self._settings, dict):
+            self._settings = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
+                                                                                          self._settings)
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
@@ -396,10 +396,10 @@ class CodeDescription( SettingsBaseClass ):
         if self.documentation and not isinstance( self.documentation, str ):
             raise ValueError( 'Documentation must be a string (and it is not)!' )
 
-        if not self.language_specific:
+        if not self.settings:
             raise ValueError( 'Language specific data are not set!' )
-        elif isinstance( self.language_specific, SettingsBaseClass ):
-            self.language_specific.validate( engine, project_root_dir )  # pylint: disable=no-member
+        elif isinstance(self.settings, SettingsBaseClass):
+            self.settings.validate(engine, project_root_dir)  # pylint: disable=no-member
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -415,7 +415,7 @@ class CodeDescription( SettingsBaseClass ):
         self.arguments = []
         self.documentation = None
         self.implementation.clear()
-        self.language_specific = {}
+        self.settings = {}
 
 
     def to_dict(self, resolve_path: bool = False,

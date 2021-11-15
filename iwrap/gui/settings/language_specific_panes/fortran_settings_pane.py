@@ -7,10 +7,10 @@ from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
-from iwrap.settings.language_specific.fortran_settings import ExtraLibraries
-from iwrap.settings.language_specific.fortran_settings import MPI
-from iwrap.settings.language_specific.fortran_settings import Batch
-from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.settings.settings.fortran_settings import ExtraLibraries
+from iwrap.settings.settings.fortran_settings import MPI
+from iwrap.settings.settings.fortran_settings import Batch
+from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
 
@@ -46,8 +46,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         FortranPane.language = language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
-        if not ProjectSettings.get_settings().code_description.language_specific:
-            ProjectSettings.get_settings().code_description.language_specific = self.settings
+        if not ProjectSettings.get_settings().code_description.settings:
+            ProjectSettings.get_settings().code_description.settings = self.settings
 
         # TABS FRAME
         tab_frame = ttk.Frame(self)
@@ -122,6 +122,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
+        self.settings = ProjectSettings.get_settings().code_description.settings
+
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
@@ -145,7 +147,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         self.pkg_config_pane.update_settings()
         self.library_path_pane.update_settings()
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings = ProjectSettings.get_settings().code_description.settings
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
@@ -317,14 +319,14 @@ class PkgConfigPane:
     def reload(self):
         """Reload settings from the LanguageSettingsManager and add system libraries to the Table widget.
         """
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings = ProjectSettings.get_settings().code_description.settings
         self.__add_table_data()
 
     def update_settings(self):
         """Update system library values in the ProjectSettings.
         """
         pkg_config = self.get_data_from_table()
-        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.pkg_config_defined = pkg_config
+        ProjectSettings.get_settings().code_description.settings.extra_libraries.pkg_config_defined = pkg_config
 
 
 class SystemLibraryInfoWindow:
@@ -535,7 +537,7 @@ class LibraryPathPane:
         """
         from iwrap.settings.project import ProjectSettings
 
-        self.settings = ProjectSettings.get_settings().code_description.language_specific
+        self.settings = ProjectSettings.get_settings().code_description.settings
 
         self.__add_path_from_settings()
 
@@ -543,5 +545,5 @@ class LibraryPathPane:
         """Update library paths in the ProjectSettings.
         """
         library_paths = self.get_list_of_paths()
-        ProjectSettings.get_settings().code_description.language_specific.extra_libraries.path_defined = library_paths
+        ProjectSettings.get_settings().code_description.settings.extra_libraries.path_defined = library_paths
 
