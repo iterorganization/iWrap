@@ -1,0 +1,36 @@
+{% macro imports() -%}
+    use ids_schemas
+    use ids_routines
+{%- endmacro -%}
+
+{% macro declare(ids_name, ids_var_name) -%}
+    type(ids_description_t) :: {{ ids_var_name }}_desc
+    type (ids_{{ ids_name }}) :: {{ ids_var_name }}
+{%- endmacro -%}
+
+{% macro get(ids_var_name) -%}
+    ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
+    call ids_get({{ ids_var_name }}_desc%idx, ids_full_name, {{ ids_var_name }})
+{%- endmacro -%}
+
+{%- macro provenance(ids_var_name, sbrt_name) -%}
+   if (associated({{ ids_var_name }}%code%name)) then
+      deallocate({{ ids_var_name }}%code%name)
+   endif
+   if (associated({{ ids_var_name }}%code%version)) then
+      deallocate({{ ids_var_name }}%code%version)
+   endif
+   allocate({{ ids_var_name }}%code%name(1))
+   allocate({{ ids_var_name }}%code%version(1))
+   {{ ids_var_name }}%code%name(1) = "{{sbrt_name}}"
+   {{ ids_var_name }}%code%version(1) = ""
+{%- endmacro -%}
+
+{% macro put(ids_var_name) -%}
+    ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
+    call ids_put({{ ids_var_name }}_desc%idx, ids_full_name, {{ ids_var_name }})
+{%- endmacro -%}
+
+{% macro deallocate(ids_var_name) -%}
+  call ids_deallocate({{ ids_var_name }})
+{%- endmacro -%}

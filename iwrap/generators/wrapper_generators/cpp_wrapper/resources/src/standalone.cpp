@@ -84,6 +84,11 @@ int main(int argc, char **argv)
     handle_status_info(status_info, "{{actor_description.actor_name}}");
     {% endif %}
 
+    {% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+    // ------Deallocating code parameters ----------------------------
+    free(xml_string);
+    {% endif %}
+
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI Finalization ----
     MPI_Finalized(&was_mpi_finalized);

@@ -1,11 +1,11 @@
-
+{% import './macros/%s_ids.jinja2' % code_description.settings.data_type as ids_macro %}
 #include <string.h>
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
 #include <mpi.h>
 {% endif %}
 
-#include "UALClasses.h"
+{{ ids_macro.imports() }}
 #include "defs.h"
 #include  "{{code_description.language_specific.include_path.split('/')[-1]}}"
 
@@ -73,8 +73,10 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% endif %}
                 status_t* status_info)
 {
+
 {% for argument in code_description.arguments %}
-    IdsNs::IDS::{{ argument.type}} {{ argument.name }};
+    // IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.declare(argument.type, argument.name ) }}
 {% endfor %}
 
 {% if code_description.code_parameters.parameters %}
@@ -82,7 +84,6 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
     IdsNs::codeparam_t imas_code_params;
 {% endif %}
 
-    IdsNs::IDS *db_entry;
 
     {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI  ----
@@ -96,14 +97,9 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% endif %}
 
 
-   {% for argument in code_description.arguments %}
-    //--------- IDS : {{ argument.name }} ------------------------
-    db_entry =   new IdsNs::IDS({{ argument.name }}_desc->idx);
-    {{ argument.name }} = db_entry->_{{ argument.type}};
-       {% if argument.intent == 'IN' %}
-	{{ argument.name }} .get({{ argument.name }}_desc->occurrence);
-{% endif %}
-
+    {% for argument in code_description.arguments if argument.intent == 'IN' %}
+    //--------- Get IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
         {% if code_description.code_parameters.parameters  %}
@@ -127,17 +123,19 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 	if(status_info->code < 0)
 		return;
    // ------------ Provenance information --------------
-
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-   {{ argument.name }}.code.name = "{{code_description.subroutines.main}}";
-   {{ argument.name }}.code.version = "";
+    {{ ids_macro.provenance( argument.name , code_description.subroutines.main) }}
 {% endfor %}
 
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}
     //--------- PUT IDS : {{ argument.name }} ------------------------
-    {{ argument.name }}.put({{ argument.name }}_desc->occurrence);
+    {{ ids_macro.put( argument.name) }}
 {% endfor %}
 
+{% for argument in code_description.arguments %}
+    //--------- PUT IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.deallocate( argument.name) }}
+{% endfor %}
 
 {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
     //----  MPI Finalization ----
