@@ -73,7 +73,6 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% endif %}
                 status_t* status_info)
 {
-IdsNs::IDS *db_entry;
 
 {% for argument in code_description.arguments %}
     // IDS : {{ argument.name }} ------------------------

@@ -4,8 +4,8 @@
 
 {% macro declare(ids_name, ids_var_name) -%}
     IdsNs::IDS::{{ ids_name }} {{ ids_var_name }};
-     db_entry =   new IdsNs::IDS({{ ids_var_name }}_desc->idx);
-    {{ ids_var_name }} = db_entry->_{{ ids_name }};
+     IdsNs::IDS *db_entry_{{ ids_var_name }} =   new IdsNs::IDS({{ ids_var_name }}_desc->idx);
+    {{ ids_var_name }} = db_entry_{{ ids_var_name }}->_{{ ids_name }};
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
@@ -24,4 +24,5 @@
 {% macro deallocate(ids_var_name) -%}
    // Should not be called until IMAS-3937 will be resolved
    // {{ ids_var_name }}.clear();
+    delete db_entry_{{ ids_var_name }};
 {%- endmacro -%}
