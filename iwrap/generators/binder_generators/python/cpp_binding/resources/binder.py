@@ -7,10 +7,11 @@ from pathlib import Path
 from threading import Thread
 
 import imas
+from .data_storages import IDSConvertersRegistry
 
 from ..common.definitions import Argument
 
-from .data_type import LegacyIDS
+from .data_type import LegacyIDSConverter
 from .data_c_binding import ParametersCType, StatusCType
 from ..common.runtime_settings import RuntimeSettings, RunMode, DebugMode
 
@@ -35,7 +36,7 @@ class CBinder:
         self.__logger = logging.getLogger( 'binding' )
         self.__logger.setLevel( logging.DEBUG )
 
-        self.work_db = None
+        self.ids_converter_class = None
         self.actor = None
 
         self.actor_dir = None
@@ -54,13 +55,16 @@ class CBinder:
         pass
 
     def initialize(self, actor):
+
+        IDSConvertersRegistry.initialize()
+        self.ids_converter_class = IDSConvertersRegistry.get_converter_class('legacy', 'cpp')
         self.actor = actor
 
         self.runtime_settings = actor.runtime_settings
         self.formal_arguments = actor.arguments
         self.actor_dir = actor.actor_dir
-        self.work_db = self.__create_work_db()
 
+        self.ids_converter_class.initialize(actor.is_standalone_run(), self.runtime_settings.ids_storage)
         actor_name = self.actor.name
         if self.actor.code_description['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
@@ -77,25 +81,7 @@ class CBinder:
 
 
     def finalize(self):
-        ...
-
-
-    def __create_work_db(self):
-        ids_storage = self.runtime_settings.ids_storage
-        is_standalone_run = self.actor.is_standalone_run()
-
-        if is_standalone_run and ids_storage.backend is imas.imasdef.MEMORY_BACKEND:
-            backend = ids_storage.persistent_backend
-        else:
-            backend = ids_storage.backend
-
-        db_entry = imas.DBEntry( backend_id=backend,
-                                 db_name=ids_storage.db_name,
-                                 shot=ids_storage.shot,
-                                 run=ids_storage.run )
-
-        db_entry.create()
-        return db_entry
+        self.ids_converter_class.finalize()
 
     def __get_wrapper_function(self, function_name: str):
 
@@ -135,6 +121,7 @@ class CBinder:
                           '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',
                           ]
 
+            self.__logger.debug( 'EXECUTING command: ' + str( tv_command ) )
             exec_system_cmd(tv_command, output_stream=self.actor.output_stream)
 
         t = Thread( target=start_debugger, args=() )
@@ -170,7 +157,7 @@ class CBinder:
                 arg.save( file )
             self.actor.code_parameters.save(file)
 
-    def __run_standalone(self, full_arguments_list, sandbox_dir:str, mpi_settings=None, debug_mode=False):
+    def run_standalone(self, full_arguments_list, sandbox_dir:str, mpi_settings=None, debug_mode=False):
 
         self.__logger.debug( "RUNNING STDL" )
 
@@ -194,7 +181,7 @@ class CBinder:
         os.chdir(sandbox_dir)
         self.__save_input( full_arguments_list , sandbox_dir)
 
-        self.__logger.debug( 'EXECUTING command: ', exec_command )
+        self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
         exec_system_cmd(exec_command, output_stream=self.actor.output_stream)
 
         # go back to initial dir
@@ -238,14 +225,14 @@ class CBinder:
         full_arguments_list = []
 
         # LOOP over full_arguments_list
+
         for formal_arg in self.formal_arguments:
             ids_value = None
             if formal_arg.intent == Argument.IN:
                 ids_value = input_idses.pop( 0 )
 
-            arg = LegacyIDS( self.work_db, formal_arg, ids_value )
+            arg = self.ids_converter_class(formal_arg.type, formal_arg.intent, ids_value )
             full_arguments_list.append( arg )
-            pass
 
         #
         c_arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
@@ -266,8 +253,8 @@ class CBinder:
         debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
 
         if is_standalone:
-            self.__run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
-                                   mpi_settings=mpi_settings, debug_mode=debug_mode )
+            self.run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
+                                 mpi_settings=mpi_settings, debug_mode=debug_mode )
         else:
             self.__run_normal( c_arglist,  sandbox_dir=sandbox_dir, debug_mode=debug_mode )
 

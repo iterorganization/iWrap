@@ -45,7 +45,7 @@ class BinderGenerator(AbstractGenerator):
 
 
 class BinderGeneratorRegistry:
-    __builtin_pkg_name: str = 'iwrap.generators.binder_generators'
+    __builtin_pkg_name: str = 'iwrap.generators.binder_generators.python'
     __plugin_pkg_name: str = 'iwrap_binder_generator'
     __generators: List[BinderGenerator] = []
 
@@ -55,7 +55,7 @@ class BinderGeneratorRegistry:
 
         # raises exception if no generator was found
         if len( cls.__generators ) < 1:
-            raise RuntimeError( 'ERROR! No valid actor generator can be found!' )
+            raise RuntimeError( 'ERROR! No valid binder generator can be found!' )
 
     @classmethod
     def generators(cls): # TODO set as a class property (available since Python 3.9)

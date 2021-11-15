@@ -28,14 +28,12 @@ class SandboxLifeTime( Enum ):
     PERSISTENT = auto()
 
 
-class IdsStorage:
+class IdsStorageSettings:
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         self.db_name = 'tmp'
-        self.shot = 9999
-        self.run = 9999
         self.backend = imas.imasdef.MEMORY_BACKEND
         self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
 
@@ -48,23 +46,27 @@ class RuntimeSettings:
         # handled/implemented
         self.run_mode = RunMode.NORMAL
         self.debug_mode = DebugMode.NONE
-        self.ids_storage = IdsStorage()
+        self.ids_storage = IdsStorageSettings()
         self.mpi = self.MPI()
-
-        # not implemented yet
-        self.batch_job = self.BatchJob()
-        self.open_mp = self.OpenMP()
         self.sandbox = self.SandboxSettings()
+        self.batch = self.Batch()
+        # not implemented yet
+
+        self.open_mp = self.OpenMP()
+
         self.TBD = None  # any other info needed?
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class BatchJob:
+    class Batch:
         # Class logger
         __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
         def __init__(self):
+            self.runner = None
             self.queue = None
-            self.TBD = None
+            self.default_options = None
+            self.options = None
+
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class Debug:
@@ -83,7 +85,9 @@ class RuntimeSettings:
 
         def __init__(self):
             self.number_of_processes = 1
-            self.TBD = None
+            self.runner = None
+            self.default_options = None
+            self.options = None
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class OpenMP:

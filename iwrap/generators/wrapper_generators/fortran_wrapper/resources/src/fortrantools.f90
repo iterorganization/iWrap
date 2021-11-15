@@ -94,7 +94,6 @@ END FUNCTION create_ids_full_name
 
         read(10,*) ! skip line " === Arguments ===="
         read(10,*) ! skip line " Length:"
-
         read(10,*) array_read_size
 
         if ( ids_array_size /= array_read_size) then
