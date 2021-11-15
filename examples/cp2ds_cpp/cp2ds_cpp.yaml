@@ -27,7 +27,7 @@ code_description:
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
-    language_specific:
+    settings:
         compiler_cmd: g++
         mpi:
             mpi_compiler_cmd:
