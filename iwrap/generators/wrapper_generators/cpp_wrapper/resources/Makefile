@@ -1,21 +1,21 @@
 # actor name
 ACTOR_NAME={{actor_description.actor_name}}
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd   %}
-CXX={{ code_description.language_specific.mpi.mpi_compiler_cmd }}
+{% if code_description.settings.mpi.mpi_compiler_cmd   %}
+CXX={{ code_description.settings.mpi.mpi_compiler_cmd }}
 {% else %}
-CXX={{ code_description.language_specific.compiler_cmd }}
+CXX={{ code_description.settings.compiler_cmd }}
 {% endif %}
 
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-OPENMPFLAG={{ code_description.language_specific.open_mp_switch or '' }}
+OPENMPFLAG={{ code_description.settings.open_mp_switch or '' }}
 
 CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG)
 
 
-CODE_LIB_FILE=$(notdir {{code_description.code_path}})
+CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 
@@ -24,8 +24,8 @@ CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp xmllib)
 CORE_LIBS=$(shell pkg-config --libs imas-cpp xmllib)
 
 # required 'platform' libs (i.e. published using pkg-config mechanism)
-{% if code_description.language_specific.extra_libraries.pkg_config_defined  %}
-PLATFORM_LIBS_NAMES={{ (code_description.language_specific.extra_libraries.pkg_config_defined or []) | join(' ')}}
+{% if code_description.settings.extra_libraries.pkg_config_defined  %}
+PLATFORM_LIBS_NAMES={{ (code_description.settings.extra_libraries.pkg_config_defined or []) | join(' ')}}
 PLATFORM_LIBS_FLAGS=$(shell pkg-config --cflags $(PLATFORM_LIBS_NAMES))
 PLATFORM_LIBS=$(shell pkg-config --libs $(PLATFORM_LIBS_NAMES))
 {% else %}
@@ -37,7 +37,7 @@ PLATFORM_LIBS=
 
 
 # required 'custom' libs (i.e. provided by user as a pth to library)
-CUSTOM_LIBS={{ (code_description.language_specific.extra_libraries.path_defined or [] ) | join(' ')}}
+CUSTOM_LIBS={{ (code_description.settings.extra_libraries.path_defined or [] ) | join(' ')}}
 
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)

@@ -139,8 +139,10 @@ class Subroutines( SettingsBaseClass ):
             Dict[str, Any]: Dictionary containing object data
         """
         return super().to_dict(resolve_path, make_relative, project_root_dir)
-
-
+'''
+        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
+            method/subroutine to be run
+'''
 class Implementation( SettingsBaseClass ):
     @property
     def programming_language(self):
@@ -225,6 +227,11 @@ class Implementation( SettingsBaseClass ):
             # include_path
             __path = utils.resolve_path( self.include_path, project_root_dir )
             ret_dict.update( {'include_path': __path} )
+
+            # code_path
+            code_path = self.code_path
+            __path = utils.resolve_path( code_path, project_root_dir )
+            ret_dict.update( {'code_path': __path} )
 
         return ret_dict
 
@@ -340,8 +347,6 @@ class CodeDescription( SettingsBaseClass ):
         subroutines (:obj:`Subroutines`): name of user method / subroutine to be called, used also as an actor name
         data_type (:obj:`str`):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
         arguments (list [:obj:`Arguments`]): list of native code in/out arguments
-        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
-            method/subroutine to be run
         code_parameters (:obj:`CodeParameters`): user defined parameters of the native code
         documentation (str): human readable description of the native code
         language_specific (Dict[str, Any]): information specific for a given language of the native code
@@ -427,11 +432,6 @@ class CodeDescription( SettingsBaseClass ):
             Dict[str, Any]: Dictionary containing object data
         """
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
-        if resolve_path:
-            # code_path
-            code_path = self.implementation.code_path
-            __path = utils.resolve_path( code_path, project_root_dir )
-            ret_dict.update( {'code_path': __path} )
 
         return ret_dict
 
