@@ -8,8 +8,6 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.settings.fortran_settings import ExtraLibraries
-from iwrap.settings.settings.fortran_settings import MPI
-from iwrap.settings.settings.fortran_settings import Batch
 from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
@@ -80,19 +78,19 @@ class FortranPane( ttk.Frame, IWrapPane ):
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
-        frame_batch = ttk.LabelFrame(main_frame, text="Batch", borderwidth=2, relief="groove")
-        frame_batch.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
-        frame_batch.grid_columnconfigure(1, weight=1)
+        # frame_batch = ttk.LabelFrame(main_frame, text="Batch", borderwidth=2, relief="groove")
+        # frame_batch.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
+        # frame_batch.grid_columnconfigure(1, weight=1)
 
-        frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
-        frame_mpi.pack(side=tk.LEFT, fill=tk.X, expand=1, padx=10)
-        frame_mpi.grid_columnconfigure(1, weight=1)
+        # frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
+        # frame_mpi.pack(side=tk.LEFT, fill=tk.X, expand=1, padx=10)
+        # frame_mpi.grid_columnconfigure(1, weight=1)
 
-        self.openmp_switch_combobox = BatchMpiCombo(frame, 0, 3, 10, "OpenMP switch:", self.settings.open_mp_switch)
-        self.mpi_combobox = BatchMpiCombo(frame_mpi, 0, 0, 5, "Mpi compiler cmd:", self.settings.mpi.mpi_compiler_cmd)
-        self.mpi_runner_combobox = BatchMpiCombo(frame_mpi, 0, 1, 5, "MPI runner:", self.settings.mpi.mpi_runner)
-        self.batch_default_queue_combobox = BatchMpiCombo(frame_batch, 0, 0, 5, "Batch default queue:", self.settings.batch.batch_default_queue)
-        self.batch_runner_combobox = BatchMpiCombo(frame_batch, 0, 1, 5, "Batch runner", self.settings.batch.batch_runner)
+        self.openmp_switch_combobox = MpiCombo(frame, 0, 3, 10, "OpenMP switch:", self.settings.open_mp_switch)
+        self.mpi_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
+        # self.mpi_runner_combobox = BatchMpiCombo(frame_mpi, 0, 1, 5, "MPI runner:", self.settings.mpi.mpi_runner)
+        # self.batch_default_queue_combobox = BatchMpiCombo(frame_batch, 0, 0, 5, "Batch default queue:", self.settings.batch.batch_default_queue)
+        # self.batch_runner_combobox = BatchMpiCombo(frame_batch, 0, 1, 5, "Batch runner", self.settings.batch.batch_runner)
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
@@ -125,11 +123,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.settings = ProjectSettings.get_settings().code_description.settings
 
         self.compiler_cmd.set(self.settings.compiler_cmd)
-        self.mpi_combobox.set(self.settings.mpi.mpi_compiler_cmd or "")
+        self.mpi_combobox.set(self.settings.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
-        self.mpi_runner_combobox.set(self.settings.mpi.mpi_runner or "")
-        self.batch_default_queue_combobox.set(self.settings.batch.batch_default_queue or "")
-        self.batch_runner_combobox.set(self.settings.batch.batch_runner or "")
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
@@ -139,11 +134,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         and LibraryPathPane update_settings methods.
         """
         self.settings.compiler_cmd = self.compiler_cmd.get()
-        self.settings.mpi.mpi_compiler_cmd = self.mpi_combobox.get()
+        self.settings.mpi_compiler_cmd = self.mpi_combobox.get()
         self.settings.open_mp_switch = self.openmp_switch_combobox.get()
-        self.settings.mpi.mpi_runner = self.mpi_runner_combobox.get()
-        self.settings.batch.batch_runner = self.batch_runner_combobox.get()
-        self.settings.batch.batch_default_queue = self.batch_default_queue_combobox.get()
 
         self.pkg_config_pane.update_settings()
         self.library_path_pane.update_settings()
@@ -156,13 +148,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         compiler_cmd = self.compiler_cmd.get()
         open_mp_switch = self.openmp_switch_combobox.get()
 
-        mpi = MPI()
-        mpi.mpi_runner = self.mpi_runner_combobox.get()
-        mpi.mpi_compiler_cmd = self.mpi_combobox.get()
-
-        batch = Batch()
-        batch.batch_runner = self.batch_runner_combobox.get()
-        batch.batch_default_queue = self.batch_default_queue_combobox.get()
+        mpi_compiler_cmd = self.mpi_combobox.get()
 
         extra_lib = ExtraLibraries()
         pkg_configs = self.pkg_config_pane.get_data_from_table()
@@ -171,13 +157,12 @@ class FortranPane( ttk.Frame, IWrapPane ):
         extra_lib.path_defined = library_paths
 
         self.settings.from_dict({'compiler_cmd': compiler_cmd,
-                                 'mpi': mpi.to_dict(),
-                                 'batch': batch.to_dict(),
+                                 'mpi_compiler_cmd': mpi_compiler_cmd,
                                  'open_mp_switch': open_mp_switch,
                                  'extra_libraries': extra_lib.to_dict()})
 
 
-class BatchMpiCombo:
+class MpiCombo:
     def __init__(self, frame, column, row, padx, text, settings):
         self.frame = frame
         self.column = column
