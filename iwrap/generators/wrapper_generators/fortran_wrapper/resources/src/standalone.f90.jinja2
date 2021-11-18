@@ -1,6 +1,6 @@
 program standalone
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     use mpi
 {% endif %}
     use iwrap_defs
@@ -21,7 +21,7 @@ program standalone
     character(len=:), allocatable :: xml_string
     type(code_parameters_t) :: code_params
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI  ----
     logical :: was_mpi_finalized
     integer :: process_rank
@@ -65,7 +65,7 @@ program standalone
                 status_info)
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     if (process_rank == 0) then
        ! --- called only for RANK 0 process
 {% endif %}
@@ -76,7 +76,7 @@ program standalone
     !-----------Writing output data to file ---------------------
     call write_output(status_info)
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
     !-----------Close DB entries---------------------
@@ -88,7 +88,7 @@ program standalone
     call finish_{{actor_description.actor_name}}_wrapper(status_info)
     {% endif %}
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI Finalization ----
     call MPI_finalized(was_mpi_finalized, status)
     if (.not. was_mpi_finalized)   call MPI_Finalize(status)
