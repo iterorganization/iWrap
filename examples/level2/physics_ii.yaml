@@ -1,9 +1,9 @@
 code_description:
     implementation:
         subroutines:
-            init:  dummy_i
+            init:
             main:  physics_ii
-            finalize: dummy_f
+            finalize:
         data_type: legacy
         programming_language: Fortran
         code_path: ./native_code/libphysics_ii.a
