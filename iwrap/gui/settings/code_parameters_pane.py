@@ -15,7 +15,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-
     def __init__(self, master=None):
         """This pane is used to validate the XML file against the XSD schema file.
 

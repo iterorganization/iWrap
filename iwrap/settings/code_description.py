@@ -142,6 +142,18 @@ class Subroutines( SettingsBaseClass ):
 
 
 class Implementation( SettingsBaseClass ):
+    """The data class containing information about user code implementation.
+
+    Attributes:
+        root dir (str): root directory
+        programming_language (str): language of native physics code
+        data_type (:obj:str):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
+        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
+            method/subroutine to be run
+        include path (str): a module's / header's file path
+        code_parameters (:obj:CodeParameters): user defined parameters of the native code
+        subroutines (:obj:Subroutines): name of user method / subroutine to be called, used also as an actor name
+    """
     @property
     def programming_language(self):
         return self._programming_language
@@ -187,7 +199,7 @@ class Implementation( SettingsBaseClass ):
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
 
-        # include_path
+        # include path
         if not self.include_path:
             raise ValueError( 'Path to include/module file is not set!' )
 
@@ -247,7 +259,6 @@ class CodeParameters( SettingsBaseClass ):
         self.schema: str = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
-
         if self.parameters and not self.schema:
             raise ValueError( 'XSD schema must be set if XML parameters file is specified!' )
 
@@ -336,15 +347,10 @@ class CodeDescription( SettingsBaseClass ):
     """Description of the native code used for wrapping the code within an actor.
 
     Attributes:
-        programming_language (`str`): language of native physics code
-        subroutines (:obj:`Subroutines`): name of user method / subroutine to be called, used also as an actor name
-        data_type (:obj:`str`):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
         arguments (list [:obj:`Arguments`]): list of native code in/out arguments
-        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
-            method/subroutine to be run
-        code_parameters (:obj:`CodeParameters`): user defined parameters of the native code
         documentation (str): human readable description of the native code
-        language_specific (Dict[str, Any]): information specific for a given language of the native code
+        settings (dict): native code settings
+        implementation(:obj:`Implementation`): native code implementation info
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -379,23 +385,25 @@ class CodeDescription( SettingsBaseClass ):
         self._settings: dict = {}
 
     def change_language_specific(self):
+        """ Update settings when programming language changed.
+        """
         if self._settings is not None and isinstance(self._settings, dict):
             self._settings = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
                                                                                           self._settings)
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
-
         # arguments
         for argument in self.arguments or []:
             argument.validate( engine, project_root_dir, **{'data_type': self.implementation.data_type} )
 
-        #settings
+        # implementation
         self.implementation.validate(engine, project_root_dir)
 
         # documentation
         if self.documentation and not isinstance( self.documentation, str ):
             raise ValueError( 'Documentation must be a string (and it is not)!' )
 
+        # settings
         if not self.settings:
             raise ValueError( 'Language specific data are not set!' )
         elif isinstance(self.settings, SettingsBaseClass):
@@ -416,7 +424,6 @@ class CodeDescription( SettingsBaseClass ):
         self.documentation = None
         self.implementation.clear()
         self.settings = {}
-
 
     def to_dict(self, resolve_path: bool = False,
                 make_relative: bool = False,

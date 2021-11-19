@@ -14,7 +14,11 @@ class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
 
 
 class ExtraLibraries( SettingsBaseClass ):
-
+    """ Class for libraries from path and libraries defines by pkg config.
+        Attributes:
+            pkg_config_defined (list [`str`]): list of pkg config defined libraries.
+            path_defined (list [`str`]): list of path defined libraries.
+    """
     def __init__(self):
         self.pkg_config_defined = []
         self.path_defined = []
@@ -31,12 +35,23 @@ class ExtraLibraries( SettingsBaseClass ):
                 raise ValueError( f'Path to library file is not valid! {str( __path )}' )
 
     def clear(self):
+        """Clears class content."""
         self.__init__()
 
     def from_dict(self, dictionary: dict):
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
         super().from_dict( dictionary )
 
     def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
 
         if resolve_path:
@@ -50,6 +65,13 @@ class ExtraLibraries( SettingsBaseClass ):
 
 
 class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
+    """ The fortran language specific settings.
+    Attributes:
+        compiler_cmd (str): the compiler command used to compile native codes.
+        _open_mp_switch (str): the OpenMP switch.
+        _mpi_compiler_cmd (str): the MPI compiler command
+        extra_libraries (:obj:`ExtraLibraries`): extra libraries defined by paths or pkg configs.
+    """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -89,11 +111,23 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         self.extra_libraries.validate(engine, project_root_dir)
 
     def clear(self):
+        """Clears class content
+        """
         self.__init__()
 
     def from_dict(self, dictionary: dict):
+        """Restores given object from dictionary.
+
+           Args:
+               dictionary (Dict[str], Any): Data to be used to restore object
+           """
         super().from_dict( dictionary )
 
     def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+        """Serializes given object to dictionary
+
+        Returns
+            Dict[str, Any]: Dictionary containing object data
+        """
         return super().to_dict()
 

@@ -2,8 +2,9 @@ import logging
 from iwrap.settings.settings.fortran_settings import FortranSpecificSettings
 
 
-
 class LanguageSettingsManager:
+    """Language settings manager, change language settings object when programming language changed.
+    """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -14,7 +15,8 @@ class LanguageSettingsManager:
 
     @classmethod
     def get_settings_handler(cls, language, values=None):
-
+        """ Returns language settings.
+        """
         language = language.lower()
         # no special handler
         if language not in cls._language_settings_handlers:
@@ -30,4 +32,12 @@ class LanguageSettingsManager:
 
     @classmethod
     def get_settings(cls, language):
+        """
+        Returns settings for specific language.
+        Args:
+            language (str): programming language.
+
+        Returns: Settings object.
+
+        """
         return cls._language_settings_handlers[language]

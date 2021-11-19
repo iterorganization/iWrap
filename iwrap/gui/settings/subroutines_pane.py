@@ -10,9 +10,9 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
     """Subroutines pane contains main, init and finalize values.
 
     Attributes:
-        main(tk.StringVar()): String value for main.
-        init(tk.StringVar()): String value for init.
-        finalize(tk.StringVar()): String value for finalize.
+        init (tk.StringVar()): A name of subroutine that could be used to initialise the native code
+        main (tk.StringVar()): A name of the main subroutine that will be called from actor
+        finalize (tk.StringVar()): A name of subroutine that could be used to finalise the native code
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)

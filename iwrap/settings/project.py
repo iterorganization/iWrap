@@ -14,6 +14,7 @@ from iwrap.settings.code_description import CodeDescription
 
 #from iwrap.generation_engine.engine import Engine
 
+
 class ProjectSettings( SettingsBaseClass ):
     """Data class describing iWrap project settings.
 

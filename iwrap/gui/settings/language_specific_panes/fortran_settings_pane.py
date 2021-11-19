@@ -24,8 +24,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         compiler_cmd (tk.StringVar()): The compiler cmd.
         openmp_switch_combobox (ttk.Combobox): The combobox enables switch openmp.
-        mpi_combobox (ttk.Combobox): The combobox contains mpi values.
-        module_path (tk.StringVar()): The value for include path.
+        mpi_compiler_combobox (ttk.Combobox): The combobox contains mpi values.
         pkg_config_pane (PkgConfigPane): The PkgConfigPane class object.
         library_path_pane (LibraryPathPane): The LibraryPathPane class object.
     """
@@ -78,19 +77,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
-        # frame_batch = ttk.LabelFrame(main_frame, text="Batch", borderwidth=2, relief="groove")
-        # frame_batch.pack(side=tk.RIGHT, fill=tk.X, expand=1, padx=10)
-        # frame_batch.grid_columnconfigure(1, weight=1)
-
-        # frame_mpi = ttk.LabelFrame(main_frame, text="MPI", borderwidth=2, relief="groove")
-        # frame_mpi.pack(side=tk.LEFT, fill=tk.X, expand=1, padx=10)
-        # frame_mpi.grid_columnconfigure(1, weight=1)
-
         self.openmp_switch_combobox = MpiCombo(frame, 0, 3, 10, "OpenMP switch:", self.settings.open_mp_switch)
-        self.mpi_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
-        # self.mpi_runner_combobox = BatchMpiCombo(frame_mpi, 0, 1, 5, "MPI runner:", self.settings.mpi.mpi_runner)
-        # self.batch_default_queue_combobox = BatchMpiCombo(frame_batch, 0, 0, 5, "Batch default queue:", self.settings.batch.batch_default_queue)
-        # self.batch_runner_combobox = BatchMpiCombo(frame_batch, 0, 1, 5, "Batch runner", self.settings.batch.batch_runner)
+        self.mpi_compiler_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
@@ -117,24 +105,24 @@ class FortranPane( ttk.Frame, IWrapPane ):
         event.widget.tk_focusNext().focus()
 
     def reload(self):
-        """Reload system settings, set current value of compiler, module path, MPI and OpenMP switch.
+        """Reload system settings, set current value of compiler, MPI and OpenMP switch.
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
         self.settings = ProjectSettings.get_settings().code_description.settings
 
         self.compiler_cmd.set(self.settings.compiler_cmd)
-        self.mpi_combobox.set(self.settings.mpi_compiler_cmd or "")
+        self.mpi_compiler_combobox.set(self.settings.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
 
     def update_settings(self):
-        """Update compiler, module path, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
+        """Update compiler, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
         and LibraryPathPane update_settings methods.
         """
         self.settings.compiler_cmd = self.compiler_cmd.get()
-        self.settings.mpi_compiler_cmd = self.mpi_combobox.get()
+        self.settings.mpi_compiler_cmd = self.mpi_compiler_combobox.get()
         self.settings.open_mp_switch = self.openmp_switch_combobox.get()
 
         self.pkg_config_pane.update_settings()
@@ -147,8 +135,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         compiler_cmd = self.compiler_cmd.get()
         open_mp_switch = self.openmp_switch_combobox.get()
-
-        mpi_compiler_cmd = self.mpi_combobox.get()
+        mpi_compiler_cmd = self.mpi_compiler_combobox.get()
 
         extra_lib = ExtraLibraries()
         pkg_configs = self.pkg_config_pane.get_data_from_table()
@@ -217,7 +204,7 @@ class PkgConfigPane:
         columns (list[Column]): The list of the Column class objects.
         table (Table): The table widget.
         master (ttk.Frame): The master frame.
-        system_lib (PkgConfigTools): The PkgConfigTools class object.
+        pkg_config (PkgConfigTools): The PkgConfigTools class object.
 
     """
     # Class logger
@@ -287,6 +274,10 @@ class PkgConfigPane:
         self.table.add_new_table_content(data)
 
     def add_row_to_table(self, data):
+        """Add data to the table row.
+        Args:
+            data: data to be added.
+        """
         self.table.add_rows([data])
 
     def get_data_from_table(self):
@@ -425,7 +416,6 @@ class AddPkgConfigWindow:
         info_button.pack(side=tk.LEFT, padx=10, pady=10)
 
         # TABLE
-        system_lib_dict = master.pkg_config.system_lib_dict
         data = []
         for key, value in self.pkg_config.system_lib_dict.items():
             data.append([key, value['info'], value['description']])
@@ -452,7 +442,7 @@ class AddPkgConfigWindow:
 
 
 class LibraryPathPane:
-    """The PathPane contains the Table widget with the library paths. Add button enables to add library
+    """The LibraryPathPane contains the Table widget with the library paths. Add button enables to add library
     path from filedialog to the Table, remove button enables to delete selected library from the Table.
 
     Attributes:
