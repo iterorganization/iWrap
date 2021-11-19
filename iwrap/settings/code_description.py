@@ -238,6 +238,11 @@ class Implementation( SettingsBaseClass ):
             __path = utils.resolve_path( self.include_path, project_root_dir )
             ret_dict.update( {'include_path': __path} )
 
+            # code_path
+            code_path = self.code_path
+            __path = utils.resolve_path( code_path, project_root_dir )
+            ret_dict.update( {'code_path': __path} )
+
         return ret_dict
 
 
@@ -434,11 +439,6 @@ class CodeDescription( SettingsBaseClass ):
             Dict[str, Any]: Dictionary containing object data
         """
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
-        if resolve_path:
-            # code_path
-            code_path = self.implementation.code_path
-            __path = utils.resolve_path( code_path, project_root_dir )
-            ret_dict.update( {'code_path': __path} )
 
         return ret_dict
 

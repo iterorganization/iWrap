@@ -1,6 +1,7 @@
 program standalone
 
 {% if code_description.settings.mpi_compiler_cmd %}
+
     use mpi
 {% endif %}
     use iwrap_defs
@@ -20,6 +21,7 @@ program standalone
     !----  Code parameters  ----
     character(len=:), allocatable :: xml_string
     type(code_parameters_t) :: code_params
+
 
 {% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI  ----
@@ -75,6 +77,7 @@ program standalone
 
     !-----------Writing output data to file ---------------------
     call write_output(status_info)
+
 
 {% if code_description.settings.mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process

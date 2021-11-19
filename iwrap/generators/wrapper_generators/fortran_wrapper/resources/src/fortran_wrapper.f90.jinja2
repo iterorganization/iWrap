@@ -1,6 +1,7 @@
 {% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
 
 module wrapper
+
 {% if code_description.settings.mpi_compiler_cmd %}
     use mpi
 {% endif %}
@@ -149,6 +150,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% endif %}
             wrap_out_outputFlag, diagnosticInfo)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
 {% if code_description.settings.mpi_compiler_cmd %}
     if (process_rank == 0) then
        ! --- called only for RANK 0 process
@@ -173,6 +175,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     {{ ids_macro.put( argument.name) }}
     {% endfor %}
 
+
 {% if code_description.settings.mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
@@ -185,6 +188,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     ! ------Deallocating code parameters ----------------------------
     deallocate(imas_code_params%parameters_value)
     {% endif %}
+
 
 {% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI Finalization ----

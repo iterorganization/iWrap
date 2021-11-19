@@ -1,8 +1,10 @@
 # actor name
 ACTOR_NAME={{actor_description.actor_name}}
 
+
 {% if code_description.settings.mpi_compiler_cmd   %}
 CXX={{ code_description.settings.mpi_compiler_cmd }}
+
 {% else %}
 CXX={{ code_description.settings.compiler_cmd }}
 {% endif %}
@@ -15,7 +17,7 @@ OPENMPFLAG={{ code_description.settings.open_mp_switch or '' }}
 CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG)
 
 
-CODE_LIB_FILE=$(notdir {{code_description.code_path}})
+CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 

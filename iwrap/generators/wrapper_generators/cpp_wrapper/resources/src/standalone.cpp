@@ -1,4 +1,5 @@
 {% if code_description.settings.mpi_compiler_cmd %}
+
 #include <mpi.h>
 {% endif %}
 #include "iwrap_tools.h"
@@ -61,6 +62,7 @@ int main(int argc, char **argv)
                 &status_info);
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+
    {% if code_description.settings.mpi_compiler_cmd %}
     if (mpi_rank == 0)
     {
@@ -71,6 +73,7 @@ int main(int argc, char **argv)
 
     //-----------Writing output data to file ---------------------
     write_output(status_info);
+
 
 {% if code_description.settings.mpi_compiler_cmd %}
     } //The end of section called only for RANK 0 process

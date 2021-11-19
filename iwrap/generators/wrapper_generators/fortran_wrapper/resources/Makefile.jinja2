@@ -2,6 +2,7 @@
 ACTOR_NAME={{actor_description.actor_name}}
 
 FC={{ code_description.settings.compiler_cmd }}
+
 MPIFC={{ code_description.settings.mpi_compiler_cmd or ''}}
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
@@ -20,7 +21,7 @@ else
 endif
 
 FCLAGS=$(FLAGS) $(OPENMPFLAG)
-CODE_LIB_FILE=$(notdir {{code_description.code_path}})
+CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 # main IMAS libs to be used
@@ -48,6 +49,7 @@ INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
 LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS) $(CODE_LIB_DEF)
 
 {% if code_description.settings.mpi_compiler_cmd   %}
+
 # MPI compilation wrapper will be used
 FC=$(MPIFC)
 {% endif %}
