@@ -22,12 +22,7 @@ code_description:
         consequat. '
     settings:
         compiler_cmd: g++
-        mpi:
-            mpi_compiler_cmd: mpicxx
-            mpi_runner: mpiexec
-        batch:
-            batch_runner:
-            batch_default_queue:
+        mpi_compiler_cmd: mpicxx
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

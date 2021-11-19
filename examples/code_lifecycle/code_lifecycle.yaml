@@ -24,12 +24,7 @@ code_description:
         consequat. '
     settings:
         compiler_cmd: gfortran
-        mpi:
-            mpi_compiler_cmd:
-            mpi_runner:
-        batch:
-            batch_runner:
-            batch_default_queue:
+        mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
