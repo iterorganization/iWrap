@@ -66,7 +66,7 @@ class CBinder:
 
         self.ids_converter_class.initialize(actor.is_standalone_run(), self.runtime_settings.ids_storage)
         actor_name = self.actor.name
-        if self.actor.code_description['subroutines'].get('init'):
+        if self.actor.code_description['implementation']['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
             self.wrapper_init_func = self.__get_wrapper_function(sbrt_name)
 
@@ -74,7 +74,7 @@ class CBinder:
         self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
 
-        if self.actor.code_description['subroutines'].get('finish'):
+        if self.actor.code_description['implementation']['subroutines'].get('finish'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
 

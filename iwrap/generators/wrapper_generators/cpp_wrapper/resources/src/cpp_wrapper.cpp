@@ -1,25 +1,25 @@
-{% import './macros/%s_ids.jinja2' % code_description.settings.data_type as ids_macro %}
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
 #include <string.h>
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
 #include <mpi.h>
 {% endif %}
 
 {{ ids_macro.imports() }}
 #include "defs.h"
-#include  "{{code_description.language_specific.include_path.split('/')[-1]}}"
+#include  "{{code_description.implementation.include_path.split('/')[-1]}}"
 
-{% if code_description.subroutines.init %}
+{% if code_description.implementation.subroutines.init %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_description.actor_name}}_wrapper(
-{% if code_description.code_parameters.parameters   %}
+{% if code_description.implementation.code_parameters.parameters   %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info)
 {
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
     imas_code_params.parameters = (char**)&(code_params->params);
@@ -29,8 +29,8 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.subroutines.init}}(
-{% if code_description.code_parameters.parameters  %}
+    {{code_description.implementation.subroutines.init}}(
+{% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
             &(status_info->code), &(status_info->message) );
@@ -41,7 +41,7 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 }
 {% endif %}
 
-{% if code_description.subroutines.finish %}
+{% if code_description.implementation.subroutines.finish %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -51,7 +51,7 @@ extern "C" void finish_{{actor_description.actor_name}}_wrapper(
 
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.subroutines.finish}}(
+    {{code_description.implementation.subroutines.finish}}(
             &(status_info->code), &(status_info->message) );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -68,7 +68,7 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info)
@@ -79,13 +79,13 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
     {{ ids_macro.declare(argument.type, argument.name ) }}
 {% endfor %}
 
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
 {% endif %}
 
 
-    {% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+    {% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI  ----
     int mpi_rank;
     int was_mpi_initialized, was_mpi_finalized;
@@ -102,7 +102,7 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
-        {% if code_description.code_parameters.parameters  %}
+        {% if code_description.implementation.code_parameters.parameters  %}
     // ------------------ code parameters ----------------------------
     imas_code_params.parameters = (char**)&(code_params->params);
     imas_code_params.default_param = NULL;
@@ -110,11 +110,11 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.subroutines.main}}(
+    {{code_description.implementation.subroutines.main}}(
 {% for argument in code_description.arguments %}
             {{ argument.name }},
 {% endfor %}
-{% if code_description.code_parameters.parameters  %}
+{% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
             &(status_info->code), &(status_info->message) );
@@ -124,7 +124,7 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 		return;
    // ------------ Provenance information --------------
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-    {{ ids_macro.provenance( argument.name , code_description.subroutines.main) }}
+    {{ ids_macro.provenance( argument.name , code_description.implementation.subroutines.main) }}
 {% endfor %}
 
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}
@@ -137,7 +137,7 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
     {{ ids_macro.deallocate( argument.name) }}
 {% endfor %}
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI Finalization ----
     MPI_Finalized(&was_mpi_finalized);
     if (!was_mpi_finalized)

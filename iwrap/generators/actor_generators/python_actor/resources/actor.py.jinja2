@@ -47,16 +47,16 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         self.sandbox_default_dir = '{{ platform_settings.default_directories.sandbox_default_dir }}'
 
         # setting MPI parameters
-        self.runtime_settings.mpi.runner = '{{ code_description.settings.mpi_runner or "" }}'
+{#        self.runtime_settings.mpi.runner = '{{ code_description.settings.mpi_runner or "" }}'#}
         self.runtime_settings.mpi.default_options = ['-n @NODES@']
 
-        # setting BATCH parameters
-        self.runtime_settings.batch.runner = '{{ code_description.settings.batch.batch_runner or "" }}'
-        self.runtime_settings.batch.queue = '{{ code_description.settings.batch.batch_queue or "" }}'
-        self.runtime_settings.batch.default_options = ['--nodes=@NODES@', '--wrap=@EXEC@']
-
-
-
-
+{#        # setting BATCH parameters#}
+{#        self.runtime_settings.batch.runner = '{{ code_description.settings.batch.batch_runner or "" }}'#}
+{#        self.runtime_settings.batch.queue = '{{ code_description.settings.batch.batch_queue or "" }}'#}
+{#        self.runtime_settings.batch.default_options = ['--nodes=@NODES@', '--wrap=@EXEC@']#}
+{##}
+{##}
+{##}
+{##}
 
 
