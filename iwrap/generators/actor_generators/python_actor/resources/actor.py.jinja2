@@ -56,7 +56,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
 
         self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
 
-       {% if code_description.settings.mpi and code_description.settings.mpi.mpi_runner %}
+       {% if code_description.settings.mpi_compiler_cmd %}
         # setting MPI parameters
         self.runtime_settings.mpi = RuntimeSettings.MPISettings()
         self.runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'

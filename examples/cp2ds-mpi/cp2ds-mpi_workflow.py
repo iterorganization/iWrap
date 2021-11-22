@@ -47,7 +47,7 @@ class ExampleWorkflowManager:
 
         #self.actor_core2dist_mpi.runtime_settings.run_mode = RunMode.BATCH
         #self.actor_core2dist_mpi.runtime_settings.debug_mode = DebugMode.ATTACH
-        self.actor_core2dist_mpi.runtime_settings.mpi.nodes = 3
+        self.actor_core2dist_mpi.runtime_settings.mpi.mpi_nodes = 3
         self.actor_core2dist_mpi.initialize()
     
     def execute_workflow(self):

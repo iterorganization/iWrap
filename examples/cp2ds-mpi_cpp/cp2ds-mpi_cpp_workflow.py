@@ -43,7 +43,7 @@ class ExampleWorkflowManager:
         print( 'Running STANDALONE version. (Even if NORMAL was selected)' )
         self.actor_cp2ds_mpi.runtime_settings.run_mode = RunMode.STANDALONE
 
-        self.actor_cp2ds_mpi.runtime_settings.mpi.number_of_processes = 3
+        self.actor_cp2ds_mpi.runtime_settings.mpi.mpi_nodes = 3
         self.actor_cp2ds_mpi.initialize()
     
     def execute_workflow(self):

@@ -70,7 +70,7 @@ class CBinder:
         self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
 
-        if self.actor.code_description['implementation']['subroutines'].get('finish'):
+        if self.actor.code_description['implementation']['subroutines'].get('finalize'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
 
