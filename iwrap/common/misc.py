@@ -15,8 +15,6 @@ class Dictionarizable( ABC ):
 
         return members_list
 
-
-    @abstractmethod
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
@@ -33,7 +31,6 @@ class Dictionarizable( ABC ):
             else:
                 setattr( self, name, value )
 
-    @abstractmethod
     def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
 

@@ -60,20 +60,5 @@ class CodeParameters:
         xml_schema_validator.assertValid( xml_tree )
 
 
-    def save(self, stream ):
-        stream.write( " Code Parameters ".center(70, '=') )
-        stream.write( "\n" )
-        stream.write( 'Length:' )
-        stream.write( "\n" )
-        if self.__parameters_str:
-            stream.write( str(len(self.__parameters_str)) )
-        else:
-            stream.write( '0\n' )
-            return
-        stream.write( "\n" )
-        stream.write( ' Value: '.center(20, '-') )
-        stream.write( "\n" )
-        stream.write( self.__parameters_str )
-        stream.write( "\n" )
 
 

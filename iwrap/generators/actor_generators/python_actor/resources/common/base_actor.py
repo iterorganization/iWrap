@@ -6,6 +6,7 @@ from abc import ABC
 from .runtime_settings import RuntimeSettings, SandboxLifeTime, DebugMode, RunMode
 from ..binding.binder import CBinder
 from .sandbox import Sandbox
+from .runners import Runner
 
 
 class OutputStatus:
@@ -42,6 +43,7 @@ class ActorBaseClass( ABC ):
         self.name = self.__class__.__name__
 
         self.__binder = CBinder( )
+        self.__runner = None
 
     def is_standalone_run(self):
         if self.is_mpi_code:
@@ -67,13 +69,16 @@ class ActorBaseClass( ABC ):
         self.__binder.initialize(actor=self)
         self.sandbox.initialize()
 
-        if not self.is_standalone_run():
-            # XML Code Params
-            code_parameters = None
-            if self.code_parameters:
-                code_parameters = self.code_parameters.parameters
 
-            self.__binder.call_init(code_parameters, sandbox_dir=self.sandbox.path)
+        # XML Code Params
+        code_parameters = None
+        if self.code_parameters:
+            code_parameters = self.code_parameters.parameters
+
+        Runner.initialize(self, self.__binder, self.sandbox.path, self.output_stream)
+        is_standalone = self.is_standalone_run()
+        self.__runner = Runner.get_runner(is_standalone)
+        self.__runner.call_initialize( code_parameters )
 
     def __call__(self, *args):
         return self.run( *args )
@@ -84,7 +89,7 @@ class ActorBaseClass( ABC ):
         if self.code_parameters:
             code_parameters = self.code_parameters.parameters
 
-        out = self.__binder.call_main( *args , code_parameters=code_parameters, sandbox_dir=self.sandbox.path)
+        out = self.__runner.call_main( *args , code_parameters=code_parameters)
 
         if self.runtime_settings.sandbox.life_time == SandboxLifeTime.ACTOR_RUN:
             self.sandbox.clean()
@@ -93,8 +98,7 @@ class ActorBaseClass( ABC ):
 
     def finalize(self):
 
-        if not self.is_standalone_run():
-            self.__binder.call_finish(sandbox_dir=self.sandbox.path)
+        self.__runner.call_finalize()
 
         self.sandbox.clean()
         self.__binder.finalize()

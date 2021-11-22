@@ -1,0 +1,14 @@
+import sys
+import subprocess
+def exec_system_cmd(system_cmd: str,  output_stream=sys.stdout) :
+
+    proc = subprocess.Popen( system_cmd, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+
+    for line in proc.stdout:
+        line = line.decode( errors='replace' )
+        print( line, end='', file=output_stream )
+
+    return_code = proc.wait()
+    if return_code:
+        raise RuntimeError( f'ERROR [{return_code}] while executing command: {system_cmd}' )

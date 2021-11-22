@@ -18,7 +18,7 @@ from ..common.runtime_settings import RuntimeSettings, RunMode, DebugMode
 
 def exec_system_cmd(system_cmd: str,  output_stream=sys.stdout) :
 
-    proc = subprocess.Popen( system_cmd,
+    proc = subprocess.Popen( system_cmd, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
 
     for line in proc.stdout:
@@ -42,43 +42,36 @@ class CBinder:
         self.actor_dir = None
 
         self.runtime_settings : RuntimeSettings = None
-        self.formal_arguments = None
+        self.arg_metadata_list = None
 
         self.wrapper_init_func = None
         self.wrapper_main_func = None
         self.wrapper_finish_func = None
 
-    def save_data(self, ids):
-        pass
 
-    def read_data(self, ids):
-        pass
 
     def initialize(self, actor):
 
         IDSConvertersRegistry.initialize()
-        self.ids_converter_class = IDSConvertersRegistry.get_converter_class('legacy', 'cpp')
+        self.ids_converter_class = IDSConvertersRegistry.get_converter_class(actor.data_type, 'cpp')
         self.actor = actor
 
         self.runtime_settings = actor.runtime_settings
-        self.formal_arguments = actor.arguments
+        self.arg_metadata_list = actor.arguments
         self.actor_dir = actor.actor_dir
 
         self.ids_converter_class.initialize(actor.is_standalone_run(), self.runtime_settings.ids_storage)
         actor_name = self.actor.name
-        if self.actor.code_description['subroutines'].get('init'):
+        if self.actor.code_description['implementation']['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
             self.wrapper_init_func = self.__get_wrapper_function(sbrt_name)
 
         sbrt_name = actor_name + "_wrapper"
         self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
-
-        if self.actor.code_description['subroutines'].get('finish'):
+        if self.actor.code_description['implementation']['subroutines'].get('finalize'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
-
-
 
     def finalize(self):
         self.ids_converter_class.finalize()
@@ -105,45 +98,52 @@ class CBinder:
                 "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      ",
                 status_info.code, "\n     Diagnostic info: ", status_info.message )
 
-    def __attach_debugger(self, sbrt_name:str):
+    def get_converters(self, ids_list, code_parameters):
+
+        ids_converters_list = None
+        if ids_list:
+            input_idses = list( ids_list )
+
+            ids_converters_list = []
+
+            # LOOP over ids
+
+            for arg_meta_data in self.arg_metadata_list:
+                ids_value = None
+                if arg_meta_data.intent == Argument.IN:
+                    ids_value = input_idses.pop( 0 )
+
+                arg = self.ids_converter_class( arg_meta_data.type, arg_meta_data.intent, ids_value )
+                ids_converters_list.append( arg )
+
+        # XML Code Params
+        param_c = None
+        if code_parameters:
+            param_c = ParametersCType( code_parameters )
 
 
-        def start_debugger():
-            process_id = os.getpid()
-            tv_command = ['totalview',
-                          '-e', 'dset VERBOSE warning',
-                          '-e', 'dset TV::dll_read_loader_symbols_only *',
-                          '-e', 'dset TV::GUI::pop_at_breakpoint true',
-                          '-e', f'dattach python {process_id}',
-                          '-e', f'dbreak -pending {sbrt_name}',
-                          '-e', 'puts  "\n\nTotalView attached to a running Python process.\n"',
-                          '-e', 'puts  "Press any key to continue!\n"',
-                          '-e', 'puts  "WARNING:\tRestarting or killing debugged process will close the workflow!"',
-                          ]
+        # DIAGNOSTIC INFO
+        status_info_converter = StatusCType()
 
-            self.__logger.debug( 'EXECUTING command: ' + str( tv_command ) )
-            exec_system_cmd(tv_command, output_stream=self.actor.output_stream)
+        return ids_converters_list, param_c, status_info_converter
 
-        t = Thread( target=start_debugger, args=() )
-        t.daemon = True  # thread dies with the program
-        t.start()
-        input()  # just to wait until debugger starts
+    def get_native_arguments(self, ids_converters_list, code_parameters_converter, status_info_converter):
 
-    def __run_normal(self, c_arglist, sandbox_dir:str, debug_mode=False):
+        c_arglist = []
+        if ids_converters_list:
+            c_idslist = [arg.convert_to_native_type() for arg in ids_converters_list]
+            c_arglist = c_arglist + c_idslist
 
-        sbrt_name = self.actor.name + "_wrapper"
-        if debug_mode:
-            self.__attach_debugger(sbrt_name)
+        if code_parameters_converter:
+            c_code_parameters = code_parameters_converter.convert_to_native_type()
+            c_arglist.append(c_code_parameters)
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
+        c_status_info = status_info_converter.convert_to_native_type()
+        c_arglist.append( c_status_info )
 
-        self.wrapper_main_func( *c_arglist )
-        # go back to initial dir
-        os.chdir(cwd)
+        return c_arglist
 
-    def __save_input(self, full_arguments_list, sandbox_dir):
+    def __save_input(self, full_arguments_list, code_parameters, sandbox_dir):
 
         file_path = Path(sandbox_dir, 'input.txt')
         with open( file_path, "wt" ) as file:
@@ -155,53 +155,57 @@ class CBinder:
             file.write( str( len( full_arguments_list ) ) + "\n" )
             for arg in full_arguments_list:
                 arg.save( file )
-            self.actor.code_parameters.save(file)
+            ParametersCType.save(code_parameters, file)
 
-    def run_standalone(self, full_arguments_list, sandbox_dir:str, mpi_settings=None, debug_mode=False):
+    def __read_output(self, status_info, sandbox_dir):
+
+        file_path = Path(sandbox_dir, 'output.txt')
+        with open( file_path, "rt" ) as file:
+            # Read status info
+            status_info.read(file)
+
+    def run_standalone(self, ids_list, code_parameters, exec_command, sandbox_dir:str, output_stream):
 
         self.__logger.debug( "RUNNING STDL" )
-
-        exec_command = []
-
-        if self.actor.is_mpi_code and mpi_settings:
-            exec_command.append( 'mpiexec' )
-            np = mpi_settings.number_of_processes
-            if np and str( np ).isnumeric():
-                exec_command.append( '-np' )
-                exec_command.append( str( np ) )
-            if debug_mode:
-                exec_command.append( '-tv' )
-        elif debug_mode:
-            exec_command.append( 'totalview' )
-
-        exec_command.append( self.actor_dir + '/bin/' + self.actor.name + '.exe' )
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
-        self.__save_input( full_arguments_list , sandbox_dir)
 
+        ids_converters_list, code_parameters_converter, status_info_converter = self.get_converters( ids_list, code_parameters)
+        c_arglist = self.get_native_arguments( ids_converters_list, code_parameters_converter, status_info_converter )
+        self.__save_input( ids_converters_list, code_parameters_converter, sandbox_dir )
         self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
-        exec_system_cmd(exec_command, output_stream=self.actor.output_stream)
+        exec_system_cmd(exec_command, output_stream=output_stream)
 
         # go back to initial dir
         os.chdir(cwd)
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info_converter )
+
+        # get output data
+        results = []
+        for arg in ids_converters_list:
+            if arg.intent == Argument.OUT:
+                results.append( arg.convert_to_actor_type() )
+            arg.release()
+
+        # final output
+        if not results:
+            return None
+        elif len( results ) == 1:
+            return results[0]
+        else:
+            return tuple( results )
 
     def call_init(self, code_parameters: str, sandbox_dir: str, debug_mode=False):
 
         if not self.wrapper_init_func:
             return
 
-        c_arglist = []
-
-        # XML Code Params
-        if code_parameters:
-            param_c = ParametersCType(code_parameters).convert_to_native_type()
-            c_arglist.append( param_c )
-
-        # DIAGNOSTIC INFO
-        status_info = StatusCType()
-        c_arglist.append( status_info.convert_to_native_type() )
+        _, code_parameters_converter, status_info_converter = self.get_converters( None, code_parameters)
+        c_arglist = self.get_native_arguments( _, code_parameters_converter, status_info_converter )
 
         # go to sandbox
         cwd = os.getcwd()
@@ -214,56 +218,33 @@ class CBinder:
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info )
+        self.__status_check( status_info_converter )
 
     # only input arguments, outputs are returned (as a list if more than 1)
-    def call_main(self, *input_idses, code_parameters:str, sandbox_dir:str):
+    def call_main(self, input_idses, code_parameters:str, sandbox_dir:str):
         """
         """
-        input_idses = list( input_idses )
-
-        full_arguments_list = []
-
-        # LOOP over full_arguments_list
-
-        for formal_arg in self.formal_arguments:
-            ids_value = None
-            if formal_arg.intent == Argument.IN:
-                ids_value = input_idses.pop( 0 )
-
-            arg = self.ids_converter_class(formal_arg.type, formal_arg.intent, ids_value )
-            full_arguments_list.append( arg )
-
-        #
-        c_arglist = [arg.convert_to_native_type() for arg in full_arguments_list]
-
-        # XML Code Params
-        if code_parameters:
-            param_c = ParametersCType(code_parameters).convert_to_native_type()
-            c_arglist.append( param_c )
-
-        # DIAGNOSTIC INFO
-        status_info = StatusCType()
-        c_arglist.append( status_info.convert_to_native_type() )
-
         print( 'RUN MODE: ', str( self.runtime_settings.run_mode ) )
+        ids_converters_list, code_parameters_converter, status_info_converter = self.get_converters( input_idses, code_parameters)
 
-        mpi_settings = self.runtime_settings.mpi
-        is_standalone =  self.actor.is_standalone_run()
-        debug_mode = self.runtime_settings.debug_mode != DebugMode.NONE
+        c_arglist = self.get_native_arguments( ids_converters_list, code_parameters_converter, status_info_converter )
 
-        if is_standalone:
-            self.run_standalone( full_arguments_list, sandbox_dir=sandbox_dir,
-                                 mpi_settings=mpi_settings, debug_mode=debug_mode )
-        else:
-            self.__run_normal( c_arglist,  sandbox_dir=sandbox_dir, debug_mode=debug_mode )
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( sandbox_dir )
+
+
+
+        self.wrapper_main_func( *c_arglist )
+        # go back to initial dir
+        os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info )
+        self.__status_check(status_info_converter)
 
         # get output data
         results = []
-        for arg in full_arguments_list:
+        for arg in ids_converters_list:
             if arg.intent == Argument.OUT:
                 results.append( arg.convert_to_actor_type() )
             arg.release()
@@ -280,20 +261,19 @@ class CBinder:
         if not self.wrapper_finish_func:
             return
 
-        c_arglist = []
-        # DIAGNOSTIC INFO
-        status_info = StatusCType()
-        c_arglist.append( status_info.convert_to_native_type() )
+        _, _, status_info_converter = self.get_converters( ids_list=None, code_parameters=None)
+
+        c_arg_list = self.get_native_arguments(_, _, status_info_converter )
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
 
         # call FINISH
-        self.wrapper_finish_func( *c_arglist )
+        self.wrapper_finish_func( *c_arg_list )
 
         # go back to initial dir
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info )
+        self.__status_check( status_info_converter )

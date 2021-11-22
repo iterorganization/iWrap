@@ -14,12 +14,12 @@
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_description.actor_name}}_wrapper(
-{% if code_description.code_parameters.parameters   %}
+{% if code_description.implementation.code_parameters.parameters   %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info)
 {
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
     imas_code_params.parameters = (char**)&(code_params->params);
@@ -29,8 +29,8 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.subroutines.init}}(
-{% if code_description.code_parameters.parameters  %}
+    {{code_description.implementation.subroutines.init}}(
+{% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
             &(status_info->code), &(status_info->message) );
@@ -41,7 +41,7 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 }
 {% endif %}
 
-{% if code_description.implementation.subroutines.finish %}
+{% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

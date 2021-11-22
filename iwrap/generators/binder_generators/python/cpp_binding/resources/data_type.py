@@ -82,12 +82,12 @@ class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
 
         # store input data
         if self.intent == Argument.IN:
-            self.db_entry.put( self.value, self.occurrence )
+            self.__data_storage.save_data(self.ids_name, self.occurrence, self.value)
 
         return ctypes.byref( self )
 
     def convert_to_actor_type(self):
-        ids = self.db_entry.get( self.ids_name, self.occurrence )
+        ids = self.__data_storage.read_data( self.ids_name, self.occurrence )
         return ids
 
     def release(self):

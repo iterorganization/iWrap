@@ -10,14 +10,14 @@
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_description.actor_name}}_wrapper(
-{% if code_description.code_parameters.parameters and code_description.code_parameters.schema %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
                 code_parameters_t* code_params,
 {% endif %}
                 status_t* status_info);
 
 {% endif %}
 
-{% if code_description.implementation.subroutines.finish %}
+{% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
