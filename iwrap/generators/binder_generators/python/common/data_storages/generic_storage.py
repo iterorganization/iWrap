@@ -79,12 +79,11 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
     @classmethod
     def save_data(cls, ids_name, ids_occurrence, legacy_ids):
-
         cls.__db_entry.put( legacy_ids, ids_occurrence )
 
     @classmethod
     def read_data(cls, ids_name, ids_occurrence):
-        legacy_ids = cls.__db_entry.put( ids_name, ids_occurrence )
+        legacy_ids = cls.__db_entry.get( ids_name, ids_occurrence )
         return legacy_ids
 
     @classmethod

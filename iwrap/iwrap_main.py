@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
 
-    main( ['-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=False )
+    main( ['-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=True )
     #main( ['-a', 'core2dist_mpi', '-f', '../examples/cp2ds-mpi/cp2ds-mpi.yaml'], is_commandline_mode=True )
     # main( ['-h'] )
     # main(['--list-actor-types'])

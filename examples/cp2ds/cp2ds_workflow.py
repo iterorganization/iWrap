@@ -13,9 +13,10 @@ class ExampleWorkflowManager:
 
         self.actor_cp2ds = core2dist()
         print( self.actor_cp2ds.unique_id )
-        print(self.actor_cp2ds.code_description['implementation']['data_type'])
+        print(self.actor_cp2ds.actor_description['data_type'])
         print(self.actor_cp2ds.code_description['implementation']['subroutines'])
         print(self.actor_cp2ds.code_description['implementation']['include_path'])
+        print(self.actor_cp2ds.code_description['implementation']['data_type'])
         for arg in self.actor_cp2ds.code_description['arguments']:
             print(arg)
         for arg in self.actor_cp2ds.arguments:

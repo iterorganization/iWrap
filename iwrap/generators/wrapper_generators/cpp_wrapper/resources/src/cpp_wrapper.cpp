@@ -42,7 +42,7 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 }
 {% endif %}
 
-{% if code_description.implementation.subroutines.finish %}
+{% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

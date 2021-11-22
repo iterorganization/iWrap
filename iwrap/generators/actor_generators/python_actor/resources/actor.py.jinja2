@@ -3,11 +3,20 @@ import os
 from .common.base_actor import ActorBaseClass
 from .common.definitions import Argument
 from .common.code_parameters import CodeParameters
+from .common.runtime_settings import RuntimeSettings
 
 # {{ " PROVENANCE INFO ".center(80, '=') }}
+
 ACTOR_DESCRIPTION = {{actor_description | pprint | wordwrap(width=80, wrapstring='\n\t\t')}}
 
+# {{ "".center(60, '-') }}
+
 CODE_DESCRIPTION = {{code_description | pprint | indent(width=8)}}
+
+# {{ "".center(60, '-') }}
+
+PLATFORM_SETTINGS = {{platform_settings | pprint | indent(width=8)}}
+
 # {{ "".center(80, '=') }}
 
 
@@ -25,6 +34,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     def __init__(self):
         super().__init__()
         self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
+        self.data_type = '{{code_description.implementation.data_type | lower}}'
         self.native_language = '{{code_description.implementation.programming_language | lower}}'
         self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
@@ -44,14 +54,21 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     {% endif %}
         self.code_parameters = CodeParameters(default_parameters_file, schema_file)
 
-        self.sandbox_default_dir = '{{ platform_settings.default_directories.sandbox_default_dir }}'
+        self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
 
+       {% if code_description.settings.mpi and code_description.settings.mpi.mpi_runner %}
         # setting MPI parameters
-{#        self.runtime_settings.mpi.runner = '{{ code_description.settings.mpi_runner or "" }}'#}
-        self.runtime_settings.mpi.default_options = ['-n @NODES@']
+        self.runtime_settings.mpi = RuntimeSettings.MPISettings()
+        self.runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
+        self.runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
+        {% endif %}
 
-{#        # setting BATCH parameters#}
-{#        self.runtime_settings.batch.runner = '{{ code_description.settings.batch.batch_runner or "" }}'#}
-{#        self.runtime_settings.batch.queue = '{{ code_description.settings.batch.batch_queue or "" }}'#}
-{#        self.runtime_settings.batch.default_options = ['--nodes=@NODES@', '--wrap=@EXEC@']#}
-{##}
+        # setting BATCH parameters
+        self.runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
+        self.runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
+
+
+        # setting DEBUGGER parameters
+        self.runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
+        self.runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
+
