@@ -14,8 +14,8 @@ class ExampleWorkflowManager:
         self.actor_cp2ds = core2dist()
         print( self.actor_cp2ds.unique_id )
         print(self.actor_cp2ds.actor_description['data_type'])
-        print(self.actor_cp2ds.code_description['subroutines'])
-        print(self.actor_cp2ds.code_description['language_specific']['include_path'])
+        print(self.actor_cp2ds.code_description['implementation']['subroutines'])
+        print(self.actor_cp2ds.code_description['implementation']['include_path'])
         for arg in self.actor_cp2ds.code_description['arguments']:
             print(arg)
         for arg in self.actor_cp2ds.arguments:
@@ -50,7 +50,8 @@ class ExampleWorkflowManager:
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
             self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
-        #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
+        self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
+        self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.STANDALONE
         self.actor_cp2ds.initialize()
     
     def execute_workflow(self):
