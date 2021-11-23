@@ -28,33 +28,48 @@ Scientific Worfklows : iWrap - native code API
 
          .. container:: page-metadata
 
-            Created by Bartosz Palak, last modified on 10 wrz 2021
+            Created by Bartosz Palak, last modified on 23 Nov 2021
 
          .. container:: wiki-content group
             :name: main-content
 
-            .. container:: toc-macro rbtoc1632746267058
+            .. container:: toc-macro rbtoc1637669703690
 
                -  `1. Introduction <#iWrapnativecodeAPI-Introduction>`__
-               -  `2. Fortran <#iWrapnativecodeAPI-Fortran>`__
+               -  `2. The method
+                  API <#iWrapnativecodeAPI-ThemethodAPI>`__
 
-                  -  `2.1. Native code
-                     signature <#iWrapnativecodeAPI-Nativecodesignature>`__
-                  -  `2.2. Module <#iWrapnativecodeAPI-Module>`__
-                  -  `2.3.
-                     Subroutine <#iWrapnativecodeAPI-Subroutine>`__
-                  -  `2.4. Arguments <#iWrapnativecodeAPI-Arguments>`__
-                  -  `2.5. Example <#iWrapnativecodeAPI-Example>`__
+                  -  `2.1.
+                     Initialisation method <#iWrapnativecodeAPI-Initialisationmethod>`__
+                  -  `2.2. Main
+                     method <#iWrapnativecodeAPI-Mainmethod>`__
+                  -  `2.3. Finalize
+                     method <#iWrapnativecodeAPI-Finalizemethod>`__
 
-               -  `3.  C++ <#iWrapnativecodeAPI-C++>`__
+               -  `3. API
+                  implementation <#iWrapnativecodeAPI-APIimplementation>`__
 
-                  -  `3.1. Native code
-                     signature <#iWrapnativecodeAPI-Nativecodesignature.1>`__
-                  -  `3.2. Header <#iWrapnativecodeAPI-Header>`__
-                  -  `3.3. Method <#iWrapnativecodeAPI-Method>`__
-                  -  `3.4.
-                     Arguments <#iWrapnativecodeAPI-Arguments.1>`__
-                  -  `3.5. Example <#iWrapnativecodeAPI-Example.1>`__
+                  -  `3.1. Fortran <#iWrapnativecodeAPI-Fortran>`__
+
+                     -  `3.1.1. Native code
+                        signature <#iWrapnativecodeAPI-Nativecodesignature>`__
+                     -  `3.1.2. Module <#iWrapnativecodeAPI-Module>`__
+                     -  `3.1.3.
+                        Subroutines <#iWrapnativecodeAPI-Subroutines>`__
+                     -  `3.1.4.
+                        Arguments <#iWrapnativecodeAPI-Arguments>`__
+
+                  -  `3.2. Example <#iWrapnativecodeAPI-Example>`__
+                  -  `3.3.  C++ <#iWrapnativecodeAPI-C++>`__
+
+                     -  `3.3.1. Native code
+                        signature <#iWrapnativecodeAPI-Nativecodesignature.1>`__
+                     -  `3.3.2. Header <#iWrapnativecodeAPI-Header>`__
+                     -  `3.3.3. Method <#iWrapnativecodeAPI-Method>`__
+                     -  `3.3.4.
+                        Arguments <#iWrapnativecodeAPI-Arguments.1>`__
+                     -  `3.3.5.
+                        Example <#iWrapnativecodeAPI-Example.1>`__
 
                -  `4. MPI <#iWrapnativecodeAPI-MPI>`__
                -  `5. Code
@@ -63,18 +78,32 @@ Scientific Worfklows : iWrap - native code API
             .. rubric:: 1.Introduction
                :name: iWrapnativecodeAPI-Introduction
 
-            A signature of user code must follow strict rules to allow
-            interaction between it and wrapping actor. Without the
-            detailed knowledge of method signature iWrap cannot built an
-            actor.
+            .. container::
+            .. warning::
 
-            -  Only IDS data are accepted as dynamic data input/output 
-            -  Static data provided as additional codeparam input ,
-            -  Optional error code/mesg output (not mandatory),
-            -  A constraint: at least one IDS is either produced or
-               consumed
+               .. container:: confluence-information-macro-body
+
+                  A signature of user code must follow strict rules to
+                  be wrapped by iWrap - without the detailed knowledge
+                  of method signature iWrap cannot built an actor.
 
             | 
+
+            iWrap actor calls three methods of the native code:
+
+            -  The initialisation method
+            -  The main ("step") method
+            -  The finalisation method
+
+            Signatures of methods may differ, depending of features of
+            programming language being used, however the main principia
+            remains the same. 
+
+            .. rubric:: 2.The method API
+               :name: iWrapnativecodeAPI-ThemethodAPI
+
+            .. rubric:: 2.1.Initialisation method
+               :name: iWrapnativecodeAPI-Initialisationmethod
 
             +-----------------------------------------------------------------------+
             | +----------+                                                          |
@@ -82,32 +111,112 @@ Scientific Worfklows : iWrap - native code API
             | +----------+                                                          |
             +-----------------------------------------------------------------------+
 
+            -  An optional method used for set-up of native code
+            -  If provided - the method is called only, when an actor
+               isinitialised - The method must be run **before** a call
+               of *main* and *finalisation *\ (if provided)
+            -  The method can be of arbitrary name (the name has to be
+               specified in the code YAML description)
+            -  Method arguments:
+
+               -  Code parameters:
+
+                  -  **Optional**\  argument
+                  -  Type: string
+                  -  Intent: IN
+
+            -  
+
+               -  Status code:
+
+                  -  **Mandatory**\  argument
+                  -  Type: Integer
+                  -  Intent: OUT
+
+            -  
+
+               -  Status message
+
+                  -  **Mandatory**\  argument
+                  -  Type: string
+                  -  Intent: OUT
+
             | 
 
-            -  Input and output IDSes:
+            .. rubric:: 2.2.Main method
+               :name: iWrapnativecodeAPI-Mainmethod
 
-               -  **Optional**\  arguments
-               -  Intent: IN or OUT
+            +-----------------------------------------------------------------------+
+            | +----------+                                                          |
+            | | |image2| |                                                          |
+            | +----------+                                                          |
+            +-----------------------------------------------------------------------+
 
-            -  XML parameters:
+            -  A **mandatory** method that native code **must** provide
+            -  The method can be run an arbitrary numer of times (e.g.
+               in a loop)
+            -  It can be of arbitrary name (the name has to be specified
+               in the code YAML description)
+            -  The method must be run **after** a call of
+               *initialisation* (if provided) and **before** a call
+               of *finalisation *\ (if provided)
+            -  Method arguments:
 
-               -  **Optional**\  argument
-               -  Intent: IN
+               -  Input and output IDSes:
 
-            -  Status code:
+                  -  **Optional**\  arguments
+                  -  Intent: IN or OUT
 
-               -  **Mandatory**\  argument
-               -  Intent: OUT
+               -  XML parameters:
 
-            -  Status message
+                  -  **Optional**\  argument
+                  -  Intent: IN
 
-               -  **Mandatory**\  argument
-               -  Intent: OUT
+               -  Status code:
 
-            The current version of iWrap allows to wrap native code
-            implemented in Fortran or C++
+                  -  **Mandatory**\  argument
+                  -  Type: Integer
+                  -  Intent: OUT
+
+            -  
+
+               -  Status message
+
+                  -  **Mandatory**\  argument
+                  -  Type: string
+                  -  Intent: OUT
+
+            .. rubric:: 2.3.Finalize method
+               :name: iWrapnativecodeAPI-Finalizemethod
+
+            +-----------------------------------------------------------------------+
+            | +----------+                                                          |
+            | | |image3| |                                                          |
+            | +----------+                                                          |
+            +-----------------------------------------------------------------------+
 
             | 
+
+            -  An optional method that is usually called to clean-up
+               environment
+            -  The method can be run an arbitrary numer of times
+            -  The method can be of arbitrary name (the name has to be
+               specified in the code YAML description)
+            -  Method arguments:
+
+               -  Status code:
+
+                  -  **Mandatory**\  argument
+                  -  Type: Integer
+                  -  Intent: OUT
+
+            -  
+
+               -  Status message
+
+                  -  **Mandatory**\  argument
+                  -  Type: string
+                  -  Intent: OUT
 
             | 
 
@@ -118,17 +227,19 @@ Scientific Worfklows : iWrap - native code API
 
                .. container:: confluence-information-macro-body
 
-                  A native code that will be wrapped by iWrap and that
-                  will become a part of workflow should be compiled
-                  using the same environment in which workflow will be
-                  run!
+                  A native code wrapped by iWrap that will become a part
+                  of workflow should be compiled using the same
+                  environment in which workflow will be run!
 
             | 
 
-            .. rubric:: 2.Fortran
+            .. rubric:: 3.API implementation
+               :name: iWrapnativecodeAPI-APIimplementation
+
+            .. rubric:: 3.1.Fortran
                :name: iWrapnativecodeAPI-Fortran
 
-            .. rubric:: 2.1.Native code signature
+            .. rubric:: 3.1.1.Native code signature
                :name: iWrapnativecodeAPI-Nativecodesignature
 
             | 
@@ -140,7 +251,22 @@ Scientific Worfklows : iWrap - native code API
                   .. code:: 
 
                      module <module name>
+                      
+                     !
+                     !    INITIALISATION SUBROUTINE
+                     !
+                       subroutine <init subroutine name> ([xml_parameters,] status_code, status_message)
+                       use ids_schemas
                        
+                       ! XML code parameters
+                       type(ids_parameters_input) :: xml_parameters
+                      
+                       ! status info
+                       integer, intent(OUT) :: status_code
+                       character(len=:), pointer, intent(OUT) :: status_message
+                      
+                     end subroutine <init subroutine name> 
+
                      subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml_parameters], status_code, status_message)
                        use ids_schemas
                        ! IN/OUT IDSes
@@ -148,7 +274,6 @@ Scientific Worfklows : iWrap - native code API
                        type(ids_<ids_name>), intent([IN|OUT]):: ids2
                         . . .
                        type(ids_<ids_name>), intent([IN|OUT]):: idsN 
-                      
                       
                        ! XML code parameters
                        type(ids_parameters_input) :: xml_parameters
@@ -158,11 +283,23 @@ Scientific Worfklows : iWrap - native code API
                        character(len=:), pointer, intent(OUT) :: status_message
                       
                      end subroutine <subroutine name>
+
+                     !
+                     !    FINALISATION SUBROUTINE
+                     !
+                     subroutine <finish subroutine name> (status_code, status_message)
+                       use ids_schemas
+                      
+                       ! status info
+                       integer, intent(OUT) :: status_code
+                       character(len=:), pointer, intent(OUT) :: status_message
+                      
+                     end subroutine <finish subroutine name>   
                      end module <module name>
 
             | 
 
-            .. rubric:: 2.2.Module
+            .. rubric:: 3.1.2.Module
                :name: iWrapnativecodeAPI-Module
 
             -  Native code should be put within a module
@@ -171,18 +308,44 @@ Scientific Worfklows : iWrap - native code API
             -  A name of the module could be arbitrary - chosen by code
                developer
 
-            .. rubric:: 2.3.Subroutine
-               :name: iWrapnativecodeAPI-Subroutine
+            .. rubric:: 3.1.3.Subroutines
+               :name: iWrapnativecodeAPI-Subroutines
 
-            -  A user code should be provided as a subroutine (and not a
-               function)
+            -  A user code should be provided as subroutines (and not a
+               functions)
+            -  A name of subroutines could be arbitrary - chosen by code
+               developer
             -  A name of the module could be arbitrary - chosen by code
                developer
+            -  Arguments shall be provided in a strict order
+            -  No INOUT arguments are allowed!
 
-            .. rubric:: 2.4.Arguments
+            .. rubric:: 3.1.4.Arguments
                :name: iWrapnativecodeAPI-Arguments
 
-            Arguments shall be provided in a strict order:
+            *Initialisation subroutine:*
+
+            -  XML parameters:
+
+               -  **Optional**\  argument
+               -  Intent: IN
+               -  Defined as
+                  "  type(ids_parameters_input), intent(IN)"   
+
+            -  Status code:
+
+               -  **Mandatory**\  argument
+               -  Intent: OUT
+               -  Defined as  "  integer, intent(OUT)"  \  
+
+            -  Status message
+
+               -  **Mandatory**\  argument
+               -  Intent: OUT
+               -  Defined
+                  as: \   character(len=:), pointer, intent(OUT)   
+
+            *Main subroutine:*
 
             -  Input and output IDSes:
 
@@ -210,9 +373,22 @@ Scientific Worfklows : iWrap - native code API
                -  Defined
                   as: \   character(len=:), pointer, intent(OUT)   
 
-            No INOUT arguments are allowed!
+            *Finalisation subroutine:*
 
-            .. rubric:: 2.5.Example
+            -  Status code:
+
+               -  **Mandatory**\  argument
+               -  Intent: OUT
+               -  Defined as  "  integer, intent(OUT)"  \  
+
+            -  Status message
+
+               -  **Mandatory**\  argument
+               -  Intent: OUT
+               -  Defined
+                  as: \   character(len=:), pointer, intent(OUT)   
+
+            .. rubric:: 3.2.Example
                :name: iWrapnativecodeAPI-Example
 
             .. container:: code panel pdl
@@ -223,6 +399,29 @@ Scientific Worfklows : iWrap - native code API
 
                      module physics_ii_mod
                        
+                         !
+                         !    INITIALISATION SUBROUTINE
+                         !
+                     subroutine init_code (xml_parameters, status_code, status_message)
+                         use ids_schemas, only: ids_parameters_input
+                         implicit none
+                         type(ids_parameters_input) :: xml_parameters
+                         integer, intent(out) :: status_code
+                         character(len=:), pointer, intent(out) :: status_message
+
+                         ! Setting status to SUCCESS
+                         status_code = 0
+                         allocate(character(50):: status_message)
+                         status_message = 'OK'
+
+                         write(*,*) '============ The subroutine body ============='
+
+                     end subroutine init_code
+
+                         !
+                         !    MAIN SUBROUTINE
+                         ! 
+
                      subroutine physics_ii(equilibrium_in, equilibrium_out, code_param, error_flag, error_message)      
 
                        use ids_schemas   
@@ -238,12 +437,31 @@ Scientific Worfklows : iWrap - native code API
                        character(len=:), pointer, intent(out) :: error_message
                       
                      end subroutine physics_ii
+
+                         !
+                         !    FINALISATION SUBROUTINE
+                         !
+                     subroutine clean_up(status_code, status_message)
+                         implicit none
+                         integer, intent(out) :: status_code
+                         character(len=:), pointer, intent(out) :: status_message
+
+                         ! Setting status to SUCCESS
+                         status_code = 0
+                         allocate(character(50):: status_message)
+                         status_message = 'OK'
+
+                         write(*,*) '============ The subroutine body =============' 
+
+                     end subroutine clean_up
+
+
                      end module physics_ii_mod
 
-            .. rubric:: 3. C++
+            .. rubric:: 3.3. C++
                :name: iWrapnativecodeAPI-C++
 
-            .. rubric:: 3.1.Native code signature
+            .. rubric:: 3.3.1.Native code signature
                :name: iWrapnativecodeAPI-Nativecodesignature.1
 
             | 
@@ -255,23 +473,34 @@ Scientific Worfklows : iWrap - native code API
                   .. code:: 
 
                      #include "UALClasses.h"
+
+                     /* * * Initialisation method * * */
+                     void <method name>([IdsNs::codeparam_t codeparam,] int* status_code, char** status_message)
+
+                     /* * * Main method * * */
                      void <method name>([IdsNs::IDS::<ids_name> ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int* status_code, char** status_message)
 
-            .. rubric:: 3.2.Header
+                     /* * * Finalisation method * * */
+                     void <method name>(int* status_code, char** status_message)
+
+            .. rubric:: 3.3.2.Header
                :name: iWrapnativecodeAPI-Header
 
             To generate an actor user has to provide a file containing
             C++ header of wrapped method. This file can be of arbitrary
             name but must contain method signature.
 
-            .. rubric:: 3.3.Method
+            .. rubric:: 3.3.3.Method
                :name: iWrapnativecodeAPI-Method
 
-            -  A user code should be provided as a single method
-            -  A name of the module could be arbitrary - chosen by code
+            -  A user code should be provided as methods (and not a
+               functions)
+            -  A name of methods could be arbitrary - chosen by code
                developer
+            -  Arguments shall be provided in a strict order
+            -  No INOUT arguments are allowed!
 
-            .. rubric:: 3.4.Arguments
+            .. rubric:: 3.3.4.Arguments
                :name: iWrapnativecodeAPI-Arguments.1
 
             Arguments shall be provided in a strict order:
@@ -307,7 +536,7 @@ Scientific Worfklows : iWrap - native code API
 
             No INOUT arguments are allowed!
 
-            .. rubric:: 3.5.Example
+            .. rubric:: 3.3.5.Example
                :name: iWrapnativecodeAPI-Example.1
 
             .. container:: code panel pdl
@@ -323,9 +552,17 @@ Scientific Worfklows : iWrap - native code API
                      #ifndef _LEVEL_II_CPP
                      #define _LEVEL_II_CPP
 
-                     #include "UALClasses.h"
+                     #include "UALClasses.h" 
 
+                     /* * *   INITIALISATION method   * * */ 
+                     void init_code (IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
+
+                     /* * *   MAIN method   * * */  
                      void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
+
+                     /* * *   FINALISATION method   * * */ 
+                     void clean_up(int* status_code, char** status_message);
+
 
                      #endif // _LEVEL_II_CPP
 
@@ -339,10 +576,30 @@ Scientific Worfklows : iWrap - native code API
 
                   .. code:: 
 
-                     #include "UALClasses.h"
+                     #include "UALClasses.h" 
+
+                     /* * *   INITIALISATION method   * * */ 
+                     void init_code (IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
+                     {
+                     ...
+                     // method body
+                     ...
+                     }
+
+                     /* * *   MAIN method   * * */  
                      void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
                      {
-                     ....
+                     ...
+                     // method body
+                     ...
+                     }
+
+                     /* * *   FINALISATION method   * * */ 
+                     void clean_up(int* status_code, char** status_message)
+                     {
+                     ...
+                     // method body
+                     ...
                      }
 
             .. rubric:: 4.MPI
@@ -358,7 +615,7 @@ Scientific Worfklows : iWrap - native code API
 
                +--------------------------------------------------------------------------+
                | |   !  \   ----  MPI initialisation ----                                 |
-               | |   call MPI_initialized(was_mpi_initialized, ierr)                      |
+               | |   call MPI_initiazed(was_mpi_initialized, ierr)                        |
                | |   if (.  \   not  \   . was_mpi_initialized)   call MPI_Init(ierr)     |
                | |                                                                        |
                | |   !  \   ----  MPI Finalisation ----                                   |
@@ -407,23 +664,65 @@ Scientific Worfklows : iWrap - native code API
 
             .. container:: greybox
 
-               |image2|
+               |image4|
                `iWrapNativeCodeAPI <attachments/70877452/70877460>`__
                (application/gliffy+json)
-               |image3|
+               |image5|
                `iWrapNativeCodeAPI.png <attachments/70877452/70877461.png>`__
                (image/png)
-               |image4|
+               |image6|
                `iWrapNativeCodeAPI <attachments/70877452/70877462>`__
                (application/gliffy+json)
-               |image5|
+               |image7|
                `iWrapNativeCodeAPI.png <attachments/70877452/70877463.png>`__
                (image/png)
-               |image6|
+               |image8|
+               `iWrapNativeCodeAPI <attachments/70877452/77370369>`__
+               (application/gliffy+json)
+               |image9|
+               `iWrapNativeCodeAPI.png <attachments/70877452/77370370.png>`__
+               (image/png)
+               |image10|
+               `iWrapNativeCodeAPI <attachments/70877452/77370385>`__
+               (application/gliffy+json)
+               |image11|
+               `iWrapNativeCodeAPI.png <attachments/70877452/77370386.png>`__
+               (image/png)
+               |image12|
+               `iWrapInitializationMethodAPI <attachments/70877452/77370375>`__
+               (application/gliffy+json)
+               |image13|
+               `iWrapInitializationMethodAPI.png <attachments/70877452/77370376.png>`__
+               (image/png)
+               |image14|
+               `iWrapInitializationMethodAPI <attachments/70877452/77370372>`__
+               (application/gliffy+json)
+               |image15|
+               `iWrapInitializationMethodAPI.png <attachments/70877452/77370373.png>`__
+               (image/png)
+               |image16|
                `iWrapNativeCodeAPI <attachments/70877452/70877458>`__
                (application/gliffy+json)
-               |image7|
+               |image17|
                `iWrapNativeCodeAPI.png <attachments/70877452/70877459.png>`__
+               (image/png)
+               |image18|
+               `iWrapNativeCodeFinishAPI <attachments/70877452/77370396>`__
+               (application/gliffy+json)
+               |image19|
+               `iWrapNativeCodeFinishAPI.png <attachments/70877452/77370397.png>`__
+               (image/png)
+               |image20|
+               `iWrapNativeCodeFinishAPI <attachments/70877452/77370400>`__
+               (application/gliffy+json)
+               |image21|
+               `iWrapNativeCodeFinishAPI.png <attachments/70877452/77370401.png>`__
+               (image/png)
+               |image22|
+               `iWrapNativeCodeFinishAPI <attachments/70877452/77370388>`__
+               (application/gliffy+json)
+               |image23|
+               `iWrapNativeCodeFinishAPI.png <attachments/70877452/77370389.png>`__
                (image/png)
 
    .. container::
@@ -431,21 +730,19 @@ Scientific Worfklows : iWrap - native code API
 
       .. container:: section footer-body
 
-         Document generated by Confluence on 27 wrz 2021 14:37
+         Document generated by Confluence on 23 Nov 2021 13:15
 
          .. container::
             :name: footer-logo
 
             `Atlassian <http://www.atlassian.com/>`__
 
-.. |image1| image:: attachments/70877452/70877459.png
+.. |image1| image:: attachments/70877452/77370373.png
    :class: gliffy-macro-image
-.. |image2| image:: images/icons/bullet_blue.gif
-   :width: 8px
-   :height: 8px
-.. |image3| image:: images/icons/bullet_blue.gif
-   :width: 8px
-   :height: 8px
+.. |image2| image:: attachments/70877452/70877459.png
+   :class: gliffy-macro-image
+.. |image3| image:: attachments/70877452/77370389.png
+   :class: gliffy-macro-image
 .. |image4| image:: images/icons/bullet_blue.gif
    :width: 8px
    :height: 8px
@@ -456,5 +753,53 @@ Scientific Worfklows : iWrap - native code API
    :width: 8px
    :height: 8px
 .. |image7| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image8| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image9| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image10| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image11| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image12| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image13| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image14| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image15| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image16| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image17| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image18| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image19| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image20| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image21| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image22| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image23| image:: images/icons/bullet_blue.gif
    :width: 8px
    :height: 8px

@@ -29,7 +29,8 @@ Scientific Worfklows : iWrap - native code description
 
          .. container:: page-metadata
 
-            Created by Bartosz Palak on 06 wrz 2021
+            Created by Bartosz Palak, last modified by Natalia
+            Kraszewska on 08 Nov 2021
 
          .. container:: wiki-content group
             :name: main-content
@@ -173,7 +174,7 @@ Scientific Worfklows : iWrap - native code description
                   while native code linking
 
                -  value: a list of system libraries names, as they are
-                  published by *pkg-config* |(ostrzeżenie)|
+                  published by *pkg-config* |(warning)|
 
                -  example: 
 
@@ -211,48 +212,41 @@ Scientific Worfklows : iWrap - native code description
 
             .. container:: table-wrap
 
-               +----------------------------------------------------------------------+
-               | |   ---                                                              |
-               | |   programming_language:  \  \   Fortran                            |
-               | |   code_name:  \  \   demo_code                                     |
-               | |   data_type:  \  \   LEGACY_IDS                                    |
-               | |   arguments:                                                       |
-               | |   -   name  \   :  \  \   equilibrium00                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   IN                                     |
-               | |   -   name  \   :  \  \   equilibrium01                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   IN                                     |
-               | |   -   name  \   :  \  \   equilibrium10                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   OUT                                    |
-               | |   -   name  \   :  \  \   equilibrium11                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   OUT                                    |
-               | |   code_path:  \  \   ./lib/libmy_lib.a                             |
-               | |   code_parameters:                                                 |
-               | |                                                                    |
-               |          \   parameters:  \  \   ./code_paramneters/parameters.xml   |
-               | |         \   schema:  \  \   ./code_paramneters/parameters.xsd      |
-               | |   documentation:  \  \   'Lorem ipsum dolor sit ame                |
-               | t  \   ,  \  \   consectetur adipiscing elit  \   ,  \  \   sed do   |
-               | |         \   eiusmod te                                             |
-               | mpor incididunt ut labore et dolore magna aliqua. Ut enim ad minim   |
-               | |         \   veniam  \   ,  \  \   quis                             |
-               | nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo   |
-               | |         \   consequat. '                                           |
-               | |   language_specific:                                               |
-               | |         \   compiler:  \  \   Intel                                |
-               | |         \   mpi_flavour:  \  \   MPICH2                            |
-               | |         \   open_mp:  \  \   false                                 |
-               | |         \   system_libraries:                                      |
-               | |         \   -  \  \   fftw3f                                       |
-               | |         \   -  \  \   glib                                         |
-               | |         \   -  \  \   mkl                                          |
-               | |         \   custom_libraries:                                      |
-               | |         \   -  \  \   ./lib/custom/libcustom1.a                    |
-               | |         \   -  \  \   ./lib/custom/libcustom2.a                    |
-               +----------------------------------------------------------------------+
+               +-----------------------------------------------------------------------+
+               | |   ---                                                               |
+               | |   programming_language:  \  \   Fortran                             |
+               | |   code_name:  \  \   demo_code                                      |
+               | |   data_type:  \  \   LEGACY_IDS                                     |
+               | |   arguments:                                                        |
+               | |   -   name  \   :  \  \   equilibrium00                             |
+               | |         \   type:  \  \   equilibrium                               |
+               | |         \   intent:  \  \   IN                                      |
+               | |   -   name  \   :  \  \   equilibrium01                             |
+               | |         \   type:  \  \   equilibrium                               |
+               | |         \   intent:  \  \   IN                                      |
+               | |   -   name  \   :  \  \   equilibrium10                             |
+               | |         \   type:  \  \   equilibrium                               |
+               | |         \   intent:  \  \   OUT                                     |
+               | |   -   name  \   :  \  \   equilibrium11                             |
+               | |         \   type:  \  \   equilibrium                               |
+               | |         \   intent:  \  \   OUT                                     |
+               | |   code_path:  \  \   ./lib/libmy_lib.a                              |
+               | |   code_parameters:                                                  |
+               | |         \   parameters:  \  \   ./code_paramneters/parameters.xml   |
+               | |         \   schema:  \  \   ./code_paramneters/parameters.xsd       |
+               | |   documentation:  \ "\   Lorem ipsum dolor sit amet  \   "          |
+               | |   language_specific:                                                |
+               | |         \   compiler:  \  \   Intel                                 |
+               | |         \   mpi_flavour:  \  \   MPICH2                             |
+               | |         \   open_mp:  \  \   false                                  |
+               | |         \   system_libraries:                                       |
+               | |         \   -  \  \   fftw3f                                        |
+               | |         \   -  \  \   glib                                          |
+               | |         \   -  \  \   mkl                                           |
+               | |         \   custom_libraries:                                       |
+               | |         \   -  \  \   ./lib/custom/libcustom1.a                     |
+               | |         \   -  \  \   ./lib/custom/libcustom2.a                     |
+               +-----------------------------------------------------------------------+
 
             .. rubric:: 4.2.Python code description
                :name: iWrapnativecodedescription-Pythoncodedescription
@@ -264,8 +258,7 @@ Scientific Worfklows : iWrap - native code description
 
                +----------------------------------------------------------------------+
                | |   ---                                                              |
-               | |   programming                                                      |
-               | _language:  \  \   Python                    ! <<<<======= CHANGED   |
+               | |   programming_language:  \  \   Python                             |
                | |   code_name:  \  \   demo_code                                     |
                | |   data_type:  \  \   LEGACY_IDS                                    |
                | |   arguments:                                                       |
@@ -281,14 +274,12 @@ Scientific Worfklows : iWrap - native code description
                | |   -   name  \   :  \  \   equilibrium11                            |
                | |         \   type:  \  \   equilibrium                              |
                | |         \   intent:  \  \   OUT                                    |
-               | |   code_path:  \                                                    |
-               | \   ./demo_script.py                         ! <<<<======= CHANGED   |
+               | |   code_path:  \  \   ./demo_script.py                              |
                | |   code_parameters:                                                 |
                | |         \   parameters:  \  \   ./code_parameters/parameters.xml   |
                | |         \   schema:  \  \   ./code_parameters/parameters.xsd       |
-               | |   documentation:  \  \   'Lorem ipsum dolor sit amet, '            |
-               | |   specific_se                                                      |
-               | ttings:                                  \   ! <<<<======= CHANGED   |
+               | |   documentation:  \ "\   Lorem ipsum dolor sit amet, "             |
+               | |   specific_settings:                                               |
                | |         \   language_required_version:    \   4.x                  |
                | |         \   not_sure_about_other_settings:  \  \   true            |
                +----------------------------------------------------------------------+
@@ -302,7 +293,7 @@ Scientific Worfklows : iWrap - native code description
 
       .. container:: section footer-body
 
-         Document generated by Confluence on 27 wrz 2021 14:37
+         Document generated by Confluence on 23 Nov 2021 13:15
 
          .. container::
             :name: footer-logo
@@ -311,5 +302,5 @@ Scientific Worfklows : iWrap - native code description
 
 .. |image1| image:: https://jira.iter.org/secure/viewavatar?size=xsmall&avatarId=13310&avatarType=issuetype
    :class: confluence-embedded-image icon confluence-external-resource
-.. |(ostrzeżenie)| image:: images/icons/emoticons/warning.svg
+.. |(warning)| image:: images/icons/emoticons/warning.svg
    :class: emoticon emoticon-warning
