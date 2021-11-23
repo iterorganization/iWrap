@@ -22,7 +22,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
     'sphinx.ext.extlinks',
-    'recommonmark',
     'sphinx_markdown_tables'
 ]
 
