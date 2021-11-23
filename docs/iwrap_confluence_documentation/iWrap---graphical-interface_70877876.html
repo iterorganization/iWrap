@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Scientific Worfklows : iWrap - graphical interface</title>
+        <link rel="stylesheet" href="styles/site.css" type="text/css" />
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body class="theme-default aui-theme-default">
+        <div id="page">
+            <div id="main" class="aui-page-panel">
+                <div id="main-header">
+                    <div id="breadcrumb-section">
+                        <ol id="breadcrumbs">
+                            <li class="first">
+                                <span><a href="index.html">Scientific Worfklows</a></span>
+                            </li>
+                                                    <li>
+                                <span><a href="Wrapping-user-codes-into-actors---iWrap_70877391.html">Wrapping user codes into actors - iWrap</a></span>
+                            </li>
+                                                </ol>
+                    </div>
+                    <h1 id="title-heading" class="pagetitle">
+                                                <span id="title-text">
+                            Scientific Worfklows : iWrap - graphical interface
+                        </span>
+                    </h1>
+                </div>
+
+                <div id="content" class="view">
+                    <div class="page-metadata">
+                        
+        
+    
+        
+    
+        
+        
+            Created by <span class='author'> Bartosz Palak</span>, last modified by <span class='editor'> Natalia Kraszewska</span> on 09 wrz 2021
+                        </div>
+                    <div id="main-content" class="wiki-content group">
+                    <p><style type="text/css">/*<![CDATA[*/
+div.rbtoc1632746267207 {padding: 0px;}
+div.rbtoc1632746267207 ul {list-style: disc;margin-left: 0px;}
+div.rbtoc1632746267207 li {margin-left: 0px;padding-left: 0px;}
+
+/*]]>*/</style></p><div class="toc-macro rbtoc1632746267207">
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-iWrappurpose">1. iWrap purpose</a></li>
+<li><a href="#iWrapgraphicalinterface-iWrapmainwindow">2. iWrap main window</a></li>
+<li><a href="#iWrapgraphicalinterface-Actordescription">3. Actor description</a></li>
+<li><a href="#iWrapgraphicalinterface-Codedescription">4. Code description</a>
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-Arguments">4.1. Arguments</a>
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-Addargument">4.1.1. &#xa0;Add argument</a></li>
+<li><a href="#iWrapgraphicalinterface-Editargument">4.1.2. Edit argument</a></li>
+</ul>
+</li>
+<li><a href="#iWrapgraphicalinterface-Codesettings">4.2. Code settings</a>
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-Usercodesettings">4.2.1. User code settings</a></li>
+<li><a href="#iWrapgraphicalinterface-Languagespecificsettings">4.2.2. Language specific settings</a>
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-Features">4.2.2.1. Features</a></li>
+<li><a href="#iWrapgraphicalinterface-Systemlibraries">4.2.2.2. System libraries</a>
+<ul class="toc-indentation">
+<li><a href="#iWrapgraphicalinterface-Addsystemlibraries">4.2.2.2.1. Add system libraries</a></li>
+</ul>
+</li>
+<li><a href="#iWrapgraphicalinterface-Customlibraries">4.2.2.3. Custom libraries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#iWrapgraphicalinterface-Codeparameters">4.3. Code parameters</a></li>
+<li><a href="#iWrapgraphicalinterface-Documentation">4.4. Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div><p></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p><strong>This tutorial explains:</strong></p><ul><li>iWrap graphic user interface</li><li>How to set up actor description</li><li>How to set up code description&#xa0;</li></ul></div></div><h1 id="iWrapgraphicalinterface-iWrappurpose"><span class="nh-number">1. </span>iWrap purpose</h1><ul><li>iWrap generates a Fortran/CPP wrapper, which intermediates between Kepler actor and user code in terms of:<ul><li>reading/writing of in/out physical data (IDS)</li><li>passing other arguments to/from the actor</li></ul></li><li>iWrap creates a Python script (aka an actor) that:<ul><li>calls a user code</li><li>provides error handling</li><li>calls debugger (if run in "debug" mode)</li></ul></li></ul><h1 id="iWrapgraphicalinterface-iWrapmainwindow"><span class="nh-number">2. </span>iWrap main window</h1><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879104.png" data-image-src="attachments/70877876/70879104.png" data-unresolved-comment-count="0" data-linked-resource-id="70879104" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_14-13-36.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><h1 id="iWrapgraphicalinterface-Actordescription"><span class="nh-number">3. </span>Actor description</h1><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879107.png" data-image-src="attachments/70877876/70879107.png" data-unresolved-comment-count="0" data-linked-resource-id="70879107" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_14-14-5.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p><span style="color: rgb(23,43,77);">This group of graphical controls allows setting the description of the actor.</span></p><ul><li><span style="color: rgb(23,43,77);"><strong>Name</strong> - a user-defined name of the actor</span></li><li><span style="color: rgb(23,43,77);"><strong>Type</strong> - a user-defined type of the actor</span></li><li><span style="color: rgb(23,43,77);"><strong>Data type </strong>-&#xa0; an actor data type</span></li><li><span style="color: rgb(23,43,77);"><strong>Install</strong> <strong>path</strong> - path where actor will be installed</span></li></ul><h1 id="iWrapgraphicalinterface-Codedescription"><span class="nh-number">4. </span>Code description</h1><h2 id="iWrapgraphicalinterface-Arguments"><span class="nh-number">4.1. </span>Arguments</h2><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879041.png" data-image-src="attachments/70877876/70879041.png" data-unresolved-comment-count="0" data-linked-resource-id="70879041" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-20-58.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><ul><li><strong>Data type </strong>- an arguments data type</li></ul><p>In the table, there are columns like:</p><ul><li><strong>Label </strong>- u<span style="color: rgb(23,43,77);">ser defined name of an argument</span></li><li><strong>Input/Output</strong> - d<span style="color: rgb(23,43,77);">efines argument as&#xa0;</span><em style="text-align: left;">an input/output</em></li><li><strong>Type</strong> - d<span style="color: rgb(23,43,77);">efines an IDS based type of argument (e.g. equilibrium, topinfo, etc.)<span>&#xa0;</span></span></li></ul><p><br></p><p><span style="color: rgb(23,43,77);"><span>On the right side of the table, there is a section with buttons. Add button allows to add a new argument, edit to edit argument and up/down buttons are changing the position of selected argument in the table. The remove button removes selected argument.</span></span></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>To change <strong>Edit</strong>, <strong>Up</strong>/<strong>Down,</strong> and <strong>Remove</strong> buttons state to active at least one argument has to be added to the table.&#xa0;</p></div></div><h3 id="iWrapgraphicalinterface-Addargument"><span class="nh-number">4.1.1. </span>&#xa0;Add argument</h3><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879061.png" data-image-src="attachments/70877876/70879061.png" data-unresolved-comment-count="0" data-linked-resource-id="70879061" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-49-32.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p>To add new arguments click <strong>Add...</strong> button in the <em>Arguments</em> section. A new window named <em>iWrap - Add new argument</em> will appear. Filling label (argument can be also added with empty label) and selecting intent and type allow adding new argument by clicking <strong>Add</strong> button. Click <strong>Cancel</strong> to exit this window.&#xa0;</p><h3 id="iWrapgraphicalinterface-Editargument"><span class="nh-number">4.1.2. </span>Edit argument</h3><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879057.png" data-image-src="attachments/70877876/70879057.png" data-unresolved-comment-count="0" data-linked-resource-id="70879057" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-47-34.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p>There is also possible to edit arguments. When <strong>Edit...</strong> button in the <em>Arguments</em> section is clicked, a new window <em>iWrap - Edit argument</em> will appear. Change settings and approve it by clicking <strong>Close</strong> button. To exit the window click <strong>Cancel</strong>.</p><h2 id="iWrapgraphicalinterface-Codesettings"><span class="nh-number">4.2. </span>Code settings</h2><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879045.png" data-image-src="attachments/70877876/70879045.png" data-unresolved-comment-count="0" data-linked-resource-id="70879045" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-23-37.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><h3 id="iWrapgraphicalinterface-Usercodesettings"><span class="nh-number">4.2.1. </span>User code settings</h3><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879046.png" data-image-src="attachments/70877876/70879046.png" data-unresolved-comment-count="0" data-linked-resource-id="70879046" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-28-27.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><ul><li><strong>Language</strong> - a user code language</li><li><strong>Code</strong> <strong>name</strong> - a user code name</li><li><strong>Code</strong> <strong>path</strong> - a user code path&#xa0;</li></ul><h3 id="iWrapgraphicalinterface-Languagespecificsettings"><span class="nh-number">4.2.2. </span>Language specific settings</h3><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879048.png" data-image-src="attachments/70877876/70879048.png" data-unresolved-comment-count="0" data-linked-resource-id="70879048" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-29-23.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><ul><li><strong>Compiler</strong> - a <span style="color: rgb(23,43,77);">compiler used to built library, available compilers are:</span><ul><li><span style="color: rgb(23,43,77);">Intel Fortran (ifort)</span></li><li>GNU Compiler Collection (fortran)</li><li>Intel</li></ul></li></ul><h4 id="iWrapgraphicalinterface-Features"><span class="nh-number">4.2.2.1. </span>Features</h4><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879070.png" data-image-src="attachments/70877876/70879070.png" data-unresolved-comment-count="0" data-linked-resource-id="70879070" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_13-5-17.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><ul><li><strong>Module path</strong> - path to the module</li><li><strong>Computation</strong>:<ul><li><strong>MPI Flavour</strong> - MPI library, <span style="color: rgb(23,43,77);">available compilers are:</span><ul><li><span style="color: rgb(23,43,77);">MPICH2</span></li><li><span style="color: rgb(23,43,77);">OpenMPI</span></li><li><span style="color: rgb(23,43,77);">None - if actor isn't MPI based&#xa0;</span></li></ul></li><li><strong>OpenMP </strong>- d<span style="color: rgb(23,43,77);">efines if usage of OpenMP directives is turned No/Yes</span></li></ul></li></ul><h4 id="iWrapgraphicalinterface-Systemlibraries"><span class="nh-number">4.2.2.2. </span>System libraries</h4><p><em>System libraries</em><span style="color: rgb(23,43,77);"> are system libraries handled by the pkg-config mechanism and required for building the user code.</span></p><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879049.png" data-image-src="attachments/70877876/70879049.png" data-unresolved-comment-count="0" data-linked-resource-id="70879049" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-30-13.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p><span style="color: rgb(23,43,77);">In the table there is information about:</span></p><ul><li><span style="color: rgb(23,43,77);"><strong>Name</strong> - a library name</span></li><li><span style="color: rgb(23,43,77);"><strong>Info</strong> - information about library</span></li><li><span style="color: rgb(23,43,77);"><strong>Description</strong> - a library description&#xa0;</span></li></ul><p><span style="color: rgb(23,43,77);">System library can be added and removed using buttons placed on the right side of the table.</span></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>To change <strong>Remove</strong> button state to active at least one system library has to be added and selected.</p></div></div><h5 id="iWrapgraphicalinterface-Addsystemlibraries"><span class="nh-number">4.2.2.2.1. </span>Add system libraries</h5><p>To add new arguments click <strong>Add...</strong> button in the <em>System libraries</em> section. A new window named <em>Add system library</em> will appear. <em>Search </em>field allows for easy filtering the list of libraries. To add a system library select your choice and click <strong>Ok</strong> button. To close window click <strong>Cancel</strong>.</p><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="500" src="attachments/70877876/70878345.png" data-image-src="attachments/70877876/70878345.png" data-unresolved-comment-count="0" data-linked-resource-id="70878345" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-7_13-35-19.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><h4 id="iWrapgraphicalinterface-Customlibraries"><span class="nh-number">4.2.2.3. </span>Custom libraries</h4><p><em>Custom libraries </em>are non-standard static libraries required for building the user code.</p><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879051.png" data-image-src="attachments/70877876/70879051.png" data-unresolved-comment-count="0" data-linked-resource-id="70879051" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-37-6.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p>Available operations on libraries list:</p><ul><li><strong>Add...</strong>&#xa0;- Adds a new library to the list</li><li><strong>Remove</strong> - Removes a new library from the list</li></ul><p><br></p><div class="confluence-information-macro confluence-information-macro-information"><span class="aui-icon aui-icon-small aui-iconfont-info confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>To change <strong>Remove</strong> button state to active at least one library path has to be added and selected.</p></div></div><h2 id="iWrapgraphicalinterface-Codeparameters"><span class="nh-number">4.3. </span>Code parameters</h2><p><em>Code parameters</em><span style="color: rgb(23,43,77);"> are all parameters that are specific to the code (like switches, scaling parameters, and parameters for built-in analytical models) as well as parameters to explicitly overrule fields in the IMAS&#xa0;data structures.</span></p><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879052.png" data-image-src="attachments/70877876/70879052.png" data-unresolved-comment-count="0" data-linked-resource-id="70879052" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-40-24.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><ul><li><strong>Code parameters file</strong> - XML file contains code parameters&#xa0;</li><li><strong>Schema file</strong> - XSD file contains schema</li></ul><h2 id="iWrapgraphicalinterface-Documentation"><span class="nh-number">4.4. </span>Documentation</h2><p><span style="color: rgb(23,43,77);">The </span><em>Documentation</em><span style="color: rgb(23,43,77);"> tab specifies a user-defined actor description.</span></p><p><span class="confluence-embedded-file-wrapper confluence-embedded-manual-size"><img class="confluence-embedded-image" width="450" src="attachments/70877876/70879053.png" data-image-src="attachments/70877876/70879053.png" data-unresolved-comment-count="0" data-linked-resource-id="70879053" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image2021-9-9_12-41-7.png" data-base-url="https://docs.psnc.pl" data-linked-resource-content-type="image/png" data-linked-resource-container-id="70877876" data-linked-resource-container-version="13"></span></p><p><br></p>
+                    </div>
+
+                                                            <div class="pageSection group">
+                        <div class="pageSectionHeader">
+                            <h2 id="attachments" class="pageSectionTitle">Attachments:</h2>
+                        </div>
+
+                        <div class="greybox" align="left">
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878309.png">image2021-9-7_13-20-11.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878310.png">image2021-9-7_13-20-22.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878311.png">image2021-9-7_13-21-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878312.png">image2021-9-7_13-21-56.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878318.png">image2021-9-7_13-23-57.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878322.png">image2021-9-7_13-24-40.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878330.png">image2021-9-7_13-26-5.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878331.png">image2021-9-7_13-26-38.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878332.png">image2021-9-7_13-27-20.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878333.png">image2021-9-7_13-28-13.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878335.png">image2021-9-7_13-28-45.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878337.png">image2021-9-7_13-30-4.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878338.png">image2021-9-7_13-32-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878340.png">image2021-9-7_13-32-24.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878341.png">image2021-9-7_13-33-1.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878342.png">image2021-9-7_13-33-12.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878343.png">image2021-9-7_13-34-5.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878344.png">image2021-9-7_13-34-29.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878345.png">image2021-9-7_13-35-19.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878346.png">image2021-9-7_13-37-43.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878347.png">image2021-9-7_13-38-6.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878348.png">image2021-9-7_13-38-34.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878349.png">image2021-9-7_13-39-26.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70878350.png">image2021-9-7_13-39-54.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879036.png">image2021-9-9_12-14-39.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879037.png">image2021-9-9_12-15-39.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879038.png">image2021-9-9_12-16-46.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879040.png">image2021-9-9_12-17-9.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879041.png">image2021-9-9_12-20-58.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879042.png">image2021-9-9_12-21-36.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879043.png">image2021-9-9_12-21-59.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879044.png">image2021-9-9_12-22-34.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879045.png">image2021-9-9_12-23-37.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879046.png">image2021-9-9_12-28-27.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879047.png">image2021-9-9_12-28-56.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879048.png">image2021-9-9_12-29-23.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879049.png">image2021-9-9_12-30-13.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879050.png">image2021-9-9_12-36-34.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879051.png">image2021-9-9_12-37-6.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879052.png">image2021-9-9_12-40-24.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879053.png">image2021-9-9_12-41-7.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879057.png">image2021-9-9_12-47-34.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879058.png">image2021-9-9_12-48-18.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879061.png">image2021-9-9_12-49-32.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879070.png">image2021-9-9_13-5-17.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879104.png">image2021-9-9_14-13-36.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879107.png">image2021-9-9_14-14-5.png</a> (image/png)
+                                <br/>
+                                                            <img src="images/icons/bullet_blue.gif" height="8" width="8" alt=""/>
+                                <a href="attachments/70877876/70879109.png">image2021-9-9_14-14-22.png</a> (image/png)
+                                <br/>
+                                                    </div>
+                    </div>
+                    
+                                                      
+                </div>             </div> 
+            <div id="footer" role="contentinfo">
+                <section class="footer-body">
+                    <p>Document generated by Confluence on 27 wrz 2021 14:37</p>
+                    <div id="footer-logo"><a href="http://www.atlassian.com/">Atlassian</a></div>
+                </section>
+            </div>
+        </div>     </body>
+</html>
