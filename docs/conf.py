@@ -21,8 +21,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
-    'sphinx.ext.extlinks',
-    'sphinx_markdown_tables'
+    'sphinx.ext.extlinks'
 ]
 
 autodoc_default_options = {
