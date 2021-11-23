@@ -1,6 +1,6 @@
-###############
+############################################################
 Native code API
-###############
+############################################################
 .. contents::
 .. sectnum::
 
@@ -30,8 +30,7 @@ The method API
 Initialisation method
 ======================
 
-.. image:: bla.png
-   :alt: bla
+.. image:: .. image:: attachments/70877452/77370373.png
 
 
 - An optional method used for set-up of native code
@@ -59,7 +58,7 @@ Initialisation method
 Main method
 ======================
 
-|image2|                                                           |
+.. image:: attachments/70877452/70877459.png                                                          |
 
 -  A **mandatory** method that native code **must** provide
 -  The method can be run an arbitrary numer of times (e.g. in a loop)
@@ -92,13 +91,11 @@ Main method
 
 Finalize method
 ======================
-   |image3|
+   .. image:: attachments/70877452/77370389.png
 
--  An optional method that is usually called to clean-up
-   environment
+-  An optional method that is usually called to clean-up environment
 -  The method can be run an arbitrary numer of times
--  The method can be of arbitrary name (the name has to be
-   specified in the code YAML description)
+-  The method can be of arbitrary name (the name has to be specified in the code YAML description)
 -  Method arguments:
 
     -  Status code:
@@ -113,8 +110,7 @@ Finalize method
 
 .. warning::
        Important!
-          A native code wrapped by iWrap that will become a part
-          of workflow should be compiled using the same
+          A native code wrapped by iWrap that will become a part of workflow should be compiled using the same
           environment in which workflow will be run!
 
 API implementation
@@ -125,6 +121,7 @@ Fortran
 
 Native code signature
 -----------------------
+
 .. code-block:: fortran
 
      module <module name>
@@ -144,6 +141,9 @@ Native code signature
 
      end subroutine <init subroutine name>
 
+     !
+     !    MAIN SUBROUTINE
+     !
      subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml_parameters], status_code, status_message)
        use ids_schemas
        ! IN/OUT IDSes
@@ -376,8 +376,7 @@ Arguments shall be provided in a strict order:
 -  Output IDSes:
 
    -  **Optional**\  arguments
-   -  Defined as   IdsNs::IDS::<ids_name>&    (please notice
-      reference sign - '&')
+   -  Defined as   IdsNs::IDS::<ids_name>&    (please notice reference sign - '&')
 
 -  XML parameters:
 
@@ -486,70 +485,7 @@ A native code written in C++ or Fortran should be packed within static Linux lib
     e.g.:
     ar -cr libphysics_ii.a *.o
 
-|image4|
-`iWrapNativeCodeAPI <attachments/70877452/70877460>`__
-(application/gliffy+json)
-|image5|
-`iWrapNativeCodeAPI.png <attachments/70877452/70877461.png>`__
-(image/png)
-|image6|
-`iWrapNativeCodeAPI <attachments/70877452/70877462>`__
-(application/gliffy+json)
-|image7|
-`iWrapNativeCodeAPI.png <attachments/70877452/70877463.png>`__
-(image/png)
-|image8|
-`iWrapNativeCodeAPI <attachments/70877452/77370369>`__
-(application/gliffy+json)
-|image9|
-`iWrapNativeCodeAPI.png <attachments/70877452/77370370.png>`__
-(image/png)
-|image10|
-`iWrapNativeCodeAPI <attachments/70877452/77370385>`__
-(application/gliffy+json)
-|image11|
-`iWrapNativeCodeAPI.png <attachments/70877452/77370386.png>`__
-(image/png)
-|image12|
-`iWrapInitializationMethodAPI <attachments/70877452/77370375>`__
-(application/gliffy+json)
-|image13|
-`iWrapInitializationMethodAPI.png <attachments/70877452/77370376.png>`__
-(image/png)
-|image14|
-`iWrapInitializationMethodAPI <attachments/70877452/77370372>`__
-(application/gliffy+json)
-|image15|
-`iWrapInitializationMethodAPI.png <attachments/70877452/77370373.png>`__
-(image/png)
-|image16|
-`iWrapNativeCodeAPI <attachments/70877452/70877458>`__
-(application/gliffy+json)
-|image17|
-`iWrapNativeCodeAPI.png <attachments/70877452/70877459.png>`__
-(image/png)
-|image18|
-`iWrapNativeCodeFinishAPI <attachments/70877452/77370396>`__
-(application/gliffy+json)
-|image19|
-`iWrapNativeCodeFinishAPI.png <attachments/70877452/77370397.png>`__
-(image/png)
-|image20|
-`iWrapNativeCodeFinishAPI <attachments/70877452/77370400>`__
-(application/gliffy+json)
-|image21|
-`iWrapNativeCodeFinishAPI.png <attachments/70877452/77370401.png>`__
-(image/png)
-|image22|
-`iWrapNativeCodeFinishAPI <attachments/70877452/77370388>`__
-(application/gliffy+json)
-|image23|
-`iWrapNativeCodeFinishAPI.png <attachments/70877452/77370389.png>`__
-(image/png)
 
 
 
-.. |image2| image:: attachments/70877452/70877459.png
-   :class: gliffy-macro-image
-.. |image3| image:: attachments/70877452/77370389.png
 

@@ -1,104 +1,136 @@
-:orphan:
-======================================================
-Scientific Worfklows : iWrap - native code description
-======================================================
 
-.. container::
-   :name: page
+############################################################
+Actor and native code YAML description
+############################################################
+.. contents::
+.. sectnum::
 
-   .. container:: aui-page-panel
-      :name: main
+Introduction
+#######################################################################################################################
 
-      .. container::
-         :name: main-header
+iWrap, to properly wrap the code, needs detailed informations about both: the wrapped code and an actor to be
+generated. A formal description of the code provides information about the programming language used, arguments
+passed to/from the code, type of these arguments, etc, etc, while an actor description tells iWrap how to name generated
+actor, where to put it, etc. Such descriptions has to be provided in YAML format file, prepared manually, or
+automatically with help of iWrap GUI.
 
-         .. container::
-            :name: breadcrumb-section
+.. note::
+      iWrap GUI allows to generate an actor without the need for manual preparation of actor/code description.
 
-            #. `Scientific Worfklows <index.html>`__
-            #. `Wrapping user codes into actors -
-               iWrap <Wrapping-user-codes-into-actors---iWrap_70877391.html>`__
+**YAML file syntax**
 
-         .. rubric:: Scientific Worfklows : iWrap - native code
-            description
-            :name: title-heading
-            :class: pagetitle
+The YAML file consists of two independent parts, with entry names corresponding to their roles:
+*actor_description* and *code_description*. Only *code description* part is mandatory, and  *actor description* data
+could be provided in a file or using iWrap commandline switches or interacting with GUI.
 
-      .. container:: view
-         :name: content
+The structure of the file is following:
 
-         .. container:: page-metadata
+.. code-block:: YAML
 
-            Created by Bartosz Palak, last modified by Natalia
-            Kraszewska on 08 Nov 2021
+    ---
+    # actor description part - optional
+    actor_description:
+         # <see chapter below for details>
 
-         .. container:: wiki-content group
-            :name: main-content
+    # code description part - mandatory
+    code_description:
+         # <see chapter below for details>
+    ...
 
-            .. rubric:: 1.Introduction 
-               :name: iWrapnativecodedescription-Introduction
-               :class: auto-cursor-target
+.. warning::
+      -  All YAML fields are *MANDATORY*, unless explicitly described as *OPTIONAL*
+      -  An actor description part must begin with entry "actor_description:"
+      -  A code description part must begin with entry "code_description:"
 
-            Description of the native code has to be provided as a YAML
-            document. It consist of two parts. The first one contains
-            generic information common for all languages, The latter one
-            contains information specific for a given language of the
-            native code (currently defined only for Fortran and CPP). 
+Actor description
+#######################################################################################################################
 
-            | 
+Actor description syntax
+=========================================================================================
+-  actor_name:
 
-            Please note - all YAML fields are MANDATORY, unless
-            explicitly described as OPTIONAL
+   -  meaning: the arbitrary, user defined name of the actor. It determines e.g. : the name of class to be generated and directory where actor will be put
+   -  value: string
+   -  example: 'core2dist'
 
-            .. rubric:: 2.Common part
-               :name: iWrapnativecodedescription-Commonpart
-               :class: auto-cursor-target
+-  actor_type:
 
-            -  *programming_language*
+   -  meaning:
+   -  values: 'python' (currently only python type has been implemented)
+   -  example: 'python'
+
+-  data_type:
+
+   -  meaning: data type handled at the workflow level
+   -  value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
+   -  example: 'legacy'
+
+Example
+=========================================================================================
+
+.. code-block:: YAML
+
+    ---
+    actor_description:
+        actor_name: core2dist
+        actor_type: python
+        data_type: legacy
+
+    code_description:
+        # mandatory part
+    ...
+
+Native code description
+#######################################################################################################################
+
+Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains
+generic information common for all languages, The latter one contains information specific for a given language of the
+native code (currently defined only for Fortran and CPP).
+
+Common part
+=========================================================================================
+
+             Generic information common for all programming languages handled by iWrap:
+
+            -    programming_language
 
                -  meaning:  language of physics code
                -  value: one of predefined values: 'Fortran', 'CPP'
                -  example: 'Fortran'
 
-            -  *code_name*
+            -  *  code_name  *
 
                -  meaning:
 
                   -  name of user method / subroutine to be called,
-                  -  must be \ **exactly the same** as name of called
-                     method / subroutine
-                  -  used also as an actor name
+                  -  must be \ **exactly the same** as name of called  method / subroutine
+                  -  it is used also as an actor name and the name of
+                     directory where actor is installed
 
                -  value: string
-               -  example: 'my_subroutine' 
+               -  example: 'my_subroutine'
 
-            -  *data_type*
+            -  *  data_type  *
 
                -  meaning: data type handled by the physics code
-               -  value: one of predefined values: 'Legacy IDS' 'HDC
-                  IDS'
-               -  example: 'Legacy IDS'
+               -  value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
+               -  example: 'legacy'
 
-            -  *arguments - *\ list of arguments
+            -  *  arguments   * *- *\ list of arguments
 
-               -  argument definition: 
+               -  argument definition:
 
                   -  *name*:
 
                      -  meaning: user defined argument name
                      -  value: string
-                     -  example: equilibrium00   
+                     -  example: equilibrium00
 
                   -  *type*:
 
                      -  meaning: a type of an IDS argument
-                     -  value: 
-
-                        -  for data type 'IDS': predefined name of one
-                           of the IDSes
-                        -  for data type 'HDC' : TBD
-
-                     -  example: 'equilibrium' 
+                     -  value: predefined name of one of the IDSes
+                     -  example: 'equilibrium'
 
                   -  intent
 
@@ -106,43 +138,42 @@ Scientific Worfklows : iWrap - native code description
                         or output one
                      -  value: predefined - string "IN", "OUT"
 
-            -  *code_path:* 
+            -  code_path:
 
-               -  meaning: path to system library (C, CPP) , script
-                  (Python), etc containing the physics code, including
+               -  meaning: path to system library (C, C++) , script (Python), etc containing the physics code, including
                   method/subroutine to be run
                -  value: string, valid path to file
-               -  example: 'any text'  
+               -  example: 'any text'
 
-            -  code_parameters:
+            -  *  code_parameters  *\ ** ** - a structure containing
+                 parameters   and schema   entry  :
 
-               -  parameters:
+               -    parameters   :
 
                   -  meaning: path to XML file containing user defined
                      parameters of the physics code
                   -  value: string, valid path to file
                   -  example: './code_parameters/parameters.xml'
 
-               -  schema:
+               -    schema   :
 
                   -  meaning: path to XSD file contains schema of XML
                      parameters, to be able to validate them
                   -  value: string, valid path to file
                   -  example: './code_parameters/parameters.xsd'
 
-            -  *documentation:*
+            -  *  documentation   :*
 
                -  meaning: human readable description of native code
                -  value: string
                -  example: 'any text'
 
-            .. rubric:: 3.Language specific part
-               :name: iWrapnativecodedescription-Languagespecificpart
+Language specific part - Fortran/C++
+=========================================================================================
 
-            .. rubric:: 3.1.Fortran/CPP
-               :name: iWrapnativecodedescription-Fortran/CPP
-
-            -  *compiler*:
+Syntax
+------------------------------------------------------------
+            -    compiler   :
 
                -  meaning: the name/vendor of the compiler (and not
                   compiler command!) used to compile native codes
@@ -150,33 +181,30 @@ Scientific Worfklows : iWrap - native code description
                   'Intel' or 'GCC'
                -  example: 'Intel'
 
-            -  *mpi\_*\ flavour:
+            -    mpi_flavour
 
-               -  meaning: MPI compiler flavour to be
-                  used \ `|image1|\ IMAS-2056 <https://jira.iter.org/browse/IMAS-2056>`__\  - Allow
-                  users to select MPI implementation as well as compiler
-                  / linker ON HOLD
+               -  meaning: MPI compiler flavour to be used
                -  values: string, one of:  MPICH, MPICH2, MVAPICH2,
                   OpenMPI, etc.
                -  example 'MPICH2'
 
-            -  *open_mp*:
+            -    open_mp   :
 
                -  meaning: if user code should be compiled with OpenMP
                   flag
                -  values: boolean
                -  example 'true'
 
-            -  *system_libraries:*
+            -  *  system_libraries   :*
 
                -  meaning: a list of system libraries, managed
                   using *pkg-config*\  mechanism,  that has to be used
                   while native code linking
 
                -  value: a list of system libraries names, as they are
-                  published by *pkg-config* |(warning)|
+                  published by *pkg-config*
 
-               -  example: 
+               -  example:
 
                   .. container:: table-wrap
 
@@ -186,121 +214,58 @@ Scientific Worfklows : iWrap - native code description
                      | |   - mkl                                                             |
                      +-----------------------------------------------------------------------+
 
-            -  *custom_libraries*:
+            -    custom_libraries   :
 
                -  meaning: additional libraries, not managed
                   by *pkg-config*\  mechanism, necessary to link of the
                   physics code\ * *:
 
-               -  value:  a list of paths to libraries 
+               -  value:  a list of paths to libraries
 
-               -  example: 
+               -  example:
 
                   .. container:: table-wrap
 
-                     +-----------------------------------------------------------------------+
-                     | |   - ./lib/custom/libcustom1.a                                       |
-                     | |   - ./lib/custom/libcustom2.a                                       |
-                     +-----------------------------------------------------------------------+
+                     +-----------------------------------+
+                     | |   - ./lib/custom/libcustom1.a   |
+                     | |   - ./lib/custom/libcustom2.a   |
+                     +-----------------------------------+
 
-            .. rubric:: 4.Examples
-               :name: iWrapnativecodedescription-Examples
-               :class: auto-cursor-target
+Example - Fortran code description
+------------------------------------------------------------
 
-            .. rubric:: 4.1.Fortran code description
-               :name: iWrapnativecodedescription-Fortrancodedescription
+.. code-block:: YAML
 
-            .. container:: table-wrap
+    code_description:
+        implementation:
+            subroutines:
+                init:   init_code
+                main:   code_lifecycle
+                finalize: clean_up
+            programming_language: Fortran
+            data_type: legacy
+            code_path: ./native_code/libcode_lifecycle.a
+            include_path: ./native_code/mod_code_lifecycle.mod
+            code_parameters:
+                parameters: ./input/input_physics.xml
+                schema: ./input/input_physics.xsd
+        arguments:
+        -   name: equilibrium_in
+            type: equilibrium
+            intent: IN
+        -   name: equilibrium_out
+            type: equilibrium
+            intent: OUT
+        documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. '
+        settings:
+            compiler_cmd: gfortran
+            mpi_compiler_cmd:
+            open_mp_switch: false
+            extra_libraries:
+                pkg_config_defined:
+                        - xmllib
+                path_defined:
 
-               +-----------------------------------------------------------------------+
-               | |   ---                                                               |
-               | |   programming_language:  \  \   Fortran                             |
-               | |   code_name:  \  \   demo_code                                      |
-               | |   data_type:  \  \   LEGACY_IDS                                     |
-               | |   arguments:                                                        |
-               | |   -   name  \   :  \  \   equilibrium00                             |
-               | |         \   type:  \  \   equilibrium                               |
-               | |         \   intent:  \  \   IN                                      |
-               | |   -   name  \   :  \  \   equilibrium01                             |
-               | |         \   type:  \  \   equilibrium                               |
-               | |         \   intent:  \  \   IN                                      |
-               | |   -   name  \   :  \  \   equilibrium10                             |
-               | |         \   type:  \  \   equilibrium                               |
-               | |         \   intent:  \  \   OUT                                     |
-               | |   -   name  \   :  \  \   equilibrium11                             |
-               | |         \   type:  \  \   equilibrium                               |
-               | |         \   intent:  \  \   OUT                                     |
-               | |   code_path:  \  \   ./lib/libmy_lib.a                              |
-               | |   code_parameters:                                                  |
-               | |         \   parameters:  \  \   ./code_paramneters/parameters.xml   |
-               | |         \   schema:  \  \   ./code_paramneters/parameters.xsd       |
-               | |   documentation:  \ "\   Lorem ipsum dolor sit amet  \   "          |
-               | |   language_specific:                                                |
-               | |         \   compiler:  \  \   Intel                                 |
-               | |         \   mpi_flavour:  \  \   MPICH2                             |
-               | |         \   open_mp:  \  \   false                                  |
-               | |         \   system_libraries:                                       |
-               | |         \   -  \  \   fftw3f                                        |
-               | |         \   -  \  \   glib                                          |
-               | |         \   -  \  \   mkl                                           |
-               | |         \   custom_libraries:                                       |
-               | |         \   -  \  \   ./lib/custom/libcustom1.a                     |
-               | |         \   -  \  \   ./lib/custom/libcustom2.a                     |
-               +-----------------------------------------------------------------------+
-
-            .. rubric:: 4.2.Python code description
-               :name: iWrapnativecodedescription-Pythoncodedescription
-               :class: auto-cursor-target
-
-            | 
-
-            .. container:: table-wrap
-
-               +----------------------------------------------------------------------+
-               | |   ---                                                              |
-               | |   programming_language:  \  \   Python                             |
-               | |   code_name:  \  \   demo_code                                     |
-               | |   data_type:  \  \   LEGACY_IDS                                    |
-               | |   arguments:                                                       |
-               | |   -   name  \   :  \  \   equilibrium00                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   IN                                     |
-               | |   -   name  \   :  \  \   equilibrium01                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   IN                                     |
-               | |   -   name  \   :  \  \   equilibrium10                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   OUT                                    |
-               | |   -   name  \   :  \  \   equilibrium11                            |
-               | |         \   type:  \  \   equilibrium                              |
-               | |         \   intent:  \  \   OUT                                    |
-               | |   code_path:  \  \   ./demo_script.py                              |
-               | |   code_parameters:                                                 |
-               | |         \   parameters:  \  \   ./code_parameters/parameters.xml   |
-               | |         \   schema:  \  \   ./code_parameters/parameters.xsd       |
-               | |   documentation:  \ "\   Lorem ipsum dolor sit amet, "             |
-               | |   specific_settings:                                               |
-               | |         \   language_required_version:    \   4.x                  |
-               | |         \   not_sure_about_other_settings:  \  \   true            |
-               +----------------------------------------------------------------------+
-
-            | 
-
-            | 
-
-   .. container::
-      :name: footer
-
-      .. container:: section footer-body
-
-         Document generated by Confluence on 23 Nov 2021 13:15
-
-         .. container::
-            :name: footer-logo
-
-            `Atlassian <http://www.atlassian.com/>`__
-
-.. |image1| image:: https://jira.iter.org/secure/viewavatar?size=xsmall&avatarId=13310&avatarType=issuetype
-   :class: confluence-embedded-image icon confluence-external-resource
-.. |(warning)| image:: images/icons/emoticons/warning.svg
-   :class: emoticon emoticon-warning
