@@ -27,6 +27,8 @@ class ButtonPane(ttk.Frame):
         generate_button = ttk.Button(self, text='Generate', command=self.generate_action)
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
 
+        ttk.Label(self, text="* - mandatory field").pack(side=tk.LEFT, padx=10, pady=5)
+
     def generate_action(self):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
 

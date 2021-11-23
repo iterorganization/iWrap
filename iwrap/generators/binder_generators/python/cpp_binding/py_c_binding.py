@@ -1,4 +1,5 @@
 import logging
+import sys
 import tempfile
 from pathlib import Path
 from typing import Set
@@ -45,10 +46,13 @@ class CppBinderGenerator( BinderGenerator ):
         self.jinja_env: jinja2.Environment = None
         self.install_dir: str = None
 
+    def configure(self, info_output_stream=sys.stdout):
+        self.__info_output_stream = info_output_stream
+
     def initialize(self):
-        install_dir = ProjectSettings.get_settings().actor_description.install_dir
+        install_dir = ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
-            install_dir = PlatformSettings().default_directories.actor_default_install_dir
+            install_dir = PlatformSettings().directories.actor_install_dir
         self.install_dir: str = str(
             Path( install_dir, ProjectSettings.get_settings().actor_description.actor_name, 'binding' ) )
 
@@ -66,7 +70,9 @@ class CppBinderGenerator( BinderGenerator ):
         #    shutil.rmtree(self.install_dir)
 
         print(project_settings)
-        process_template_dir('iwrap.generators.binder_generators.cpp_binding', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
+        process_template_dir('iwrap.generators.binder_generators.python.cpp_binding', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
+        process_template_dir( 'iwrap.generators.binder_generators.python', 'common', self.install_dir,
+                              project_settings, filter_func=filter_func, output_stream=self.__info_output_stream, )
 
         #print('TMP2: ', self.jinja_env.loader.provider.module_path)
 

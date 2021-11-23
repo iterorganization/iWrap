@@ -45,8 +45,9 @@ class ExampleWorkflowManager:
         else:
             print('MPI is always run as STANDALONE. (Even if NORMAL was selected)')
 
+        #self.actor_core2dist_mpi.runtime_settings.run_mode = RunMode.BATCH
         #self.actor_core2dist_mpi.runtime_settings.debug_mode = DebugMode.ATTACH
-        self.actor_core2dist_mpi.runtime_settings.mpi.number_of_processes = 3
+        self.actor_core2dist_mpi.runtime_settings.mpi.mpi_nodes = 3
         self.actor_core2dist_mpi.initialize()
     
     def execute_workflow(self):

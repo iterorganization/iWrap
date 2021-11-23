@@ -1,0 +1,3 @@
+recursive-include bin *
+recursive-include iwrap *
+include requirements*

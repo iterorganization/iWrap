@@ -55,9 +55,9 @@ class PythonActorGenerator(ActorGenerator):
         self.install_dir: str = None
 
     def initialize(self):
-        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
+        install_dir =  ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
-            install_dir = PlatformSettings().default_directories.actor_default_install_dir
+            install_dir = PlatformSettings().directories.actor_install_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
 
 
@@ -109,8 +109,7 @@ class PythonActorGenerator(ActorGenerator):
 
 
     def __copy_code_params_files(self, project_settings:dict):
-
-        code_parameters = project_settings['code_description']['code_parameters']
+        code_parameters = project_settings['code_description']['implementation']['code_parameters']
         if not code_parameters:
             return
 

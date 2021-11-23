@@ -1,6 +1,7 @@
 program standalone
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
+
     use mpi
 {% endif %}
     use iwrap_defs
@@ -21,7 +22,8 @@ program standalone
     character(len=:), allocatable :: xml_string
     type(code_parameters_t) :: code_params
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+
+{% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI  ----
     logical :: was_mpi_finalized
     integer :: process_rank
@@ -33,15 +35,16 @@ program standalone
     status = read_input(db_entry_desc_array, xml_string)
     if (status /= 0) STOP -1
 
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
     code_params%params = convert2Cptr(xml_string)
+    deallocate(xml_string)
     code_params%params_size = LEN(xml_string)
 {% endif %}
 
-     {% if code_description.subroutines.init %}
+     {% if code_description.implementation.subroutines.init %}
     ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call init_{{actor_description.actor_name}}_wrapper(&
-        {% if code_description.code_parameters.parameters %}
+        {% if code_description.implementation.code_parameters.parameters %}
                 code_params,  &
         {% endif %}
                 status_info)
@@ -58,13 +61,13 @@ program standalone
 {% for argument in code_description.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
-{% if code_description.code_parameters.parameters %}
+{% if code_description.implementation.code_parameters.parameters %}
                 code_params,  &
 {% endif %}
                 status_info)
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     if (process_rank == 0) then
        ! --- called only for RANK 0 process
 {% endif %}
@@ -75,19 +78,20 @@ program standalone
     !-----------Writing output data to file ---------------------
     call write_output(status_info)
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+
+{% if code_description.settings.mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
     !-----------Close DB entries---------------------
     call close_db_entries(db_entry_desc_array)
 
 
-     {% if code_description.subroutines.finish %}
+     {% if code_description.implementation.subroutines.finalize %}
     ! - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call finish_{{actor_description.actor_name}}_wrapper(status_info)
     {% endif %}
 
-{% if code_description.language_specific.mpi.mpi_compiler_cmd %}
+{% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI Finalization ----
     call MPI_finalized(was_mpi_finalized, status)
     if (.not. was_mpi_finalized)   call MPI_Finalize(status)

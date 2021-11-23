@@ -11,8 +11,8 @@ class MenuBar(tk.Menu):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    save_and_open_initialdir = ProjectSettings.get_settings().code_description.settings.root_dir
-    import_and_export_initialdir = ProjectSettings.get_settings().code_description.settings.root_dir
+    save_and_open_initialdir = ProjectSettings.get_settings().code_description.implementation.root_dir
+    import_and_export_initialdir = ProjectSettings.get_settings().code_description.implementation.root_dir
 
     def __init__(self, master: IWrapPane):
         super().__init__(master)

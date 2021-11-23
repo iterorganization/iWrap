@@ -1,5 +1,34 @@
 ---
 platform_settings:
+    directories:
+        actor_install_dir: $HOME/IWRAP_ACTORS
+        sandbox_dir: $HOME/IWRAP_SANDBOX
+
+    batch_jobs:
+        runner: sbatch
+        options: --nodes=${batch_nodes} --wait --wrap=
+
+    mpi_jobs:
+        runner: mpiexec
+        options: -np ${mpi_nodes}
+
+    debugger:
+        cmd: totalview
+        attach_cmd:
+            totalview
+                -e 'dset VERBOSE warning'
+                -e 'dset TV::dll_read_loader_symbols_only *'
+                -e 'dset TV::GUI::pop_at_breakpoint true'
+                -e 'dattach python ${process_id}'
+                -e 'dbreak -pending ${init_sbrt_name}'
+                -e 'dbreak -pending ${main_sbrt_name}'
+                -e 'dbreak -pending ${finish_sbrt_name}'
+                -e 'puts  \"\\n\\nTotalView attached to a running Python process.\\n\"'
+                -e 'puts  \"Press any key to continue!\n\"'
+                -e 'puts  \"WARNING:\\tRestarting or killing debugged process will close the workflow!\"'
+...
+---
+platform_settings:
     default_directories:
         actor_default_install_dir: $HOME/IWRAP_ACTORS
         sandbox_default_dir: $HOME/IWRAP_SANDBOX

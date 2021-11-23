@@ -14,6 +14,7 @@ from iwrap.settings.code_description import CodeDescription
 
 #from iwrap.generation_engine.engine import Engine
 
+
 class ProjectSettings( SettingsBaseClass ):
     """Data class describing iWrap project settings.
 
@@ -42,7 +43,7 @@ class ProjectSettings( SettingsBaseClass ):
 
     @property
     def root_dir_path(self):
-        return str( Path( self.project_dir, self.code_description.settings.root_dir ) )
+        return str( Path( self.project_dir, self.code_description.implementation.root_dir ) )
 
     def __init__(self):
         self.project_dir = os.getcwd()

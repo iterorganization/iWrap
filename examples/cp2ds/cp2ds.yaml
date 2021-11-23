@@ -4,14 +4,18 @@ actor_description:
     data_type: legacy
 
 code_description:
-    subroutines:
-        init:
-        main:   coreprofiles2distsource
-        finish:
-    settings:
+    implementation:
+        subroutines:
+            init:
+            main:   coreprofiles2distsource
+            finalize:
         programming_language: Fortran
         data_type: legacy
         code_path: ./native/libcp2ds.a
+        include_path: ./native/mod_coreprofiles2distsource.mod
+        code_parameters:
+            parameters:
+            schema:
     arguments:
     -   name: core_profiles_in
         type: core_profiles
@@ -19,22 +23,13 @@ code_description:
     -   name: distribution_sources_out
         type: distribution_sources
         intent: OUT
-    code_parameters:
-        parameters:
-        schema:
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
-    language_specific:
+    settings:
         compiler_cmd: gfortran
-        include_path: ./native/mod_coreprofiles2distsource.mod
-        mpi:
-            mpi_compiler_cmd:
-            mpi_runner:
-        batch:
-            batch_runner:
-            batch_default_queue:
+        mpi_compiler_cmd:
         open_mp_switch:
         extra_libraries:
             pkg_config_defined:

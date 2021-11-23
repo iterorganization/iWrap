@@ -16,6 +16,7 @@ class DebugMode( Enum ):
 class RunMode( Enum ):
     NORMAL = auto()
     STANDALONE = auto()
+    BATCH = auto()
 
 
 class SandboxMode( Enum ):
@@ -28,65 +29,93 @@ class SandboxLifeTime( Enum ):
     PERSISTENT = auto()
 
 
-class IdsStorage:
+class IdsStorageSettings:
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         self.db_name = 'tmp'
-        self.shot = 9999
-        self.run = 9999
         self.backend = imas.imasdef.MEMORY_BACKEND
         self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
 
 
 class RuntimeSettings:
-    # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
         # handled/implemented
         self.run_mode = RunMode.NORMAL
         self.debug_mode = DebugMode.NONE
-        self.ids_storage = IdsStorage()
-        self.mpi = self.MPI()
-
-        # not implemented yet
-        self.batch_job = self.BatchJob()
-        self.open_mp = self.OpenMP()
+        self.ids_storage = IdsStorageSettings()
+        self.commandline_cmd = ''
+        self.exec_options = {}
+        self.mpi = None
         self.sandbox = self.SandboxSettings()
+        self.batch = self.BatchSettings()
+        self.debugger = self.DebuggerSettings()
+        # not implemented yet
+
+        self.open_mp = None
+
         self.TBD = None  # any other info needed?
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class BatchJob:
-        # Class logger
-        __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    class BatchSettings:
+
+        @property
+        def batch_default_runner(self):
+            return self._default_runner
+
+        @property
+        def batch_default_options(self):
+            return self._default_options
+
 
         def __init__(self):
-            self.queue = None
-            self.TBD = None
+            self._default_runner = ''
+            self.batch_runner = ''
+            self.batch_queue = ''
+            self.batch_nodes = 1
+            self._default_options = ''
+            self.batch_options = ''
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class Debug:
-        # Class logger
-        __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    class DebuggerSettings:
+
+        @property
+        def debugger_default_cmd(self):
+            return self._default_cmd
+
+        @property
+        def debugger_default_attach_cmd(self):
+            return self._default_attach_cmd
 
         def __init__(self):
-            self.debugger = None  # TotalView/gdb
-            self.mode = None  # attach/standalone
-            self.TBD = None
+            self._default_cmd = ''  # TotalView/gdb
+            self.debugger_cmd = ''
+            self._default_attach_cmd = ''
+            self.debugger_attach_cmd = ''
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class MPI:
-        # Class logger
-        __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    class MPISettings:
+
+        @property
+        def mpi_default_runner(self):
+            return self._default_runner
+
+        @property
+        def mpi_default_options(self):
+            return self._default_options
 
         def __init__(self):
-            self.number_of_processes = 1
-            self.TBD = None
+            self.mpi_nodes = 1
+            self.mpi_runner = None
+            self._default_runner = None
+            self._default_options = None
+            self.mpi_options = None
+
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-    class OpenMP:
+    class OpenMPSettings:
         # Class logger
         __logger = logging.getLogger( __name__ + "." + __qualname__ )
 

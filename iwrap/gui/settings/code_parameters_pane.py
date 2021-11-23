@@ -15,7 +15,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-
     def __init__(self, master=None):
         """This pane is used to validate the XML file against the XSD schema file.
 
@@ -34,7 +33,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         super().__init__(master)
 
         # Common reference for directory browsers.
-        self._browser_dir = ProjectSettings.get_settings().code_description.settings.root_dir
+        self._browser_dir = ProjectSettings.get_settings().code_description.implementation.root_dir
         # XML file path browser dialog
         self.xml_browser = CodeParameterBrowserPane(self, label_text="Parameters file:", file_type="XML")
 
@@ -44,8 +43,6 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         # XML Validator object against XSD
         _validator = XMLValidatorPane(self, xml=self.xml_browser.file_path, xsd=self.xsd_browser.file_path)
 
-        #: The frame is set up with a padding 20 on the top
-        self.configure(padding=(0, 20, 0, 0))
 
     def update_settings(self):
         """Force an update of ProjectSettings from CodeParameterBrowserPane.
@@ -101,7 +98,7 @@ class CodeParameterPath:
 
     @property
     def _project_settings(self):
-        return ProjectSettings.get_settings().code_description.code_parameters
+        return ProjectSettings.get_settings().code_description.implementation.code_parameters
 
 
 class XMLPath(CodeParameterPath):

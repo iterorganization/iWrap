@@ -10,12 +10,10 @@ from iwrap.common.misc import Dictionarizable
 
 
 class DefaultDirectories(Dictionarizable):
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self.actor_default_install_dir = str(Path(Path.home(), 'IWRAP_ACTORS'))
-        self.sandbox_default_dir: str = str(Path(Path.home(), 'IWRAP_SANDBOX'))
+        self.actor_install_dir = str(Path(Path.home(), 'IWRAP_ACTORS'))
+        self.sandbox_dir: str = str(Path(Path.home(), 'IWRAP_SANDBOX'))
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -25,17 +23,28 @@ class DefaultDirectories(Dictionarizable):
            """
         super().from_dict(dictionary)
 
-        if self.actor_default_install_dir:
-            self.actor_default_install_dir = utils.resolve_path(self.actor_default_install_dir)
+        if self.actor_install_dir:
+            self.actor_install_dir = utils.resolve_path(self.actor_install_dir)
 
-    def to_dict(self, resolve_path: bool = False, make_relative: str = False,
-                project_root: str = None) -> Dict[str, Any]:
-        """Serializes given object to dictionary
 
-        Returns
-            Dict[str, Any]: Dictionary containing object data
-        """
-        return super().to_dict()
+class BatchJobs(Dictionarizable):
+
+    def __init__(self):
+        self.runner: str = ''
+        self.options: str = ''
+
+class MPIJobs(Dictionarizable):
+
+    def __init__(self):
+        self.runner: str = ''
+        self.options: str = ''
+
+
+class Debugger(Dictionarizable):
+
+    def __init__(self):
+        self.cmd: str = ''
+        self.attach_cmd: str = ''
 
 
 class PlatformSettings(Dictionarizable):
@@ -56,7 +65,10 @@ class PlatformSettings(Dictionarizable):
         if self.__was_inited:
             return
 
-        self.default_directories = DefaultDirectories()
+        self.directories = DefaultDirectories()
+        self.batch_jobs = BatchJobs()
+        self.mpi_jobs = MPIJobs()
+        self.debugger = Debugger()
         self.__was_inited = True
 
     def __read_config_file(self):
@@ -75,23 +87,6 @@ class PlatformSettings(Dictionarizable):
         self.__read_config_file()
         pass
 
-    def from_dict(self, dictionary: Dict[str, Any]) -> None:
-        """Restores given object from dictionary.
-
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict(dictionary)
-
-    def to_dict(self, resolve_path: bool = False, make_relative: str = False,
-                project_root_dir: str = None) -> Dict[str, Any]:
-        """Serializes given object to dictionary
-
-        Returns
-            Dict[str, Any]: Dictionary containing object data
-        """
-        return super().to_dict()
-
     def save(self, stream):
         """Stores code description in a file
 
@@ -100,7 +95,7 @@ class PlatformSettings(Dictionarizable):
         """
 
         dict_to_store = {'platform_settings': self.to_dict()}
-        yaml.dump(dict_to_store, stream=stream, default_flow_style=False, sort_keys=False, indent=4,
+        yaml.dump(dict_to_store, stream=stream, flow_style=False, sort_keys=False, indent=4,
                   explicit_start=True, explicit_end=True)
 
     def load(self, file_path):

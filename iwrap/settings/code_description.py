@@ -10,7 +10,7 @@ from enum import Enum
 from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
-from iwrap.settings.language_specific.language_settings_mgmt import LanguageSettingsManager
+from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
 
 
 class Intent( Enum ):
@@ -95,7 +95,7 @@ class Subroutines( SettingsBaseClass ):
     Attributes:
         init (str): A name of subroutine that could be used to initialise the native code (optional)
         main (str): A name of the main subroutine that will be called from actor (mandatory)
-        finish (str): A name of subroutine that could be used to finalise the native code (optional)
+        finalize (str): A name of subroutine that could be used to finalise the native code (optional)
     """
 
     def __init__(self):
@@ -109,7 +109,7 @@ class Subroutines( SettingsBaseClass ):
 
         # A name of subroutine that could be used to finalise the native code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.finish: str = ''
+        self.finalize: str = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         # validate correctness of XML
@@ -122,7 +122,7 @@ class Subroutines( SettingsBaseClass ):
         """
         self.init = ''
         self.main = ''
-        self.finish = ''
+        self.finalize = ''
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -141,7 +141,19 @@ class Subroutines( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
 
-class Settings( SettingsBaseClass ):
+class Implementation( SettingsBaseClass ):
+    """The data class containing information about user code implementation.
+
+    Attributes:
+        root dir (str): root directory
+        programming_language (str): language of native physics code
+        data_type (:obj:str):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
+        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
+            method/subroutine to be run
+        include path (str): a module's / header's file path
+        code_parameters (:obj:CodeParameters): user defined parameters of the native code
+        subroutines (:obj:Subroutines): name of user method / subroutine to be called, used also as an actor name
+    """
     @property
     def programming_language(self):
         return self._programming_language
@@ -158,7 +170,10 @@ class Settings( SettingsBaseClass ):
         self._programming_language: str = ''
         self.data_type: str = None
         self.code_path: str = None
+        self.include_path = ''
         self._master = master
+        self.code_parameters: CodeParameters = CodeParameters()
+        self.subroutines: Subroutines = Subroutines()
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         # programming_language
@@ -181,6 +196,17 @@ class Settings( SettingsBaseClass ):
         if not Path(__path).exists():
             raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
 
+        # code parameters
+        self.code_parameters.validate( engine, project_root_dir )
+
+        # include path
+        if not self.include_path:
+            raise ValueError( 'Path to include/module file is not set!' )
+
+        __path = utils.resolve_path( self.include_path, project_root_dir)
+        if not Path(__path).exists():
+            raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
+
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
@@ -196,6 +222,8 @@ class Settings( SettingsBaseClass ):
         self.programming_language = None
         self.data_type = None
         self.code_path = None
+        self.subroutines.clear()
+        self.code_parameters.clear()
 
     def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
         """Serializes given object to dictionary
@@ -203,7 +231,19 @@ class Settings( SettingsBaseClass ):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict(resolve_path, make_relative, project_root_dir)
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+
+        if resolve_path:
+            # include_path
+            __path = utils.resolve_path( self.include_path, project_root_dir )
+            ret_dict.update( {'include_path': __path} )
+
+            # code_path
+            code_path = self.code_path
+            __path = utils.resolve_path( code_path, project_root_dir )
+            ret_dict.update( {'code_path': __path} )
+
+        return ret_dict
 
 
 class CodeParameters( SettingsBaseClass ):
@@ -224,7 +264,6 @@ class CodeParameters( SettingsBaseClass ):
         self.schema: str = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
-
         if self.parameters and not self.schema:
             raise ValueError( 'XSD schema must be set if XML parameters file is specified!' )
 
@@ -313,15 +352,10 @@ class CodeDescription( SettingsBaseClass ):
     """Description of the native code used for wrapping the code within an actor.
 
     Attributes:
-        programming_language (`str`): language of native physics code
-        subroutines (:obj:`Subroutines`): name of user method / subroutine to be called, used also as an actor name
-        data_type (:obj:`str`):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
         arguments (list [:obj:`Arguments`]): list of native code in/out arguments
-        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
-            method/subroutine to be run
-        code_parameters (:obj:`CodeParameters`): user defined parameters of the native code
         documentation (str): human readable description of the native code
-        language_specific (Dict[str, Any]): information specific for a given language of the native code
+        settings (dict): native code settings
+        implementation(:obj:`Implementation`): native code implementation info
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -340,48 +374,45 @@ class CodeDescription( SettingsBaseClass ):
             self._arguments.append( value )
 
     @property
-    def language_specific(self):
-        return self._language_specific
+    def settings(self):
+        return self._settings
 
-    @language_specific.setter
-    def language_specific(self, values):
+    @settings.setter
+    def settings(self, values):
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._language_specific = LanguageSettingsManager.get_settings_handler( self.settings.programming_language, values )
+        self._settings = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
 
     def __init__(self):
-        self.subroutines: Subroutines = Subroutines()
         self._arguments: List[Argument] = []
-        self.settings: Settings = Settings(self)
-        self.code_parameters: CodeParameters = CodeParameters()
+        self.implementation: Implementation = Implementation(self)
         self.documentation: str = None
-        self.language_specific: dict = {}
+        self._settings: dict = {}
 
     def change_language_specific(self):
-        if self._language_specific is not None and isinstance(self._language_specific, dict):
-            self._language_specific = LanguageSettingsManager.get_settings_handler(self.settings.programming_language,
-                                                                                          self._language_specific)
+        """ Update settings when programming language changed.
+        """
+        if self._settings is not None and isinstance(self._settings, dict):
+            self._settings = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
+                                                                                          self._settings)
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
-
         # arguments
         for argument in self.arguments or []:
-            argument.validate( engine, project_root_dir, **{'data_type': self.settings.data_type} )
+            argument.validate( engine, project_root_dir, **{'data_type': self.implementation.data_type} )
 
-        # code parameters
-        self.code_parameters.validate( engine, project_root_dir )
-
-        #settings
-        self.settings.validate(engine, project_root_dir)
+        # implementation
+        self.implementation.validate(engine, project_root_dir)
 
         # documentation
         if self.documentation and not isinstance( self.documentation, str ):
             raise ValueError( 'Documentation must be a string (and it is not)!' )
 
-        if not self.language_specific:
+        # settings
+        if not self.settings:
             raise ValueError( 'Language specific data are not set!' )
-        elif isinstance( self.language_specific, SettingsBaseClass ):
-            self.language_specific.validate( engine, project_root_dir )  # pylint: disable=no-member
+        elif isinstance(self.settings, SettingsBaseClass):
+            self.settings.validate(engine, project_root_dir)  # pylint: disable=no-member
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -395,11 +426,9 @@ class CodeDescription( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.arguments = []
-        self.code_parameters.clear()
         self.documentation = None
-        self.settings.clear()
-        self.language_specific = {}
-        self.subroutines.clear()
+        self.implementation.clear()
+        self.settings = {}
 
     def to_dict(self, resolve_path: bool = False,
                 make_relative: bool = False,
@@ -410,11 +439,6 @@ class CodeDescription( SettingsBaseClass ):
             Dict[str, Any]: Dictionary containing object data
         """
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
-        if resolve_path:
-            # code_path
-            code_path = self.settings.code_path
-            __path = utils.resolve_path( code_path, project_root_dir )
-            ret_dict.update( {'code_path': __path} )
 
         return ret_dict
 
@@ -446,7 +470,7 @@ class CodeDescription( SettingsBaseClass ):
         self.from_dict( code_description_dict )
 
         file_real_path = os.path.realpath( file.name )
-        if not self.settings.root_dir:
-            self.settings.root_dir = os.path.dirname( file_real_path )
+        if not self.implementation.root_dir:
+            self.implementation.root_dir = os.path.dirname( file_real_path )
 
 

@@ -56,21 +56,22 @@ class CppWrapperGenerator(WrapperGenerator):
         self.install_dir: str = None
         self.wrapper_dir = 'wrapper'
 
+    def configure(self, info_output_stream=sys.stdout):
+        self.__info_output_stream = info_output_stream
+
     def initialize(self):
-        install_dir =  ProjectSettings.get_settings().actor_description.install_dir
+        install_dir =  ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
-            install_dir = PlatformSettings().default_directories.actor_default_install_dir
+            install_dir = PlatformSettings().directories.actor_install_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name, 'wrapper'))
-
-
 
     def generate(self, project_settings: dict):
         self.temp_dir = tempfile.TemporaryDirectory().name
-        install_dir = ProjectSettings.get_settings().actor_description.install_dir
+        install_dir = ProjectSettings.get_settings().actor_description._install_dir
         code_description = ProjectSettings.get_settings().code_description
         generation_env = {'temp_dir': self.install_dir}
 
-        native_language = code_description.settings.programming_language.lower()
+        native_language = code_description.implementation.programming_language.lower()
 
         # TO BE CHECKED!!!!
 
@@ -124,7 +125,7 @@ class CppWrapperGenerator(WrapperGenerator):
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
-        native_lib_path = project_settings['code_description']['code_path']
+        native_lib_path = project_settings['code_description']['implementation']['code_path']
         shutil.copy( native_lib_path, destination_dir )
 
     def __copy_include(self, project_settings:dict):
@@ -133,7 +134,7 @@ class CppWrapperGenerator(WrapperGenerator):
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
-        include_path = project_settings['code_description']['language_specific']['include_path']
+        include_path = project_settings['code_description']['implementation']['include_path']
         shutil.copy( include_path, destination_dir )
 
 

@@ -15,17 +15,17 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         super().__init__( master, text='Actor description:', borderwidth=2, relief="groove", height=100 )
 
         self.grid( column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W) )
-        ttk.Label( self, text="Actor name:" ).grid( column=0, row=0, padx=10, pady=5, sticky=tk.W )
+        ttk.Label( self, text="*Actor name:" ).grid( column=0, row=0, padx=10, pady=5, sticky=tk.W )
         self.actor_name = ttk.Entry( self )
         self.actor_name.grid( column=1, columnspan=10, row=0, padx=10, pady=5, sticky=(tk.W, tk.E) )
 
-        ttk.Label( self, text="Actor type:" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
+        ttk.Label( self, text="*Actor type:" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
 
         self.actor_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.actor_type_combo.grid( column=1, columnspan=10, row=1, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.actor_type_combo.bind( "<<ComboboxSelected>>", self.actor_type_combo_action )
 
-        ttk.Label( self, text="Data type:" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
+        ttk.Label( self, text="*Data type:" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
 
         self.data_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )

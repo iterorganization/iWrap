@@ -1,10 +1,14 @@
 code_description:
-    subroutines:
-        main:   physics_ii
-    settings:
+    implementation:
+        subroutines:
+            main:  physics_ii
         data_type: legacy
         programming_language: Fortran
         code_path: ./native_code/libphysics_ii.a
+        include_path: ./native_code/mod_physics_ii.mod
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -12,26 +16,16 @@ code_description:
     -   name: equilibrium_out
         type: equilibrium
         intent: OUT
-    code_parameters:
-        parameters: ./input/input_physics.xml
-        schema: ./input/input_physics.xsd
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
-    language_specific:
+    settings:
         compiler_cmd: gfortran
-        include_path: ./native_code/mod_physics_ii.mod
-        mpi:
-            mpi_compiler_cmd:
-            mpi_runner:
-        batch:
-            batch_runner:
-            batch_default_queue:
+        mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
-                    - xmllib
+                - xmllib
             path_defined:
-
 
