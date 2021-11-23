@@ -51,7 +51,6 @@ copy_attachments:
 
 docs:
 	make clean
-	make html_to_md
 	make setconfig
 	make apidocs
 	make html
