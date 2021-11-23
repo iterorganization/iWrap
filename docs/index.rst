@@ -18,7 +18,7 @@ For user conveniency it provides two kinds of interfaces:
    :maxdepth: 1
    :caption: For users:
 
-   /iwrap_confluence_documentation/index.rst
+   /resources/index.rst
 
 .. toctree::
    :maxdepth: 1

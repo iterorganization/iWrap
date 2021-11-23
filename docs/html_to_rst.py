@@ -3,7 +3,7 @@ import os
 import pypandoc
 from pypandoc.pandoc_download import download_pandoc
 
-os.chdir("iwrap_confluence_documentation/")
+os.chdir("resources/")
 download_pandoc(version='2.14.2')
 
 def clean_text(text):
