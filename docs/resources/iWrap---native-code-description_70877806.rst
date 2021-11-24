@@ -65,7 +65,193 @@ Actor description syntax
    -  value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
    -  example: 'legacy'
 
-Example
+Native code description
+#######################################################################################################################
+
+Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains
+generic information common for all languages, The latter one contains information specific for a given native code
+language (currently defined only for Fortran and C++).
+
+Generic part
+=========================================================================================
+
+Generic information common for all programming languages handled by iWrap:
+
+-   *implementation:*
+
+    -   *programming_language:*
+
+        -   meaning:  language of physics code
+        -   value: one of predefined values: 'Fortran', 'CPP'
+        -   example: 'Fortran'
+
+    -   *root_dir:*
+
+        -   **optional** entry
+        -   meaning:  the root directory for ALL relative paths placed in code description
+        -   value: string, a relative path leading from YAML file location to actor project root dir
+        -   example: '..'
+
+    -   *subroutines:*
+
+        -   *init*:
+
+            - **optional** entry
+            -   meaning:
+
+                -  name of user method / subroutine to be called,
+                -  must be **exactly the same** as name of called method / subroutine
+                -  it is used, usually, to set up the native code, however subroutine may contain any arbitrary actions
+            -  value: string
+            -  example: 'init_code'
+
+        -   *main:*
+
+            -   meaning:
+
+                -  name of user method / subroutine to be called,
+                -  must be \ **exactly the same** as name of called  method / subroutine
+                -  it is used also as an actor name and the name of directory where actor is installed
+
+            -  value: string
+            -  example: 'my_subroutine'
+
+        -    *finalize:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of user method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used, usually, to clean up the native code, however subroutine may contain any arbitrary actions
+
+             -  value: string
+             -  example: 'clean_up'
+
+    -   *data_type:*
+
+        -   meaning: data type handled by the physics code
+        -   value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
+        -   example: 'legacy'
+
+    -  *code_path:*
+
+       -  meaning: path to system library (C, C++, Fortran) , script (Python), etc., containing the physics code, including
+          methods/subroutines to be run
+       -  value: string, valid path to file
+       -  example: '/path/to/code/lib/libcode.a'
+
+    -  *include_path:*
+
+       -  meaning: path to a header file (C, C++), module (Fortran), etc., containing the declaration of physics code
+          methods/subroutines to be run
+       -  value: string, valid path to file
+       -  example: '/path/to/code/include/code.h'
+
+    -   *code_parameters:* a structure containing parameters and schema entry. **optional**  :
+
+        -   *parameters:*
+
+            -  meaning: path to XML file containing user defined parameters of the physics model
+            -  value: string, valid path to file
+            -  example: './code_parameters/parameters.xml'
+
+        -   *schema:*
+
+            -  meaning: path to XSD file contains schema of XML parameters, enabling its validation
+            -  value: string, valid path to file
+            -  example: './code_parameters/parameters.xsd'
+
+
+
+-   *arguments:* list of arguments. Argument definition:
+
+    -   *name:*
+
+        -  meaning: user defined argument name
+        -  value: string
+        -  example: equilibrium00
+
+    -   *type:*
+
+        -  meaning: a type of an IDS argument
+        -  value: predefined name of one of the IDSes
+        -  example: 'equilibrium'
+
+    -   *intent:*
+
+        -  meaning: determines if given argument is input or output one
+        -  value: predefined - string "IN", "OUT"
+        -  example: 'IN'
+
+-   *documentation:*
+    - **optional** entry
+    -  meaning: human readable description of native code
+    -  value: string
+    -  example: 'any text describing a physics model'
+
+-   *settings:*  mandatory entry gathering all information specific for given language (see chapter below)
+
+
+Language specific settings - Fortran/C++
+=========================================================================================
+
+Syntax
+------------------------------------------------------------
+-   *compiler_cmd:*
+
+    -  meaning: the name/vendor of the compiler command used to compile native codes
+    -  value: string, compiler script name
+    -  example: 'gfortran', 'ifort'
+
+-   *mpi_compiler_cmd:
+
+    -  meaning: the name/vendor of the *MPI* compiler command used to compile native codes.
+    -  value: string, compiler script name
+    -  example: 'mpif90', 'ifort'
+    -  Important! The existence (or absence) of this entry, determines if native codes use MPI or not
+
+-   *open_mp_switch:*
+
+    -  meaning: a compiler switch to be used if native code use OpenMP.
+    -  value: string
+    -  example: '-fopenmp', '-qopenmp'
+
+-   *extra_libraries:* -
+
+    -  *pkg_config_defined:*
+
+       -  meaning: a list of system libraries, managed using *pkg-config* mechanism, that has to be used
+          while native code linking
+
+       -  value: a list of system libraries names, as they are published by *pkg-config*
+
+       -  example:
+
+          .. code-block:: YAML
+
+                pkg_config_defined:
+                     - fftw3f
+                     - glib
+                     - mkl
+
+    -   *path_defined:*
+
+        -  meaning: a list of additional libraries, not managed by *pkg-config* mechanism but necessary
+           to link the provided physics code
+
+        -  value:  a list of paths to libraries
+
+        -  example:
+
+           .. code-block:: YAML
+
+               path_defined:
+                   - ./lib/custom/libcustom1.a
+                   - ./lib/custom/libcustom2.a
+
+
+Example - description of an actor wrapping Fortran code x
 =========================================================================================
 
 .. code-block:: YAML
@@ -75,166 +261,6 @@ Example
         actor_name: core2dist
         actor_type: python
         data_type: legacy
-
-    code_description:
-        # mandatory part
-    ...
-
-Native code description
-#######################################################################################################################
-
-Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains
-generic information common for all languages, The latter one contains information specific for a given language of the
-native code (currently defined only for Fortran and CPP).
-
-Common part
-=========================================================================================
-
-             Generic information common for all programming languages handled by iWrap:
-
-            -    programming_language
-
-               -  meaning:  language of physics code
-               -  value: one of predefined values: 'Fortran', 'CPP'
-               -  example: 'Fortran'
-
-            -  *  code_name  *
-
-               -  meaning:
-
-                  -  name of user method / subroutine to be called,
-                  -  must be \ **exactly the same** as name of called  method / subroutine
-                  -  it is used also as an actor name and the name of
-                     directory where actor is installed
-
-               -  value: string
-               -  example: 'my_subroutine'
-
-            -  *  data_type  *
-
-               -  meaning: data type handled by the physics code
-               -  value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
-               -  example: 'legacy'
-
-            -  *  arguments   * *- *\ list of arguments
-
-               -  argument definition:
-
-                  -  *name*:
-
-                     -  meaning: user defined argument name
-                     -  value: string
-                     -  example: equilibrium00
-
-                  -  *type*:
-
-                     -  meaning: a type of an IDS argument
-                     -  value: predefined name of one of the IDSes
-                     -  example: 'equilibrium'
-
-                  -  intent
-
-                     -  meaning: determines if given argument is input
-                        or output one
-                     -  value: predefined - string "IN", "OUT"
-
-            -  code_path:
-
-               -  meaning: path to system library (C, C++) , script (Python), etc containing the physics code, including
-                  method/subroutine to be run
-               -  value: string, valid path to file
-               -  example: 'any text'
-
-            -  *  code_parameters  *\ ** ** - a structure containing
-                 parameters   and schema   entry  :
-
-               -    parameters   :
-
-                  -  meaning: path to XML file containing user defined
-                     parameters of the physics code
-                  -  value: string, valid path to file
-                  -  example: './code_parameters/parameters.xml'
-
-               -    schema   :
-
-                  -  meaning: path to XSD file contains schema of XML
-                     parameters, to be able to validate them
-                  -  value: string, valid path to file
-                  -  example: './code_parameters/parameters.xsd'
-
-            -  *  documentation   :*
-
-               -  meaning: human readable description of native code
-               -  value: string
-               -  example: 'any text'
-
-Language specific part - Fortran/C++
-=========================================================================================
-
-Syntax
-------------------------------------------------------------
-            -    compiler   :
-
-               -  meaning: the name/vendor of the compiler (and not
-                  compiler command!) used to compile native codes
-               -  value: string, one of vendors of compilers, currently:
-                  'Intel' or 'GCC'
-               -  example: 'Intel'
-
-            -    mpi_flavour
-
-               -  meaning: MPI compiler flavour to be used
-               -  values: string, one of:  MPICH, MPICH2, MVAPICH2,
-                  OpenMPI, etc.
-               -  example 'MPICH2'
-
-            -    open_mp   :
-
-               -  meaning: if user code should be compiled with OpenMP
-                  flag
-               -  values: boolean
-               -  example 'true'
-
-            -  *  system_libraries   :*
-
-               -  meaning: a list of system libraries, managed
-                  using *pkg-config*\  mechanism,  that has to be used
-                  while native code linking
-
-               -  value: a list of system libraries names, as they are
-                  published by *pkg-config*
-
-               -  example:
-
-                  .. container:: table-wrap
-
-                     +-----------------------------------------------------------------------+
-                     | |   - fftw3f                                                          |
-                     | |   - glib                                                            |
-                     | |   - mkl                                                             |
-                     +-----------------------------------------------------------------------+
-
-            -    custom_libraries   :
-
-               -  meaning: additional libraries, not managed
-                  by *pkg-config*\  mechanism, necessary to link of the
-                  physics code\ * *:
-
-               -  value:  a list of paths to libraries
-
-               -  example:
-
-                  .. container:: table-wrap
-
-                     +-----------------------------------+
-                     | |   - ./lib/custom/libcustom1.a   |
-                     | |   - ./lib/custom/libcustom2.a   |
-                     +-----------------------------------+
-
-Example - Fortran code description
-------------------------------------------------------------
-
-.. code-block:: YAML
 
     code_description:
         implementation:
@@ -262,10 +288,12 @@ Example - Fortran code description
             consequat. '
         settings:
             compiler_cmd: gfortran
-            mpi_compiler_cmd:
-            open_mp_switch: false
+            mpi_compiler_cmd: mpif90
+            open_mp_switch: -qopenmp
             extra_libraries:
                 pkg_config_defined:
-                        - xmllib
+                  - xmllib
                 path_defined:
-
+                  - ./lib/custom/libcustom1.a
+                  - ./lib/custom/libcustom2.a
+    ...
