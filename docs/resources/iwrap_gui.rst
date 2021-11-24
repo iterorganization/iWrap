@@ -1,5 +1,5 @@
 ==================================================
-Scientific Worfklows : iWrap - graphical interface
+iWrap - graphical interface
 ==================================================
 
 .. container::

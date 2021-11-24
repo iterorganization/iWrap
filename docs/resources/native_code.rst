@@ -1,5 +1,5 @@
 ############################################################
-Native code API
+Native code standardisation
 ############################################################
 .. contents::
 .. sectnum::
@@ -30,7 +30,7 @@ The method API
 Initialisation method
 ======================
 
-.. image:: .. image:: attachments/70877452/77370373.png
+.. image:: .. image:: /resources/attachments/70877452/77370373.png
 
 
 - An optional method used for set-up of native code

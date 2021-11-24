@@ -3,8 +3,10 @@ import os
 import logging
 import subprocess
 import sys
+from abc import ABC, abstractmethod
 from pathlib import Path
 from threading import Thread
+from typing import Any, List
 
 import imas
 from .data_storages import IDSConvertersRegistry
@@ -29,8 +31,34 @@ def exec_system_cmd(system_cmd: str,  output_stream=sys.stdout) :
     if return_code:
         raise RuntimeError( f'ERROR [{return_code}] while executing command: {system_cmd}' )
 
+class Binder (ABC):
 
-class CBinder:
+    @abstractmethod
+    def initialize(self, actor) -> None:
+        ...
+
+    @abstractmethod
+    def finalize(self) -> None:
+        ...
+
+    @abstractmethod
+    def call_init(self, code_parameters: str, sandbox_dir: str, debug_mode=False) -> None:
+        ...
+
+    @abstractmethod
+    def call_main(self, input_idses, code_parameters:str, sandbox_dir:str):
+        ...
+
+    @abstractmethod
+    def call_finish(self, sandbox_dir: str) -> None:
+        ...
+
+    @abstractmethod
+    def run_standalone(self, ids_list:List[Any], code_parameters:str, exec_command:str, sandbox_dir:str, output_stream) -> None:
+        ...
+
+
+class CBinder(Binder):
 
     def __init__(self):
         self.__logger = logging.getLogger( 'binding' )

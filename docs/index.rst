@@ -1,8 +1,3 @@
-.. iWrap documentation master file, created by
-   sphinx-quickstart on Fri Mar 26 16:31:43 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to iWrap's documentation!
 =================================
 
@@ -18,20 +13,14 @@ For user conveniency it provides two kinds of interfaces:
    :maxdepth: 1
    :caption: For users:
 
-   /resources/index.rst
+   /resources/user_manual.rst
 
 .. toctree::
    :maxdepth: 1
    :caption: For developers:
 
+   /resources/developers_manual.rst
    /documentation_files/docstring_documentation.rst
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
