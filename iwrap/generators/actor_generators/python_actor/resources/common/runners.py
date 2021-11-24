@@ -31,7 +31,7 @@ class Runner(ABC):
         self._binder = binder
         self._output_stream = output_stream
         self._sandbox_dir = sandbox_dir
-        self._runtime_settings = actor.runtime_settings
+        self._runtime_settings = actor._ActorBaseClass__runtime_settings
 
     @abstractmethod
     def call_initialize(self, code_parameters: str):

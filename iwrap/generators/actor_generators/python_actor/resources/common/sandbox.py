@@ -10,7 +10,7 @@ class Sandbox:
 
     def __init__(self, actor):
         self.actor = actor
-        self.sandbox_settings = actor.runtime_settings.sandbox
+        self.sandbox_settings = actor._ActorBaseClass__runtime_settings.sandbox
         self.path = None
 
     def __set_path(self):

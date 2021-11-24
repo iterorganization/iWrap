@@ -39,10 +39,12 @@ class ExampleWorkflowManager:
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
+            runtime_settings = self.actor_physics_ii.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
 
-        self.actor_physics_ii.code_parameters.parameters_path= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
-        self.actor_physics_ii.initialize() 
+        code_parameters = self.actor_physics_ii.get_code_parameters()
+        code_parameters.parameters_path= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
+        self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
