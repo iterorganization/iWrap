@@ -17,6 +17,24 @@ class CodeParameters:
     def parameters(self):
         return self.__parameters_str
 
+    def get_parametr_value(self, path_to_node:str) -> str:
+        if not self.__default_parameters_path:
+            return
+
+        if not self.__parameters_str:
+            self.initialize()
+
+        # add  operations on XML tree
+        return 'PARAMETER VALUE'
+
+    def set_parametr_value(self, path_to_node:str, value) -> None:
+        if not self.__default_parameters_path:
+            return
+        if not self.__parameters_str:
+            self.initialize()
+
+        # add  operations on XML tree
+
     def __init__(self, default_parameters_path:str, schema_path:str):
 
         self.__default_params_dir = Path( Path( __file__ ).parent, '../input/')
