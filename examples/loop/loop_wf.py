@@ -37,12 +37,19 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        runtime_settings = None
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_loop.runtime_settings.run_mode = RunMode.STANDALONE
+            runtime_settings = self.actor_loop.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
+
+        code_parameters = self.actor_loop.get_code_parameters()
+        self.actor_loop.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
+        self.actor_loop.runtime_settings.run_mode = RunMode.STANDALONE
 
         #self.actor_loop.code_parameters.parameters= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
-        self.actor_loop.initialize()
+
+
         # READ INPUT IDSS FROM LOCAL DATABASE
         time_slice          = 200.
         print('=> Read input IDSs')

@@ -35,6 +35,7 @@ class ExampleWorkflowManager:
         self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
         self.output_entry.create()
 
+        runtime_settings = None
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         if actor_run_mode == 'STANDALONE':

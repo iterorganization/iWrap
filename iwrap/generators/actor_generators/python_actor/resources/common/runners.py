@@ -189,7 +189,7 @@ class StandaloneRunner( Runner ):
 
         self.__logger.debug( "RUNNING STDL" )
 
-        runtime_settings = self._actor.runtime_settings
+        runtime_settings = self._runtime_settings
 
         if runtime_settings.commandline_cmd:
             exec_command:str = runtime_settings.commandline_cmd
