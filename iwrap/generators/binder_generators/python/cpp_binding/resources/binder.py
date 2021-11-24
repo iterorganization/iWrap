@@ -56,7 +56,7 @@ class CBinder:
         self.ids_converter_class = IDSConvertersRegistry.get_converter_class(actor.data_type, 'cpp')
         self.actor = actor
 
-        self.runtime_settings = actor.runtime_settings
+        self.runtime_settings = actor._ActorBaseClass__runtime_settings
         self.arg_metadata_list = actor.arguments
         self.actor_dir = actor.actor_dir
 

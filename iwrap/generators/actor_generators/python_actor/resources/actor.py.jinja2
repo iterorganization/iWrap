@@ -52,23 +52,23 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         default_parameters_file = ''
         schema_file = ''
     {% endif %}
-        self.code_parameters = CodeParameters(default_parameters_file, schema_file)
+        self._ActorBaseClass__code_parameters = CodeParameters(default_parameters_file, schema_file)
 
         self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
 
        {% if code_description.settings.mpi_compiler_cmd %}
         # setting MPI parameters
-        self.runtime_settings.mpi = RuntimeSettings.MPISettings()
-        self.runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
-        self.runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
+        self._ActorBaseClass__runtime_settings.mpi = RuntimeSettings.MPISettings()
+        self._ActorBaseClass__runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
+        self._ActorBaseClass__runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
         {% endif %}
 
         # setting BATCH parameters
-        self.runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
-        self.runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
+        self._ActorBaseClass__runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
+        self._ActorBaseClass__runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
 
 
         # setting DEBUGGER parameters
-        self.runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
-        self.runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
+        self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
+        self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
 
