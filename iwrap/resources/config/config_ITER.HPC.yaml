@@ -27,9 +27,4 @@ platform_settings:
                 -e 'puts  \"Press any key to continue!\n\"'
                 -e 'puts  \"WARNING:\\tRestarting or killing debugged process will close the workflow!\"'
 ...
----
-platform_settings:
-    default_directories:
-        actor_default_install_dir: $HOME/IWRAP_ACTORS
-        sandbox_default_dir: $HOME/IWRAP_SANDBOX
-...
+
