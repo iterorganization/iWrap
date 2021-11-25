@@ -18,6 +18,15 @@ class CodeParameters:
     def parameters(self):
         return self.__parameters_str
 
+    @property
+    def parameters_path(self):
+        return self.__parameters_path
+
+    @parameters_path.setter
+    def parameters_path(self, path: str) -> None:
+        self.__parameters_path = path
+        self.__new_path_set = True
+
     def __is_leaf(self, node):
         return len(list(node)) < 1
 
@@ -58,7 +67,7 @@ class CodeParameters:
         if not self.__default_parameters_path:
             return
 
-        if not self.__parameters_str:
+        if not self.__parameters_str  or self.__new_path_set:
             self.initialize()
 
         tree = et.ElementTree(et.fromstring(self.__parameters_str))
@@ -69,7 +78,7 @@ class CodeParameters:
     def set_parametr_value(self, path_to_node:str, value) -> None:
         if not self.__default_parameters_path:
             return
-        if not self.__parameters_str:
+        if not self.__parameters_str or self.__new_path_set:
             self.initialize()
 
         # add  operations on XML tree
@@ -86,7 +95,8 @@ class CodeParameters:
         self.__default_parameters_path = default_parameters_path
         self.__schema_path = schema_path
 
-        self.parameters_path = None
+        self.__new_path_set:bool = True
+        self.__parameters_path: str = None
 
         self.__schema_str = None
         self.__parameters_str = None
@@ -104,11 +114,14 @@ class CodeParameters:
         schema_path = Path( self.__default_params_dir, Path(self.__schema_path))
         self.__schema_str = self._read_file( schema_path )
 
-        if self.parameters_path:
-            self.__parameters_str = self._read_file( self.parameters_path )
-        else:
-            default_parameters_path = Path( self.__default_params_dir, Path( self.__default_parameters_path ) )
-            self.__parameters_str = self._read_file( default_parameters_path )
+        if self.__new_path_set:
+            if self.parameters_path:
+                self.__parameters_str = self._read_file( self.parameters_path )
+            else:
+                default_parameters_path = Path( self.__default_params_dir, Path( self.__default_parameters_path ) )
+                self.__parameters_str = self._read_file( default_parameters_path )
+
+            self.__new_path_set = False
 
         self.validate()
 
