@@ -18,10 +18,10 @@ class CodeParameters:
     def parameters(self):
         return self.__parameters_str
 
-    def is_leaf(self, node):
+    def __is_leaf(self, node):
         return len(list(node)) < 1
 
-    def get_tree_info(self, path):
+    def __get_tree_info(self, path):
         pattern = r'\((\d)\)'
 
         # get current node and index
@@ -39,20 +39,20 @@ class CodeParameters:
 
         return path, index, current_node
 
-    def get_xml_value(self, path, tree):
-        if self.is_leaf(tree):
-            return tree.text
+    def __get_xml_value(self, path, tree):
+        if self.__is_leaf(tree):
+            return tree.text.strip()
 
-        path, index, current_node = self.get_tree_info(path)
-        self.get_xml_value(path, tree.findall(current_node)[index])
+        path, index, current_node = self.__get_tree_info(path)
+        return self.__get_xml_value(path, tree.findall(current_node)[index])
 
-    def set_xml_value(self, path, tree, value):
-        if self.is_leaf(tree):
-            tree.text = value
+    def __set_xml_value(self, path, tree, value):
+        if self.__is_leaf(tree):
+            tree.text = str(value)
             return
 
-        path, index, current_node = self.get_tree_info(path)
-        self.set_xml_value(path, tree.findall(current_node)[index], value)
+        path, index, current_node = self.__get_tree_info(path)
+        return self.__set_xml_value(path, tree.findall(current_node)[index], value)
 
     def get_parametr_value(self, path_to_node:str) -> str:
         if not self.__default_parameters_path:
@@ -63,7 +63,8 @@ class CodeParameters:
 
         tree = et.ElementTree(et.fromstring(self.__parameters_str))
         root = tree.getroot()
-        return self.get_xml_value(path_to_node, root)
+
+        return self.__get_xml_value(path_to_node, root)
 
     def set_parametr_value(self, path_to_node:str, value) -> None:
         if not self.__default_parameters_path:
@@ -74,7 +75,10 @@ class CodeParameters:
         # add  operations on XML tree
         tree = et.ElementTree(et.fromstring(self.__parameters_str))
         root = tree.getroot()
-        self.set_xml_value(path_to_node, root, value)
+
+        self.__set_xml_value(path_to_node, root, value)
+        self.__parameters_str = et.tostring(tree.getroot()).decode('utf-8')
+
 
     def __init__(self, default_parameters_path:str, schema_path:str):
 
@@ -117,7 +121,3 @@ class CodeParameters:
 
         # Perform validation:
         xml_schema_validator.assertValid( xml_tree )
-
-
-
-
