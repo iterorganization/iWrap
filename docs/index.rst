@@ -10,7 +10,7 @@ Welcome to iWrap's documentation!
 
    /resources/user_manual.rst
 
-.. toctree::
+.. .. toctree::
    :maxdepth: 1
    :caption: For developers:
 

@@ -30,7 +30,7 @@ The method API
 Initialisation method
 ======================
 
-.. image:: .. image:: /resources/attachments/70877452/77370373.png
+.. image:: /resources/attachments/70877452/77370373.png
 
 
 - An optional method used for set-up of native code
@@ -122,14 +122,14 @@ Fortran
 Native code signature
 -----------------------
 
-.. code-block:: fortran
+.. code-block:: Fortran
 
      module <module name>
 
      !
      !    INITIALISATION SUBROUTINE
      !
-       subroutine <init subroutine name> ([xml_parameters,] status_code, status_message)
+     subroutine <init subroutine name> ([xml_parameters,] status_code, status_message)
        use ids_schemas
 
        ! XML code parameters
