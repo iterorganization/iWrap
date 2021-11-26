@@ -1,8 +1,9 @@
 ==================================================
 Scientific Worfklows : iWrap - graphical interface
 ==================================================
-.. contents::
-.. sectnum::
+
+.. toctree::
+   :numbered:
 
 
 .. note::
