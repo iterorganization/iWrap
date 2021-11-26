@@ -1,8 +1,8 @@
+.. _native_code_api:
+
 ############################################################
 Native code standardisation
 ############################################################
-.. contents::
-.. sectnum::
 
 Introduction
 ############
@@ -401,9 +401,9 @@ No INOUT arguments are allowed!
 Example
 -----------------------
 
-  **Header file - physics_ii.h**
+**Header file - physics_ii.h**
 
-  .. code-block::cpp
+.. code-block:: cpp
 
      #ifndef _LEVEL_II_CPP
      #define _LEVEL_II_CPP
@@ -414,7 +414,9 @@ Example
      void init_code (IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
 
      /* * *   MAIN method   * * */
-     void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
+     void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
+
+     IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
 
      /* * *   FINALISATION method   * * */
      void clean_up(int* status_code, char** status_message);
@@ -424,7 +426,7 @@ Example
 
 **Implementation file - level_ii.cpp**
 
-.. code-block::cpp
+.. code-block:: cpp
 
      #include "UALClasses.h"
 

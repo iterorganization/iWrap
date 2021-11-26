@@ -4,6 +4,6 @@ iWrap developers manual
 
 .. toctree::
    :maxdepth: 1
-   :caption: For users:
+   :caption: Developers manual
 
    /resources/developers_manual/actor_architecture.rst
