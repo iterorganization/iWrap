@@ -44,8 +44,9 @@ class ExampleWorkflowManager:
             runtime_settings.run_mode = RunMode.STANDALONE
 
         code_parameters = self.actor_physics_ii.get_code_parameters()
-        code_parameters.parameters_path= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
+        xxx = code_parameters.get_parametr_value('parameters/multiplication_factor')
         self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
+        sys.exit()
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
