@@ -15,7 +15,7 @@ iWrap - graphical interface
 
                .. container:: confluence-information-macro-body
 
-                  **This tutorial explains:**
+                  **This section explains:**
 
                   -  iWrap graphic user interface
                   -  How to set up actor description

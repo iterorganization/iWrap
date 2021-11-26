@@ -1,68 +1,127 @@
 #######################################################################################################################
-An actor usage and configuration
+Actor usage and configuration
 #######################################################################################################################
 
-.. contents::
-.. sectnum::
+.. toctree::
+   :numbered:
 
-Actor import and creation
+Importing an actor class
 ######################################################################################################################
 
-To make an actor class accessible inside a workflow script it has to be imported:
+To make an actor class accessible inside a workflow script, an actor class has to be imported:
 
-  .. code::
+.. code-block:: Python
 
-     from <actor_package>.actor import <actor_class>
+ from <actor_package>.actor import <actor_class>
 
-In a current version
-both: *<actor_package>* and *<actor_class>*  are set to the
-same value provided by user as an *'actor name'.*
+Both: *<actor_package>* and *<actor_class>*  are set to the same value, provided by user as an *'actor name'.*
+To import an actor named e.g. *'physics_ii*' a correct import will look like:
 
-To import an actor named e.g. *'physics_ii*' a correct
-import will look like:
 
-            .. container:: code panel pdl
-
-               .. container:: codeContent panelContent pdl
-
-                  .. code:: 
+.. code-block:: Python
 
                      from physics_ii.actor import physics_ii 
 
-            An actor instance can be created using already imported
-            actor class in 'usual pythonic' way:
 
-            .. container:: code panel pdl
 
-               .. container:: codeContent panelContent pdl
+.. warning::
+    To be able to import any actor, directory containing actors has to be added to *PYTHONPATH*
 
-                  .. code:: 
+    .. code-block:: bash
 
-                     actor_object = <actor name>()
-                     e.g.
-                     actor_object = physics_ii()
+        export PYTHONPATH=</path/to/actors/directory>:$PYTHONPATH
 
-            .. rubric:: 5.2.Actor runtime settings
-               :name: WrappingusercodesintoactorsiWrap-Actorruntimesettings
+
+
+Actor life cycle
+######################################################################################################################
+
+During its 'life' an actor goes through several states, that have to be passed
+only in a strict order:
+
+- Actor creation
+- Configuration of runtime settings
+- Initialisation
+- x
+
+Creation of the object
+=========================================================================================
+
+An actor instance can be created, using already imported actor class, in usual 'pythonic' way:
+
+.. code-block:: Python
+
+     actor_object = <actor name>()
+     e.g.
+     actor_object = physics_ii()
+
+
+
+Configuration of runtime settings
+=========================================================================================
+
+               -  Tuning up the actor before its initialization and
+                  native code execution
+
+               -  See chapter above
+
+Actor initialisation:
+=========================================================================================
+
+               -  Calling   initialize()   method of the actor to
+                  perform internal initialisation actions
+
+       .. code-block:: Python
+
+                           actor_object.initialize()
+
+Native code call:
+=========================================================================================
+
+               -  This step can be repeated an arbitrary number of times
+
+               -  
+
+.. code-block:: Python
+
+                             <output IDS or list of IDSes> = actor_object(<input IDS/IDSes>)  
+                           e.g.
+                             output_distribution_sources = actor_object(input_core_profiles)         
+
+Actor finalisation
+=========================================================================================
+
+               -  Calling   finalize()   method of the actor to perform
+                  internal finalisation actions
+
+.. code-block:: Python
+
+                           actor_object.finalize()
+
+
+Actor runtime settings
+######################################################################################################################
+
 
             Among the actor properties one is especially important:
               runtime_settings.    This property tells the wrapper how
             native code should be run and defines:
 
-            -  Run mode
+Run mode
+=========================================================================================
 
                -  Defined by setting:
-                    <actor name>.runtime_settings.run_mode = value  
+                    <actor name>.runtime_settings.run_mode = value
 
                -  Import of enumerated values:
-                    from <actor name>.python_common.job_settings import RunMode   
+                    from <actor name>.python_common.job_settings import RunMode
 
                -    RunMode.NORMAL   (default) - native code is called
                   directly from Python, within the same process (and
                   environment) that workflow script. Usually system
                   resources, shared with other Python threads are
                   limited, however this mode is suitable for most of the
-                  actors.   
+                  actors.
 
                -    RunMode.STANDALONE   - an actor runs native code as
                   executable in a separate system process, having its
@@ -70,24 +129,23 @@ import will look like:
                   available. This mode is suitable e.g. for memory
                   demanding code.
 
-               -  Example: 
+               -  Example:
 
-                  .. container:: code panel pdl
 
-                     .. container:: codeContent panelContent pdl
 
-                        .. code:: 
+.. code-block:: Python
 
                            from physics_ii.python_common.job_settings import RunMode
                            self.physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
 
-            -  Debug mode:
+Debug mode
+=========================================================================================
 
                -  Defined by setting:
-                    <actor name>.runtime_settings.debug_mode = value  
+                    <actor name>.runtime_settings.debug_mode = value
 
                -  Import of enumerated values:
-                    from <actor name>.python_common.job_settings import DebugMode   
+                    from <actor name>.python_common.job_settings import DebugMode
 
                -    DebugMode.STANDALONE   - similarly to STANDALONE
                   *run mode* - an actor runs *native code as executable
@@ -95,7 +153,7 @@ import will look like:
                   debugger control. Debugged code can be run several
                   times. To proceed with workflow execution is enough to
                   close the debugger. This debugging mode is suitable
-                  for most of the purposes.   
+                  for most of the purposes.
 
                -    DebugMode.ATTACH   - an actor runs *a debugger as
                   parallel process, attaching it to a running workflow*
@@ -108,269 +166,208 @@ import will look like:
                   interdependencies (e.g. one actor overwrites memory of
                   the other one).
 
-               -  Example: 
+               -  Example:
 
-                  .. container:: code panel pdl
+.. code-block:: Python
 
-                     .. container:: codeContent panelContent pdl
+   from physics_ii.python_common.job_settings import DebugMode
+   self.physics_ii.runtime_settings.run_mode = DebugMode.STANDALONE
 
-                        .. code:: 
+MPI settings
+=========================================================================================
 
-                           from physics_ii.python_common.job_settings import DebugMode
-                           self.physics_ii.runtime_settings.run_mode = DebugMode.STANDALONE
+           -  Currently only number of nodes to run a code in
+              parallel are defined
+           -  Defined by setting:
+                <actor name>.runtime_settings.mpi.number_of_processes = value
+           -  Please note:
 
-            -  MPI settings
+              -  MPI code is run always in standalone mode
+              -  If a native code is not marked as 'MPI' during
+                 actor generation, this setting is ignored
 
-               -  Currently only number of nodes to run a code in
-                  parallel are defined
-               -  Defined by setting:
-                    <actor name>.runtime_settings.mpi.number_of_processes = value  
-               -  Please note: 
+Batch settings
+=========================================================================================
 
-                  -  MPI code is run always in standalone mode
-                  -  If a native code is not marked as 'MPI' during
-                     actor generation, this setting is ignored
+           -  Currently only number of nodes to run a code in
+              parallel are defined
+           -  Defined by setting:
+                <actor name>.runtime_settings.mpi.number_of_processes = value
+           -  Please note:
 
-            -  IDS storage settings:
+              -  MPI code is run always in standalone mode
+              -  If a native code is not marked as 'MPI' during
+                 actor generation, this setting is ignored
 
-               -  This attribute defines settings of temporary storage
-                  being used while passing IDSes between an actor and
-                  native code.
-               -  Defined by setting:
-                    <actor name>.runtime_settings.ids_storage.<storage_parameter> = value  
-               -  Storage parameters that can be set:
 
-                  -    db_name:   
+        -  Other settings - not yet implemented:
 
-                     -  Meaning: name of data base to be used
-                     -  Default value: 'tmp'
+Sandbox settings
+=========================================================================================
 
-                  -    shot:  
+           -  Currently only number of nodes to run a code in
+              parallel are defined
+           -  Defined by setting:
+                <actor name>.runtime_settings.mpi.number_of_processes = value
+           -  Please note:
 
-                     -  Meaning - shot number
-                     -  Default value - 9999
+              -  MPI code is run always in standalone mode
+              -  If a native code is not marked as 'MPI' during
+                 actor generation, this setting is ignored
+           -  OpenMP settings
 
-                  -    run   :
 
-                     -  Meaning - run number
-                     -  Default value - 9999
+IDS storage settings:
+=========================================================================================
 
-                  -    backend:  
+           -  This attribute defines settings of temporary storage
+              being used while passing IDSes between an actor and
+              native code.
+           -  Defined by setting:
+                <actor name>.runtime_settings.ids_storage.<storage_parameter> = value
+           -  Storage parameters that can be set:
 
-                     -  Meaning - backend to be used
-                     -  Default value -   imas.imasdef.MEMORY_BACKEND   
+              -    db_name:
 
-                  -    persistent_backend   
+                 -  Meaning: name of data base to be used
+                 -  Default value: 'tmp'
 
-                     -  Meaning - backend to be used when temporary data
-                        cannot be stored in memory (e.g. while running
-                        actor in a standalone mode, when a native code
-                        is run as separate process, so it doesn't share
-                        memory with other actors.
-                     -  Default value -  imas.imasdef.MDSPLUS_BACKEND
+              -    shot:
 
-               -  Please note: for most of the purposes it is fine to
-                  not set this property and leave default values
-                  unchanged.
+                 -  Meaning - shot number
+                 -  Default value - 9999
 
-            -  Other settings - not yet implemented:
+              -    run   :
 
-               -  Sandbox settings
-               -  Batch job settings
-               -  OpenMP settings
+                 -  Meaning - run number
+                 -  Default value - 9999
 
-            .. rubric:: 5.3.Actor life cycle
-               :name: WrappingusercodesintoactorsiWrap-Actorlifecycle
+              -    backend:
 
-            During its 'life' an actor goes through several states, that
-            can be passed only in a strict order:
+                 -  Meaning - backend to be used
+                 -  Default value -   imas.imasdef.MEMORY_BACKEND
 
-            -  Creation of the object
+              -    persistent_backend
 
-               .. container:: code panel pdl
+                 -  Meaning - backend to be used when temporary data
+                    cannot be stored in memory (e.g. while running
+                    actor in a standalone mode, when a native code
+                    is run as separate process, so it doesn't share
+                    memory with other actors.
+                 -  Default value -  imas.imasdef.MDSPLUS_BACKEND
 
-                  .. container:: codeContent panelContent pdl
+           -  Please note: for most of the purposes it is fine to
+              not set this property and leave default values
+              unchanged.
 
-                     .. code:: 
 
-                        actor_object = <actor name>()
-                        e.g.
-                        actor_object = physics_ii()
+The simplest workflow
+######################################################################################################################
 
-            -  Setting up the runtime settings
 
-               -  Tuning up the actor before its initialization and
-                  native code execution
 
-               -  See chapter above
+A skeleton of the very simple workflow could be implemented like this:
 
-            -  Actor initialisation:
+.. code-block:: Python
 
-               -  Calling   initialize()   method of the actor to
-                  perform internal initialisation actions
+     # Import of the actor class
+     from <actor name>.actor import <actor name>
 
-                  .. container:: code panel pdl
+     # Creation of actor object
+     actor_object = <actor name>()
 
-                     .. container:: codeContent panelContent pdl
+     # Reading input data
+     ...
 
-                        .. code:: 
+     # Setting up runtime properties (if necessary)
+     ...
 
-                           actor_object.initialize()
+     # Actor initialisation
+     actor_object.initialize()
 
-            -  Native code call:
+     # Native code run
+     <output IDS or list of IDSes>  = actor_object(<input IDS/IDSes>)
 
-               -  This step can be repeated an arbitrary number of times
+     # Actor finalisation
+     actor_object.finalize()
 
-               -  
+     # Saving output data
+     ...
 
-                  .. container:: code panel pdl
 
-                     .. container:: codeContent panelContent pdl
+Workflow example
+######################################################################################################################
 
-                        .. code:: 
 
-                             <output IDS or list of IDSes> = actor_object(<input IDS/IDSes>)  
-                           e.g.
-                             output_distribution_sources = actor_object(input_core_profiles)         
 
-            -  Actor finalisation
+.. code-block:: python
 
-               -  Calling   finalize()   method of the actor to perform
-                  internal finalisation actions
+     import sys
+     import imas, os
 
-                  .. container:: code panel pdl
+     from core2dist.actor import core2dist
+     from core2dist.python_common.job_settings import RunMode, DebugMode
 
-                     .. container:: codeContent panelContent pdl
+     class ExampleWorkflowManager:
 
-                        .. code:: 
+         def __init__(self):
+             self.actor_cp2ds = core2dist()
+             self.input_entry = None
+             self.output_entry = None
 
-                           actor_object.finalize()
+         def init_workflow(self):
 
-            .. rubric:: 5.4.The simplest workflow
-               :name: WrappingusercodesintoactorsiWrap-Thesimplestworkflow
+             # INPUT/OUTPUT CONFIGURATION
+             shot                = 134174
+             run_in              = 37
+             input_user_or_path  = 'public'
+             input_database      = 'iter'
+             run_out             = 10
+             output_user_or_path = os.getenv('USER')
+             output_database     = input_database
 
-            A skeleton of the very simple workflow could be implemented
-            like this:
+             # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
+             print('=> Open input datafile')
+             self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
+             self.input_entry.open()
 
-            .. container:: code panel pdl
+             # CREATE OUTPUT DATAFILE
+             print('=> Create output datafile')
+             self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
+             self.output_entry.create()
 
-               .. container:: codeContent panelContent pdl
+             # # # # # # # # Initialization of ALL actors  # # # # # # # #
+              #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.STANDALONE
+              self.actor_cp2ds.initialize()
 
-                  .. code:: 
+         def execute_workflow(self):
+             # READ INPUT IDSS FROM LOCAL DATABASE
+             print('=> Read input IDSs')
+             input_core_profiles = self.input_entry.get('core_profiles')
 
-                     # Import of the actor class
-                     from <actor name>.actor import <actor name> 
+             # EXECUTE PHYSICS CODE
+             print('=> Execute physics code')
 
-                     # Creation of actor object
-                     actor_object = <actor name>()
+             output_distribution_sources = self.actor_cp2ds(input_core_profiles)
 
-                     # Reading input data
-                     ...
+             # SAVE IDSS INTO OUTPUT FILE
+             print('=> Export output IDSs to local database')
+             self.output_entry.put(output_distribution_sources)
+             print('Done exporting.')
 
-                     # Setting up runtime properties (if necessary)
-                     ...
+         def end_workflow(self):
 
-                     # Actor initialisation
-                     actor_object.initialize()
+             # Finalise ALL actors
+             self.actor_cp2ds.finalize()
 
-                     # Native code run     
-                     <output IDS or list of IDSes>  = actor_object(<input IDS/IDSes>)  
+             #other finalisation actions
+             self.input_entry.close()
+             self.output_entry.close()
 
-                     # Actor finalisation
-                     actor_object.finalize()
+     manager = ExampleWorkflowManager()
 
-                     # Saving output data
-                     ...
+     manager.init_workflow()
+     manager.execute_workflow()
+     manager.end_workflow()
 
-            | 
 
-            .. rubric:: 5.5. Workflow example
-               :name: WrappingusercodesintoactorsiWrap-Workflowexample
-
-            .. container:: code panel pdl
-
-               .. container:: codeContent panelContent pdl
-
-                  .. code:: 
-
-                     import sys
-                     import imas, os
-
-                     from core2dist.actor import core2dist
-                     from core2dist.python_common.job_settings import RunMode, DebugMode
-
-                     class ExampleWorkflowManager:
-
-                         def __init__(self):
-                             self.actor_cp2ds = core2dist()
-                             self.input_entry = None
-                             self.output_entry = None
-
-                         def init_workflow(self):
-
-                             # INPUT/OUTPUT CONFIGURATION
-                             shot                = 134174
-                             run_in              = 37
-                             input_user_or_path  = 'public'
-                             input_database      = 'iter'
-                             run_out             = 10
-                             output_user_or_path = os.getenv('USER')
-                             output_database     = input_database
-
-                             # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
-                             print('=> Open input datafile')
-                             self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
-                             self.input_entry.open()
-                             
-                             # CREATE OUTPUT DATAFILE
-                             print('=> Create output datafile')
-                             self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
-                             self.output_entry.create()
-
-                             # # # # # # # # Initialization of ALL actors  # # # # # # # #
-                              #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.STANDALONE
-                              self.actor_cp2ds.initialize()
-                         
-                         def execute_workflow(self):
-                             # READ INPUT IDSS FROM LOCAL DATABASE
-                             print('=> Read input IDSs')
-                             input_core_profiles = self.input_entry.get('core_profiles')
-
-                             # EXECUTE PHYSICS CODE
-                             print('=> Execute physics code')
-
-                             output_distribution_sources = self.actor_cp2ds(input_core_profiles)        
-                             
-                             # SAVE IDSS INTO OUTPUT FILE
-                             print('=> Export output IDSs to local database')
-                             self.output_entry.put(output_distribution_sources)
-                             print('Done exporting.')
-
-                         def end_workflow(self):
-                             
-                             # Finalise ALL actors 
-                             self.actor_cp2ds.finalize()
-
-                             #other finalisation actions
-                             self.input_entry.close()
-                             self.output_entry.close()
-
-                     manager = ExampleWorkflowManager()
-
-                     manager.init_workflow()
-                     manager.execute_workflow()
-                     manager.end_workflow()
-
-
-            | 
-
-
-
-
-
-.. |image1| image:: attachments/70877391/70877442.png
-   :class: confluence-embedded-image image-center
-   :height: 400px
-.. |image2| image:: images/icons/bullet_blue.gif
-   :width: 8px
-   :height: 8px

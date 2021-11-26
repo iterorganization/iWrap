@@ -4,6 +4,7 @@ Actor architecture
 .. contents::
 .. sectnum::
 
+.. _native_code_api:
 Actor layered architecture
 #######################################################################################################################
 
@@ -78,4 +79,5 @@ Wrapper
 Native code
 #######################################################################################################################
 
-This is a link to the RST Overview: :ref:`RST Overview`
+
+ /resources/native_code.rst
