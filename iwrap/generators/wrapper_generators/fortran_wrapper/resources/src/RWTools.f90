@@ -89,13 +89,14 @@ FUNCTION read_file(filename) RESULT (str)
      character(len=:), allocatable :: var
      integer :: isize
      character(1000)                 :: line
-     integer :: k, i, line_length, read_count
+     integer :: k, i, line_length, read_count, io_stat
      var(:) = ''
      read_count = 1
+     io_stat = 0
 
-     DO WHILE (read_count < isize)
+     DO WHILE (read_count < isize .and. io_stat > -1)
        line = ""
-       read(10,"(a)")  line
+       read(10,"(a)", iostat=io_stat)  line
 
 
        line_length = len_trim(line)
