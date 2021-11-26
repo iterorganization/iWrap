@@ -1,7 +1,7 @@
 import os
 import logging
 import sys
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from .code_parameters import CodeParameters
 
@@ -16,7 +16,22 @@ class OutputStatus:
         self.code: int = 0
         self.message: str = None
 
-class ActorBaseClass( ABC ):
+
+class Actor(ABC):
+
+    @abstractmethod
+    def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
+        ...
+
+    @abstractmethod
+    def run(self, *args)->None:
+        ...
+
+    @abstractmethod
+    def finalize(self):
+        ...
+
+class ActorBaseClass(Actor):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -50,7 +65,7 @@ class ActorBaseClass( ABC ):
 
         self.name = self.__class__.__name__
 
-        self.__binder = CBinder( )
+        self.__binder = CBinder()
         self.__runner = None
 
     def is_standalone_run(self):
@@ -68,7 +83,11 @@ class ActorBaseClass( ABC ):
     # # #  Actor lifecycle methods # # #
 
     def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None):
-
+        """
+        Attributes:
+            runtime_settings (RuntimeSettings): Path to a XML file with code parameters
+            code_parameters (CodeParameters): Path to a XSD file with schema definition for code parameters file
+        """
         code_parameters_str = None
         if code_parameters:
             self.__code_parameters = code_parameters

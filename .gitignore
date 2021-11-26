@@ -15,7 +15,7 @@ _build/
 *.xml
 *.xsd
 *.python-version
-documentation_files/
+docstring_files/
 *.o
 *.mod
 *.a

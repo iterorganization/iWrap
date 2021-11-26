@@ -1,23 +1,9 @@
 #######################################################################################################################
-Welcome to iWrap's documentation!
+iWrap developers manual
 #######################################################################################################################
 
-
 .. toctree::
-   :numbered:
-   :maxdepth: 3
-   :caption: For users:
-
-   /resources/user_manual.rst
-
-.. .. toctree::
    :maxdepth: 1
-   :caption: For developers:
+   :caption: Developers manual
 
-   /resources/developers_manual.rst
-   /documentation_files/docstring_documentation.rst
-
-
-
-
-
+   /resources/developers_manual/actor_architecture.rst
