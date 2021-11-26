@@ -42,7 +42,6 @@ class ExampleWorkflowManager:
         runtime_settings = None
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_core2dist_mpi.runtime_settings.run_mode = RunMode.STANDALONE
             runtime_settings = self.actor_core2dist_mpi.get_runtime_settings()
             runtime_settings.run_mode = RunMode.STANDALONE
         else:
