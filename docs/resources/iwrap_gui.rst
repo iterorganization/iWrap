@@ -1,5 +1,5 @@
 ==================================================
-iWrap - graphical interface
+Scientific Worfklows : iWrap - graphical interface
 ==================================================
 
 .. container::
@@ -7,9 +7,6 @@ iWrap - graphical interface
 
    .. container:: aui-page-panel
       :name: main
-
-      .. container:: view
-         :name: content
 
             .. note::
 
@@ -19,7 +16,14 @@ iWrap - graphical interface
 
                   -  iWrap graphic user interface
                   -  How to set up actor description
-                  -  How to set up code description
+                  -  How to set up code description 
+
+            .. note::
+
+               .. container:: confluence-information-macro-body
+
+                  All fields marked with \ **an
+                  asterisk**\ **('*')**\ are mandatory.
 
             .. rubric:: 1.iWrap purpose
                :name: iWrapgraphicalinterface-iWrappurpose
@@ -50,10 +54,9 @@ iWrap - graphical interface
             This group of graphical controls allows setting the
             description of the actor.
 
-            -  **Name** - a user-defined name of the actor
-            -  **Type** - a user-defined type of the actor
-            -  **Data type** -  an actor data type
-            -  **Install path** - path where actor will be installed
+            -  Actor name - a user-defined name of the actor
+            -  Actor type - a user-defined type of the actor
+            -  Data type -  an actor data type
 
             .. rubric:: 4.Code description
                :name: iWrapgraphicalinterface-Codedescription
@@ -63,17 +66,15 @@ iWrap - graphical interface
 
             |image3|
 
-            -  **Data type** - an arguments data type
-
             In the table, there are columns like:
 
-            -  **Label** - user defined name of an argument
+            -  **Name** - user defined name of an argument
             -  **Input/Output** - defines argument as \ *an
                input/output*
             -  **Type** - defines an IDS based type of argument (e.g.
-               equilibrium, topinfo, etc.)
+               equilibrium, topinfo, etc.) 
 
-            |
+            | 
 
             On the right side of the table, there is a section with
             buttons. Add button allows to add a new argument, edit to
@@ -81,13 +82,14 @@ iWrap - graphical interface
             of selected argument in the table. The remove button removes
             selected argument.
 
+            .. container::
             .. note::
 
                .. container:: confluence-information-macro-body
 
                   To change **Edit**, **Up**/**Down,** and **Remove**
                   buttons state to active at least one argument has to
-                  be added to the table.
+                  be added to the table. 
 
             .. rubric:: 4.1.1. Add argument
                :name: iWrapgraphicalinterface-Addargument
@@ -96,10 +98,10 @@ iWrap - graphical interface
 
             To add new arguments click **Add...** button in the
             *Arguments* section. A new window named *iWrap - Add new
-            argument* will appear. Filling label (argument can be also
-            added with empty label) and selecting intent and type allow
+            argument* will appear. Filling name (argument can be also
+            added with empty name) and selecting intent and type allow
             adding new argument by clicking **Add** button. Click
-            **Cancel** to exit this window.
+            **Cancel** to exit this window. 
 
             .. rubric:: 4.1.2.Edit argument
                :name: iWrapgraphicalinterface-Editargument
@@ -112,99 +114,124 @@ iWrap - graphical interface
             approve it by clicking **Close** button. To exit the window
             click **Cancel**.
 
-            .. rubric:: 4.2.Code settings
-               :name: iWrapgraphicalinterface-Codesettings
+            .. rubric:: 4.2.Implementation
+               :name: iWrapgraphicalinterface-Implementation
 
             |image6|
 
-            .. rubric:: 4.2.1.User code settings
-               :name: iWrapgraphicalinterface-Usercodesettings
+            .. rubric:: 4.2.1.Implementation
+               :name: iWrapgraphicalinterface-Implementation.1
 
             |image7|
 
-            -  **Language** - a user code language
-            -  **Code** **name** - a user code name
-            -  **Code** **path** - a user code path
+            -  **Programming language** - a user code language
+            -  **Data** **type** - data type handled by the physics code
+            -  **Rood dir** - the root directory
+            -  **Code** **path** - path to system library (C, CPP),
+               script (Python), etc, containing the physics code and
+               method/subroutine to be run
+            -  **Include path** -  a module's / header's file path
 
-            .. rubric:: 4.2.2.Language specific settings
-               :name: iWrapgraphicalinterface-Languagespecificsettings
+            .. rubric:: 4.2.1.1.Subroutines tab
+               :name: iWrapgraphicalinterface-Subroutinestab
+
+            A user code should be provided as a subroutine.
 
             |image8|
 
-            -  **Compiler** - a compiler used to built library,
-               available compilers are:
+            -  **Init** - a name of a subroutine that could be used to
+               initialize the native code (optional)
+            -  **Main** - a name of the main subroutine that will be
+               called from actor (mandatory)
+            -  **Finalize **- a name of a subroutine that could be used
+               to finalize the native code (optional)
 
-               -  Intel Fortran (ifort)
-               -  GNU Compiler Collection (fortran)
-               -  Intel
+            .. rubric:: 4.2.1.2.Code parameters tab
+               :name: iWrapgraphicalinterface-Codeparameterstab
 
-            .. rubric:: 4.2.2.1.Features
-               :name: iWrapgraphicalinterface-Features
+            *Code parameters*\ are all parameters that are specific to
+            the code (like switches, scaling parameters, and parameters
+            for built-in analytical models) as well as parameters to
+            explicitly overrule fields in the IMAS data structures.
 
             |image9|
 
-            -  **Module path** - path to the module
-            -  **Computation**:
+            -  **Code parameters file** - XML file contains code
+               parameters 
+            -  **Schema file** - XSD file contains a schema
 
-               -  **MPI Flavour** - MPI library, available compilers
-                  are:
-
-                  -  MPICH2
-                  -  OpenMPI
-                  -  None - if actor isn't MPI based
-
-               -  **OpenMP** - defines if usage of OpenMP directives is
-                  turned No/Yes
-
-            .. rubric:: 4.2.2.2.System libraries
-               :name: iWrapgraphicalinterface-Systemlibraries
-
-            *System libraries*\ are system libraries handled by the
-            pkg-config mechanism and required for building the user
-            code.
+            .. rubric:: 4.3.Settings
+               :name: iWrapgraphicalinterface-Settings
 
             |image10|
 
+            .. rubric:: 4.3.1.Settings
+               :name: iWrapgraphicalinterface-Settings.1
+
+            |image11|
+
+            -  **Compiler cmd** - the compiler command used to compile
+               native codes
+            -  **OpenMP switch** - theOpenMP switch
+            -  **MPI compiler cmd** - the MPI compiler command
+
+            .. rubric:: 4.3.2.Extra libraries
+               :name: iWrapgraphicalinterface-Extralibraries
+
+            |image12|
+
+            .. rubric:: 4.3.2.1. pkg-config defined:
+               :name: iWrapgraphicalinterface-pkg-configdefined:
+
+            pkg-configs defined are system libraries handled by the
+            pkg-config mechanism and required for building the user
+            code.
+
+            |image13|
+
             In the table there is information about:
 
-            -  **Name** - a library name
-            -  **Info** - information about library
-            -  **Description** - a library description
+            -  Name - a library name
+            -  Info - information about library
+            -  Description - a library description 
 
-            System library can be added and removed using buttons placed
-            on the right side of the table.
+            pkg-config defined can be added and removed using buttons
+            placed on the right side of the table.
 
+            .. container::
             .. note::
+
+               .. container:: confluence-information-macro-body
 
                   To change **Remove** button state to active at least
                   one system library has to be added and selected.
 
-            .. rubric:: 4.2.2.2.1.Add system libraries
-               :name: iWrapgraphicalinterface-Addsystemlibraries
+            .. rubric:: 4.3.2.1.1.Add pkg-config defined
+               :name: iWrapgraphicalinterface-Addpkg-configdefined
 
-            To add new arguments click **Add...** button in the *System
-            libraries* section. A new window named *Add system library*
-            will appear. *Search* field allows for easy filtering the
-            list of libraries. To add a system library select your
-            choice and click **Ok** button. To close window click
-            **Cancel**.
+            To add new arguments click **Add...** button in the
+            *pkg-config defined*\ section. A new window named *Add
+            system library* will appear. The *search *\ field allows for
+            easy filtering of the list of libraries. To add a pkg-config
+            definedselect your choice and click **Ok** button. To close
+            the window click **Cancel**.
 
-            |image11|
+            |image14|
 
-            .. rubric:: 4.2.2.3.Custom libraries
-               :name: iWrapgraphicalinterface-Customlibraries
+            .. rubric:: 4.3.2.2.Path defined
+               :name: iWrapgraphicalinterface-Pathdefined
 
-            *Custom libraries* are non-standard static libraries
-            required for building the user code.
+            *Path defined* are non-standard static libraries required
+            for building the user code.
 
-            |image12|
+            |image15|
 
             Available operations on libraries list:
 
             -  **Add...** - Adds a new library to the list
             -  **Remove** - Removes a new library from the list
 
-            |
+            | 
 
             .. container::
             .. note::
@@ -214,79 +241,67 @@ iWrap - graphical interface
                   To change **Remove** button state to active at least
                   one library path has to be added and selected.
 
-            .. rubric:: 4.3.Code parameters
-               :name: iWrapgraphicalinterface-Codeparameters
-
-            *Code parameters*\ are all parameters that are specific to
-            the code (like switches, scaling parameters, and parameters
-            for built-in analytical models) as well as parameters to
-            explicitly overrule fields in the IMAS data structures.
-
-            |image13|
-
-            -  **Code parameters file** - XML file contains code
-               parameters
-            -  **Schema file** - XSD file contains schema
-
             .. rubric:: 4.4.Documentation
                :name: iWrapgraphicalinterface-Documentation
 
             The\ *Documentation*\ tab specifies a user-defined actor
             description.
 
-            |image14|
-
-            |
+            |image16|
 
 
-.. |image1| image:: attachments/70877876/70879104.png
+
+
+
+
+.. |image1| image:: attachments/70877876/77367779.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image2| image:: attachments/70877876/70879107.png
+.. |image2| image:: attachments/70877876/77367784.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image3| image:: attachments/70877876/70879041.png
+.. |image3| image:: attachments/70877876/77367785.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image4| image:: attachments/70877876/70879061.png
+.. |image4| image:: attachments/70877876/77367789.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image5| image:: attachments/70877876/70879057.png
+.. |image5| image:: attachments/70877876/77367790.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image6| image:: attachments/70877876/70879045.png
+.. |image6| image:: attachments/70877876/77367793.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image7| image:: attachments/70877876/70879046.png
+.. |image7| image:: attachments/70877876/77367794.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image8| image:: attachments/70877876/70879048.png
+.. |image8| image:: attachments/70877876/77367796.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image9| image:: attachments/70877876/70879070.png
+.. |image9| image:: attachments/70877876/77367798.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image10| image:: attachments/70877876/70879049.png
+.. |image10| image:: attachments/70877876/77370352.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image11| image:: attachments/70877876/70878345.png
+.. |image11| image:: attachments/70877876/77370355.png
+   :class: confluence-embedded-image
+   :width: 450px
+.. |image12| image:: attachments/70877876/77367809.png
+   :class: confluence-embedded-image
+   :width: 450px
+.. |image13| image:: attachments/70877876/77367810.png
+   :class: confluence-embedded-image
+   :width: 450px
+.. |image14| image:: attachments/70877876/70878345.png
    :class: confluence-embedded-image
    :width: 500px
-.. |image12| image:: attachments/70877876/70879051.png
+.. |image15| image:: attachments/70877876/77367815.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image13| image:: attachments/70877876/70879052.png
+.. |image16| image:: attachments/70877876/77367832.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image14| image:: attachments/70877876/70879053.png
-   :class: confluence-embedded-image
-   :width: 450px
-.. |image15| image:: images/icons/bullet_blue.gif
-   :width: 8px
-   :height: 8px
-.. |image16| image:: images/icons/bullet_blue.gif
-   :width: 8px
-   :height: 8px
 .. |image17| image:: images/icons/bullet_blue.gif
    :width: 8px
    :height: 8px
@@ -423,5 +438,86 @@ iWrap - graphical interface
    :width: 8px
    :height: 8px
 .. |image62| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image63| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image64| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image65| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image66| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image67| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image68| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image69| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image70| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image71| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image72| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image73| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image74| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image75| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image76| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image77| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image78| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image79| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image80| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image81| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image82| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image83| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image84| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image85| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image86| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image87| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image88| image:: images/icons/bullet_blue.gif
+   :width: 8px
+   :height: 8px
+.. |image89| image:: images/icons/bullet_blue.gif
    :width: 8px
    :height: 8px
