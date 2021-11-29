@@ -2,8 +2,6 @@
 iWrap user manual
 #######################################################################################################################
 
-
-
 Introduction
 #######################################################################################################################
 
@@ -72,16 +70,20 @@ For user conveniency iWrap provides two kinds of interfaces:
 Preparation of the code and actor generation
 #######################################################################################################################
 
+:doc:`Preparation of the native code <native_code>`
+
+:doc:`Generation of defined actor <../resources/actor_generation>`
+
+:doc:`Usage of an actor <actor_usage>`
+
+
+---
+
 
 .. toctree::
-   :maxdepth: 1
-
-
+   :numbered:
+   :maxdepth: 10
 
    /resources/native_code.rst
    /resources/actor_generation.rst
    /resources/actor_usage.rst
-
-
-
-
