@@ -364,9 +364,6 @@ MPI settings
 Batch settings
 =========================================================================================
 
-            self.batch_queue = ''
-
-
 -   *batch_nodes* - number of nodes to be used (default 1)
 
 -   *batch_default_runner* - default batch runner (``sbatch``, ``srun``, etc) to be used. Its value is platform dependent,
@@ -460,6 +457,21 @@ This attribute defines settings of temporary storage being used while passing ID
 
 .. note::
    Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
+
+User defined commandline command
+=========================================================================================
+Workflow developer may take full control on the way an actor is run defining ``commandline_cmd``
+attribute of ``runtime_settings``. If not set, the automatically generated commandline will be used
+(typical for the most of the usage scenarios)
+
+.. info::
+   User defined commandline may contain predefined tags (syntax ``${tag}``), where ``tag``
+   is the name of one of the runtime_settings attributes. The usage of tags is optional.
+   The only exception is ``${exec}`` tag (representing full path to executable binary),
+   which MUST be present in the commandline.
+
+
+
 
 The workflow example
 ######################################################################################################################
