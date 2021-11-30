@@ -10,25 +10,34 @@ iWrap requirements
 
 **To build and install iWrap, the following requirements must be met:**
 
-* *IMAS:*
-.. code-block:: shell
+* **Installation requires Python 3.7 or later**
+* **Installation requires setuptools 43.0 or later and wheel**
+    .. code-block:: shell
 
-   module load IMAS
+       python3 -m pip install --upgrade pip
+       python3 -m pip install --upgrade setuptools>=43 wheel
+    
+* **Additionaly, installation requires following modules:**
 
-* *LXML:*
-.. code-block:: shell
+    * *IMAS:*
+    .. code-block:: shell
 
-   module load lxml
+        module load IMAS
 
-* *XMLLIB:*
-.. code-block:: shell
+    * *LXML:*
+    .. code-block:: shell
 
-   module load XMLlib
+        module load lxml
 
-* *tomli:*
-.. code-block:: shell
+    * *XMLLIB:*
+    .. code-block:: shell
 
-   python3 -m pip install --upgrade --user tomli
+        module load XMLlib
+
+    * *tomli:*
+    .. code-block:: shell
+
+        python3 -m pip install --upgrade --user tomli
 
 Installation
 #######################################################################################################################
@@ -81,3 +90,97 @@ If the installation is successful, the following information will be printed:
     and
         INSTALL_MODULE FINISHED
         iWrap ENVIRONMENT MODULE installed in: [INSTALL_MOD/MODULEFILE]
+
+After a successful installation, it is recommended to clean the root of the project from compilation residues. To do this, run a cleaning recipe:
+
+.. code-block:: shell
+
+   make clean
+
+Extras
+#######################################################################################################################
+
+**1. Uninstall iWrap:**
+
+Proper uninstallation of iWrap (including its distribution and module file) requires the use of the same INSTALL_DIR and INSTALL MOD variables as in the installation process.
+
+* Run the uninstall recipe:
+
+.. code-block:: shell
+   
+   export INSTALL_DIR=[DIRECTORY...]
+   export INSTALL_MOD=[DIRECTORY...]
+   
+   make uninstall
+
+**Remember that from the given directories only the current tagged version will be uninstalled!**
+
+**2. Verification of the prepared installation configuration:**
+
+After setting the INSTALL_DIR and INSTALL_MOD variables, the pre-installation configuration can be verified using the help recipe:
+
+.. code-block:: shell
+   
+   export INSTALL_DIR=[DIRECTORY...]
+   export INSTALL_MOD=[DIRECTORY...]
+   
+   make help
+
+This will automatically evaluate all paths and print them with the appropriate descriptions.
+
+**3. Adding the module file to the MODULEPATH variable:**
+
+If the INSTALL_MOD directory is not already attached to MODULEPATH, it can simply be added manually:
+
+.. code-block:: shell
+   
+   module use INSTALL_MOD
+
+**4. Diagnostics:**
+
+* After installing the module and adding it to MODULEPATH, check if it is available
+
+.. code-block:: shell
+   
+   module avail iwrap
+
+* If so, load the module into the environment:
+
+.. code-block:: shell
+   
+   module load iwrap
+
+* Check that iWrap has loaded properly and that the Python package manager is able to find it:
+
+.. code-block:: shell
+   
+   python3 -m pip list
+
+and look for iwrap package,
+
+or:
+
+.. code-block:: shell
+   
+   python3 -m pip list | grep iwrap
+
+**5. Run iWrap:**
+
+Load the module into the environment:
+
+.. code-block:: shell
+   
+   module load iwrap
+
+* Command line:
+
+.. code-block:: shell
+   
+   iwrap
+
+* GUI:
+
+.. code-block:: shell
+   
+   iwrap-gui
+
