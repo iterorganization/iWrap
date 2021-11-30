@@ -14,15 +14,17 @@ module iwrap_defs
     end type
 
 !--------------------------------------------------
+    integer, parameter :: STRING_SIZE = 132
+
     type, BIND(C) :: ids_description_t
-        character(132)::ids_name
+        character(kind=c_char)::ids_name(STRING_SIZE)
         integer::shot
         integer::run
         integer::occurrence
         integer::idx
-        character(132)::machine
-        character(132)::user
-        character(132)::version
+        character(kind=c_char)::machine(STRING_SIZE)
+        character(kind=c_char)::user(STRING_SIZE)
+        character(kind=c_char)::version(STRING_SIZE)
     end type ids_description_t
 !--------------------------------------------------
 end module

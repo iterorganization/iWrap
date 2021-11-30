@@ -23,20 +23,36 @@ module rwtool
     type(ids_description_t), intent(inout) :: ids_description
 
         read(10,*) ! skip line " ----- IDS ----- "
-        read(10,*) ids_description%ids_name
+        call read_chars( ids_description%ids_name)
         read(10,*) ids_description%shot
         read(10,*) ids_description%run
         read(10,*) ids_description%occurrence
         read(10,*) ids_description%idx
-        read(10,*) ids_description%machine
-        read(10,*) ids_description%user
-        read(10,*) ids_description%version
+        call read_chars( ids_description%machine)
+        call read_chars( ids_description%user)
+        call read_chars( ids_description%version)
    end subroutine
 
 
    subroutine readint(var)
      integer, intent(inout) :: var
      read(10,*) var
+   end subroutine
+
+   !---------------------------------------------------
+   subroutine read_chars(var)
+        implicit none
+        character(kind=c_char),dimension(:),intent(inout) :: var
+        integer                 :: i
+        character(STRING_SIZE)  :: line
+        
+        var(:) = char(0)
+        read(10,"(a)")  line        
+        ! -- convert string -> array
+        do i = 1, STRING_SIZE
+            var(i) = line(i : i)
+        enddo
+
    end subroutine
 
 FUNCTION read_file(filename) RESULT (str)

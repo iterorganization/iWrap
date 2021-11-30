@@ -52,9 +52,9 @@ FUNCTION create_ids_full_name(ids_description)  RESULT (ids_full_name)
 
     if (ids_description%occurrence/=0) then
             write(ids_full_name,"(i0)") ids_description%occurrence
-            ids_full_name=trim(ids_description%ids_name)//"/"//trim(ids_full_name)
+            ids_full_name=trim(convert(ids_description%ids_name))//"/"//trim(ids_full_name)
     else
-            ids_full_name=trim(ids_description%ids_name)
+            ids_full_name=trim(convert(ids_description%ids_name))
     endif
 END FUNCTION create_ids_full_name
 
@@ -160,17 +160,21 @@ END FUNCTION create_ids_full_name
       do while (j.lt.i)
          if ( db_entry_desc_array(j)%shot .eq. db_entry_desc_array(i)%shot .and.       &
               db_entry_desc_array(j)%run .eq. db_entry_desc_array(i)%run .and.         &
-              db_entry_desc_array(j)%user .eq. db_entry_desc_array(i)%user .and.       &
-              db_entry_desc_array(j)%machine .eq. db_entry_desc_array(i)%machine .and. &
-              db_entry_desc_array(j)%version .eq. db_entry_desc_array(i)%version ) then
+              convert(db_entry_desc_array(j)%user) .eq. convert(db_entry_desc_array(i)%user) .and.       &
+              convert(db_entry_desc_array(j)%machine) .eq. convert(db_entry_desc_array(i)%machine).and. &
+              convert(db_entry_desc_array(j)%version) .eq. convert(db_entry_desc_array(i)%version) ) then
             EXIT
          else
             j=j+1
          end if
       end do
       if (j.eq.i) then
-         call imas_open_env("",db_entry_desc_array(i)%shot,db_entry_desc_array(i)%run,&
-              db_entry_desc_array(i)%idx,db_entry_desc_array(i)%user,db_entry_desc_array(i)%machine,db_entry_desc_array(i)%version)
+         call imas_open_env("", db_entry_desc_array(i)%shot, &
+                                db_entry_desc_array(i)%run, &
+                                db_entry_desc_array(i)%idx, &
+                        convert(db_entry_desc_array(i)%user), &
+                        convert(db_entry_desc_array(i)%machine), &
+                        convert(db_entry_desc_array(i)%version) )
       else
          db_entry_desc_array(i)%idx = db_entry_desc_array(j)%idx
       end if
