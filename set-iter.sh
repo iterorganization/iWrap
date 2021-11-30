@@ -10,7 +10,7 @@ export PYTHONPATH=$PWD:$PYTHONPATH
 
 
 # setting environment for running examples
-module load  XMLlib
+module load XMLlib/3.3.1-GCC-10.2.0
 
 mkdir -p $HOME/public/imasdb/tmp/3/0
 mkdir -p $HOME/public/imasdb/iter/3/0
