@@ -476,6 +476,7 @@ attribute of ``runtime_settings``. If not set, the automatically generated comma
 The workflow example
 ######################################################################################################################
 
+.. _workflow_example_anchor:
 
 .. code-block:: python
 
@@ -546,12 +547,7 @@ The workflow example
             # Finalize ALL actors
             self.actor_physics_ii.finalize()
 
-            output_ids = self.output_entry.get('equilibrium')
-
-            with open( 'wf_output.txt', 'w' ) as file:
-                file.write( str(output_ids.time) )
-
-            #other finalizastion actions
+            #other finalization actions
             self.input_entry.close()
             self.output_entry.close()
 
