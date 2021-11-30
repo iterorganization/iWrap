@@ -21,7 +21,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
-    'sphinx.ext.extlinks',
+    'sphinx.ext.extlinks'
 ]
 
 autodoc_default_options = {
@@ -31,8 +31,8 @@ autodoc_default_options = {
     'exclude-members': '__weakref__'
 }
 
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+#source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'

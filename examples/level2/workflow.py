@@ -35,13 +35,18 @@ class ExampleWorkflowManager:
         self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
         self.output_entry.create()
 
+        runtime_settings = None
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_physics_ii.runtime_settings.run_mode = RunMode.STANDALONE
+            runtime_settings = self.actor_physics_ii.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
 
-        self.actor_physics_ii.initialize() 
+        code_parameters = self.actor_physics_ii.get_code_parameters()
+        xxx = code_parameters.get_parametr_value('parameters/multiplication_factor')
+        self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
+        sys.exit()
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE

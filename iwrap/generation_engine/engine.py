@@ -1,25 +1,25 @@
+import logging
 import sys
 from typing import Set, List
 
 import imas
 
-from iwrap.generation_engine.base_classes import ActorGenerator
-from iwrap.generation_engine.generators_mgmt import GeneratorRegistry
+from iwrap.generators.actor_generators import ActorGenerator, ActorGeneratorRegistry
+from iwrap.generators.binder_generators import BinderGeneratorRegistry
+from iwrap.generators.wrapper_generators import WrapperGeneratorRegistry
 from iwrap.settings.platform.platform_settings import PlatformSettings
 
 class Engine:
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     __class_instance = None
-    _registry: GeneratorRegistry = GeneratorRegistry()
     _active_generator: ActorGenerator = None
 
     def __new__(cls):
         if cls.__class_instance is None:
             cls.__class_instance = object.__new__(cls)
         return cls.__class_instance
-
-    @classmethod
-    def get_code_signature(cls) -> str:
-        return cls._active_generator.get_code_signature()
 
 
     @property # TODO set as a class property (available since Python 3.9)
@@ -32,57 +32,80 @@ class Engine:
             return
 
         if isinstance(value, str):
-            value = Engine._registry.get_generator(value)
+            value = ActorGeneratorRegistry.get_generator(value)
 
         Engine._active_generator = value
         Engine._active_generator.initialize()
 
     @property # TODO set as a class property (available since Python 3.9)
     def registered_generators(self) -> List[ActorGenerator]:
-        return Engine._registry.registered_generators
+        return ActorGeneratorRegistry.generators()
 
     @staticmethod
     def get_generator(generator_id):
-        generator = Engine._registry.get_generator(generator_id)
+        generator = ActorGeneratorRegistry.get_generator(generator_id)
         return generator
-
 
     def startup(self):
         PlatformSettings().initialize()
 
         # Initialization of registry of generators
-        generators_registry = GeneratorRegistry()
-        generators_registry.initialize()
+        ActorGeneratorRegistry.initialize()
+        BinderGeneratorRegistry.initialize()
+        WrapperGeneratorRegistry.initialize()
 
         # set default generator
-        registered_generators = generators_registry.registered_generators
+        registered_generators = ActorGeneratorRegistry.generators()
         if len(registered_generators) > 0:
             Engine._active_generator = registered_generators[0]
             Engine._active_generator.initialize()
 
     def generate_actor(self, info_output_stream=sys.stdout):
         from iwrap.settings.project import ProjectSettings
-        try:
-            Engine._active_generator.configure(info_output_stream = info_output_stream)
-            text_decoration = 20 * "="
-            print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
-            ProjectSettings.get_settings().validate(self)
-            print(text_decoration, 'GENERATING AN ACTOR', text_decoration, file=info_output_stream)
-            Engine._active_generator.generate( )
-            print(text_decoration, 'BUILDING AN ACTOR', text_decoration, file=info_output_stream )
-            Engine._active_generator.build()
-            print(text_decoration, 'GENERATION COMPLETE!', text_decoration,file=info_output_stream)
-            return 0
-        except Exception as exc:
-            print( 'GENERATION FAILED!', file=info_output_stream )
-            print( exc, file=info_output_stream )
-            import traceback
-            traceback.print_tb( exc.__traceback__ )
-            return 1
+        from iwrap.settings.platform.platform_settings import PlatformSettings
+
+        project_root_dir = ProjectSettings.get_settings().root_dir_path
+
+        platform_settings_dict = PlatformSettings().to_dict( resolve_path=True, project_root_dir=project_root_dir )
+
+        project_settings_dict = ProjectSettings.get_settings().to_dict( resolve_path=True,
+                                                                       project_root_dir=project_root_dir )
+
+        project_settings_dict.update({'platform_settings': platform_settings_dict})
+        actor_language = Engine._active_generator.actor_language
+        code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
+        binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
+        binder_generator.initialize()
+        wrapper_generator = WrapperGeneratorRegistry.get_generator(code_language)
+        wrapper_generator.initialize()
+
+        generators = Engine._active_generator, binder_generator, wrapper_generator
+        text_decoration = 20 * "-"
+        print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
+        ProjectSettings.get_settings().validate( self )
+
+        for generator in generators:
+            try:
+                generator_name: str = generator.__class__.__name__
+                print(f'  {generator_name}  '.center(80, '='), file=info_output_stream)
+                generator.configure(info_output_stream = info_output_stream)
+                print(text_decoration, 'GENERATING', text_decoration, file=info_output_stream)
+                generator.generate(project_settings_dict)
+                print(text_decoration, 'BUILDING', text_decoration, file=info_output_stream )
+                generator.build()
+                print(text_decoration, 'GENERATION COMPLETE!', text_decoration, file=info_output_stream)
+
+            except Exception as exc:
+                print( 'GENERATION FAILED!', file=info_output_stream )
+                print( exc, file=info_output_stream )
+                import traceback
+                traceback.print_tb( exc.__traceback__ )
+                return 1
+        return 0
 
     @classmethod
     def validate_actor_type(cls, actor_type):
-        available_actor_types = [generator.name for generator in Engine._registry.registered_generators]
+        available_actor_types = [generator.name for generator in ActorGeneratorRegistry.generators()]
         if actor_type not in available_actor_types:
             raise ValueError( f'Unknown type of data handled by an actor : "{actor_type}"! Available types: {available_actor_types}.' )
 

@@ -12,6 +12,15 @@ class ExampleWorkflowManager:
     def __init__(self):
 
         self.actor_cp2ds = core2dist()
+        print( self.actor_cp2ds.unique_id )
+        print(self.actor_cp2ds.actor_description['data_type'])
+        print(self.actor_cp2ds.code_description['implementation']['subroutines'])
+        print(self.actor_cp2ds.code_description['implementation']['include_path'])
+        print(self.actor_cp2ds.code_description['implementation']['data_type'])
+        for arg in self.actor_cp2ds.code_description['arguments']:
+            print(arg)
+        for arg in self.actor_cp2ds.arguments:
+            print(arg)
         self.input_entry = None
         self.output_entry = None
 
@@ -36,15 +45,17 @@ class ExampleWorkflowManager:
         self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
         self.output_entry.create()
 
-        # # # # # # # # Initialization of ALL actors  # # # # # # # #
-        #
+        # # # # # # # # Initialization of ALL actors  # # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        runtime_settings = None
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
+            runtime_settings = self.actor_cp2ds.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
         #self.actor_cp2ds.runtime_settings.debug_mode = DebugMode.ATTACH
-        self.actor_cp2ds.initialize()
-    
+        code_parameters = self.actor_cp2ds.get_code_parameters()
+        self.actor_cp2ds.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
+
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE
         print('=> Read input IDSs')

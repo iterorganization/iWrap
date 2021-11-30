@@ -5,7 +5,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
-GENERATEDDIR  = documentation_files
+GENERATEDDIR  = docstring_files
 PROJECT_PATH  = ../iwrap
 
 YAML_FILE = project_informations.yaml.tmp
@@ -29,10 +29,10 @@ help:
 #clean setconfig apidocs html
 %: Makefile
 	mkdir -p _static
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O) -Q
 
 apidocs: Makefile
-	sphinx-apidoc -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate --templatedir templates/
+	sphinx-apidoc -q -o "$(GENERATEDDIR)" "$(PROJECT_PATH)" --separate --templatedir templates/
 
 setconfig:
 	touch ${YAML_FILE}
@@ -43,8 +43,15 @@ setconfig:
 clean:
 	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
 
+html_to_md:
+	python3 $(SOURCEDIR)/html_to_rst.py
+
+copy_attachments:
+	cp -r $(SOURCEDIR)/resources/attachments $(SOURCEDIR)/_build/html/resources/.
+
 docs:
 	make clean
 	make setconfig
 	make apidocs
 	make html
+	make copy_attachments

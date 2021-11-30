@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 build/
+dist/
+*egg-info/
 lib/
 .idea
 *.yaml
@@ -13,7 +15,7 @@ _build/
 *.xml
 *.xsd
 *.python-version
-documentation_files/
+docstring_files/
 *.o
 *.mod
 *.a

@@ -41,10 +41,13 @@ class ExampleWorkflowManager:
         #actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         #if actor_run_mode == 'STANDALONE':
         print( 'Running STANDALONE version. (Even if NORMAL was selected)' )
-        self.actor_cp2ds_mpi.runtime_settings.run_mode = RunMode.STANDALONE
+        runtime_settings = self.actor_cp2ds_mpi.get_runtime_settings()
+        runtime_settings.run_mode = RunMode.STANDALONE
 
-        self.actor_cp2ds_mpi.runtime_settings.mpi.number_of_processes = 3
-        self.actor_cp2ds_mpi.initialize()
+        # self.actor_cp2ds_mpi.runtime_settings.mpi.mpi_nodes = 3
+        # self.actor_cp2ds_mpi.initialize()
+        code_parameters = self.actor_cp2ds_mpi.get_code_parameters()
+        self.actor_cp2ds_mpi.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE

@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 
@@ -18,6 +19,9 @@ class ScrollableFrame( ttk.Frame ):
         your_scrollable_frame = your_scrollable_frame.update()
 
     """
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master):
         """ Initialize the scrollable frame.
 

@@ -1,28 +1,31 @@
---- !code_description
-programming_language: cpp
-code_name: cp2ds_mpi_cpp
-data_type: legacy
-arguments:
--   name: core_profiles_in
-    type: core_profiles
-    intent: IN
--   name: distribution_sources_out
-    type: distribution_sources
-    intent: OUT
-code_path: ./native/libcp2ds_mpi_cpp.a
-code_parameters:
-    parameters:
-    schema:
-documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. '
-language_specific:
-    compiler: gcc
-    include_path: ./native/cp2ds_mpi.h
-    mpi: true
-    open_mp: false
-    system_libraries:
-    custom_libraries:
+code_description:
+    implementation:
+        subroutines:
+            main:   cp2ds_mpi_cpp
+        data_type: legacy
+        programming_language: cpp
+        code_path: ./native/libcp2ds_mpi_cpp.a
+        include_path: ./native/cp2ds_mpi.h
+        code_parameters:
+            parameters:
+            schema:
+    arguments:
+    -   name: core_profiles_in
+        type: core_profiles
+        intent: IN
+    -   name: distribution_sources_out
+        type: distribution_sources
+        intent: OUT
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    settings:
+        compiler_cmd: g++
+        mpi_compiler_cmd: mpicxx
+        open_mp_switch: false
+        extra_libraries:
+            pkg_config_defined:
+            path_defined:
 
 

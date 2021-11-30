@@ -1,0 +1,74 @@
+import os
+
+from .common.base_actor import ActorBaseClass
+from .common.definitions import Argument
+from .common.code_parameters import CodeParameters
+from .common.runtime_settings import RuntimeSettings
+
+# {{ " PROVENANCE INFO ".center(80, '=') }}
+
+ACTOR_DESCRIPTION = {{actor_description | pprint | wordwrap(width=80, wrapstring='\n\t\t')}}
+
+# {{ "".center(60, '-') }}
+
+CODE_DESCRIPTION = {{code_description | pprint | indent(width=8)}}
+
+# {{ "".center(60, '-') }}
+
+PLATFORM_SETTINGS = {{platform_settings | pprint | indent(width=8)}}
+
+# {{ "".center(80, '=') }}
+
+
+class {{actor_description.actor_name}}(ActorBaseClass):
+    """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
+    """
+
+    # Provenance info
+    actor_description = ACTOR_DESCRIPTION
+    code_description = CODE_DESCRIPTION
+    # {{ "".center(80, '=') }}
+
+
+
+    def __init__(self):
+        super().__init__()
+        self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
+        self.data_type = '{{code_description.implementation.data_type | lower}}'
+        self.native_language = '{{code_description.implementation.programming_language | lower}}'
+        self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
+
+        # Auto-generated list of arguments meta-data
+    {% for argument in code_description.arguments %}
+        argument = Argument(name='{{ argument.name }}', type='{{argument.type}}', intent='{{argument.intent}}')
+        self.arguments.append(argument)
+    {% endfor %}
+
+        # Static code parameters
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+        default_parameters_file = '{{code_description.implementation.code_parameters.parameters.split('/')[-1]}}'
+        schema_file = '{{code_description.implementation.code_parameters.schema.split('/')[-1]}}'
+    {% else %}
+        default_parameters_file = ''
+        schema_file = ''
+    {% endif %}
+        self._ActorBaseClass__code_parameters = CodeParameters(default_parameters_file, schema_file)
+
+        self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
+
+       {% if code_description.settings.mpi_compiler_cmd %}
+        # setting MPI parameters
+        self._ActorBaseClass__runtime_settings.mpi = RuntimeSettings.MPISettings()
+        self._ActorBaseClass__runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
+        self._ActorBaseClass__runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
+        {% endif %}
+
+        # setting BATCH parameters
+        self._ActorBaseClass__runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
+        self._ActorBaseClass__runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
+
+
+        # setting DEBUGGER parameters
+        self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
+        self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
+

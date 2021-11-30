@@ -39,10 +39,14 @@ class ExampleWorkflowManager:
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        runtime_settings = None
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            self.actor_cp2ds.runtime_settings.run_mode = RunMode.STANDALONE
-        self.actor_cp2ds.initialize()
+            runtime_settings = self.actor_cp2ds.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
+
+        code_parameters = self.actor_cp2ds.get_code_parameters()
+        self.actor_cp2ds.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE

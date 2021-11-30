@@ -1,0 +1,200 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+
+module wrapper
+
+{% if code_description.settings.mpi_compiler_cmd %}
+    use mpi
+{% endif %}
+    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
+contains
+
+        {% if code_description.implementation.subroutines.init %}
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE INIT SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+subroutine init_{{actor_description.actor_name}}_wrapper(&
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+                code_params,  &
+{% endif %}
+                status_info) BIND(C)
+    {{ ids_macro.imports() }}
+    use iwrap_defs
+    use iwrap_tools
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+	!----  Code parameters ----
+    type(ids_parameters_input) :: imas_code_params
+    type(code_parameters_t) :: code_params
+{% endif %}
+	 !----  Diagnostic info  ----
+     type(status_t) :: status_info
+	 character(len=:), pointer :: diagnosticInfo
+	 integer :: wrap_out_outputFlag
+
+        {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+    ! ------------------ code parameters ----------------------------
+    imas_code_params = convert(code_params)
+    {% endif %}
+
+        ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.init}}( &
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+            imas_code_params,  &
+{% endif %}
+            wrap_out_outputFlag, diagnosticInfo)
+        ! ------------ Output data conversion [ISO_C_BINDING] --------------
+	 status_info%code = wrap_out_outputFlag
+	 if(associated(diagnosticInfo)) then
+		 status_info%message = convert_string2Cptr(diagnosticInfo)
+     endif
+
+	 ! Return in case of 'soft' crash (diagnostic info < 0)
+	 if(wrap_out_outputFlag < 0 ) RETURN
+end
+{% endif %}
+
+{% if code_description.implementation.subroutines.finalize %}
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE FINISH SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+subroutine finish_{{actor_description.actor_name}}_wrapper(status_info) BIND(C)
+    {{ ids_macro.imports() }}
+    use iwrap_defs
+    use iwrap_tools
+    !----  Diagnostic info  ----
+    type(status_t) :: status_info
+	character(len=:), pointer :: diagnosticInfo
+	integer :: wrap_out_outputFlag
+
+
+        ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.finalize}}( &
+            wrap_out_outputFlag, diagnosticInfo)
+
+        ! ------------ Output data conversion [ISO_C_BINDING] --------------
+	 status_info%code = wrap_out_outputFlag
+	 if(associated(diagnosticInfo)) then
+		 status_info%message = convert_string2Cptr(diagnosticInfo)
+     endif
+
+    ! Return in case of 'soft' crash (diagnostic info < 0)
+	if(wrap_out_outputFlag < 0 ) RETURN
+end
+{% endif %}
+
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE MAIN SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+subroutine {{actor_description.actor_name}}_wrapper(&
+{% for argument in code_description.arguments %}
+                {{ argument.name }}_desc,  &
+{% endfor %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+                code_params,  &
+{% endif %}
+                status_info) BIND(C)
+
+    {{ ids_macro.imports() }}
+    use iwrap_defs
+    use iwrap_tools
+    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
+
+    implicit none
+    character(132):: ids_full_name
+
+{% for argument in code_description.arguments %}
+    ! {{ argument.name }}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
+{% endfor %}
+
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+	!----  Code parameters ----
+    type(ids_parameters_input) :: imas_code_params
+    type(code_parameters_t) :: code_params
+{% endif %}
+
+	 !----  Diagnostic info  ----
+     type(status_t) :: status_info
+	 character(len=:), pointer :: diagnosticInfo
+	 integer :: wrap_out_outputFlag
+
+{% if code_description.settings.mpi_compiler_cmd %}
+    !----  MPI  ----
+    integer :: ierr, process_rank
+    logical :: was_mpi_initialized, was_mpi_finalized
+
+    call MPI_initialized(was_mpi_initialized, ierr)
+    if (.not. was_mpi_initialized)   call MPI_Init(ierr)
+    call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
+{% endif %}
+
+    {% for argument in code_description.arguments if argument.intent == 'IN' %}
+    !--------- Get IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.get( argument.name) }}
+    {% endfor %}
+
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+    ! ------------------ code parameters ----------------------------
+    imas_code_params = convert(code_params)
+    {% endif %}
+
+ 
+	! ------------- Input data conversion [ISO_C_BINDING] --------------
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.main}}( &
+{% for argument in code_description.arguments %}
+            {{ argument.name }}, &
+{% endfor %}
+{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+            imas_code_params,  &
+{% endif %}
+            wrap_out_outputFlag, diagnosticInfo)
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+{% if code_description.settings.mpi_compiler_cmd %}
+    if (process_rank == 0) then
+       ! --- called only for RANK 0 process
+{% endif %}
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+	 status_info%code = wrap_out_outputFlag
+	 if(associated(diagnosticInfo)) then
+		 status_info%message = convert_string2Cptr(diagnosticInfo)
+     endif
+
+	 ! Return in case of 'soft' crash (diagnostic info < 0)  
+	 if(wrap_out_outputFlag < 0 ) RETURN
+
+   ! ------------ Provenance information --------------
+ {% for argument in code_description.arguments if argument.intent == 'OUT' %}
+
+    {{ ids_macro.provenance( argument.name , code_description.implementation.subroutines.main) }}
+    {% endfor %}
+
+     {% for argument in code_description.arguments if argument.intent == 'OUT' %}
+    !--------- PUT IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.put( argument.name) }}
+    {% endfor %}
+
+
+{% if code_description.settings.mpi_compiler_cmd %}
+    endif ! --- The end of section called only for RANK 0 process
+{% endif %}
+    !--------- Dealloacting IDSes ------------------------
+    {% for argument in code_description.arguments %}
+     {{ ids_macro.deallocate( argument.name) }}
+    {% endfor %}
+
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+    ! ------Deallocating code parameters ----------------------------
+    deallocate(imas_code_params%parameters_value)
+    {% endif %}
+
+
+{% if code_description.settings.mpi_compiler_cmd %}
+    !----  MPI Finalization ----
+    call MPI_finalized(was_mpi_finalized, ierr)
+    if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
+{% endif %}
+end
+
+end module wrapper

@@ -1,3 +1,4 @@
+import logging
 import tkinter as tk
 from tkinter import ttk
 import importlib
@@ -13,6 +14,9 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 
 
 class ButtonPane(ttk.Frame):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self, master: ttk.Widget, update_method):
         super().__init__(master, borderwidth=1, relief="solid")
         self.master = master
@@ -22,6 +26,8 @@ class ButtonPane(ttk.Frame):
 
         generate_button = ttk.Button(self, text='Generate', command=self.generate_action)
         generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
+
+        ttk.Label(self, text="* - mandatory field").pack(side=tk.LEFT, padx=10, pady=5)
 
     def generate_action(self):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
@@ -34,6 +40,9 @@ class ButtonPane(ttk.Frame):
 
 
 class MainWindow(tk.Tk, IWrapPane):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     def __init__(self):
         super().__init__()
 
