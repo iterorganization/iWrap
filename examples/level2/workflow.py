@@ -45,8 +45,9 @@ class ExampleWorkflowManager:
 
         code_parameters = self.actor_physics_ii.get_code_parameters()
         xxx = code_parameters.get_parametr_value('parameters/multiplication_factor')
+        code_parameters.set_parametr_value( 'parameters/multiplication_factor', 0.5 )
+        xxx = code_parameters.get_parametr_value( 'parameters/multiplication_factor' )
         self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
-        sys.exit()
     
     def execute_workflow(self):
         # READ INPUT IDSS FROM LOCAL DATABASE

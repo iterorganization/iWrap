@@ -124,7 +124,7 @@ class FortranWrapperGenerator(WrapperGenerator):
         if not os.path.isdir( destination_dir ):
             os.makedirs( destination_dir )
 
-        native_lib_path = project_settings['code_description']['implementation']['include_path']
+        native_lib_path = project_settings['code_description']['implementation']['code_path']
         shutil.copy( native_lib_path, destination_dir )
 
     def __copy_include(self, project_settings:dict):
