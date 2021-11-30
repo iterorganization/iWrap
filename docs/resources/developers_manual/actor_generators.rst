@@ -188,13 +188,48 @@ Description of WHAT, HOW and WHERE build an actor is passed to generators' metho
 
 * ``code_description``  - describes the native code to be wrapped (see :ref:`here <yaml_code_description_anchor>` for details)
 
-* ``platform_settings`` - describe the values default for given platform/installation (see :ref:`here <yaml_platform_settings_anchor>` for details)
+* ``platform_settings`` - describe the values default for given platform/installation
+  (see :ref:`here <yaml_platform_settings_anchor>` for details)
 
 
 Data of ``actor_settings`` can be accessed as an ordinary Python dictionary. It is up to the developer,
 which entries of provided data will be used and how they will be used.
 
-
-
-Management of generators
+Adding new generators
 #######################################################################################################################
+The existing set of generators can be easily extended. It can be done in one of two ways:
+
+* as a 'built-in' generator, adding implemented class(es) as the integral part of iWrap to the iWrap repository
+* as a 'plug-in', using  Python 'namespace packages' (see `here <https://packaging.python.org/guides/packaging-namespace-packages/>`_
+  for a detailed description of this concept).
+
+Independently on the chosen way, an implementation of generator is exactly the same. The only difference is
+a place where it is put.
+
+===================== ======================================= ========================= ==========
+   generator type               built-in package                 plug-in package         interface
+===================== ======================================= ========================= ==========
+  actor generator      'iwrap.generators.actor_generators'     'iwrap_actor_generator'  ActorGenerator
+--------------------- --------------------------------------- ------------------------- ----------
+  binder generator     'iwrap.generators.binder_generators'    iwrap_binder_generator'  BinderGenerator
+--------------------- --------------------------------------- ------------------------- ----------
+  wrapper generator    'iwrap.generators.wrapper_generators'  'iwrap_wrapper_generator' WrapperGenerator
+===================== ======================================= ========================= ==========
+
+* generated type - type of implemented generator
+* built-in package - a place in iWrap repository structure, where 'built-in' generator should be put
+* plug-in package - a name of a package,  where 'plugged-in' generator should be put
+* interface - an interface (an abstract class) to be implemented by generator
+
+.. warning::
+   Added generator will be found by iWrap, if and only if:
+
+   * It implements a proper interface (abstract class)
+   * It is put in a proper repository location (built-in generator)
+   * It is put in a correctly named package (plugged-in generator)
+   * The directory containing package with plugged-in generator is added to ``PYTHONPATH``
+
+
+.. Example-TBA
+.. #######################################################################################################################
+
