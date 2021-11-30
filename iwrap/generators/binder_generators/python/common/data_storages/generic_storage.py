@@ -68,7 +68,7 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
     @classmethod
     def initialize(cls, db_name:str, backend_id):
-        shot = os.getpid()
+        shot = os.getpid() % 200_000  #MDS BE Limitation
         run = 1
         cls.__db_entry =  cls.__create_cache_db(db_name, backend_id, shot, run)
 
