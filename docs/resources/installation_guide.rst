@@ -1,22 +1,8 @@
 #######################################################################################################################
-Welcome to iWrap's documentation!
+iWrap installation guide
 #######################################################################################################################
 
 
-.. toctree::
-   :numbered:
-   :maxdepth: 10
-   :caption: For users:
-
-   /resources/user_manual.rst
-
-
-.. toctree::
-   :numbered:
-   :maxdepth: 10
-   :caption: For developers:
-
-   /resources/developers_manual.rst
 
 
 .. toctree::
@@ -25,7 +11,3 @@ Welcome to iWrap's documentation!
 
    /resources/installation_guide/iwrap_installation.rst
    /resources/installation_guide/iwrap_configuration.rst
-
-
-
-
