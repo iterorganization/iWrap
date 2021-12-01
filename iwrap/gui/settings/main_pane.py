@@ -74,7 +74,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.arguments_pane.update_settings()
         self.implementation_pane.update_settings()
         self.documentation_pane.update_settings()
-        self.signature_pane.update_settings()
+        self.language_settings_pane.update_settings()
 
     def reload(self):
         self.arguments_pane.reload()
