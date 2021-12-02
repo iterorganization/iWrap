@@ -281,7 +281,7 @@ class CodeParameters( SettingsBaseClass ):
 
         # validate correctness of XML
         if self.parameters and self.schema:
-            xml = self.validate_xml( self.parameters, self.schema, project_root_dir )
+            self.validate_xml( self.parameters, self.schema, project_root_dir )
 
     def clear(self):
         """Clears class content, setting default values of class attributes
