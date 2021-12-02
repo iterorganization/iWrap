@@ -58,15 +58,15 @@ Generator API
 Every generator must be derived from ``AbstractGenerator`` class and implement following methods:
 
 * ``initialize`` - initializes generator environment
-* ``generate`` - creates all layer files, bu
+* ``generate`` - creates all layer files
 * ``build`` - builds the code (if e.g. the code require compilation)
 * ``install`` - installs components of given layers, e.g. moving them from temporary build directory to the final one
 * ``cleanup`` - performs clean up operations, removing temporary files, directories, releasing resources etc.
 
 .. note::
-   Because of the variety of actors that could be created using iWrap there is no common pattern to be followed
-   while implementing given generator. It fully depends on the actor desired logic, programming language used by both:
-   an actor and native code, handling IDS types, etc, etc...
+   Because there are lots of possible combinations of various components being involved in the processing,
+   there is no single, correct, way of implementing a generator. It fully depends on the actor desired logic,
+   programming languages used for processing, data types being passed between components, etc.
 
 **Generator metadata**
 

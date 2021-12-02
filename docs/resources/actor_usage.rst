@@ -209,6 +209,8 @@ can be change in runtime
         # updates (and validates) parameters
         actor_object.initialize(code_parameters=code_parameters)
 
+.. _actor_settings_anchor:
+
 Actor runtime settings
 ######################################################################################################################
 
@@ -464,6 +466,8 @@ Workflow developer may take full control on the way an actor is run defining ``c
 attribute of ``runtime_settings``. If not set, the automatically generated commandline will be used
 (typical for the most of the usage scenarios)
 
+
+.. _command_tag_usage_anchor:
 .. info::
    User defined commandline may contain predefined tags (syntax ``${tag}``), where ``tag``
    is the name of one of the runtime_settings attributes. The usage of tags is optional.

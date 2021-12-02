@@ -16,6 +16,7 @@ iWrap developers manual
 
 
 .. toctree::
+   :numbered:
    :maxdepth: 10
    :caption: Developers manual
 
