@@ -46,7 +46,45 @@ This settings should be provided in YAML format. Configured values include:
 
 Picking up a proper configuration file
 #######################################################################################################################
+A configuration file has to be put in ``iwrap/resources/config`` directory.
+To find a proper configuration file, IMAS ``imas-config`` tool is used.
 
+
+
+The ``imas-config`` tool, launched by iWrap in ``iwrap/resources`` directory looks for files
+of pattern  ``config/config_*.yaml``. The tool algorithm searches for existing config files
+in order of preference:
+
+* Primary: hostname, alias, domain, domain alias, or default
+* Secondary: +OS+flag, +flag, +OS, or none.
+
+An example of searching process of one of the nodes of EUROfusion Gateway:
+
+.. code-block:: shell
+
+        shell> env IMAS_CONFIG_PREFIX='config_' IMAS_CONFIG_SUFFIX='.yaml' IMAS_CONFIG_DIR='config' imas-config
+
+        Pwd: /afs/eufus.eu/user/g/g2bpalak/work/iwrap/iwrap/resources. Prog: installer.
+        Host: r054c07s01.galileo.cineca.it, Domain: galileo.cineca.it, OS: CentOS-7.
+        Host alias: , Domain alias: EUROfusion.Marconi, Flag: .
+        Search path: ${CONFIG_DIR}/${CONFIG_PREFIX}*${CONFIG_SUFFIX}
+        Resolves to: config/config_*.yaml
+        config/config_default.yaml
+        config/config_EUROfusion.Marconi.yaml
+        config/config_ITER.CI.yaml
+        config/config_ITER.HPC.yaml
+        No such file: config/config_r054c07s01.galileo.cineca.it.CentOS-7..yaml
+        No such file: config/config_r054c07s01.galileo.cineca.it..yaml
+        No such file: config/config_r054c07s01.galileo.cineca.it.CentOS-7.yaml
+        No such file: config/config_r054c07s01.galileo.cineca.it.yaml
+        No such file: config/config_galileo.cineca.it.CentOS-7..yaml
+        No such file: config/config_galileo.cineca.it..yaml
+        No such file: config/config_galileo.cineca.it.CentOS-7.yaml
+        No such file: config/config_galileo.cineca.it.yaml
+        No such file: config/config_EUROfusion.Marconi.CentOS-7..yaml
+        No such file: config/config_EUROfusion.Marconi..yaml
+        No such file: config/config_EUROfusion.Marconi.CentOS-7.yaml
+        config/config_EUROfusion.Marconi.yaml
 
 Example of configuration file
 #######################################################################################################################
