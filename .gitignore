@@ -20,3 +20,4 @@ docstring_files/
 *.mod
 *.a
 *.so
+.DS_Store
