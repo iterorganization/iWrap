@@ -49,7 +49,7 @@ class LegacyIDSStorage( GenericIDSStorage ):
     @classmethod
     def __create_cache_db(cls, db_name:str, backend_id, shot, run):
 
-        db_entry = imas.DBEntry( backend_id=backend_id,
+        db_entry = imas.DBEntry( backend_id=backend_id,   # pylint: disable=no-member
                                  db_name=db_name,
                                  shot=shot,
                                  run=run )

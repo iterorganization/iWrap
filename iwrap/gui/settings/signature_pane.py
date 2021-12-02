@@ -163,7 +163,7 @@ class TextBox(ttk.LabelFrame):
     @staticmethod
     def data_load() -> str:
         """Loads text data from an external generator."""
-        return Engine().get_code_signature()
+        return 'TBD'
 
     def clear(self) -> None:
         """Removes text from a text box."""

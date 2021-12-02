@@ -150,6 +150,3 @@ class CppWrapperGenerator(WrapperGenerator):
         return_code = proc.wait()
         if return_code:
             raise subprocess.CalledProcessError( return_code, 'make clean' )
-
-    def get_code_signature(self) -> str:
-        return self.wrapper_generator.get_code_signature()
