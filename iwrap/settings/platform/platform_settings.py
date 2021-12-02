@@ -72,9 +72,9 @@ class PlatformSettings(Dictionarizable):
         self.__was_inited = True
 
     def __read_config_file(self):
-        env = {'IMAS_CONFIG_PREFIX': 'config_', 'IMAS_CONFIG_SUFFIX': '.yaml'}
+        env = {'IMAS_CONFIG_PREFIX': 'config_', 'IMAS_CONFIG_SUFFIX': '.yaml', 'IMAS_CONFIG_DIR':'config'}
         config_file_dir = Path(iwrap.IWRAP_DIR, 'resources')
-        file_name = utils.exec_system_cmd('imas-config-fc2k',
+        file_name = utils.exec_system_cmd('imas-config',
                                           working_directory=config_file_dir,
                                           environment=env,
                                           return_output=True)
