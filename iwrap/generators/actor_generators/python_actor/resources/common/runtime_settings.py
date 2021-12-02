@@ -47,7 +47,7 @@ class RuntimeSettings:
         self.debug_mode = DebugMode.NONE
         self.ids_storage = IdsStorageSettings()
         self.commandline_cmd = ''
-        self.exec_options = {}
+        self.exec_options = ''
         self.mpi = None
         self.sandbox = self.SandboxSettings()
         self.batch = self.BatchSettings()
