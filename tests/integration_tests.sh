@@ -45,6 +45,11 @@ else
   TEST_DIRS=$( IFS=:; printf '%s' "${test_dirs[*]}" )
   export TEST_DIRS
 
+  # CI bamboo server runs tests on root account...
+  export OMPI_ALLOW_RUN_AS_ROOT=1
+  export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+
+
   chmod a+x ./set-iter.sh
   . ./set-iter.sh
 
