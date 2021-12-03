@@ -43,15 +43,13 @@ else
   # Load foss dependencies
   
   module load Python/3.8.6-GCCcore-10.2.0
+  module load PyYAML/5.3.1-GCCcore-10.2.0
   module load XMLlib/3.3.1-GCC-10.2.0
   module load gompi/2020b
   module load lxml/4.6.2-GCCcore-10.2.0
 
   OBJ=obj_gfortran
 fi
-
-
-
 
 mkdir -p $HOME/public/imasdb/tmp/3/0
 mkdir -p $HOME/public/imasdb/iter/3/0
