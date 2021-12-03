@@ -21,7 +21,7 @@ fi
 # CHOOSE THE COMPILER
 if [ -z "$FCOMPILER" ]; then
     echo 'FCOMPILER not set'
-    echo '=> Use intel as default'
+    echo '=> Use GCC as default'
     export FCOMPILER=gfortran
 else
    if [ "$FCOMPILER" == "ifort" ]; then
