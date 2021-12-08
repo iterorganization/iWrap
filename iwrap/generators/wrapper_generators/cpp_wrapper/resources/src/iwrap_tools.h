@@ -11,6 +11,8 @@ int write_output(status_t status_info);
 
 int handle_status_info(status_t status_info, const char* actor_name);
 
+int convert_status_info(status_t* status_info, int status_code, std::string status_msg);
+
 IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size);
 
 int close_db_entries(IdsNs::IDS** db_entry_array, int array_size);

@@ -53,17 +53,17 @@ all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
 	@mkdir -p ../bin
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
-../lib/lib$(ACTOR_NAME).so: build/cpp_wrapper.o
+../lib/lib$(ACTOR_NAME).so: build/cpp_wrapper.o build/serialization_tools.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
 	$(CXX) $(CXXFLAGS) -shared -o $@  -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/ -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/opt/
 
-build/cpp_wrapper.o: src/cpp_wrapper.cpp
+build/cpp_wrapper.o: src/cpp_wrapper.cpp build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-build/iwrap_tools.o: src/iwrap_tools.cpp
+build/iwrap_tools.o: src/iwrap_tools.cpp build/serialization_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)

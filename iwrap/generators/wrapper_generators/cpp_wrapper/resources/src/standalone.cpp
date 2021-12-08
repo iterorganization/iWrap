@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     close_db_entries(db_entry_array, IDS_ARGS_NO);
 
 
-     {% if code_description.implementation.subroutines.finish %}
+     {% if code_description.implementation.subroutines.finalize %}
     // - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     finish_{{actor_description.actor_name}}_wrapper(&status_info);
     handle_status_info(status_info, "{{actor_description.actor_name}}");

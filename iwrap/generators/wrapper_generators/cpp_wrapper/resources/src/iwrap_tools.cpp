@@ -90,6 +90,19 @@ int handle_status_info(status_t status_info, const char* actor_name)
       }
 }
 
+int convert_status_info(status_t* status_info, int status_code, std::string status_msg)
+{
+   // status code conversion
+    status_info->code = status_code;
+
+    //status message conversion
+    int size = status_msg.length();
+
+    status_info->message = (char*) malloc(size + 1);
+    strcpy(status_info->message, status_msg.c_str());
+}
+
+
 IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size)
 {
     if ( array_size < 1 )
