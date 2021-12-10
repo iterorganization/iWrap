@@ -38,7 +38,7 @@ void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
         return;
     }
 
-    printf("XXX: %s", *(codeparam.parameters));
+    printf("XML: %s", *(codeparam.parameters));
     assign_codeparam( *(codeparam.parameters), codeparam_data);
     
     printf( "------------------------------------\n");

@@ -1,13 +1,15 @@
 CXX=g++
-CXXFLAGS=-std=c++11 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
+CXXFLAGS=-std=c++14 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
-LIBS =   `pkg-config --libs imas-cpp xmllib`
-INCLUDES = `pkg-config --cflags imas-cpp xmllib`
+LIBS =   `pkg-config --libs imas-cpp libxml-2.0`
+INCLUDES = `pkg-config --cflags imas-cpp libxml-2.0`
+
+DBG ?= -DNDEBUG
 
 all: libphysics_ii_cpp.a
 
 # LIBRARY COMPILATION
-libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o
+libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o xmlIMAS.o
 	@ar -rcs $@ $^
 
 # RULES FOR ALL OBJECT FILES

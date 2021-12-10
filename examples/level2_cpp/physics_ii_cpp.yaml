@@ -1,3 +1,7 @@
+actor_description:
+    actor_name: physics_ii_cpp
+    actor_type: python
+    data_type: legacy
 code_description:
     implementation:
         subroutines:
@@ -26,5 +30,5 @@ code_description:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
-                    - xmllib
+                    - libxml-2.0
             path_defined:
