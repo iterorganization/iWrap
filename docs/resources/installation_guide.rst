@@ -6,7 +6,8 @@ iWrap installation guide
 
 
 .. toctree::
-   :maxdepth: 1
+   :numbered:
+   :maxdepth: 10
    :caption: Installation guide
 
    /resources/installation_guide/iwrap_installation.rst

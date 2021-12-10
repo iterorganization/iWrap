@@ -1,8 +1,9 @@
+#include <string>
 #include "UALClasses.h"
 
 #include "codeparam_input_physics.h"
 
-void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
+void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int& status_code, std::string& status_message)
 {
 
     // ---------------------------------------
@@ -19,7 +20,7 @@ void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
     int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
     
     // INITIALISATION OF ERROR FLAG
-    *status_code = 0;
+    status_code = 0;
     
     // INITIAL DISPLAY
     printf( " \n");
@@ -32,9 +33,8 @@ void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
     if ( idsTimeMode != IDS_TIME_MODE_HOMOGENEOUS && idsSize > 0)
     {   
         // ERROR IF THE CODE DOES NOT COMPLETE TO THE END
-        *status_code = -1;
-        *status_message = (char*)malloc(strlen(ERROR_MESSAGE) + 1);
-        strcpy (*status_message, ERROR_MESSAGE);
+        status_code = -1;
+        status_message = ERROR_MESSAGE;
         return;
     }
 

@@ -1,3 +1,5 @@
+.. _yaml_project_description_anchor:
+
 ############################################################
 Actor and native code YAML description
 ############################################################

@@ -180,7 +180,7 @@ class MpiCombo:
         self.settings = self.combobox.get()
 
     def add_settings_to_combo(self, *args):
-        if self.current_value.get() not in self.combobox['value'] and self.current_value.get() is not '':
+        if self.current_value.get() not in self.combobox['value'] and self.current_value.get() != '':
             self.combobox['values'] += (self.current_value.get(),)
 
     def get(self):

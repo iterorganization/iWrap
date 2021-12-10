@@ -1,5 +1,5 @@
 {% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
-#include <string.h>
+#include <string>
 
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -8,6 +8,7 @@
 
 {{ ids_macro.imports() }}
 #include "defs.h"
+#include "iwrap_tools.h"
 #include  "{{code_description.implementation.include_path.split('/')[-1]}}"
 
 {% if code_description.implementation.subroutines.init %}
@@ -20,6 +21,8 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 {% endif %}
                 status_t* status_info)
 {
+    int status_code = 0;
+    std:string status_msg = "OK";
 {% if code_description.implementation.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
@@ -34,13 +37,17 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
-            &(status_info->code), &(status_info->message) );
+            status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // converting status info
+    convert_status_info(status_info, status_code, status_msg);
 
 	if(status_info->code < 0)
 		return;
 }
 {% endif %}
+
 
 {% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -49,12 +56,15 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 extern "C" void finish_{{actor_description.actor_name}}_wrapper(
                 status_t* status_info)
 {
-
+    int status_code = 0;
+    std:string status_msg = "OK";
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.implementation.subroutines.finish}}(
-            &(status_info->code), &(status_info->message) );
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    {{code_description.implementation.subroutines.finalize}}(status_code, status_msg );
+     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // converting status info
+    convert_status_info(status_info, status_code, status_msg);
 
 	if(status_info->code < 0)
 		return;
@@ -74,6 +84,8 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% endif %}
                 status_t* status_info)
 {
+    int status_code = 0;
+    std:string status_msg = "OK";
 
 {% for argument in code_description.arguments %}
     // IDS : {{ argument.name }} ------------------------
@@ -118,8 +130,11 @@ extern "C" void {{actor_description.actor_name}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
-            &(status_info->code), &(status_info->message) );
+            status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+        // converting status info
+    convert_status_info(status_info, status_code, status_msg);
 
 	if(status_info->code < 0)
 		return;

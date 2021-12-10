@@ -4,7 +4,6 @@ Welcome to iWrap's documentation!
 
 
 .. toctree::
-   :numbered:
    :maxdepth: 10
    :caption: For users:
 
@@ -12,15 +11,15 @@ Welcome to iWrap's documentation!
 
 
 .. toctree::
-   :numbered:
    :maxdepth: 10
    :caption: For developers:
 
    /resources/developers_manual.rst
+   /documentation_files/docstring_documentation.rst
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 10
    :caption: Installation guide
 
    /resources/installation_guide/iwrap_installation.rst

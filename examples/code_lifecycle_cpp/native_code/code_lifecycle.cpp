@@ -8,11 +8,11 @@
 //=======================================
 
 void init_code (IdsNs::codeparam_t codeparam,
-                int* status_code, char** status_message)
+                int& status_code, std::string& status_message)
 {
-    *status_code = 0;
-    *status_message = (char*)malloc(20);
-    strcpy (*status_message, "INITIALISATION: OK");
+    status_code = 0;
+
+   status_message = "INITIALISATION: OK";
 
     printf("=======================================================\n");
     printf("Code lifecycle CPP: INITIALISATION called\n");
@@ -22,11 +22,10 @@ void init_code (IdsNs::codeparam_t codeparam,
 // =======================================
 //             FINALISATION
 //=======================================
-void clean_up(int* status_code, char** status_message)
+void clean_up( int& status_code, std::string& status_message)
 {
-    *status_code = 0;
-    *status_message = (char*)malloc(20);
-    strcpy (*status_message, "FINALISATION: OK");
+    status_code = 0;
+    status_message = "FINALISATION: OK";
 
     printf("=======================================================\n");
     printf("Code lifecycle CPP: FINALISATION called\n");
@@ -36,19 +35,15 @@ void clean_up(int* status_code, char** status_message)
 // =======================================
 //             MAIN
 //=======================================
-void code_lifecycle(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
-                        IdsNs::codeparam_t xml_params,
-                        int* status_code, char** status_message)
+void code_lifecycle(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
+                     IdsNs::codeparam_t xml_params,
+                     int& status_code, std::string& status_message)
 {
-
-    const char* ERROR_MESSAGE = "Error in code_lifecycle: input IDS not valid";
-    const char* TEXT = "Status info of code_lifecycle CPP";
-    
     int idsSize = -1;
     int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
     
     // INITIALISATION OF ERROR FLAG
-    *status_code = 0;
+    status_code = 0;
     
     // INITIAL DISPLAY
     printf( "\n=======================================\n");
@@ -60,9 +55,8 @@ void code_lifecycle(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
     if ( idsTimeMode != IDS_TIME_MODE_HOMOGENEOUS && idsSize > 0)
     {   
         // ERROR IF THE CODE DOES NOT COMPLETE TO THE END
-        *status_code = -1;
-        *status_message = (char*)malloc(strlen(ERROR_MESSAGE) + 1);
-        strcpy (*status_message, ERROR_MESSAGE);
+        status_code = -1;
+        status_message = "Error in code_lifecycle: input IDS not valid";
         return;
     }
     
@@ -87,8 +81,8 @@ void code_lifecycle(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibr
     printf("Size of input IDS  = %d\n", idsSize);
 
     // INITIALISATION OF STATUS INFO
-    *status_message = (char*)malloc(strlen(TEXT) + 1);
-    strcpy (*status_message, TEXT);
+    status_message = "Status info of code_lifecycle CPP";
+
     
     // FINAL DISPLAY
     printf( "END OF PHYSICS CODE\n");
