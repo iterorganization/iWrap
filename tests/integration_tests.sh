@@ -1,7 +1,9 @@
 #!/bin/bash
 
 declare -a test_dirs
-declare -a test_exit_code
+declare -i test_exit_code
+declare -r project_root=${PWD}
+declare -r reports_dir=$project_root/reports
 
 test_dirs+=("cp2ds")
 test_dirs+=("cp2ds_cpp")
@@ -42,6 +44,9 @@ else
   # Source and run scripts with environment vars for CI server
   # set -e
   
+  # Create reports directory
+  mkdir $reports_dir
+  
   if [ -z "${TEST_DIR_NAME+x}" ]
   then
     >&2 echo -e "\n\n\tPLEASE DEFINE TEST_DIR_NAME!\n\n"
@@ -71,14 +76,18 @@ else
 
       echo -e "\n\t- - - - - - - - - - - Test in ${ACTOR_RUN_MODE} run mode - - - - - - - - - - -"
 
-      make $TEST_COMMAND 1> make_stdout.txt 2> make_stderr.txt
+      make $TEST_COMMAND 1> $reports_dir/make_${TEST_COMMAND}_stdout.txt 2> $reports_dir/make_${TEST_COMMAND}_stderr.txt
       test_exit_code=$?
+
+      # Save exit code for a reporting purpouse
+      echo $test_exit_code > $reports_dir/make_${TEST_COMMAND}_exit_code.txt
+      
       # Log test's status
       test $test_exit_code -eq 0 && echo -e "\n\t\t\t\t   \033[0;32mPASS\033[0m" || >&2 echo -e "\n\t\t\t\t   \033[0;31mFAIL\033[0m"
       # Log test's stdoutput
-      echo -e "\n  \033[0;35mOUTPUT:\033[0m\n" && cat make_stdout.txt
+      echo -e "\n  \033[0;35mOUTPUT:\033[0m\n" && cat $reports_dir/make_${TEST_COMMAND}_stdout.txt
       # Log test's stderror
-      test $test_exit_code -eq 0 || (echo -e "   \033[0;31mERROR:\033[0m\n" && >&2 cat make_stderr.txt)
+      test $test_exit_code -eq 0 || (echo -e "   \033[0;31mERROR:\033[0m\n" && >&2 cat $reports_dir/make_${TEST_COMMAND}_stderr.txt)
 
       echo -e "\n====================|||-----Finished make ${TEST_COMMAND} Tests-----|||====================\n"
 
