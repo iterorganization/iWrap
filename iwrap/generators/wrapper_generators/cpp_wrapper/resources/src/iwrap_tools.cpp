@@ -79,8 +79,13 @@ int write_output(status_t status_info)
 
 int handle_status_info(status_t status_info, const char* actor_name)
 {
+    const char* NO_MSG = "<No diagnostic message>";
     if(status_info.message == NULL)
-        status_info.message = (char*)"<No diagnostic message>";
+    {
+        int msg_size = strlen(NO_MSG) + 1;
+        status_info.message = (char*) malloc(msg_size);
+        strcpy(status_info.message, NO_MSG);
+    }
 
     if(status_info.code !=0) {
       printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
@@ -88,6 +93,12 @@ int handle_status_info(status_t status_info, const char* actor_name)
       printf("-------Status message : %s\n", status_info.message);
       printf("---------------------------------------------------------\n");
       }
+}
+
+void release_status_info(status_t status_info)
+{
+    if(status_info.message != NULL)
+        free(status_info.message);
 }
 
 int convert_status_info(status_t* status_info, int status_code, std::string status_msg)
@@ -142,14 +153,18 @@ IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_s
     return db_entry_array;
  }
 
-int close_db_entries(IdsNs::IDS** db_entry_array, int array_size)
+void close_db_entries(IdsNs::IDS** db_entry_array, int array_size)
 {
+
+    if ( !db_entry_array )
+        return;
 
     for (int i=0; i<array_size; i++)
     {
         IdsNs::IDS* db_entry = db_entry_array[i];
         if(db_entry != NULL)
             db_entry->close();
+            delete db_entry;
     }
 
 }
