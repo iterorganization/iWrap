@@ -1,6 +1,7 @@
 #!/bin/bash
 
 declare -a test_dirs
+declare -a test_exit_code
 
 test_dirs+=("cp2ds")
 test_dirs+=("cp2ds_cpp")
@@ -37,27 +38,52 @@ then
   exit 0
 
 else
-  echo "++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
+  echo -e "\n++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
   # Source and run scripts with environment vars for CI server
-  set -e
+  # set -e
+  
+  if [ -z "${TEST_DIR_NAME+x}" ]
+  then
+    >&2 echo -e "\n\n\tPLEASE DEFINE TEST_DIR_NAME!\n\n"
+  else
+    if [ -z "${TEST_COMMAND+x}" ]
+    then
+      >&2 echo -e "\n\n\tPLEASE DEFINE TEST_COMMAND!\n\n"
+    else
+      # CI bamboo server runs tests on root account...
+      export OMPI_ALLOW_RUN_AS_ROOT=1
+      export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
-  # Turn the bash array into a string
-  TEST_DIRS=$( IFS=:; printf '%s' "${test_dirs[*]}" )
-  export TEST_DIRS
+      # Change file permissions before sourcing it (Bamboo issue)
+      chmod a+x ./set-iter.sh
+      # Source neccessary modules and environment variables to run
+      . ./set-iter.sh
 
-  # CI bamboo server runs tests on root account...
-  export OMPI_ALLOW_RUN_AS_ROOT=1
-  export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+      # Navigate to the examples directory
+      cd examples/
 
+      # Navigate to a directory with example to be tested
+      cd $TEST_DIR_NAME
 
-  chmod a+x ./set-iter.sh
-  . ./set-iter.sh
+      echo -e "***********:::---------Inside examples/${PWD##*/} directory------:::***********"
 
-  cd tests/
+      echo -e "\n====================|||------Run make ${TEST_COMMAND} Tests------|||===================="
 
-  # Run Pytests
-  echo "====================|--------------Run Integration Tests--------------|===================="
-  # Runs python pytest and logs results to junit xml file
-  python -m pytest test_cases/test_integration/
+      echo -e "\n\t- - - - - - - - - - - Test in ${ACTOR_RUN_MODE} run mode - - - - - - - - - - -"
 
+      make $TEST_COMMAND 1> make_stdout.txt 2> make_stderr.txt
+      test_exit_code=$?
+      # Log test's status
+      test $test_exit_code -eq 0 && echo -e "\n\t\t\t\t   \033[0;32mPASS\033[0m" || >&2 echo -e "\n\t\t\t\t   \033[0;31mFAIL\033[0m"
+      # Log test's stdoutput
+      echo -e "\n  \033[0;35mOUTPUT:\033[0m\n" && cat make_stdout.txt
+      # Log test's stderror
+      test $test_exit_code -eq 1 || (>&2 echo -e "   \033[0;31mERROR:\033[0m\n" && cat make_stderr.txt)
+
+      echo -e "\n====================|||-----Finished make ${TEST_COMMAND} Tests-----|||====================\n"
+
+      # Exit immediately on non zero exit-code (Explicit)
+      test $test_exit_code -eq 0 || exit $test_exit_code
+    fi
+  fi
 fi
