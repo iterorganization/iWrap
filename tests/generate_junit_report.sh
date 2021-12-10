@@ -10,6 +10,11 @@ declare -r report_destination=$project_root/reports/report.xml
 # Exit shell on error
 set -e
 
+# Change file permissions before sourcing it (Bamboo issue)
+chmod a+x ./set-iter.sh
+# Source neccessary modules and environment variables to run
+. ./set-iter.sh
+
 # Look for a tests artifacts with exit codes values
 for file in $project_root/reports/*_exit_code.txt; do
     tests_count=$tests_count+1
