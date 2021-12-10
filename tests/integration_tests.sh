@@ -45,7 +45,7 @@ else
   # set -e
   
   # Create reports directory
-  mkdir $reports_dir
+  mkdir -p $reports_dir
   
   if [ -z "${TEST_DIR_NAME+x}" ]
   then
