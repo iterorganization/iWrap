@@ -14,7 +14,7 @@ libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o xmlIMAS.o
 
 # RULES FOR ALL OBJECT FILES
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS)
+	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS) $(DBG)
 
 # TEST THE CONSISTENCY OF THE XML AND XSD FILES FOR INPUT PARAMETERS
 validate:

@@ -1,5 +1,5 @@
 #include <string>
-#include "UALClasses.h"
+#include <UALClasses.h>
 
 #include "codeparam_input_physics.h"
 
@@ -14,7 +14,6 @@ void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::e
     // ---------------------------------------
     const char* ERROR_MESSAGE = "Error in physics_ii: input IDS not valid";
     codeparam_physics_data_t codeparam_data;
-    char* codeparam_string;
     
     int idsSize = -1;
     int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
