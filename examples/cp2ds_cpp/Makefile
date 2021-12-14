@@ -13,5 +13,9 @@ actor-gui: native
 	iwrap-gui -a core2dist_cpp -f ./cp2dsn_cpp.yaml
 
 native:
-	make -C ./native clean
-	make -C ./native
+	make -C ./native_code clean
+	make -C ./native_code
+
+clean:
+	@rm -rf wf_output.txt
+	make -C ./native_code clean

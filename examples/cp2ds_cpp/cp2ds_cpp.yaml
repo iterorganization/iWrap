@@ -11,8 +11,8 @@ code_description:
             finalize:
         programming_language: cpp
         data_type: legacy
-        code_path: ./native/libcp2ds_cpp.a
-        include_path: ./native/coreprofiles2distsource.h
+        code_path: ./native_code/libcp2ds_cpp.a
+        include_path: ./native_code/coreprofiles2distsource.h
         code_parameters:
             parameters:
             schema:
