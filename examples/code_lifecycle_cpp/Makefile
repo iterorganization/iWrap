@@ -15,3 +15,7 @@ actor-gui: native
 native:
 	make -C ./native_code clean
 	make -C ./native_code
+
+clean:
+	@rm -rf wf_output.txt
+	make -C ./native_code clean

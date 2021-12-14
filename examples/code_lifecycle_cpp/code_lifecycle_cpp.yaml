@@ -28,7 +28,6 @@ code_description:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
-                    - xmllib
             path_defined:
 
 
