@@ -92,6 +92,8 @@ int main(int argc, char **argv)
     free(xml_string);
     {% endif %}
 
+    release_status_info(status_info);
+
 {% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI Finalization ----
     MPI_Finalized(&was_mpi_finalized);

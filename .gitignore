@@ -21,3 +21,4 @@ docstring_files/
 *.a
 *.so
 .DS_Store
+/reports
