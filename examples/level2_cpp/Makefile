@@ -1,4 +1,4 @@
-COMPILER? = g++
+COMPILER ?= g++
 
 .PHONY: native actor actor-gui wf-run
 
