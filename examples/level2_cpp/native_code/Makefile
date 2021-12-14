@@ -1,5 +1,6 @@
-CXX=g++
-CXXFLAGS=-std=c++14 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
+COMPILER ?= g++
+CXX = $(COMPILER)
+CXXFLAGS = -std=c++14 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
 LIBS =   `pkg-config --libs imas-cpp libxml-2.0`
 INCLUDES = `pkg-config --cflags imas-cpp libxml-2.0`
@@ -26,17 +27,3 @@ validate:
 # CLEAN DIRECTORY
 clean:
 	rm -f *.o *.a
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -27,12 +27,12 @@ class XmlImas {
     XmlImas();
     XmlImas(const std::string s);
     ~XmlImas();
-    const bool getValue(const std::string s, std::string& v);
-    const bool getValue(const std::string s, int& v);
-    const bool getValue(const std::string s, float& v);
-    const bool getValue(const std::string s, double& v);
+    bool getValue(const std::string s, std::string& v);
+    bool getValue(const std::string s, int& v);
+    bool getValue(const std::string s, float& v);
+    bool getValue(const std::string s, double& v);
     const std::string* getText();
-    const bool getStatus(){ return _initialized; };
+    bool getStatus(){ return _initialized; };
     bool fromMemory(const std::string buffer);
     
  private:

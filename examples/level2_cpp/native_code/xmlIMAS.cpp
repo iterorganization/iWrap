@@ -144,7 +144,7 @@ bool XmlImas::createContext()
     return true;
 }
 
-const bool XmlImas::getValue(const std::string path, std::string& value)
+bool XmlImas::getValue(const std::string path, std::string& value)
 {
     if (!_initialized) {
         std::cerr << "Not initialized.\n";
@@ -178,7 +178,7 @@ const bool XmlImas::getValue(const std::string path, std::string& value)
     return(true);
 }
 
-const bool XmlImas::getValue(const std::string path, int& value)
+bool XmlImas::getValue(const std::string path, int& value)
 {
     std::string raw;
     if (!getValue(path, raw)) return false;
@@ -192,7 +192,7 @@ const bool XmlImas::getValue(const std::string path, int& value)
     return(true);
 }
 
-const bool XmlImas::getValue(const std::string path, float& value)
+bool XmlImas::getValue(const std::string path, float& value)
 {
     std::string raw;
     if (!getValue(path, raw)) return false;
@@ -206,7 +206,7 @@ const bool XmlImas::getValue(const std::string path, float& value)
     return(true);
 }
 
-const bool XmlImas::getValue(const std::string path, double& value)
+bool XmlImas::getValue(const std::string path, double& value)
 {
     std::string raw;
     if (!getValue(path, raw)) return false;

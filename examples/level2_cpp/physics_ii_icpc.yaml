@@ -1,0 +1,34 @@
+actor_description:
+    actor_name: physics_ii_cpp
+    actor_type: python
+    data_type: legacy
+code_description:
+    implementation:
+        subroutines:
+            main:   physics_ii_cpp
+        data_type: legacy
+        programming_language: cpp
+        code_path: ./native_code/libphysics_ii_cpp.a
+        include_path: ./native_code/physics_ii.h
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
+    arguments:
+    -   name: equilibrium_in
+        type: equilibrium
+        intent: IN
+    -   name: equilibrium_out
+        type: equilibrium
+        intent: OUT
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    settings:
+        compiler_cmd: icpc
+        mpi_compiler_cmd:
+        open_mp_switch: false
+        extra_libraries:
+            pkg_config_defined:
+                    - libxml-2.0
+            path_defined:
