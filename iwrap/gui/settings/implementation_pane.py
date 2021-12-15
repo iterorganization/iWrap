@@ -115,7 +115,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         """Update settings in the ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_description.implementation.programming_language = self.selected_programming_language.get()
+        code_description.implementation.programming_language = self.programming_language_combobox.get()
         code_description.implementation.code_path = self.code_path.get()
         code_description.implementation.data_type = self.data_type_combobox.get()
         code_description.implementation.root_dir = self.root_dir.get()
