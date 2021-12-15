@@ -25,25 +25,23 @@ CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp)
 CORE_LIBS=$(shell pkg-config --libs imas-cpp)
 
-# required 'platform' libs (i.e. published using pkg-config mechanism)
-{% if code_description.settings.extra_libraries.pkg_config_defined  %}
-PLATFORM_LIBS_NAMES={{ (code_description.settings.extra_libraries.pkg_config_defined or []) | join(' ')}}
-PLATFORM_LIBS_FLAGS=$(shell pkg-config --cflags $(PLATFORM_LIBS_NAMES))
-PLATFORM_LIBS=$(shell pkg-config --libs $(PLATFORM_LIBS_NAMES))
+# required libs published using pkg-config mechanism
+{% if code_description.settings.extra_libraries.pkg_config_defined %}
+LIBS_PKGCONFIG_DEFINED_NAMES={{ (code_description.settings.extra_libraries.pkg_config_defined or []) | join(' ')}}
+LIBS_PKGCONFIG_DEFINED_FLAGS=$(shell pkg-config --cflags $(LIBS_PKGCONFIG_DEFINED_NAMES))
+LIBS_PKGCONFIG_DEFINED=$(shell pkg-config --libs $(LIBS_PKGCONFIG_DEFINED_NAMES))
 {% else %}
-PLATFORM_LIBS_NAMES=
-PLATFORM_LIBS_FLAGS=
-PLATFORM_LIBS=
+LIBS_PKGCONFIG_DEFINED_NAMES=
+LIBS_PKGCONFIG_DEFINED_FLAGS=
+LIBS_PKGCONFIG_DEFINED=
 {% endif %}
 
 
+# required libs provided by user as a path
+LIBS_PATH_DEFINED={{ (code_description.settings.extra_libraries.path_defined or [] ) | join(' ')}}
 
-# required 'custom' libs (i.e. provided by user as a pth to library)
-CUSTOM_LIBS={{ (code_description.settings.extra_libraries.path_defined or [] ) | join(' ')}}
-
-
-INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(PLATFORM_LIBS)
-LIBS=$(CORE_LIBS) $(PLATFORM_LIBS) $(CUSTOM_LIBS) $(PLATFORM_LIBS_FLAGS) $(CODE_LIB_DEF)
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED)
+LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(LIBS_PKGCONFIG_DEFINED_FLAGS) $(CODE_LIB_DEF)
 
 
 all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
