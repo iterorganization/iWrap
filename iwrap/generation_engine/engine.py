@@ -101,6 +101,8 @@ class Engine:
                 import traceback
                 traceback.print_tb( exc.__traceback__ )
                 return 1
+
+        print( 'ALL DONE!', file=info_output_stream )
         return 0
 
     @classmethod
