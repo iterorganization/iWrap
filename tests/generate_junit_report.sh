@@ -27,13 +27,15 @@ for file in $project_root/reports/*_exit_code.txt; do
 
     if [ $(<$file) -ne 0 ]; then
         tests_failures=$tests_failures+1
-        failure_msg="<failure message=\"$(cat ${project_root}/reports/make_${test_command}_stderr.txt)\"></failure>"
+        failure_msg="<failure message='$(cat ${project_root}/reports/make_${test_command}_stderr.txt)'></failure>"
     fi
 
+    test_cases_previous=$test_cases
     test_cases=$(echo $(<$junit_report_testcase_template) |
                 (sed -e "s;__NAME__;$TEST_DIR_NAME;g;" \
                      -e "s;__TESTCOMMAND__;$test_command;" \
-                     -e "s;__FAILURE_MSG__;$failure_msg;"))$test_cases
+                     -e "s;__FAILURE_MSG__;$failure_msg;"))
+    test_cases=$test_cases$test_cases_previous
     
     failure_msg=""
 done
@@ -45,7 +47,7 @@ sed -e "s;__ERRORS__;0;" \
     -e "s;__FAILURES__;$tests_failures;" \
     -e "s;__NAME__;$TEST_DIR_NAME;" \
     -e "s;__TESTS__;$tests_count;" \
-    -e "s;__TIME__;$(date +"%Y-%m-%dT%H:%M:%S.%N");" \
+    -e "s;__TIME__;$(date +'%Y-%m-%dT%H:%M:%S.%N');" \
     -e "s;__TEST_CASES__;$test_cases;" \
     $junit_report_template > $report_destination
 
