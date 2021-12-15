@@ -32,3 +32,4 @@ code_description:
             pkg_config_defined:
                     - libxml-2.0
             path_defined:
+            - /home/ITER/tribolp/Scratch/Source/iwrap/examples/level2_cpp/native_code/libxmlIMAS.a
