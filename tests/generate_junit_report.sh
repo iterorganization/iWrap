@@ -15,9 +15,9 @@ declare -r report_destination=$project_root/reports/report.xml
 set -e
 
 # Change file permissions before sourcing it (Bamboo issue)
-chmod a+x ./set-iter.sh
+#chmod a+x ./set-iter.sh
 # Source neccessary modules and environment variables to run
-. ./set-iter.sh
+#. ./set-iter.sh
 
 # Look for a tests artifacts with exit codes values
 for file in $project_root/reports/*_exit_code.txt; do
@@ -31,7 +31,7 @@ for file in $project_root/reports/*_exit_code.txt; do
     fi
 
     test_cases=$(echo $(<$junit_report_testcase_template) |
-                (sed -e "s;__NAME__;$TEST_DIR_NAME;g" \
+                (sed -e "s;__NAME__;$TEST_DIR_NAME;g;" \
                      -e "s;__TESTCOMMAND__;$test_command;" \
                      -e "s;__FAILURE_MSG__;$failure_msg;"))$test_cases
     
