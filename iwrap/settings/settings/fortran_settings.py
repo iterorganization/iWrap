@@ -31,7 +31,7 @@ class ExtraLibraries( SettingsBaseClass ):
         # custom_libraries
         for library in self.path_defined or []:
             __path = utils.resolve_path(library, project_root_dir)
-            if not __path.exists():
+            if not Path(__path).exists():
                 raise ValueError( f'Path to library file is not valid! {str( __path )}' )
 
     def clear(self):
