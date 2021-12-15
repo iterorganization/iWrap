@@ -29,7 +29,7 @@ for file in $project_root/reports/*_exit_code.txt; do
         tests_failures=$tests_failures+1
         failure_msg="<failure message='$(cat ${project_root}/reports/make_${test_command}_stderr.txt)'></failure>"
     fi
-
+    failure_msg="blank"
     test_cases_previous=$test_cases
     test_cases=$(echo $(<$junit_report_testcase_template) |
                 (sed -e "s;__NAME__;$TEST_DIR_NAME;g;" \
