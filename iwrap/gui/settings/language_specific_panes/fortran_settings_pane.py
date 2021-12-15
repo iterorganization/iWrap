@@ -9,6 +9,7 @@ from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.settings.fortran_settings import ExtraLibraries
 from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
+from iwrap.gui.settings.implementation_pane import ImplementationPane
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
 
@@ -41,8 +42,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         super().__init__( master )
         FortranPane.language = language
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
         if not ProjectSettings.get_settings().code_description.settings:
             ProjectSettings.get_settings().code_description.settings = self.settings
 
@@ -108,7 +109,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings, set current value of compiler, MPI and OpenMP switch.
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
-        self.settings = ProjectSettings.get_settings().code_description.settings
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
 
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.mpi_compiler_combobox.set(self.settings.mpi_compiler_cmd or "")
