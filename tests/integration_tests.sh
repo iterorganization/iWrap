@@ -14,6 +14,9 @@ test_dirs+=("cp2ds-mpi_cpp")
 test_dirs+=("code_lifecycle")
 test_dirs+=("code_lifecycle_cpp")
 
+PASSED='\033[1;32m- Passed.\033[0m'
+FAILED='\033[1;31m- Failed.\033[1;33m See log.txt.\033[0m Continuing...'
+
 if [ -z "${ONBAMBOO+x}" ]
 then
   cd ../examples
@@ -24,14 +27,27 @@ then
         echo ===   TESTING: $test_dir
         echo ==========================================================================================
         cd $test_dir
+
         echo - - - - - - - Building native code - - - - - - -
         make native > log.txt
+        test_exit_code=$?
+        test "${test_exit_code}" -eq "0" && echo -e ${PASSED} || echo -e ${FAILED} 
+            
         echo - - - - - - - - Actor generation - - - - - - - -
-        make actor > log.txt
+        make actor >> log.txt
+        test_exit_code=$?
+        test "${test_exit_code}" -eq "0" && echo -e ${PASSED} || echo -e ${FAILED} 
+
         echo - - - - - - - - Workflow test \(actor in NORMAL run mode\) - - - - - - - -
-        make wf-run > log.txt
-        echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - -
-        ACTOR_RUN_MODE='STANDALONE' make wf-run #>> log.txt
+        make wf-run >> log.txt
+        test_exit_code=$?
+        test "${test_exit_code}" -eq "0" && echo -e ${PASSED} || echo -e ${FAILED} 
+
+        echo - - - - - - - - Workflow test \(actor in STANDALONE run mode\) - - - - - - - 
+        ACTOR_RUN_MODE='STANDALONE' make wf-run >> log.txt
+        test_exit_code=$?
+        test "${test_exit_code}" -eq "0" && echo -e ${PASSED} || echo -e ${FAILED} 
+
         cd ..
         echo ==========================================================================================
   done
