@@ -45,7 +45,7 @@ class BinderGenerator(AbstractGenerator):
 
 
 class BinderGeneratorRegistry:
-    __builtin_pkg_name: str = 'iwrap.generators.binder_generators.python'
+    __builtin_pkg_name: str = 'iwrap.generators.binder_generators'
     __plugin_pkg_name: str = 'iwrap_binder_generator'
     __generators: List[BinderGenerator] = []
 

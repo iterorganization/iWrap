@@ -14,14 +14,18 @@ Introduction
       A set of components (actors) constituting a directed graph to execute a computing algorithm
 
       Actors are dependent: a control and data is passed from actor to actor
-      Usually the order of actors execution and the way how data are passed from actor to actor is managed by so called "workflow system". Such manager can be a simple script (codes) or more sophisticated "orchestrator" (e.g. Kepler)
+      Usually the order of actors execution and the way how data are passed from actor to actor is managed
+      by so called "workflow system". Such manager can be a simple script (codes)
+      or more sophisticated "orchestrator" (e.g. MUSCLE, Kepler)
 
     Actor
         A basic component of scenario / workflow
         An actor performs some actions (e.g. computations, visualisation, etc)
-        Usually given actor consumes results provided by a previous actor in a scenario and produces data for a next actor in a scenario
+        Usually given actor consumes results provided by a previous actor in a scenario and produces data for
+        a next actor in a scenario
         Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor
-        An actor, using its internal mechanisms ('wrappers') calls 'native code' method(s), usually written in other language than an actor
+        An actor, using its internal mechanisms ('wrappers') calls 'native code' method(s), usually written
+        in other language than actor
 
     Native code
      A physics model, of standardised signature, provided by software developer
@@ -29,9 +33,20 @@ Introduction
 Motivations
 #######################################################################################################################
 
-Complex simulations often combines a number of physics codes, potentially provided by various actors and written in different programming languages. To make them working together, an additional layer, that 'orchestrates' execution of particular codes, and takes care on passing data between 'producers' and 'consumers' is needed. Sometimes the functionality of such layer is provided by dedicated software (aka 'workflow orchestrators', like Kepler https://kepler-project.org/), sometimes it can be handled by much simpler mechanism like Python scripts. Unfortunately all components ('actors') that constitute a computing scenario ('workflow') must be implemented in the same programming language, defining the same API.
+Complex simulations often combines a number of physics codes, potentially provided by various actors and written
+in different programming languages. To make them working together, an additional layer, that 'orchestrates' execution
+of particular codes, and takes care on passing data between 'producers' and 'consumers' is needed. Sometimes
+the functionality of such layer is provided by dedicated software (aka 'workflow orchestrators',
+like Kepler https://kepler-project.org/), sometimes it can be handled by much simpler mechanism like Python scripts.
+Unfortunately all components ('actors') that constitute a computing scenario ('workflow') must be implemented
+in the same programming language, defining the same API.
 
-Unfortunately, in most cases, scientific, simulation codes that performs computing intensive calculations (due to performance reasons) are written in C++ or Fortran, while 'workflow orchestrators' are implemented in (more popular nowadays) languages, like Java, Python, etc. Hence the need for a 'wrapper' that intermediates between native code language and language of the orchestrator. Such wrappers can be developed manually, however users may benefit from a tool that automatise this process - iWrap
+Lots of scientific codes, algorithms, that perform computing intensive calculations, are written in C++ or Fortran.
+On the other hand, 'workflow orchestrators' are implemented in languages that provide elements
+of dynamic coding - e.g.: Java, Python. Hence the need for a 'wrapper' that intermediates between native code language
+and language of the orchestrator. Such wrappers can be developed manually. This, however, requires lots of the effort
+and practical knowledge of all the elements involved in the process - this is exactly where iWrap fits best,
+hiding this complexity by providing user with final solution - wrapped code.
 
 iWrap
 #######################################################################################################################
@@ -70,11 +85,10 @@ For user conveniency iWrap provides two kinds of interfaces:
 Preparation of the code and actor generation
 #######################################################################################################################
 
-:doc:`Preparation of the native code <native_code>`
+.. :ref:`Preparation of the native code <yaml_project_description_anchor>`_
 
-:doc:`Generation of defined actor <../resources/actor_generation>`
-
-:doc:`Usage of an actor <actor_usage>`
+.. :doc:`Generation of defined actor <../resources/actor_generation>`
+.. :doc:`Usage of an actor <actor_usage>`
 
 
 ---

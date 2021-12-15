@@ -1,21 +1,21 @@
 #include "UALClasses.h"
 
 
-void coreprofiles2distsource_cpp(IdsNs::IDS::core_profiles& in_core_profiles, IdsNs::IDS::distribution_sources& out_distribution_sources, int* status_code, char** status_message)
+void coreprofiles2distsource_cpp(const IdsNs::IDS::core_profiles& in_core_profiles,
+                                       IdsNs::IDS::distribution_sources& out_distribution_sources,
+                                       int& status_code, std::string& status_message)
 {
-    const char* TEXT = "Status info of coreprofiles2distsource CPP";
     int idsSize = -1;
 
     printf("Entering subroutine eq2dist\n");
-    *status_code = 0;
+    status_code = 0;
 
     idsSize = in_core_profiles.time.extent(0);
 
     printf("Size of input IDS  = %d\n", idsSize);
 
     // INITIALISATION OF STATUS INFO
-    *status_message = (char*)malloc(strlen(TEXT) + 1);
-    strcpy (*status_message, TEXT);
+    status_message = "Status info of coreprofiles2distsource CPP";
 
     out_distribution_sources.time.resize(idsSize);
 

@@ -2,10 +2,6 @@
 iWrap - graphical interface
 #######################################################################################################################
 
-.. toctree::
-   :numbered:
-   :maxdepth: 10
-
 Introduction
 ###############
 
@@ -80,8 +76,9 @@ selected argument.
       buttons state to active at least one argument has to
       be added to the table.
 
-Add argument
----------------
+**Add argument**
+
+
 |image4|
 
 To add new arguments click **Add...** button in the
@@ -91,8 +88,8 @@ added with empty name) and selecting intent and type allow
 adding new argument by clicking **Add** button. Click
 **Cancel** to exit this window.
 
-Edit argument
---------------
+**Edit argument**
+
 |image5|
 
 There is also possible to edit arguments. When **Edit...**
@@ -105,10 +102,6 @@ Implementation
 ===============
 |image6|
 
-Implementation
---------------------
-|image7|
-
 -  **Programming language** - a user code language
 -  **Data** **type** - data type handled by the physics code
 -  **Rood dir** - the root directory
@@ -118,7 +111,7 @@ Implementation
 -  **Include path** -  a module's / header's file path
 
 Subroutines tab
-"""""""""""""""
+---------------
 
 A user code should be provided as a subroutine.
 
@@ -132,7 +125,7 @@ A user code should be provided as a subroutine.
    to finalize the native code (optional)
 
 Code parameters tab
-"""""""""""""""""""
+--------------------
 
 *Code parameters*\ are all parameters that are specific to
 the code (like switches, scaling parameters, and parameters
@@ -148,10 +141,6 @@ explicitly overrule fields in the IMAS data structures.
 Settings
 =========
 |image10|
-
-Settings
----------
-|image11|
 
 -  **Compiler cmd** - the compiler command used to compile
    native codes
@@ -184,8 +173,7 @@ placed on the right side of the table.
       To change **Remove** button state to active at least
       one system library has to be added and selected.
 
-Add pkg-config defined
-^^^^^^^^^^^^^^^^^^^^^^^
+**Add pkg-config defined**
 
 To add new arguments click **Add...** button in the
 *pkg-config defined*\ section. A new window named *Add

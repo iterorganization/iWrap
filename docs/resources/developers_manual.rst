@@ -11,12 +11,15 @@ iWrap developers manual
     * A way an actor is generated.
 
     Thus this section shows *Python actor* design and mechanism of its generation as an example,
-    reference, that *can* but not *has to* be followed, while adding new actor generations plug-ins
+    a reference, that *can* but not *has to* be followed, while adding new actor generations plug-ins
 
 
 
 .. toctree::
-   :maxdepth: 1
+   :numbered:
+   :maxdepth: 10
    :caption: Developers manual
 
    /resources/developers_manual/actor_architecture.rst
+   /resources/developers_manual/actor_generators.rst
+

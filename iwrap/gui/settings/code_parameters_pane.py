@@ -251,8 +251,11 @@ class XMLValidatorPane(ttk.Frame):
         try:
             xml_path = self._xml_file.path.get()
             xsd_path = self._xsd_file.path.get()
-            ProjectSettings.get_settings().code_description.code_parameters\
-                .validate_xml(parameters_xml_path=xml_path, schema_xsd_path=xsd_path)
+            ProjectSettings.get_settings().code_description.implementation.code_parameters\
+                .validate_xml(
+                            parameters_xml_path=xml_path,
+                            schema_xsd_path=xsd_path,
+                            root_dir=ProjectSettings.get_settings().root_dir_path)
         except Exception as error:
             messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"
                                                      f"{error}")

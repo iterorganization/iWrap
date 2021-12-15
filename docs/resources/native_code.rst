@@ -338,13 +338,13 @@ Native code signature
      #include "UALClasses.h"
 
      /* * * Initialisation method * * */
-     void <method name>([IdsNs::codeparam_t codeparam,] int* status_code, char** status_message)
+     void <method name>([IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
 
      /* * * Main method * * */
-     void <method name>([IdsNs::IDS::<ids_name> ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int* status_code, char** status_message)
+     void <method name>([IdsNs::IDS::<ids_name>& ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
 
      /* * * Finalisation method * * */
-     void <method name>(int* status_code, char** status_message)
+     void <method name>(int& status_code, std::string& status_message)
 
 Header
 -----------------------
@@ -356,10 +356,8 @@ name but must contain method signature.
 Method
 -----------------------
 
--  A user code should be provided as methods (and not a
-   functions)
--  A name of methods could be arbitrary - chosen by code
-   developer
+-  A user code should be provided as methods (and not a functions)
+-  A name of methods could be arbitrary - chosen by code developer
 -  Arguments shall be provided in a strict order
 -  No INOUT arguments are allowed!
 
@@ -371,30 +369,30 @@ Arguments shall be provided in a strict order:
 -  Input IDSes:
 
    -  **Optional**\  arguments
-   -  Defined as   "IdsNs::IDS::<ids_name>"
+   -  Defined as   ``const IdsNs::IDS::<ids_name>&``
 
 -  Output IDSes:
 
    -  **Optional**\  arguments
-   -  Defined as   IdsNs::IDS::<ids_name>&    (please notice reference sign - '&')
+   -  Defined as   ``IdsNs::IDS::<ids_name>&``
 
 -  XML parameters:
 
    -  **Optional**\  argument
    -  Input argument
-   -  Defined as   "IdsNs::codeparam_t   "
+   -  Defined as   ``IdsNs::codeparam_t``
 
 -  Status code:
 
    -  **Mandatory**\  argument
    -  Output argument
-   -  Defined as    "int*"
+   -  Defined as    ``int&``
 
 -  Status message
 
    -  **Mandatory**\  argument
    -  Output argument
-   -  Defined as:"  char**   "
+   -  Defined as: ``std::string&``
 
 No INOUT arguments are allowed!
 
@@ -411,15 +409,16 @@ Example
      #include "UALClasses.h"
 
      /* * *   INITIALISATION method   * * */
-     void init_code (IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
+     void init_code (IdsNs::codeparam_t codeparam, int& status_code, std::string& status_message);
 
      /* * *   MAIN method   * * */
-     void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
-
-     IdsNs::codeparam_t codeparam, int* status_code, char** status_message);
+     void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium,
+                               IdsNs::IDS::equilibrium& out_equilibrium,
+                               IdsNs::codeparam_t codeparam,
+                               int& status_code, std::string& status_message);
 
      /* * *   FINALISATION method   * * */
-     void clean_up(int* status_code, char** status_message);
+     void clean_up(int& status_code, std::string& status_message);
 
 
      #endif // _LEVEL_II_CPP
@@ -431,7 +430,7 @@ Example
      #include "UALClasses.h"
 
      /* * *   INITIALISATION method   * * */
-     void init_code (IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
+     void init_code (IdsNs::codeparam_t codeparam, int& status_code, std::string& status_message)
      {
      ...
      // method body
@@ -439,7 +438,10 @@ Example
      }
 
      /* * *   MAIN method   * * */
-     void physics_ii_cpp(IdsNs::IDS::equilibrium in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium, IdsNs::codeparam_t codeparam, int* status_code, char** status_message)
+     void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium,
+                               IdsNs::IDS::equilibrium& out_equilibrium,
+                               IdsNs::codeparam_t codeparam,
+                               int& status_code, std::string& status_message)
      {
      ...
      // method body
@@ -447,7 +449,7 @@ Example
      }
 
      /* * *   FINALISATION method   * * */
-     void clean_up(int* status_code, char** status_message)
+     void clean_up(int& status_code, std::string& status_message)
      {
      ...
      // method body

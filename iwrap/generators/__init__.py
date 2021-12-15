@@ -11,7 +11,7 @@ class AbstractGenerator( ABC ):
         self.__info_output_stream = info_output_stream
 
     @abstractmethod
-    def initialize(self, **kwargs):
+    def initialize(self, actor_settings: dict):
         ...
 
     @abstractmethod
@@ -19,13 +19,13 @@ class AbstractGenerator( ABC ):
         ...
 
     @abstractmethod
-    def build(self):
+    def build(self, actor_settings: dict):
         ...
 
     @abstractmethod
-    def install(self):
+    def install(self, actor_settings: dict):
         ...
 
     @abstractmethod
-    def cleanup(self):
+    def cleanup(self, actor_settings: dict):
         ...

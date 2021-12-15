@@ -1,3 +1,5 @@
+.. _yaml_project_description_anchor:
+
 ############################################################
 Actor and native code YAML description
 ############################################################
@@ -39,6 +41,8 @@ The structure of the file is following:
       -  An actor description part must begin with entry "actor_description:"
       -  A code description part must begin with entry "code_description:"
 
+.. _yaml_actor_description_anchor:
+
 Actor description
 #######################################################################################################################
 
@@ -62,6 +66,7 @@ Actor description syntax
    -  value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
    -  example: 'legacy'
 
+.. _yaml_code_description_anchor:
 Native code description
 #######################################################################################################################
 

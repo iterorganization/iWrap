@@ -209,6 +209,8 @@ can be change in runtime
         # updates (and validates) parameters
         actor_object.initialize(code_parameters=code_parameters)
 
+.. _actor_settings_anchor:
+
 Actor runtime settings
 ######################################################################################################################
 
@@ -464,6 +466,8 @@ Workflow developer may take full control on the way an actor is run defining ``c
 attribute of ``runtime_settings``. If not set, the automatically generated commandline will be used
 (typical for the most of the usage scenarios)
 
+
+.. _command_tag_usage_anchor:
 .. info::
    User defined commandline may contain predefined tags (syntax ``${tag}``), where ``tag``
    is the name of one of the runtime_settings attributes. The usage of tags is optional.
@@ -476,6 +480,7 @@ attribute of ``runtime_settings``. If not set, the automatically generated comma
 The workflow example
 ######################################################################################################################
 
+.. _workflow_example_anchor:
 
 .. code-block:: python
 
@@ -546,12 +551,7 @@ The workflow example
             # Finalize ALL actors
             self.actor_physics_ii.finalize()
 
-            output_ids = self.output_entry.get('equilibrium')
-
-            with open( 'wf_output.txt', 'w' ) as file:
-                file.write( str(output_ids.time) )
-
-            #other finalizastion actions
+            #other finalization actions
             self.input_entry.close()
             self.output_entry.close()
 

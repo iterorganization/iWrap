@@ -2,9 +2,10 @@
 #include "UALClasses.h"
 
 
-void cp2ds_mpi_cpp(IdsNs::IDS::core_profiles& in_core_profiles, IdsNs::IDS::distribution_sources& out_distribution_sources, int* status_code, char** status_message)
+void cp2ds_mpi_cpp(const IdsNs::IDS::core_profiles& in_core_profiles,
+                         IdsNs::IDS::distribution_sources& out_distribution_sources,
+                         int& status_code, std::string& status_message)
 {
-    const char* TEXT = "Status info of cp2ds_mpi_cpp CPP";
     int mpi_size, mpi_rank;
     int idsSize = -1;
 
@@ -18,15 +19,14 @@ void cp2ds_mpi_cpp(IdsNs::IDS::core_profiles& in_core_profiles, IdsNs::IDS::dist
     printf("INFO: Process <%d>, out of: %d\n", mpi_rank, mpi_size);
 
 
-    *status_code = 0;
+    status_code = 0;
 
     idsSize = in_core_profiles.time.extent(0);
 
     printf("Size of input IDS  = %d\n", idsSize);
 
     // INITIALISATION OF STATUS INFO
-    *status_message = (char*)malloc(strlen(TEXT) + 1);
-    strcpy (*status_message, TEXT);
+    status_message = "Status info of cp2ds_mpi_cpp CPP";
 
     out_distribution_sources.time.resize(idsSize);
 
