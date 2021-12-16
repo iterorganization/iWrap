@@ -37,14 +37,14 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         self.__text_editor.config(bg='#FFF', fg='#000', insertbackground='#000')
 
         # Readonly textbox - bind key press event
-        self.__text_editor.bind("<Escape>",
-                                lambda e: self.__append_text_editor("Interruption not implemented."))
+        self.__text_editor.bind("<Key>",
+                                lambda e: self.__append_text_editor("Interruption not implemented.\n"))
 
     def write(self, *args, **kwargs):
         self.__append_text_editor(*args)
         if (str(*args).find('ALL DONE!') > -1):
             self.__label_text.set("Generation complete")
-        if (str(*args).find('GENERATION FAILED!') > -1):
+        if (str(*args).find(' FAILED!') > -1):
             self.__label_text.set("Generation complete with errors")
             
     def __append_text_editor(self, txt):

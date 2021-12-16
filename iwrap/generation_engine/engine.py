@@ -1,5 +1,6 @@
 import logging
 import sys
+import traceback
 from typing import Set, List
 
 import imas
@@ -82,7 +83,13 @@ class Engine:
         generators = Engine._active_generator, binder_generator, wrapper_generator
         text_decoration = 20 * "-"
         print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
-        ProjectSettings.get_settings().validate( self )
+        try:
+            ProjectSettings.get_settings().validate( self )
+        except Exception as exc:
+            print( 'VALIDATION FAILED!', file=info_output_stream )
+            print( exc, file=info_output_stream )
+            traceback.print_tb( exc.__traceback__ )
+            return 1
 
         for generator in generators:
             try:
@@ -98,7 +105,6 @@ class Engine:
             except Exception as exc:
                 print( 'GENERATION FAILED!', file=info_output_stream )
                 print( exc, file=info_output_stream )
-                import traceback
                 traceback.print_tb( exc.__traceback__ )
                 return 1
 
