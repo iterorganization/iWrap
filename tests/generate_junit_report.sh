@@ -22,7 +22,7 @@ for file in $project_root/reports/*_exit_code.txt; do
 
     if [ $(<$file) -ne 0 ]; then
         tests_failures=$tests_failures+1
-        failure_msg="<failure message=\"$(cat ${project_root}/reports/make_${test_command}_stderr.txt | tr '\n' ' ' | tr "\"" "\'")\"></failure>"
+        failure_msg="<failure message=\"$(cat ${project_root}/reports/make_${test_command}_stderr.txt | tr '\n' ' ' | tr "\"" "\'" | tr '<>' '.')\"/>"
     fi
 
     test_cases=$(echo $(<$junit_report_testcase_template) |
