@@ -18,7 +18,6 @@ class ImplementationPane(ttk.Frame, IWrapPane):
     and browse button for searching user files in the file dialog.
 
     Attributes:
-        default_programming_language(str): Value for default programming language. Default to Fortran.
         code_path(StringVar): Value for code path from filedialog or the YAML file.
         selected_programming_language(StringVar): Value for programming language selected in combobox.
         programming_language_combobox(Combobox): Combobox contains programming languages from combobox_values. Enables
@@ -53,9 +52,6 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         labelframe = ttk.LabelFrame(self, text="Implementation", borderwidth=2, relief="groove")
         labelframe.pack(fill=tk.BOTH, side=tk.TOP, expand=0, anchor=tk.NW, pady=10)
         labelframe.grid_columnconfigure(1, weight=1)
-
-        # LANGUAGE
-        self.selected_programming_language.set(ImplementationPane.default_programming_language)
 
         # LANGUAGE COMBOBOX
         ttk.Label(labelframe, text="*Programming language:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))

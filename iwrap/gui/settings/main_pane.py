@@ -9,6 +9,7 @@ from iwrap.gui.settings.arguments_pane import ArgumentsPane
 from iwrap.gui.settings.documentation_pane import DocumentationPane
 from iwrap.gui.settings.signature_pane import SignaturePane
 from iwrap.gui.settings.implementation_pane import ImplementationPane
+from iwrap.settings.project import ProjectSettings
 
 
 class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
@@ -54,8 +55,8 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
             event: Combobox change value event object. Default to None.
         """
         selected_language = self.implementation_pane.programming_language_combobox.get()
-        current_language = self.implementation_pane.selected_programming_language.get()
-        if current_language != selected_language:
+        if selected_language != ProjectSettings.get_settings().code_description.implementation.programming_language:
+            ProjectSettings.get_settings().code_description.implementation.programming_language = selected_language
             self.implementation_pane.selected_programming_language.set(selected_language)
             self.language_settings_pane.save_pane_settings()
             self.notebook.forget(self.language_settings_pane)
@@ -64,7 +65,7 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
         """
-        selected_language = self.implementation_pane.selected_programming_language.get()
+        selected_language = self.implementation_pane.programming_language_combobox.get()
         language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
         self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
         self.notebook.insert(2, self.language_settings_pane, text="Settings")

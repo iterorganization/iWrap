@@ -109,8 +109,8 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Reload system settings, set current value of compiler, MPI and OpenMP switch.
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
-
+        FortranPane.language = ProjectSettings.get_settings().code_description.implementation.programming_language
+        self.settings = LanguageSettingsManager.get_settings(FortranPane.language or 'fortran')
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.mpi_compiler_combobox.set(self.settings.mpi_compiler_cmd or "")
         self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
@@ -122,18 +122,23 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """Update compiler, MPI and OpenMP switch values in the ProjectSettings. Call PkgConfigPane
         and LibraryPathPane update_settings methods.
         """
-        self.settings.compiler_cmd = self.compiler_cmd.get()
-        self.settings.mpi_compiler_cmd = self.mpi_compiler_combobox.get()
-        self.settings.open_mp_switch = self.openmp_switch_combobox.get()
+        compiler_cmd = self.compiler_cmd.get()
+        open_mp_switch = self.openmp_switch_combobox.get()
+        mpi_compiler_cmd = self.mpi_compiler_combobox.get()
 
-        self.pkg_config_pane.update_settings()
-        self.library_path_pane.update_settings()
-        self.settings = ProjectSettings.get_settings().code_description.settings
+        extra_lib = ExtraLibraries()
+        pkg_configs = self.pkg_config_pane.get_data_from_table()
+        library_paths = self.library_path_pane.get_list_of_paths()
+        extra_lib.pkg_config_defined = pkg_configs
+        extra_lib.path_defined = library_paths
+        ProjectSettings.get_settings().code_description.settings = {'compiler_cmd': compiler_cmd,
+                                                                    'mpi_compiler_cmd': mpi_compiler_cmd,
+                                                                    'open_mp_switch': open_mp_switch,
+                                                                    'extra_libraries': extra_lib.to_dict()}
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
-
         compiler_cmd = self.compiler_cmd.get()
         open_mp_switch = self.openmp_switch_combobox.get()
         mpi_compiler_cmd = self.mpi_compiler_combobox.get()
@@ -148,7 +153,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
                                  'mpi_compiler_cmd': mpi_compiler_cmd,
                                  'open_mp_switch': open_mp_switch,
                                  'extra_libraries': extra_lib.to_dict()})
-
 
 class MpiCombo:
     def __init__(self, frame, column, row, padx, text, settings):
