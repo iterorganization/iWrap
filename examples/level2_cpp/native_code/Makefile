@@ -7,11 +7,14 @@ INCLUDES = `pkg-config --cflags imas-cpp libxml-2.0`
 
 DBG ?= -DNDEBUG
 
-all: libphysics_ii_cpp.a
+all: libphysics_ii_cpp.a libxmlIMAS.a
 
 # LIBRARY COMPILATION
-libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o xmlIMAS.o
-	@ar -rcs $@ $^
+libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o
+	ar -rcs $@ $^
+
+libxmlIMAS.a: xmlIMAS.o
+	ar -cr $@ $^
 
 # RULES FOR ALL OBJECT FILES
 %.o: %.cpp
@@ -27,3 +30,4 @@ validate:
 # CLEAN DIRECTORY
 clean:
 	rm -f *.o *.a
+
