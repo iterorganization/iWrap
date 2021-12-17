@@ -4,6 +4,7 @@ from tkinter import ttk
 import importlib
 from importlib import resources
 from typing import cast, Tuple
+import threading
 
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.actor_description import ActorDescriptionPane
@@ -33,9 +34,14 @@ class ButtonPane(ttk.Frame):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
 
         progress_window = ProgressMonitorWindow()
-
+        
         self.update_method()
-        Engine().generate_actor( info_output_stream=progress_window )
+
+        # Use a thread, otherwise the GUI freezes during generation:
+        gen_thread = threading.Thread(target=Engine().generate_actor,
+                                      kwargs={'info_output_stream':progress_window})
+        gen_thread.start()
+        
         #progress_window.destroy()
 
 

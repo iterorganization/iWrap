@@ -1,5 +1,6 @@
-CXX=g++
-CXXFLAGS=-std=c++11 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
+COMPILER ?= g++
+CXX = $(COMPILER)
+CXXFLAGS = -std=c++11 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
 LIBS =   `pkg-config --libs imas-cpp`
 INCLUDES = `pkg-config --cflags imas-cpp`

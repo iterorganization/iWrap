@@ -1,11 +1,18 @@
+actor_description:
+    actor_name: core2dist_cpp
+    actor_type: python
+    data_type: legacy
+
 code_description:
     implementation:
         subroutines:
-            main:   cp2ds_mpi_cpp
-        data_type: legacy
+            init:
+            main:   coreprofiles2distsource_cpp
+            finalize:
         programming_language: cpp
-        code_path: ./native/libcp2ds_mpi_cpp.a
-        include_path: ./native/cp2ds_mpi.h
+        data_type: legacy
+        code_path: ./native_code/libcp2ds_cpp.a
+        include_path: ./native_code/coreprofiles2distsource.h
         code_parameters:
             parameters:
             schema:
@@ -21,8 +28,8 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: g++
-        mpi_compiler_cmd: mpicxx
+        compiler_cmd: icpc
+        mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

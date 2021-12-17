@@ -1,3 +1,5 @@
+COMPILER ?= g++
+
 .PHONY: native actor actor-gui wf-run
 
 wf-run:  workflow_cpp.py
@@ -7,11 +9,15 @@ wf-run:  workflow_cpp.py
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a physics_ii_cpp -f ./physics_ii_cpp.yaml
+	iwrap -a physics_ii_cpp -f ./physics_ii_$(COMPILER).yaml
 
 actor-gui: native
-	iwrap-gui -a physics_ii_cpp -f ./physics_ii_cpp.yaml
+	iwrap-gui -a physics_ii_cpp -f ./physics_ii_$(COMPILER).yaml
 
 native:
 	make -C ./native_code clean
 	make -C ./native_code
+
+clean:
+	@rm -rf wf_output.txt
+	make -C ./native_code clean

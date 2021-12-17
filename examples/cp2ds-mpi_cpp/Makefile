@@ -1,3 +1,11 @@
+ifeq ($(COMPILER), icpc)
+	MPICOMPILER = mpiicpc
+else ifeq ($(COMPILER), icc) 
+	MPICOMPILER = mpiicpc
+else
+	MPICOMPILER = mpicxx
+endif
+
 .PHONY: native actor actor-gui wf-run
 
 wf-run:
@@ -7,11 +15,15 @@ wf-run:
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a core2dist_mpi_cpp -f ./cp2ds_mpi_cpp.yaml
+	iwrap -a core2dist_mpi_cpp -f ./cp2ds_$(MPICOMPILER).yaml
 
 actor-gui: native
-	iwrap-gui -a core2dist_mpi_cpp -f ./cp2ds_mpi_cpp.yaml
+	iwrap-gui -a core2dist_mpi_cpp -f ./cp2ds_$(MPICOMPILER).yaml
 
 native:
-	make -C ./native clean
-	make -C ./native
+	make -C ./native_code clean
+	make -C ./native_code
+
+clean:
+	@rm -rf wf_output.txt
+	make -C ./native_code clean
