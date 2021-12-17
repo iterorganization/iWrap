@@ -5,7 +5,7 @@ module wrapper
 {% if code_description.settings.mpi_compiler_cmd %}
     use mpi
 {% endif %}
-    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
+    use {{code_description.implementation.include_path | stemname}}
 contains
 
         {% if code_description.implementation.subroutines.init %}
@@ -103,7 +103,6 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
-    use {{code_description.implementation.include_path.split('/')[-1].replace('.mod','')}}
 
     implicit none
     character(132):: ids_full_name
