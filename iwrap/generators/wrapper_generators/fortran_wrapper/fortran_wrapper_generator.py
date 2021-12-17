@@ -74,13 +74,6 @@ class FortranWrapperGenerator(WrapperGenerator):
 
         native_language = code_description.implementation.programming_language.lower()
 
-
-        # TO BE CHECKED!!!!
-
-
-        #if os.path.isdir(self.install_dir):
-        #    shutil.rmtree(self.install_dir)
-
         def filter_func(x: str) -> bool:
             if "_wrapper" in x:
                 return native_language + '_wrapper' in x
@@ -88,15 +81,9 @@ class FortranWrapperGenerator(WrapperGenerator):
 
         process_template_dir('iwrap.generators.wrapper_generators.fortran_wrapper', 'resources', self.install_dir, project_settings, filter_func=None, output_stream= self.__info_output_stream, )
 
-
-        #print('TMP2: ', self.jinja_env.loader.provider.module_path)
-
-        #src = self.jinja_env.loader.provider.module_path + "/" + self.jinja_env.loader.package_path
-
-        # shutil.copytree(src,  self.install_dir, copy_function=self.copy_file)
-
         self.__copy_native_lib(project_settings)
         self.__copy_include(project_settings)
+        self.__copy_extra_libs(project_settings)
 
     def build(self):
 
@@ -136,6 +123,23 @@ class FortranWrapperGenerator(WrapperGenerator):
         include_path = project_settings['code_description']['implementation']['include_path']
         shutil.copy( include_path, destination_dir )
 
+    def __copy_extra_libs(self, project_settings: dict):
+
+        settings = project_settings['code_description']['settings']
+        extra_libraries = settings.get( 'extra_libraries' )
+        if not extra_libraries:
+            return
+
+        libraries = extra_libraries.get( 'path_defined' )
+        if not libraries:
+            return
+
+        destination_dir = os.path.join( self.install_dir, 'extra-libs' )
+        if not os.path.isdir( destination_dir ):
+            os.makedirs( destination_dir )
+
+        for library_path in libraries:
+            shutil.copy( library_path, destination_dir )
 
     def cleanup(self):
         #self.temp_dir.cleanup()

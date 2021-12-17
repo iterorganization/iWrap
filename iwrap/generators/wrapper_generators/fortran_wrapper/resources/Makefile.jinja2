@@ -39,11 +39,11 @@ LIBS_PKGCONFIG_DEFINED_FLAGS=
 LIBS_PKGCONFIG_DEFINED=
 {% endif %}
 
-
-
 # required libs provided by user as a path
-LIBS_PATH_DEFINED={{ (code_description.settings.extra_libraries.path_defined or [] ) | join(' ')}}
-
+LIBS_PATH_DEFINED=
+{%- for lib_path in code_description.settings.extra_libraries.path_defined %}
+ ./extra-libs/{{ lib_path | basename }}
+{%- endfor %}
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED)
 LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(LIBS_PKGCONFIG_DEFINED_FLAGS) $(CODE_LIB_DEF)
