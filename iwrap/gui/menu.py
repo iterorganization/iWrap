@@ -93,7 +93,7 @@ class MenuBar(tk.Menu):
         MenuBar.save_and_open_initialdir = os.path.dirname(file.name)
 
     def action_save(self):
-        filename = ProjectSettings.get_settings().project_file_path
+        filename = ProjectSettings.get_settings().project_file
         if filename != '':
             self.main_window.update_settings()
             ProjectSettings.get_settings().save(open(filename, 'w'))
