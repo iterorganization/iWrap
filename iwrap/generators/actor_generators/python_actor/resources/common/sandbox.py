@@ -66,4 +66,5 @@ class Sandbox:
             return  # Sbx content should be kept forever
 
         sandbox_path = self.path
-        shutil.rmtree( sandbox_path )
+        if Path(sandbox_path).exists():
+            shutil.rmtree( sandbox_path )
