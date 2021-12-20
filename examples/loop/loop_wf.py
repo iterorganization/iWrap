@@ -45,7 +45,6 @@ class ExampleWorkflowManager:
 
         code_parameters = self.actor_loop.get_code_parameters()
         self.actor_loop.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
-        self.actor_loop.runtime_settings.run_mode = RunMode.STANDALONE
 
         #self.actor_loop.code_parameters.parameters= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
 
