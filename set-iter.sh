@@ -2,29 +2,34 @@
 echo "Setting ITER"
 module purge
 
-
-
 export PATH=${PWD}/bin:${PATH}
 export PYTHONPATH=$PWD:$PYTHONPATH
 
-
 # setting environment for running examples
 
-
-
 # CHOOSE THE COMPILER
-if [ -z "$FCOMPILER" ]; then
+if [ -z "${FCOMPILER}" ]; then
     echo 'FCOMPILER not set'
     echo '=> Use GCC as default'
     export FCOMPILER=gfortran
 else
-   if [ "$FCOMPILER" == "ifort" ]; then
-      echo '$FCOMPILER set to intel'
+   if [ "${FCOMPILER}" == "ifort" ]; then
+      echo 'FCOMPILER set to intel'
     else
-      echo '$FCOMPILER set to gfortran'
+      echo 'FCOMPILER set to gfortran'
     fi
 fi
-
+if [ -z "${COMPILER}" ]; then
+    echo 'C++ COMPILER not set'
+    echo '=> Use g++ as default'
+    export COMPILER=g++
+else
+   if [ "${COMPILER}" == "icpc" ]; then
+      echo 'COMPILER set to Intel icpc'
+    else
+      echo 'COMPILER set to ${COMPILER}'
+    fi
+fi
 
 # INTEL
 if [ "$FCOMPILER" == "ifort" ]; then

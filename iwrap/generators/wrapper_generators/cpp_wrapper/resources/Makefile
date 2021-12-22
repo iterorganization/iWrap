@@ -22,8 +22,8 @@ CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 
 # main IMAS libs to be used
-CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp xmllib)
-CORE_LIBS=$(shell pkg-config --libs imas-cpp xmllib)
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp)
+CORE_LIBS=$(shell pkg-config --libs imas-cpp)
 
 # required libs published using pkg-config mechanism
 {% if code_description.settings.extra_libraries.pkg_config_defined %}
@@ -38,7 +38,10 @@ LIBS_PKGCONFIG_DEFINED=
 
 
 # required libs provided by user as a path
-LIBS_PATH_DEFINED={{ (code_description.settings.extra_libraries.path_defined or [] ) | join(' ')}}
+LIBS_PATH_DEFINED=
+{%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
+ ./extra-libs/{{ lib_path | basename }}
+{%- endfor %}
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED)
 LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(LIBS_PKGCONFIG_DEFINED_FLAGS) $(CODE_LIB_DEF)

@@ -11,6 +11,7 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
     def __init__(self):
         tk.Toplevel.__init__(self)
         self.__text_editor = None
+        self.__label_text = tk.StringVar(self, "Actor generation in progress")
         self.__initialize_window()
 
     def __initialize_window(self):
@@ -19,7 +20,8 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         self.geometry('800x600')
         self.resizable(width=True, height=False)
         self.title("iWrap - actor generation progress monitor")
-        tk.Label(self, text="Actor generation in progress").pack(pady=10)
+        tk.Label(self, text=self.__label_text.get(),
+                 textvariable=self.__label_text).pack(pady=10)
 
         # Textbox with scrollbar
         yscrollbar = ttk.Scrollbar(self)
@@ -35,17 +37,19 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         self.__text_editor.config(bg='#FFF', fg='#000', insertbackground='#000')
 
         # Readonly textbox - bind key press event
-        self.__text_editor.bind("<Key>", lambda e: "break")
+        self.__text_editor.bind("<Key>",
+                                lambda e: self.__append_text_editor("Interruption not implemented.\n"))
 
     def write(self, *args, **kwargs):
         self.__append_text_editor(*args)
-
+        if (str(*args).find('ALL DONE!') > -1):
+            self.__label_text.set("Generation complete")
+        if (str(*args).find(' FAILED!') > -1):
+            self.__label_text.set("Generation complete with errors")
+            
     def __append_text_editor(self, txt):
         self.__text_editor.insert(tk.END, txt)
         self.update_idletasks()
-
-
-
 
 
 

@@ -9,7 +9,7 @@
 {{ ids_macro.imports() }}
 #include "defs.h"
 #include "iwrap_tools.h"
-#include  "{{code_description.implementation.include_path.split('/')[-1]}}"
+#include  "{{code_description.implementation.include_path | basename }}"
 
 {% if code_description.implementation.subroutines.init %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

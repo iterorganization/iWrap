@@ -1,18 +1,24 @@
-CXX=g++
-CXXFLAGS=-std=c++11 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
+COMPILER ?= g++
+CXX = $(COMPILER)
+CXXFLAGS = -std=c++14 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
-LIBS =   `pkg-config --libs imas-cpp xmllib`
-INCLUDES = `pkg-config --cflags imas-cpp xmllib`
+LIBS =   `pkg-config --libs imas-cpp libxml-2.0`
+INCLUDES = `pkg-config --cflags imas-cpp libxml-2.0`
 
-all: libphysics_ii_cpp.a
+DBG ?= -DNDEBUG
+
+all: libphysics_ii_cpp.a libxmlIMAS.a
 
 # LIBRARY COMPILATION
 libphysics_ii_cpp.a: codeparam_input_physics.o physics_ii.o
-	@ar -rcs $@ $^
+	ar -rcs $@ $^
+
+libxmlIMAS.a: xmlIMAS.o
+	ar -cr $@ $^
 
 # RULES FOR ALL OBJECT FILES
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS)
+	$(CXX) $(CXXFLAGS) -c -o $@ $^ $(INCLUDES) $(LIBS) $(DBG)
 
 # TEST THE CONSISTENCY OF THE XML AND XSD FILES FOR INPUT PARAMETERS
 validate:
@@ -24,17 +30,4 @@ validate:
 # CLEAN DIRECTORY
 clean:
 	rm -f *.o *.a
-
-
-
-
-
-
-
-
-
-
-
-
-
 

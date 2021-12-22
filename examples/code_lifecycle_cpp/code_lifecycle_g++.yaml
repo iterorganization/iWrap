@@ -1,11 +1,13 @@
 code_description:
     implementation:
         subroutines:
-            main:   physics_ii_cpp
+            init:   init_code
+            main:   code_lifecycle
+            finalize: clean_up
         data_type: legacy
+        code_path: ./native_code/libcode_lifecycle_cpp.a
+        include_path: ./native_code/code_lifecycle.h
         programming_language: cpp
-        code_path: ./native_code/libphysics_ii_cpp.a
-        include_path: ./native_code/physics_ii.h
         code_parameters:
             parameters: ./input/input_physics.xml
             schema: ./input/input_physics.xsd
@@ -26,5 +28,6 @@ code_description:
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
-                    - xmllib
             path_defined:
+
+

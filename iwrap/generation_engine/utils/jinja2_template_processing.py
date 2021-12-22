@@ -1,9 +1,18 @@
 import logging
 import os
+from pathlib import Path
 from typing import Dict
 
 import jinja2
 
+def basename(path):
+    return os.path.basename(path)
+
+def dirname(path):
+    return os.path.dirname(path)
+
+def stemname(path):
+    return Path(path).stem
 
 def process_template_dir(
         template_pkg: str,
@@ -27,6 +36,12 @@ def process_template_dir(
         trim_blocks=True,
         lstrip_blocks = True
     )
+
+    # Adding useful filters not supported by JINJA2
+    jinja_env.filters['basename'] = basename
+    jinja_env.filters['dirname'] = dirname
+    jinja_env.filters['stemname'] = stemname
+
     templates = jinja_env.list_templates(filter_func= filter_func)
 
     for template_file in templates:
