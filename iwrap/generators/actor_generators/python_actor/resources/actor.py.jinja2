@@ -46,8 +46,8 @@ class {{actor_description.actor_name}}(ActorBaseClass):
 
         # Static code parameters
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-        default_parameters_file = '{{code_description.implementation.code_parameters.parameters.split('/')[-1]}}'
-        schema_file = '{{code_description.implementation.code_parameters.schema.split('/')[-1]}}'
+        default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
+        schema_file = '{{code_description.implementation.code_parameters.schema | basename}}'
     {% else %}
         default_parameters_file = ''
         schema_file = ''

@@ -32,7 +32,7 @@ code_description:
         compiler_cmd: g++
         extra_libraries:
             path_defined:
-            - /home/ITER/tribolp/Scratch/Source/iwrap/examples/level2_cpp/native_code/libxmlIMAS.a
+            - ./native_code/libxmlIMAS.a
             pkg_config_defined:
             - libxml-2.0
         mpi_compiler_cmd: ''
