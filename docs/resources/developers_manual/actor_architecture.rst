@@ -185,7 +185,7 @@ Scenario of transferring IDS from the top (workflow) layer to the lowest (native
 
 #. Wrapper layer (C++/Fortran)
 
-   a. Wrappers receives IDS metadata from binder
+   a. Wrapper receives IDS metadata from binder
 
    #. Wrapper uses metadata to read IDSes from IMAS AL
 
