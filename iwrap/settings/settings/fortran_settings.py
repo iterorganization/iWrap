@@ -129,5 +129,5 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict()
+        return super().to_dict(resolve_path, make_relative, project_root_dir)
 
