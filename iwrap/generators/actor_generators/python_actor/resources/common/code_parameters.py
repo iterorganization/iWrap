@@ -126,11 +126,11 @@ class CodeParameters:
         self.validate()
 
     def validate(self):
-        xml_schema_tree = etree.fromstring( self.__schema_str )
+        xml_schema_tree = etree.fromstring(bytes(self.__schema_str, encoding='utf8'))
         xml_schema_validator = etree.XMLSchema( xml_schema_tree )
 
         # Parse XML file:
-        xml_tree = etree.fromstring( self.__parameters_str )
+        xml_tree = etree.fromstring(bytes(self.__parameters_str, encoding='utf8'))
 
         # Perform validation:
         xml_schema_validator.assertValid( xml_tree )
