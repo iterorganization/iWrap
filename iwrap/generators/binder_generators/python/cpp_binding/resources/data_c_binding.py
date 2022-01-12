@@ -14,7 +14,8 @@ class StatusCType( ctypes.Structure ):
                 ("_message", ctypes.c_char_p),
                 )
     def __init__(self):
-        pass
+        self._code = 0
+        self._message = None
 
     @property
     def code(self):
