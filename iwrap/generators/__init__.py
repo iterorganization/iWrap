@@ -11,21 +11,21 @@ class AbstractGenerator( ABC ):
         self.__info_output_stream = info_output_stream
 
     @abstractmethod
-    def initialize(self, actor_settings: dict):
+    def initialize(self, actor_settings: dict = None):
         ...
 
     @abstractmethod
-    def generate(self, actor_settings: dict):
+    def generate(self, actor_settings: dict = None):
         ...
 
     @abstractmethod
-    def build(self, actor_settings: dict):
+    def build(self, actor_settings: dict = None):
         ...
 
     @abstractmethod
-    def install(self, actor_settings: dict):
+    def install(self, actor_settings: dict = None):
         ...
 
     @abstractmethod
-    def cleanup(self, actor_settings: dict):
+    def cleanup(self, actor_settings: dict = None):
         ...

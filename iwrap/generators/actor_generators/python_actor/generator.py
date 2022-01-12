@@ -54,7 +54,7 @@ class PythonActorGenerator(ActorGenerator):
         self.jinja_env: jinja2.Environment = None
         self.install_dir: str = None
 
-    def initialize(self):
+    def initialize(self, project_settings: dict = None):
         install_dir =  ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
             install_dir = PlatformSettings().directories.actor_install_dir
@@ -79,33 +79,16 @@ class PythonActorGenerator(ActorGenerator):
         print(project_settings)
         process_template_dir('iwrap.generators.actor_generators.python_actor', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
 
-
-        #print('TMP2: ', self.jinja_env.loader.provider.module_path)
-
-        #src = self.jinja_env.loader.provider.module_path + "/" + self.jinja_env.loader.package_path
-
-        # shutil.copytree(src,  self.install_dir, copy_function=self.copy_file)
-
-        #self.wrapper_generator.init(dictionary, generation_env)
-
-        #self.wrapper_generator.generate()
         self.__copy_code_params_files(project_settings)
 
-
-
-
-    def build(self):
-
+    def build(self, project_settings: dict):
         self.cleanup()
 
-
-
-
-    def install(self):
+    def install(self, project_settings: dict):
+        pass
         # cleanup leftovers (if any)
-        if os.path.isdir( self.install_dir ):
-            shutil.rmtree( self.install_dir )
-
+        # if os.path.isdir( self.install_dir ):
+        #    shutil.rmtree( self.install_dir )
 
 
     def __copy_code_params_files(self, project_settings:dict):

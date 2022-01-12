@@ -49,7 +49,7 @@ class CppBinderGenerator( BinderGenerator ):
     def configure(self, info_output_stream=sys.stdout):
         self.__info_output_stream = info_output_stream
 
-    def initialize(self):
+    def initialize(self, project_settings: dict):
         install_dir = ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
             install_dir = PlatformSettings().directories.actor_install_dir
@@ -85,11 +85,11 @@ class CppBinderGenerator( BinderGenerator ):
         #self.wrapper_generator.generate()
         #self.__copy_code_params_files(project_settings)
 
-    def build(self):
+    def build(self, project_settings: dict):
         ...
 
-    def install(self):
+    def install(self, project_settings: dict):
         ...
 
-    def cleanup(self):
+    def cleanup(self, project_settings: dict):
         ...

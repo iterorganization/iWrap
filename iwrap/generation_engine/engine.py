@@ -73,12 +73,16 @@ class Engine:
                                                                        project_root_dir=project_root_dir )
 
         project_settings_dict.update({'platform_settings': platform_settings_dict})
-        actor_language = Engine._active_generator.actor_language
+
+        actor_generator = Engine._active_generator
+        actor_language = actor_generator.actor_language
+        actor_generator.initialize(project_settings_dict)
+
         code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
         binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
-        binder_generator.initialize()
+        binder_generator.initialize(project_settings_dict)
         wrapper_generator = WrapperGeneratorRegistry.get_generator(code_language)
-        wrapper_generator.initialize()
+        wrapper_generator.initialize(project_settings_dict)
 
         generators = Engine._active_generator, binder_generator, wrapper_generator
         text_decoration = 20 * "-"
@@ -99,7 +103,7 @@ class Engine:
                 print(text_decoration, 'GENERATING', text_decoration, file=info_output_stream)
                 generator.generate(project_settings_dict)
                 print(text_decoration, 'BUILDING', text_decoration, file=info_output_stream )
-                generator.build()
+                generator.build(project_settings_dict)
                 print(text_decoration, 'GENERATION COMPLETE!', text_decoration, file=info_output_stream)
 
             except Exception as exc:

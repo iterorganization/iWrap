@@ -59,7 +59,7 @@ class CppWrapperGenerator(WrapperGenerator):
     def configure(self, info_output_stream=sys.stdout):
         self.__info_output_stream = info_output_stream
 
-    def initialize(self):
+    def initialize(self, project_settings: dict):
         install_dir =  ProjectSettings.get_settings().actor_description._install_dir
         if not install_dir:
             install_dir = PlatformSettings().directories.actor_install_dir
@@ -90,9 +90,9 @@ class CppWrapperGenerator(WrapperGenerator):
         self.__copy_include(project_settings)
         self.__copy_extra_libs(project_settings)
 
-    def build(self):
+    def build(self, project_settings: dict):
 
-        self.cleanup()
+        self.cleanup(project_settings)
 
         proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
@@ -106,7 +106,7 @@ class CppWrapperGenerator(WrapperGenerator):
 
 
 
-    def install(self):
+    def install(self, project_settings: dict):
         # cleanup leftovers (if any)
         if os.path.isdir( self.install_dir ):
             shutil.rmtree( self.install_dir )
@@ -146,7 +146,7 @@ class CppWrapperGenerator(WrapperGenerator):
         for library_path in libraries:
             shutil.copy( library_path, destination_dir )
 
-    def cleanup(self):
+    def cleanup(self, project_settings: dict):
         #self.temp_dir.cleanup()
         proc = subprocess.Popen( ['make', 'clean'],
                                  cwd=self.install_dir,
