@@ -1,5 +1,5 @@
 # Check the version from the git tag
-VERSION := $(shell git describe --abbrev=4 --dirty)-b
+VERSION := $(shell git describe --abbrev=4 --dirty)
 
 # Site configuration
 IWRAP_NAME ?= iwrap
