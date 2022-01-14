@@ -52,7 +52,8 @@ class MainWindow(tk.Tk, IWrapPane):
     def __init__(self):
         super().__init__()
 
-        self.title("iWrap")
+        import iwrap
+        self.title(f'iWrap : {iwrap.__version__}')
         self.minsize(600, 300)
         self.geometry('600x600')
 
