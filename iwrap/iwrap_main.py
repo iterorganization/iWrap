@@ -115,7 +115,7 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         return 0
 
     if args.file is None:
-        print( 'No code description file to proceed with. Nothing to do... Booooring...' )
+        print( 'No code description file to proceed with. Nothing to do... ' )
         return 0
 
     status = Engine().generate_actor( info_output_stream=sys.stdout )
