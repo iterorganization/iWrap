@@ -75,8 +75,6 @@ class PythonActorGenerator(ActorGenerator):
 
         #if os.path.isdir(self.install_dir):
         #    shutil.rmtree(self.install_dir)
-
-        print(project_settings)
         process_template_dir('iwrap.generators.actor_generators.python_actor', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
 
         self.__copy_code_params_files(project_settings)
