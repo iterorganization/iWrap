@@ -1,6 +1,9 @@
 import importlib
 import pkgutil
+import logging
 
+# Class logger
+__logger = logging.getLogger( __name__ )
 
 def discover_generators(builtin_pkg_name: str, plugin_pkg_name: str, generator_base_class):
     generators_list = []
@@ -11,7 +14,7 @@ def discover_generators(builtin_pkg_name: str, plugin_pkg_name: str, generator_b
             importlib.import_module( name )
 
     except Exception as exc:
-        print( f'INFO: No built-in {generator_base_class.__name__} plug-ins have been loaded:\n{exc}' )
+        __logger.info(f'No built-in {generator_base_class.__name__} plug-ins have been loaded:\n{exc}' )
 
     try:
         generator_module = importlib.import_module( plugin_pkg_name )
@@ -20,7 +23,7 @@ def discover_generators(builtin_pkg_name: str, plugin_pkg_name: str, generator_b
             importlib.import_module( name )
 
     except Exception as exc:
-        print( f'INFO: No external {generator_base_class.__name__} plug-ins have been found' )
+        __logger.info(f'INFO: No external {generator_base_class.__name__} plug-ins have been found' )
 
     generators_class_list = generator_base_class.__subclasses__()
 
