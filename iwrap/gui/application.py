@@ -12,6 +12,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.menu import MenuBar
 
 from iwrap.gui.settings.main_pane import SettingsMainPane
+from iwrap.settings.project import ProjectSettings
 
 
 class ButtonPane(ttk.Frame):
@@ -22,13 +23,18 @@ class ButtonPane(ttk.Frame):
         super().__init__(master, borderwidth=1, relief="solid")
         self.master = master
         self.update_method = update_method
+        self.install_dir = tk.StringVar()
+
         close_button = ttk.Button(self, text='Close', command=self.winfo_toplevel().destroy)
-        close_button.pack(side=tk.RIGHT, padx=10, pady=5)
+        close_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
         generate_button = ttk.Button(self, text='Generate', command=self.generate_action)
-        generate_button.pack(side=tk.RIGHT, padx=10, pady=5)
+        generate_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
-        ttk.Label(self, text="* - mandatory field").pack(side=tk.LEFT, padx=10, pady=5)
+        ttk.Label(self, text="install dir:").pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.install_dir_entry = ttk.Entry(self, textvariable=self.install_dir)
+        self.install_dir_entry.pack(side=tk.LEFT, pady=5, padx=5, expand=True, fill=tk.X)
 
     def generate_action(self):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
@@ -77,8 +83,10 @@ class MainWindow(tk.Tk, IWrapPane):
         self._logo_img: tk.PhotoImage = self._load_image(resource="imas_transparent_logo.gif", resize=(True, (6, 6)))
         ttk.Label(top_pane, image=self._logo_img).pack(side=tk.RIGHT, padx=(15, 20), pady=(10, 0))
 
-        button_pane = ButtonPane(main_pane, self.update_settings)
-        button_pane.pack(fill=tk.X, side=tk.BOTTOM)
+        self.button_pane = ButtonPane(main_pane, self.update_settings)
+        self.button_pane.pack(fill=tk.X, side=tk.BOTTOM)
+
+        ttk.Label(main_pane, text="* - mandatory field").pack(fill=tk.X, side=tk.BOTTOM, padx=10, pady=5)
 
         self.settings_pane = SettingsMainPane(main_pane)
         self.settings_pane.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
@@ -102,10 +110,12 @@ class MainWindow(tk.Tk, IWrapPane):
             pass
 
     def update_settings(self):
+        ProjectSettings.get_settings().actor_description.set_install_dir(self.button_pane.install_dir.get())
         self.actor_description.update_settings()
         self.settings_pane.update_settings()
 
     def reload(self):
+        self.button_pane.install_dir.set(ProjectSettings.get_settings().actor_description.get_install_dir())
         self.actor_description.reload()
         self.settings_pane.reload()
 
