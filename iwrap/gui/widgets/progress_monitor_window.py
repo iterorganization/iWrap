@@ -13,6 +13,11 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         self.__text_editor = None
         self.__label_text = tk.StringVar(self, "Actor generation in progress")
         self.__initialize_window()
+        self.__yscroll_touched = False
+
+    def __set_yscrollbar(self, *args):
+        self.__text_editor.yview(*args)
+        self.__yscroll_touched = True
 
     def __initialize_window(self):
         self.transient(self.master)
@@ -30,7 +35,7 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         xscrollbar.pack(side=tk.BOTTOM, fill=tk.X, pady=(5, 2), padx=2)
         self.__text_editor = tk.Text(self, wrap=tk.NONE)
         self.__text_editor.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
-        yscrollbar.config(command=self.__text_editor.yview)
+        yscrollbar.config(command=self.__set_yscrollbar)
         xscrollbar.config(command=self.__text_editor.xview)
         self.__text_editor['yscrollcommand'] = yscrollbar.set
         self.__text_editor['xscrollcommand'] = xscrollbar.set
@@ -49,7 +54,8 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
             
     def __append_text_editor(self, txt):
         self.__text_editor.insert(tk.END, txt)
-        self.__text_editor.see( tk.END )
+        if not self.__yscroll_touched:
+            self.__text_editor.see( tk.END )
         self.update_idletasks()
 
 
