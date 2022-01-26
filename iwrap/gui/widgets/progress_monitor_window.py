@@ -44,6 +44,8 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
         # Readonly textbox - bind key press event
         self.__text_editor.bind("<Key>",
                                 lambda e: self.__append_text_editor("Interruption not implemented.\n"))
+        # Make window modal
+        self.grab_set()
 
     def write(self, *args, **kwargs):
         self.__append_text_editor(*args)
