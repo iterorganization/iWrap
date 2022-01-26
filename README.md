@@ -37,7 +37,8 @@ Both scripts share the same set arguments and switches
 ```This is a code block.
 shell>iwrap -h
 usage: iwrap [-h] [-a ACTOR_NAME] [-t ACTOR_TYPE] [-d DATA_TYPE] [-f FILE]
-             [--list-actor-types] [--list-actor-details [ACTOR_TYPE]] [-v]
+             [-i INSTALL_DIR] [--list-actor-types]
+             [--list-actor-details [ACTOR_TYPE]] [-v]
 
 iWrap - a modular component generator, used for creating IMAS actors from
 physics models.
@@ -52,13 +53,16 @@ Actor generation:
                         type of an actor to be generated
   -d DATA_TYPE, --data-type DATA_TYPE
                         type of data to be used by the actor
-  -f FILE, --file FILE  a path to code description *.yaml file
+  -f FILE, --file FILE  a path to code/actor description *.yaml file
+  -i INSTALL_DIR, --install-dir INSTALL_DIR
+                        actor installation directory
 
 Additional information:
   --list-actor-types    lists registered actor types that can be generated
   --list-actor-details [ACTOR_TYPE]
                         lists details of given actor type generator
   -v, --version         show program's version number and exit
+
 
 For more information, visit <https://confluence.iter.org/display/IMP/IMAS+component+generator>.
 ```
