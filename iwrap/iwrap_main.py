@@ -101,7 +101,7 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
             ProjectSettings.get_settings().project_file_path = file.name
 
     if args.install_dir:
-        ProjectSettings.get_settings().actor_description.install_dir = args.install_dir
+        ProjectSettings.get_settings().actor_description._install_dir = args.install_dir
 
     if args.actor_name:
         ProjectSettings.get_settings().actor_description.actor_name = args.actor_name
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
     # commandline
 
-    main( ['-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=True )
+    main( ['-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=False )
     #main( ['-a', 'core2dist_mpi', '-f', '../examples/cp2ds-mpi/cp2ds-mpi.yaml'], is_commandline_mode=True )
     # main( ['-h'] )
     # main(['--list-actor-types'])
