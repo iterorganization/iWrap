@@ -105,6 +105,17 @@ class CBinder(Binder):
     def finalize(self):
         self.ids_converter_class.finalize()
 
+    def __check_inputs(self, ids_arguments_list):
+        import functools
+
+        inputs_number = functools.reduce(lambda nbr, arg: nbr + 1 if arg.intent == Argument.IN else nbr,
+                                         self.arg_metadata_list, 0 )
+
+        # check if a number of provided arguments is correct
+        if inputs_number != len(ids_arguments_list):
+            raise RuntimeError(f'Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})')
+
+
     def __get_wrapper_function(self, function_name: str):
 
         actor_name = self.actor.name
@@ -197,6 +208,9 @@ class CBinder(Binder):
 
         self.__logger.debug( "RUNNING STDL" )
 
+        # check if a number of provided arguments is correct
+        self.__check_inputs(ids_list)
+
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
@@ -254,6 +268,10 @@ class CBinder(Binder):
         """
         """
         print( 'RUN MODE: ', str( self.runtime_settings.run_mode ) )
+
+        # check if a number of provided arguments is correct
+        self.__check_inputs(input_idses)
+
         ids_converters_list, code_parameters_converter, status_info_converter = self.get_converters( input_idses, code_parameters)
 
         c_arglist = self.get_native_arguments( ids_converters_list, code_parameters_converter, status_info_converter )
