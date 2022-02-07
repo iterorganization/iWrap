@@ -86,19 +86,16 @@ class Engine:
 
         generators = Engine._active_generator, binder_generator, wrapper_generator
 
-        # Detect GUI or terminal, used below to update window labels:
-        info_output_type = str(type(info_output_stream))
-        info_output_gui = False
-        if info_output_type.find('ProgressMonitorWindow') > -1:
-            info_output_gui = True
-
         text_decoration = 20 * "-"
         print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
         try:
             ProjectSettings.get_settings().validate( self )
         except Exception as exc:
             print( 'VALIDATION FAILED!', file=info_output_stream )
-            if info_output_gui: info_output_stream.setLabel('Actor generation stopped on error')
+            try:
+                info_output_stream.set_label('Actor generation stopped on error')
+            except AttributeError:
+                pass # ignore if the current stream does not implement set_label
             print( exc, file=info_output_stream )
             traceback.print_tb( exc.__traceback__ )
             return 1
@@ -117,12 +114,18 @@ class Engine:
             except Exception as exc:
                 print( 'GENERATION FAILED!', file=info_output_stream )
                 print( exc, file=info_output_stream )
-                if info_output_gui: info_output_stream.setLabel('Actor generation stopped on error')
+                try:
+                    info_output_stream.set_label('Actor generation stopped on error')
+                except AttributeError:
+                    pass # ignore if the current stream does not implement set_label
                 traceback.print_tb( exc.__traceback__ )
                 return 1
 
         print( 'ALL DONE!', file=info_output_stream )
-        if info_output_gui: info_output_stream.setLabel('Actor generation finished successfully')
+        try:
+            info_output_stream.set_label('Actor generation finished successfully')
+        except AttributeError:
+            pass # ignore if the current stream does not implement set_label
         return 0
 
     @classmethod

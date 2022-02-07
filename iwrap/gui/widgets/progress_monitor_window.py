@@ -56,7 +56,7 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
             self.__text_editor.see( tk.END )
         self.update_idletasks()
 
-    def setLabel(self, txt):
+    def set_label(self, txt):
         self.__label_text.set(txt)
 
 
