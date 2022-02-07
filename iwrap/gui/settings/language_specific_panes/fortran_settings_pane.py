@@ -269,7 +269,7 @@ class PkgConfigPane:
             name = sys_lib
             system_lib_dict = self.pkg_config.get_pkg_config(name)
             if system_lib_dict is None:
-                messagebox.showwarning("Warning", f"Unknown system library.")
+                messagebox.showwarning("Warning", f"{name}: Unknown system library.")
                 continue
             else:
                 info = system_lib_dict['info']
