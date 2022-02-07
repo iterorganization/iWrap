@@ -49,10 +49,6 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
 
     def write(self, *args, **kwargs):
         self.__append_text_editor(*args)
-        if (str(*args).find('ALL DONE!') > -1):
-            self.__label_text.set("Generation complete")
-        if (str(*args).find(' FAILED!') > -1):
-            self.__label_text.set("Generation complete with errors")
             
     def __append_text_editor(self, txt):
         self.__text_editor.insert(tk.END, txt)
@@ -60,6 +56,8 @@ class ProgressMonitorWindow(tk.Toplevel, TextIOBase):
             self.__text_editor.see( tk.END )
         self.update_idletasks()
 
+    def setLabel(self, txt):
+        self.__label_text.set(txt)
 
 
 
