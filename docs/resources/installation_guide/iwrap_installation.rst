@@ -29,11 +29,6 @@ iWrap requirements
 
         module load lxml
 
-    * *XMLLIB:*
-    .. code-block:: shell
-
-        module load XMLlib
-
     * *tomli:*
     .. code-block:: shell
 

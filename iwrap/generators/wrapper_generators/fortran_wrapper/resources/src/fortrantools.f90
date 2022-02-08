@@ -219,14 +219,14 @@ FUNCTION read_codeparams_schema(xsd_file)  RESULT (xsd_string)
 END FUNCTION read_codeparams_schema
 
 
-FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)    
+FUNCTION convert_codeparams(code_params)  RESULT (al_code_params)    
     use iso_c_binding, ONLY: C_PTR
     use ids_schemas, ONLY: ids_parameters_input
     implicit none
 
 
     type(code_parameters_t) :: code_params
-    type(ids_parameters_input) :: xmllib_code_params
+    type(ids_parameters_input) :: al_code_params
 
     type(C_PTR)      :: c_str_ptr  
 
@@ -242,13 +242,13 @@ FUNCTION convert_codeparams(code_params)  RESULT (xmllib_code_params)
     if (mod(string_size,132)/=0) then
     iloopmax = iloopmax + 1
     endif
-    allocate(xmllib_code_params%parameters_value(iloopmax))
+    allocate(al_code_params%parameters_value(iloopmax))
     
     call C_F_POINTER(c_str_ptr, f_char_arr, (/string_size/))
-    xmllib_code_params%parameters_value = transfer(f_char_arr, xmllib_code_params%parameters_value)
+    al_code_params%parameters_value = transfer(f_char_arr, al_code_params%parameters_value)
     
     if(mod(string_size,132)/=0) then
-    xmllib_code_params%parameters_value(iloopmax)(mod(string_size,132)+1:132) = ' '
+    al_code_params%parameters_value(iloopmax)(mod(string_size,132)+1:132) = ' '
     endif
 
 END FUNCTION convert_codeparams

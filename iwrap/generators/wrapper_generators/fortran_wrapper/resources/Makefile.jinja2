@@ -25,8 +25,8 @@ CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 # main IMAS libs to be used
-CORE_LIBS_FLAGS:= $(shell pkg-config --cflags "imas-$(FC)" xmllib)
-CORE_LIBS:=$(shell pkg-config --libs "imas-$(FC)" xmllib)
+CORE_LIBS_FLAGS:= $(shell pkg-config --cflags "imas-$(FC)")
+CORE_LIBS:=$(shell pkg-config --libs "imas-$(FC)")
 
 # required libs published using pkg-config mechanism
 {% if code_description.settings.extra_libraries.pkg_config_defined %}
