@@ -2,6 +2,7 @@ import os
 import logging
 import sys
 from abc import ABC, abstractmethod
+from typing import Union, List, Any
 
 from .code_parameters import CodeParameters
 
@@ -24,11 +25,11 @@ class Actor(ABC):
         ...
 
     @abstractmethod
-    def run(self, *args)->None:
+    def run(self, *args) -> Union[List[Any], Any]:
         ...
 
     @abstractmethod
-    def finalize(self):
+    def finalize(self) -> None:
         ...
 
 class ActorBaseClass(Actor):
