@@ -44,15 +44,13 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         self.arguments.append(argument)
     {% endfor %}
 
-        # Static code parameters
+
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+        # Static code parameters
         default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
         schema_file = '{{code_description.implementation.code_parameters.schema | basename}}'
-    {% else %}
-        default_parameters_file = ''
-        schema_file = ''
-    {% endif %}
         self._ActorBaseClass__code_parameters = CodeParameters(default_parameters_file, schema_file)
+    {% endif %}
 
         self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
 

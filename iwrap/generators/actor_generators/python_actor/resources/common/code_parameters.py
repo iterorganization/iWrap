@@ -108,11 +108,15 @@ class CodeParameters:
         return file_str
 
     def initialize(self):
+        # actor with parameters MUST have default parameters
         if not self.__default_parameters_path:
             return
 
-        schema_path = Path( self.__default_params_dir, Path(self.__schema_path))
-        self.__schema_str = self._read_file( schema_path )
+        # Read XSD (if not yet loaded)
+        if not self.__schema_str:
+            schema_path = Path( self.__default_params_dir, Path(self.__schema_path))
+            self.__schema_str = self._read_file( schema_path )
+
 
         if self.__new_path_set:
             if self.parameters_path:

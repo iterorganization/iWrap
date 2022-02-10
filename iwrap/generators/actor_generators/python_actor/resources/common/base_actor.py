@@ -58,6 +58,7 @@ class ActorBaseClass(Actor):
 
     def __init__(self):
         self.output_stream = sys.stdout
+        self.is_mpi_code = False
         self.__runtime_settings: RuntimeSettings = RuntimeSettings()
         self.sandbox: Sandbox = None
         self.arguments = []
@@ -88,9 +89,12 @@ class ActorBaseClass(Actor):
             runtime_settings (RuntimeSettings): Path to a XML file with code parameters
             code_parameters (CodeParameters): Path to a XSD file with schema definition for code parameters file
         """
+
         code_parameters_str = None
-        if code_parameters:
-            self.__code_parameters = code_parameters
+        if self.__code_parameters:
+            if code_parameters:
+                self.__code_parameters = code_parameters
+
             self.__code_parameters.initialize()
             code_parameters_str = self.__code_parameters.parameters
 
