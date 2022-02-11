@@ -45,8 +45,8 @@ LIBS_PATH_DEFINED=
  ./extra-libs/{{ lib_path | basename }}
 {%- endfor %}
 
-INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED)
-LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(LIBS_PKGCONFIG_DEFINED_FLAGS) $(CODE_LIB_DEF)
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
+LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(CODE_LIB_DEF)
 
 {% if code_description.settings.mpi_compiler_cmd   %}
 
@@ -57,32 +57,22 @@ FC=$(MPIFC)
 
 all: ../bin/$(ACTOR_NAME).exe   ../lib/lib$(ACTOR_NAME).so
 
-../bin/$(ACTOR_NAME).exe: src/standalone.f90 build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
+../bin/$(ACTOR_NAME).exe: src/standalone.f90 build/defs.o build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../bin
-	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
 
-build/defs.o: src/defs.f90
+build/%.o: src/%.f90
 	@echo "  * $< -> $@"
 	@mkdir -p ./build
 	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-build/RWTools.o: src/RWTools.f90 build/defs.o
-	@echo "  * $< -> $@"
-	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
-
-build/fortrantools.o: src/fortrantools.f90 build/defs.o
-	@echo "  * $^ -> $@"
-	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
-
-../lib/lib$(ACTOR_NAME).so: build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
+../lib/lib$(ACTOR_NAME).so: build/defs.o build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
 	$(FC) $(FCLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
 
-build/fortran_wrapper.o: src/fortran_wrapper.f90 build/fortrantools.o
-	@echo "   * $< -> $@"
-	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
+
 
 clean:
 	-rm -f *.o build/* ../lib/*.so ../bin/*

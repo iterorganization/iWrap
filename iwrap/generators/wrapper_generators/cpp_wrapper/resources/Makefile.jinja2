@@ -43,8 +43,8 @@ LIBS_PATH_DEFINED=
  ./extra-libs/{{ lib_path | basename }}
 {%- endfor %}
 
-INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED)
-LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(LIBS_PKGCONFIG_DEFINED_FLAGS) $(CODE_LIB_DEF)
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
+LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED)  $(CODE_LIB_DEF)
 
 
 all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
@@ -52,29 +52,18 @@ all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
 ../bin/$(ACTOR_NAME).exe: src/standalone.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../bin
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
 
 ../lib/lib$(ACTOR_NAME).so: build/cpp_wrapper.o build/serialization_tools.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
-	$(CXX) $(CXXFLAGS) -shared -o $@  -Wl,--start-group $^  $(LIBS) -Wl,--end-group  #-Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/ -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/opt/
+	$(CXX) $(CXXFLAGS) -shared -o $@  -Wl,--start-group $^  $(LIBS) -Wl,--end-group  -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
 
-build/cpp_wrapper.o: src/cpp_wrapper.cpp build/iwrap_tools.o
+build/%.o: src/%.cpp
 	@echo "   * $^ -> $@"
 	@mkdir -p build
 	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-build/iwrap_tools.o: src/iwrap_tools.cpp build/serialization_tools.o
-	@echo "   * $^ -> $@"
-	@mkdir -p build
-	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
-
-build/serialization_tools.o: src/serialization_tools.cpp
-	@echo "   * $^ -> $@"
-	@mkdir -p build
-	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
-
-
-clean: 
+clean:
 	-rm -f *.o build/* ../lib/*.so ../bin/*
 
