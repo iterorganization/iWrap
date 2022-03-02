@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
      {% if code_description.implementation.subroutines.init %}
     // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    init_{{actor_description.actor_name}}_wrapper(
+    init_{{actor_description.actor_name | lower}}_wrapper(
         {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
                 &code_params,
         {% endif %}
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     db_entry_array = open_db_entries(db_entry_desc_array, IDS_ARGS_NO);
 
     //!!!!!!!!! Cpp wrapper !!!!!!!!!!!!!!!
-    {{actor_description.actor_name}}_wrapper(
+    {{actor_description.actor_name | lower}}_wrapper(
 {% for argument in code_description.arguments %}
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 
      {% if code_description.implementation.subroutines.finalize %}
     // - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    finish_{{actor_description.actor_name}}_wrapper(&status_info);
+    finish_{{actor_description.actor_name | lower }}_wrapper(&status_info);
     handle_status_info(status_info, "{{actor_description.actor_name}}");
     {% endif %}
 

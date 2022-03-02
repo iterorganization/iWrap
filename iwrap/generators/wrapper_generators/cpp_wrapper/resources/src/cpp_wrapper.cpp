@@ -15,7 +15,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void init_{{actor_description.actor_name}}_wrapper(
+extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters   %}
                 code_parameters_t* code_params,
 {% endif %}
@@ -53,7 +53,7 @@ extern "C" void init_{{actor_description.actor_name}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void finish_{{actor_description.actor_name}}_wrapper(
+extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(
                 status_t* status_info)
 {
     int status_code = 0;
@@ -75,7 +75,7 @@ extern "C" void finish_{{actor_description.actor_name}}_wrapper(
 //                                   NATIVE MAIN SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-extern "C" void {{actor_description.actor_name}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 {% for argument in code_description.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
