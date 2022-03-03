@@ -2,8 +2,6 @@ import importlib
 import pkgutil
 from typing import List, Set
 
-from iwrap.generation_engine import utils
-
 
 class IDSConverter():
 
