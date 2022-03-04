@@ -19,11 +19,14 @@ class Sandbox:
                 raise ValueError(f"A path must be set in sandbox MANUAL mode and is empty for actor {self.actor.name}")
 
             path = Path(self.sandbox_settings.path)
-            if not path.is_dir():
-                raise ValueError(f"Actor {self.actor.name}: Sandbox path points to a file and not directory ({path})")
 
             if not path.exists():
                 raise ValueError(f"Actor {self.actor.name}: Sandbox path points to non existing directory ({path})" )
+
+            if not path.is_dir():
+                raise ValueError(f"Actor {self.actor.name}: Sandbox path points to a file and not directory ({path})")
+
+
             self.path =  self.sandbox_settings.path
         else:
             actor_id = self.actor.unique_id
@@ -41,7 +44,7 @@ class Sandbox:
 
 
     def create(self):
-        self.path.mkdir( parents=True, exist_ok=True)
+        Path(self.path).mkdir( parents=True, exist_ok=True)
 
     def clean(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
