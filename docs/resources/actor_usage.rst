@@ -432,6 +432,31 @@ Sandbox attributes:
         of an actor and after other finalisation actions of the actor (so, sandbox should be available during
         the whole workflow run)
 
+    -   ``SandboxLifeTime.PERSISTENT`` - content of the sandbox directory is preserved and never cleaned up
+
+-   Import of enumerated values:
+
+    .. code-block:: Python
+
+      from <actor name>.common.runtime_settings import SandboxLifeTime, SandboxMode
+
+-   Example of the usage:
+
+   .. code-block:: Python
+
+       from <actor name>.common.runtime_settings import SandboxMode
+
+       ...
+       # gets runtime settings
+       runtime_settings = actor_object.get_runtime_settings()
+
+       #configures runtime settings
+       runtime_settings.sandbox.mode = SandboxMode.MANUAL
+       runtime_settings.sandbox.path = '/path/to/existing/sandbox/directory'
+
+       # updates runtime_settings
+       actor_object.initialize(runtime_settings=runtime_settings)
+
 
 IDS storage settings
 =========================================================================================
