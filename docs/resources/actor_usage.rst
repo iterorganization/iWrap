@@ -513,7 +513,7 @@ The workflow example
     import imas,os
 
     from physics_ii.actor import physics_ii
-    from physics_ii.common.runtime_settings import RunMode, DebugMode
+    from physics_ii.common.runtime_settings import RunMode, DebugMode, SandboxLifeTime
 
 
 
