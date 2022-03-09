@@ -89,7 +89,7 @@ class CBinder(Binder):
         self.actor_dir = actor.actor_dir
 
         self.ids_converter_class.initialize(actor.is_standalone_run(), self.runtime_settings.ids_storage)
-        actor_name = self.actor.name
+        actor_name = self.actor.name.lower()
         if self.actor.code_description['implementation']['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
             self.wrapper_init_func = self.__get_wrapper_function(sbrt_name)
