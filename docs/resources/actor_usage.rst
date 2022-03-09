@@ -319,7 +319,7 @@ Debug mode
        runtime_settings = actor_object.get_runtime_settings()
 
        #configures runtime settings
-       runtime_settings.run_mode = DebugMode.STANDALONE
+       runtime_settings.debug_mode = DebugMode.STANDALONE
 
        # updates runtime_settings
        actor_object.initialize(runtime_settings=runtime_settings)
