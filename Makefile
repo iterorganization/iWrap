@@ -16,7 +16,7 @@ PY_VER := $(if $(PY_CMD),$(shell $(PY_CMD) -c 'print(".".join(str(i) for i in __
 INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
-INSTALL_MOD ?= $(IMAS_HOME)/etc/modulefiles
+INSTALL_MOD ?= $(HOME)/IWRAP_MODULE_DIR/
 
 all: iwrap_build
 install: install_dir install_iwrap install_module
