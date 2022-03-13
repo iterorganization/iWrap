@@ -45,7 +45,7 @@ install_module: build/module/$(MODULEFILE)
 	install -d $(dir $(INSTALL_MOD)/$(MODULEFILE))
 	install $< $(INSTALL_MOD)/$(MODULEFILE)
 	@echo -e "\n\tINSTALL_MODULE FINISHED\n"
-	@echo -e "\t iWrap ENVIRONMENT MODULE installed in:\n\t$(INSTALL_MOD)$(MODULEFILE)\n"
+	@echo -e "\t iWrap ENVIRONMENT MODULE installed in:\n\t$(INSTALL_MOD)/$(MODULEFILE)\n"
 
 build/module/$(MODULEFILE): iwrap/resources/module/iWrap.in
 	install -d $(dir $@)
