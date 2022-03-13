@@ -34,6 +34,20 @@ class CleanCommand(Command):
         subprocess.run(['rm', '-vrf', './build', './dist']+glob('./*.pyc')+glob('./*.tgz')+glob('./*egg-info/'))
 
 
+def list_docs_data_files(path_to_docs: str):
+    search_path = path_to_docs
+    search_results = list(Path(search_path).rglob("**/*.*"))
+
+    docs_files = []
+
+    for path in search_results:
+        parent = str(path.relative_to(search_path).parent)
+        parent = 'docs/' + parent if parent != '.' else 'docs'
+        file = str(path)
+        docs_files.append((parent, [file]))
+
+    return docs_files
+
 # Workaround for https://github.com/pypa/pip/issues/7953
 # Cannot install into user site directory with editable source
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
@@ -85,6 +99,7 @@ if __name__ == "__main__":
                 'iwrap-gui = bin.run:gui',
                 'iwrap = bin.run:cmd_line'
             ]
-        }
+        },
+        data_files=list_docs_data_files(path_to_docs="./docs/_build/html/")
     )
 
