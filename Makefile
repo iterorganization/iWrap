@@ -71,6 +71,7 @@ uninstall_module:
 help: install_dir
 	@echo "USAGE: Run 'make all' to build iWrap. Run 'make install' to install."
 	@echo -e "\tHINT: provide a INSTALL_DIR=[DIRECTORY...] with make command to specify installation directory."
+	@echo -e "\tHINT: provide a INSTALL_MOD=[DIRECTORY...] with make command to specify a installation directory for iWrap module file."
 	@echo "Do this make for each python build/installation."
 	@echo -e '\n- Use the following flags to configure the build/install, which may be set'
 	@echo "  previously on the command line for current environment:"
