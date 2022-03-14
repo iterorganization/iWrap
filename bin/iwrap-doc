@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "LAUNCHED IWRAP DOCUMENTATION"
+
+if command -v firefox &> /dev/null
+then
+	echo "USING FIREFOX BROWSER"
+	firefox $IWRAP_HOME/docs/index.html
+else
+	echo "USING DEAFULT BROWSER"
+	xdg-open $IWRAP_HOME/docs/index.html
+fi
