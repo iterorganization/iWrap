@@ -38,14 +38,16 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         #
-        #actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
-        #if actor_run_mode == 'STANDALONE':
-        print( 'Running STANDALONE version. (Even if NORMAL was selected)' )
         runtime_settings = self.actor_cp2ds_mpi.get_runtime_settings()
-        runtime_settings.run_mode = RunMode.STANDALONE
+        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        if actor_run_mode == 'STANDALONE':
+            print( 'Running STANDALONE version. (Even if NORMAL was selected)' )
+            runtime_settings.run_mode = RunMode.STANDALONE
+        else:
+            print( 'MPI is always run as STANDALONE. (Even if NORMAL was selected)' )
 
-        # self.actor_cp2ds_mpi.runtime_settings.mpi.mpi_nodes = 3
-        # self.actor_cp2ds_mpi.initialize()
+        runtime_settings.mpi.mpi_processes = 3
+
         code_parameters = self.actor_cp2ds_mpi.get_code_parameters()
         self.actor_cp2ds_mpi.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
     

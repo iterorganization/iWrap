@@ -106,8 +106,18 @@ class RuntimeSettings:
         def mpi_default_options(self):
             return self._default_options
 
+
+        @property
+        def mpi_nodes(self):
+            raise AttributeError( '"mpi_nodes" attribute has been removed please use "mpi_processes" instead')
+
+        @mpi_nodes.setter
+        def mpi_nodes(self, value):
+            raise AttributeError( '"mpi_nodes" attribute has been removed please use "mpi_processes" instead')
+
+
         def __init__(self):
-            self.mpi_nodes = 1
+            self.mpi_processes = 1
             self.mpi_runner = None
             self._default_runner = None
             self._default_options = None
