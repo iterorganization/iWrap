@@ -97,9 +97,10 @@ if __name__ == "__main__":
         entry_points={
             'console_scripts': [
                 'iwrap-gui = bin.run:gui',
-                'iwrap = bin.run:cmd_line'
+                'iwrap = bin.run:cmd_line',
             ]
         },
+	scripts=['bin/iwrap-doc'],
         data_files=list_docs_data_files(path_to_docs="./docs/_build/html/")
     )
 
