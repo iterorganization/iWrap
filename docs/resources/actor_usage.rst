@@ -328,7 +328,7 @@ Debug mode
 MPI settings
 =========================================================================================
 
--   *mpi_nodes* - number of MPI nodes to be used (default 1)
+-   *mpi_processes* - number of MPI processes to be used (default 1)
 
 -   *mpi_default_runner* - default MPI runner (``mpiexec``, ``mpirun``, etc) to be used. Its value is platform dependent,
     read from iWrap configuration. Read only attribute
@@ -348,7 +348,7 @@ MPI settings
        runtime_settings = actor_object.get_runtime_settings()
 
        #configures runtime settings
-       runtime_settings.mpi.mpi_nodes = 4
+       runtime_settings.mpi.mpi_processes = 4
        runtime_settings.mpi.mpi_runner = 'mpirun'
        runtime_settings.mpi.mpi_options = '-tv'
 

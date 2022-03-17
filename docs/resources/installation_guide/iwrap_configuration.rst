@@ -102,7 +102,7 @@ Example of configuration file
 
         mpi_jobs:
             runner: mpiexec
-            options: -np ${mpi_nodes}
+            options: -np ${mpi_processes}
 
         debugger:
             cmd: totalview
