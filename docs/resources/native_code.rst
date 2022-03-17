@@ -260,6 +260,11 @@ Arguments
    -  Defined
       as: \   character(len=:), pointer, intent(OUT)
 
+
+.. warning::
+   Only XML parameters are passed to native code, so only ``parameters_value`` field
+   of ``ids_parameters_input`` derived type is valid !
+
 Example
 -----------------------
 
@@ -395,6 +400,11 @@ Arguments shall be provided in a strict order:
    -  Defined as: ``std::string&``
 
 No INOUT arguments are allowed!
+
+
+.. warning::
+   Only XML parameters are passed to native code, so only ``parameters`` field
+   of ``IdsNs::codeparam_t`` structure type is valid !
 
 Example
 -----------------------
