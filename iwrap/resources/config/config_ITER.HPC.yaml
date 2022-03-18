@@ -6,7 +6,7 @@ platform_settings:
 
     batch_jobs:
         runner: sbatch
-        options: --nodes=${batch_nodes} --wait --wrap=
+        options: --nodes=${batch_nodes} --wait --wrap="${exec}"
 
     mpi_jobs:
         runner: mpiexec
