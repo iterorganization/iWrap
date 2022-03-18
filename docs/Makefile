@@ -41,7 +41,7 @@ setconfig:
 	echo ${VERSION_KEY}: ${VERSION} >> ${YAML_FILE}
 
 clean:
-	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/html/ $(SOURCEDIR)/_static/ $(YAML_FILE)
+	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/html/ $(SOURCEDIR)/_static/ $(YAML_FILE) $(SOURCEDIR)/doctrees/
 
 html_to_md:
 	python3 $(SOURCEDIR)/html_to_rst.py
