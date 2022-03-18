@@ -4,7 +4,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = .
 GENERATEDDIR  = docstring_files
 PROJECT_PATH  = ../iwrap
 
@@ -41,13 +41,13 @@ setconfig:
 	echo ${VERSION_KEY}: ${VERSION} >> ${YAML_FILE}
 
 clean:
-	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/_build/ $(SOURCEDIR)/_static/ $(YAML_FILE)
+	rm -rf $(GENERATEDDIR) $(SOURCEDIR)/html/ $(SOURCEDIR)/_static/ $(YAML_FILE)
 
 html_to_md:
 	python3 $(SOURCEDIR)/html_to_rst.py
 
 copy_attachments:
-	cp -r $(SOURCEDIR)/resources/attachments $(SOURCEDIR)/_build/html/resources/.
+	cp -r $(SOURCEDIR)/resources/attachments $(SOURCEDIR)/html/resources/.
 
 docs:
 	make clean

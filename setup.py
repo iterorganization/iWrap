@@ -42,7 +42,7 @@ def list_docs_data_files(path_to_docs: str):
 
     for path in search_results:
         parent = str(path.relative_to(search_path).parent)
-        parent = 'docs/' + parent if parent != '.' else 'docs'
+        parent = 'docs/html/' + parent if parent != '.' else 'docs/html/'
         file = str(path)
         docs_files.append((parent, [file]))
 
@@ -101,6 +101,6 @@ if __name__ == "__main__":
             ]
         },
 	scripts=['bin/iwrap-doc'],
-        data_files=list_docs_data_files(path_to_docs="./docs/_build/html/")
+        data_files=list_docs_data_files(path_to_docs="./docs/html/")
     )
 
