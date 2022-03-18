@@ -80,21 +80,22 @@ class StandaloneRunner( Runner ):
 
         batch_settings = runtime_settings.batch
 
-        if batch_settings.runner:
-            cmd.append(batch_settings.runner)
+        if batch_settings.batch_runner:
+            cmd.append(batch_settings.batch_runner)
 
-            if batch_settings.options:
-                cmd.append( batch_settings.options)
+            if batch_settings.batch_options:
+                cmd.append( batch_settings.batch_options)
         else:
-            cmd.append( batch_settings.default_runner )
+            cmd.append( batch_settings.batch_default_runner )
 
-            if batch_settings.options:
-                cmd.append( batch_settings.options )
+            if batch_settings.batch_options:
+                cmd.append( batch_settings.batch_options )
 
-            if batch_settings.default_options:
-                cmd.append( batch_settings.default_options )
+            if batch_settings.batch_default_options:
+                cmd.append( batch_settings.batch_default_options )
 
-        cmd.append( f"'{executable}'")
+        cmd = ' '.join(cmd)
+        cmd = string.Template(cmd).safe_substitute(exec=executable)
 
         return cmd
 
@@ -134,7 +135,8 @@ class StandaloneRunner( Runner ):
             if mpi_settings.mpi_default_options:
                 cmd.append( mpi_settings.mpi_default_options )
 
-        cmd = cmd + executable
+        cmd = ' '.join(cmd)
+        cmd = string.Template(cmd).safe_substitute(exec=executable)
 
         cmd = StandaloneRunner.__create_batch_cmd(cmd, runtime_settings)
 
@@ -165,6 +167,8 @@ class StandaloneRunner( Runner ):
             cmd.append( runtime_settings.exec_options )
 
         cmd.append( '${exec}' )
+
+        cmd = ' '.join(cmd)
         if runtime_settings.debug_mode != DebugMode.NONE:
             StandaloneRunner.__logger.warning('While standalone debugging MPI and batch modes are switched off!')
             return cmd
@@ -202,7 +206,6 @@ class StandaloneRunner( Runner ):
 
         else:
             exec_command = StandaloneRunner.__create_cmd(runtime_settings)
-            exec_command = ' '.join(exec_command)
 
         exec_command = StandaloneRunner.__resolve_cmd_tags( self._actor,  exec_command, runtime_settings )
 

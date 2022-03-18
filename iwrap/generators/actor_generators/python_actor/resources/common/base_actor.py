@@ -80,6 +80,9 @@ class ActorBaseClass(Actor):
         if self.__runtime_settings.run_mode == RunMode.STANDALONE:
             return True
 
+        if self.__runtime_settings.run_mode == RunMode.BATCH:
+            return True
+
         return False
 
     # # #  Actor lifecycle methods # # #
