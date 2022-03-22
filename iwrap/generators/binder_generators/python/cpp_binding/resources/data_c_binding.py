@@ -118,7 +118,7 @@ class ParametersCType(  ):
             stream.write( '0\n' )
             return
 
-        stream.write( str(len(code_description.params)) )
+        stream.write( str(len(code_description.params.encode('utf-8'))) )
         stream.write( "\n" )
         stream.write( ' Value: '.center(20, '-') )
         stream.write( "\n" )

@@ -21,7 +21,7 @@ program standalone
 
     !----  Code parameters  ----
     character(len=:), allocatable :: xml_string
-    type(C_PTR) :: code_params_cstr
+    character(kind=c_char), dimension(:), pointer :: code_params_cstr
 
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -37,7 +37,7 @@ program standalone
     if (status /= 0) STOP -1
 
 {% if code_description.implementation.code_parameters.parameters %}
-    code_params_cstr = convert2Cptr(xml_string)
+    code_params_cstr => convert(xml_string)
     deallocate(xml_string)
 {% endif %}
 
