@@ -14,29 +14,29 @@ contains
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 subroutine init_{{actor_description.actor_name}}_wrapper(&
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_params,  &
+                code_params_cstr,  &
 {% endif %}
-                status_info) BIND(C)
+                status_code, out_status_msg) BIND(C)
     {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
-    type(code_parameters_t) :: code_params
+    character(kind=C_CHAR) :: code_params_cstr(*)
 {% endif %}
 	 !----  Diagnostic info  ----
-     type(status_t) :: status_info
-	 character(len=:), pointer :: status_info_msg
-	 integer :: status_info_code
+  	 integer :: status_code
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
 
      !----  Initialize status info  ----
-	 nullify(status_info_msg)
-	 status_info_code = 0
+	 nullify(status_msg)
+	 status_code = 0
 
         {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
     ! ------------------ code parameters ----------------------------
-    imas_code_params = convert(code_params)
+        imas_code_params = convert_codeparams(code_params_cstr)
     {% endif %}
 
         ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
@@ -44,15 +44,14 @@ subroutine init_{{actor_description.actor_name}}_wrapper(&
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
             imas_code_params,  &
 {% endif %}
-            status_info_code, status_info_msg)
+            status_code, status_msg)
         ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 status_info%code = status_info_code
-	 if(associated(status_info_msg)) then
-		 status_info%message = convert_string2Cptr(status_info_msg)
+	 if(associated(status_msg)) then
+		 out_status_msg = convert_string2Cptr(status_msg)
      endif
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)
-	 if(status_info_code < 0 ) RETURN
+	 if(status_code < 0 ) RETURN
 end
 {% endif %}
 
@@ -60,31 +59,31 @@ end
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE FINISH SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine finish_{{actor_description.actor_name}}_wrapper(status_info) BIND(C)
+subroutine finish_{{actor_description.actor_name}}_wrapper(status_code, out_status_msg) BIND(C)
     {{ ids_macro.imports() }}
     use iwrap_defs
     use iwrap_tools
-    !----  Diagnostic info  ----
-    type(status_t) :: status_info
-	character(len=:), pointer :: status_info_msg
-	integer :: status_info_code
 
-    !----  Initialize status info  ----
-	 nullify(status_info_msg)
-	 status_info_code = 0
+	 !----  Diagnostic info  ----
+  	 integer :: status_code
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
 
         ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
     call  {{code_description.implementation.subroutines.finalize}}( &
-            status_info_code, status_info_msg)
+            status_code, status_msg)
 
         ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 status_info%code = status_info_code
-	 if(associated(status_info_msg)) then
-		 status_info%message = convert_string2Cptr(status_info_msg)
+	 if(associated(status_msg)) then
+		 out_status_msg = convert_string2Cptr(status_msg)
      endif
 
     ! Return in case of 'soft' crash (diagnostic info < 0)
-	if(status_info_code < 0 ) RETURN
+	if(status_code < 0 ) RETURN
 end
 {% endif %}
 
@@ -96,9 +95,9 @@ subroutine {{actor_description.actor_name}}_wrapper(&
                 {{ argument.name }}_desc,  &
 {% endfor %}
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_params,  &
+                code_params_cstr,  &
 {% endif %}
-                status_info) BIND(C)
+                status_code, out_status_msg) BIND(C)
 
     {{ ids_macro.imports() }}
     use iwrap_defs
@@ -115,13 +114,16 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
-    type(code_parameters_t) :: code_params
+    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
+    integer :: ssize, i
+
+
 {% endif %}
 
-	 !----  Status info  ----
-     type(status_t) :: status_info
-	 character(len=:), pointer :: status_info_msg
-	 integer :: status_info_code
+ !----  Diagnostic info  ----
+  	 integer :: status_code
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
 
 {% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI  ----
@@ -133,9 +135,10 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
 {% endif %}
 
-    !----  Initialize status info  ----
-	 nullify(status_info_msg)
-	 status_info_code = 0
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
 
     {% for argument in code_description.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
@@ -144,7 +147,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
     ! ------------------ code parameters ----------------------------
-    imas_code_params = convert(code_params)
+    imas_code_params = convert_codeparams(code_params_cstr)
     {% endif %}
 
  
@@ -158,7 +161,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
             imas_code_params,  &
 {% endif %}
-            status_info_code, status_info_msg)
+            status_code, status_msg)
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -166,13 +169,12 @@ subroutine {{actor_description.actor_name}}_wrapper(&
        ! --- called only for RANK 0 process
 {% endif %}
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 status_info%code = status_info_code
-	 if(associated(status_info_msg)) then
-		 status_info%message = convert_string2Cptr(status_info_msg)
+	 if(associated(status_msg)) then
+		 out_status_msg = convert_string2Cptr(status_msg)
      endif
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)  
-	 if(status_info_code < 0 ) RETURN
+	 if(status_code < 0 ) RETURN
 
    ! ------------ Provenance information --------------
  {% for argument in code_description.arguments if argument.intent == 'OUT' %}

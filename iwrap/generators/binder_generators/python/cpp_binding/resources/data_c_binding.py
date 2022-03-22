@@ -1,18 +1,13 @@
 import logging
 import ctypes
 
-from iwrap.generators.actor_generators.python_actor.resources.common.code_parameters import CodeParameters
-
 
 # # # # # # # #
-class StatusCType( ctypes.Structure ):
+class StatusCType( ):
     '''IDSRef reference structure'''
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    _fields_ = (("_code", ctypes.c_int),
-                ("_message", ctypes.c_char_p),
-                )
     def __init__(self):
         self._code = 0
         self._message = None
@@ -23,21 +18,41 @@ class StatusCType( ctypes.Structure ):
 
     @code.setter
     def code(self, code):
-        self._code = ctypes.c_int( code )
+        self._code =  code
 
     @property
     def message(self):
         if self._message is None:
             return ''
-        return self._message.decode(errors='replace')
+        return self._message
 
     @message.setter
     def message(self, message):
-        self._message = ctypes.c_char_p(message.encode('utf-8'))
+        self._message = message
 
 
     def convert_to_native_type(self):
-        return ctypes.byref( self )
+
+        c_ptr_code = ctypes.c_int(0)
+        cref_code = ctypes.pointer( c_ptr_code )
+
+        c_ptr_msg = ctypes.c_char_p()
+        cref_msg = ctypes.pointer( c_ptr_msg )
+
+        return [cref_code, cref_msg]
+
+    def convert_to_actor_type(self, c_ptr_status, c_ptr_msg):
+
+        self._code = c_ptr_status.contents.value
+
+        message_raw = c_ptr_msg.contents
+        if message_raw:
+            try:
+                self._message = message_raw.value.decode('utf-8','replace')
+            except ValueError as ve:
+                self.__logger.warning('An error while encoding status message' + str(ve))
+                self._message = ''
+
 
     def read(self, stream ):
         # read returned code
@@ -58,34 +73,33 @@ class StatusCType( ctypes.Structure ):
 
 
 # # # # # # # #
-class ParametersCType( ctypes.Structure ):
+class ParametersCType(  ):
     '''IDSRef reference structure'''
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
-
-    _fields_ = (("params_", ctypes.c_char_p),
-                ("params_size_", ctypes.c_int),
-                )
 
     @property
     def params(self):
         if self.params_ is None:
             return ''
-        return self.params_.decode(errors='replace')
+        return self.params_
 
     @params.setter
     def params(self, params):
-        if not params:
-            self.params_ = None
-            self.params_size_ = 0
-            return
+        self.params_ = params
 
-        self.params_ = ctypes.c_char_p(params.encode('utf-8'))
-        str_size = len( self.params_ )
-        self.params_size_ =  ctypes.c_int(str_size)
 
     def convert_to_native_type(self):
-        return ctypes.byref( self )
+
+        encoded_params = None
+
+        if self.params_:
+            encoded_params = self.params_.encode('utf-8')
+
+        c_ptr_params = ctypes.c_char_p(encoded_params)
+        cref_params = ctypes.byref(c_ptr_params)
+
+        return c_ptr_params
 
     def __init__(self, code_parameters: str):
         self.params = code_parameters

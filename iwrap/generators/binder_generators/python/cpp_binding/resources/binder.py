@@ -135,8 +135,8 @@ class CBinder(Binder):
 
         if status_info.code > 0:
             self.__logger.warning(
-                "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      ",
-                status_info.code, "\n     Diagnostic info: ", status_info.message )
+                "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      " +
+                str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
 
     def get_converters(self, ids_list, code_parameters):
 
@@ -179,7 +179,7 @@ class CBinder(Binder):
             c_arglist.append(c_code_parameters)
 
         c_status_info = status_info_converter.convert_to_native_type()
-        c_arglist.append( c_status_info )
+        c_arglist += c_status_info
 
         return c_arglist
 
@@ -287,6 +287,7 @@ class CBinder(Binder):
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
+        status_info_converter.convert_to_actor_type(c_arglist[-2], c_arglist[-1])
         self.__status_check(status_info_converter)
 
         # get output data

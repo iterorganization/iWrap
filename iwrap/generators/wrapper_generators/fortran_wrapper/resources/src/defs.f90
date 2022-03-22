@@ -2,18 +2,6 @@ module iwrap_defs
     use iso_c_binding
 
 !--------------------------------------------------
-    type, BIND(C)::code_parameters_t
-        type(C_PTR) :: params  = C_NULL_PTR
-        integer     :: params_size = 0
-    end type
-
-!--------------------------------------------------
-    type, BIND(C)::status_t
-        integer     :: code = 0
-        type(C_PTR) :: message = C_NULL_PTR
-    end type
-
-!--------------------------------------------------
     integer, parameter :: STRING_SIZE = 132
 
     type, BIND(C) :: ids_description_t

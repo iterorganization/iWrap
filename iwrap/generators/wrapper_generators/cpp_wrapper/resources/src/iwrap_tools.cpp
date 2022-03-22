@@ -53,19 +53,19 @@ int read_input(ids_description_t db_entry_desc_array[], int array_expected_size,
     return 0;
 }
 
-int write_output(status_t status_info)
+int write_output(int status_code, char* status_message)
 {
     ofstream fout;
     int str_len;
 
     fout.open("output.txt");
-    write_data(&fout, status_info.code);
+    write_data(&fout, status_message);
 
-    if ( status_info.message != NULL)
+    if ( status_message != NULL)
     {
-        str_len = strlen(status_info.message) + 1;
+        str_len = strlen(status_message) + 1;
         write_data(&fout, str_len);
-        write_data(&fout, status_info.message);
+        write_data(&fout, status_message);
     }
     else
     {
@@ -77,40 +77,38 @@ int write_output(status_t status_info)
     return 0;
 }
 
-int handle_status_info(status_t status_info, const char* actor_name)
+int handle_status_info(int status_code, char* status_message, const char* actor_name)
 {
     const char* NO_MSG = "<No diagnostic message>";
-    if(status_info.message == NULL)
+    if(status_message == NULL)
     {
         int msg_size = strlen(NO_MSG) + 1;
-        status_info.message = (char*) malloc(msg_size);
-        strcpy(status_info.message, NO_MSG);
+        status_message = (char*) malloc(msg_size);
+        strcpy(status_message, NO_MSG);
     }
 
-    if(status_info.code !=0) {
+    if(status_code !=0) {
       printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
-      printf("-------Status code    : %d\n", status_info.code);
-      printf("-------Status message : %s\n", status_info.message);
+      printf("-------Status code    : %d\n", status_code);
+      printf("-------Status message : %s\n", status_message);
       printf("---------------------------------------------------------\n");
       }
 }
 
-void release_status_info(status_t status_info)
+void release_status_info(char* status_message)
 {
-    if(status_info.message != NULL)
-        free(status_info.message);
+    if(status_message != NULL)
+        free(status_message);
 }
 
-int convert_status_info(status_t* status_info, int status_code, std::string status_msg)
+int convert_status_info(std::string in_status_msg, char** out_status_msg)
 {
-   // status code conversion
-    status_info->code = status_code;
 
     //status message conversion
-    int size = status_msg.length();
+    int size = in_status_msg.length();
 
-    status_info->message = (char*) malloc(size + 1);
-    strcpy(status_info->message, status_msg.c_str());
+    *out_status_msg = (char*) malloc(size + 1);
+    strcpy(*out_status_msg, in_status_msg.c_str());
 }
 
 

@@ -4,16 +4,15 @@
 #include "UALClasses.h"
 #include "defs.h"
 
-
 int read_input(ids_description_t db_entry_desc_array[], int array_expected_size, char** xml_string);
 
-int write_output(status_t status_info);
+int write_output(int status_code, char* status_message);
 
-int handle_status_info(status_t status_info, const char* actor_name);
+int handle_status_info(int status_code, char* status_message, const char* actor_name);
 
-int convert_status_info(status_t* status_info, int status_code, std::string status_msg);
+void release_status_info(char* status_message);
 
-void release_status_info(status_t status_info);
+int convert_status_info(std::string in_status_msg, char** out_status_msg);
 
 IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size);
 

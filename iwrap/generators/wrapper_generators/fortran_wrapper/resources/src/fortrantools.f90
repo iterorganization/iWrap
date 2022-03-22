@@ -6,7 +6,6 @@ module iwrap_tools
 
  interface convert
    module procedure &
-       convert_codeparams,&
        convert_array2string,&
 	   convert_string2array, &
        convert_cptr2string
@@ -58,27 +57,28 @@ FUNCTION create_ids_full_name(ids_description)  RESULT (ids_full_name)
     endif
 END FUNCTION create_ids_full_name
 
-    SUBROUTINE handle_status_info(status_info, actor_name)
+
+    SUBROUTINE handle_status_info(status_code, status_message, actor_name)
             !----  Status info  ----
-        type(status_t) :: status_info
+        integer :: status_code
+        type(C_PTR) :: status_message
         character(*) :: actor_name
         character(kind = C_CHAR), dimension(:), pointer :: status_info_array
         integer  :: status_info_size
 
-        if((.NOT. c_associated(status_info%message)) .OR. (c_str_length(status_info%message) < 1)) then
+        if((.NOT. c_associated(status_message)) .OR. (c_str_length(status_message) < 1)) then
             allocate(status_info_array(23))
             status_info_size = 23
             status_info_array = transfer("<No status information>", status_info_array)
         else
-            status_info_size = c_str_length(status_info%message)
-            call c_f_pointer(status_info%message, status_info_array, [status_info_size])
+            status_info_size = c_str_length(status_message)
+            call c_f_pointer(status_message, status_info_array, [status_info_size])
         endif
         print *, "---Diagnostic information returned from *** ", actor_name, " ***:---"
-        print *, "-------Output flag    : ", status_info%code
+        print *, "-------Output flag    : ", status_code
         print *, "-------Status info: ", status_info_array
         print *, "---------------------------------------------------------"
     END SUBROUTINE handle_status_info
-
 
     FUNCTION read_input(db_entry_desc_array, xml_string) RESULT(status)
         use rwtool
@@ -126,19 +126,20 @@ END FUNCTION create_ids_full_name
     END FUNCTION read_input
 
 
-    SUBROUTINE write_output(status_info)
+    SUBROUTINE write_output(status_code, status_message)
         use rwtool
-        type(status_t), intent(IN) :: status_info
+        integer, intent(IN) :: status_code
+        type(C_PTR) :: status_message
         integer :: str_len, istat
 
         !-----------Writing output data to file ---------------------
         open(10,file='output.txt',form='formatted',access='sequential',status='unknown', iostat=istat)
-        call writefile(status_info%code)
+        call writefile(status_code)
 
-        if ( C_ASSOCIATED(status_info%message)) then
-            str_len = c_str_length(status_info%message)
+        if ( C_ASSOCIATED(status_message)) then
+            str_len = c_str_length(status_message)
             call writefile(str_len)
-            call writefile(convert_cptr2string(status_info%message))
+            call writefile(convert_cptr2string(status_message))
         else
             call writefile(0)
             call writefile("")
@@ -219,33 +220,36 @@ FUNCTION read_codeparams_schema(xsd_file)  RESULT (xsd_string)
 END FUNCTION read_codeparams_schema
 
 
-FUNCTION convert_codeparams(code_params)  RESULT (al_code_params)    
+FUNCTION convert_codeparams(code_params_cstr)  RESULT (al_code_params)
     use iso_c_binding, ONLY: C_PTR
     use ids_schemas, ONLY: ids_parameters_input
     implicit none
 
-
-    type(code_parameters_t) :: code_params
     type(ids_parameters_input) :: al_code_params
 
-    type(C_PTR)      :: c_str_ptr  
+    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
 
     character(kind=C_CHAR), dimension(:), pointer :: f_char_arr 
 
     
-    integer     :: iloopmax, string_size, sizexml,sizexsd
+    integer     :: iloopmax, string_size
     
-    !  xml parameters
-    c_str_ptr = code_params%params
-    string_size = c_str_length(c_str_ptr)
+
+       string_size=0
+    do
+       if (code_params_cstr(string_size+1) == C_NULL_CHAR) exit
+       string_size = string_size + 1
+    end do
+
+
     iloopmax=string_size/132
     if (mod(string_size,132)/=0) then
     iloopmax = iloopmax + 1
     endif
     allocate(al_code_params%parameters_value(iloopmax))
     
-    call C_F_POINTER(c_str_ptr, f_char_arr, (/string_size/))
-    al_code_params%parameters_value = transfer(f_char_arr, al_code_params%parameters_value)
+
+    al_code_params%parameters_value = transfer(code_params_cstr(1:string_size), al_code_params%parameters_value)
     
     if(mod(string_size,132)/=0) then
     al_code_params%parameters_value(iloopmax)(mod(string_size,132)+1:132) = ' '

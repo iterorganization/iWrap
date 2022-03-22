@@ -12,7 +12,9 @@ int main(int argc, char **argv)
    IdsNs::IDS* *db_entry_array ;
 
     //----  Status info  ----
-    status_t status_info;
+    int status_code = 0;
+    char* status_message = NULL;
+
 
 {% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI  ----
@@ -30,21 +32,14 @@ int main(int argc, char **argv)
 
   read_input(db_entry_desc_array, IDS_ARGS_NO, &xml_string);
 
-{% if code_description.implementation.code_parameters.parameters %}
-    code_parameters_t code_params;
-
-    code_params.params = xml_string;
-    code_params.params_size = strlen(xml_string);
-{% endif %}
-
 
      {% if code_description.implementation.subroutines.init %}
     // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     init_{{actor_description.actor_name | lower}}_wrapper(
         {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                &code_params,
+                xml_string,
         {% endif %}
-                &status_info);
+                &status_code, &status_message);
     {% endif %}
 
 
@@ -57,9 +52,9 @@ int main(int argc, char **argv)
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                &code_params,
+                xml_string,
 {% endif %}
-                &status_info);
+                &status_code, &status_message);
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -69,10 +64,10 @@ int main(int argc, char **argv)
        // --- called only for RANK 0 process
 {% endif %}
 
-    handle_status_info(status_info, "{{actor_description.actor_name}}");
+    handle_status_info(status_code, status_message, "{{actor_description.actor_name}}");
 
     //-----------Writing output data to file ---------------------
-    write_output(status_info);
+    write_output(status_code, status_message);
 
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -83,8 +78,8 @@ int main(int argc, char **argv)
 
      {% if code_description.implementation.subroutines.finalize %}
     // - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    finish_{{actor_description.actor_name | lower }}_wrapper(&status_info);
-    handle_status_info(status_info, "{{actor_description.actor_name}}");
+    finish_{{actor_description.actor_name | lower }}_wrapper(&status_code, &status_message);
+    handle_status_info(status_code, status_message, "{{actor_description.actor_name}}");
     {% endif %}
 
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
@@ -92,7 +87,7 @@ int main(int argc, char **argv)
     free(xml_string);
     {% endif %}
 
-    release_status_info(status_info);
+    release_status_info(status_message);
 
 {% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI Finalization ----

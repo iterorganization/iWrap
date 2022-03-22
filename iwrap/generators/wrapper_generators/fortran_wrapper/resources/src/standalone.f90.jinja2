@@ -16,11 +16,12 @@ program standalone
     integer :: status
 
     !----  Status info  ----
-    type(status_t) :: status_info
+    integer :: status_code = 0
+    type(C_PTR) :: status_msg
 
     !----  Code parameters  ----
     character(len=:), allocatable :: xml_string
-    type(code_parameters_t) :: code_params
+    type(C_PTR) :: code_params_cstr
 
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -36,18 +37,17 @@ program standalone
     if (status /= 0) STOP -1
 
 {% if code_description.implementation.code_parameters.parameters %}
-    code_params%params = convert2Cptr(xml_string)
+    code_params_cstr = convert2Cptr(xml_string)
     deallocate(xml_string)
-    code_params%params_size = LEN(xml_string)
 {% endif %}
 
      {% if code_description.implementation.subroutines.init %}
     ! - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
     call init_{{actor_description.actor_name}}_wrapper(&
         {% if code_description.implementation.code_parameters.parameters %}
-                code_params,  &
+                code_params_cstr,  &
         {% endif %}
-                status_info)
+                status_code, status_msg)
     {% endif %}
 
 
@@ -62,9 +62,9 @@ program standalone
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
 {% if code_description.implementation.code_parameters.parameters %}
-                code_params,  &
+                code_params_cstr,  &
 {% endif %}
-                status_info)
+                status_code, status_msg)
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -73,10 +73,10 @@ program standalone
 {% endif %}
 
     !-----------Check status info ---------------------
-    call handle_status_info(status_info, "{{actor_description.actor_name}}")
+    call handle_status_info(status_code, status_msg, "{{actor_description.actor_name}}")
 
     !-----------Writing output data to file ---------------------
-    call write_output(status_info)
+    call write_output(status_code, status_msg)
 
 
 {% if code_description.settings.mpi_compiler_cmd %}
@@ -88,7 +88,7 @@ program standalone
 
      {% if code_description.implementation.subroutines.finalize %}
     ! - - - - - - - - - - - - - - - - - -FINISH SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -
-    call finish_{{actor_description.actor_name}}_wrapper(status_info)
+    call finish_{{actor_description.actor_name}}_wrapper(status_code, status_msg)
     {% endif %}
 
 {% if code_description.settings.mpi_compiler_cmd %}

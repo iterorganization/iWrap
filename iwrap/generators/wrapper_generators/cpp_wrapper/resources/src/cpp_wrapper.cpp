@@ -17,16 +17,15 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters   %}
-                code_parameters_t* code_params,
+                char* code_params_str,
 {% endif %}
-                status_t* status_info)
+                int* out_status_code, char** out_status_message)
 {
-    int status_code = 0;
     std:string status_msg = "OK";
 {% if code_description.implementation.code_parameters.parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
-    imas_code_params.parameters = (char**)&(code_params->params);
+    imas_code_params.parameters = (char**)&(code_params_str);
     imas_code_params.default_param = NULL;
     imas_code_params.schema = NULL;
 
@@ -37,13 +36,13 @@ extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
-            status_code, status_msg );
+            *out_status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // converting status info
-    convert_status_info(status_info, status_code, status_msg);
+    convert_status_info(status_msg, out_status_message);
 
-	if(status_info->code < 0)
+	if(*out_status_code < 0)
 		return;
 }
 {% endif %}
@@ -54,19 +53,18 @@ extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(
-                status_t* status_info)
+            int *out_status_code, char **out_status_message )
 {
-    int status_code = 0;
     std:string status_msg = "OK";
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.implementation.subroutines.finalize}}(status_code, status_msg );
+    {{code_description.implementation.subroutines.finalize}}(*out_status_code, status_msg );
      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // converting status info
-    convert_status_info(status_info, status_code, status_msg);
+    convert_status_info(status_msg, out_status_message);
 
-	if(status_info->code < 0)
+	if(*out_status_code < 0)
 		return;
 }
 {% endif %}
@@ -80,11 +78,10 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
 {% if code_description.implementation.code_parameters.parameters %}
-                code_parameters_t* code_params,
+                char* code_params_str,
 {% endif %}
-                status_t* status_info)
+                int* out_status_code, char** out_status_message)
 {
-    int status_code = 0;
     std:string status_msg = "OK";
 
 {% for argument in code_description.arguments %}
@@ -117,7 +114,7 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 
         {% if code_description.implementation.code_parameters.parameters  %}
     // ------------------ code parameters ----------------------------
-    imas_code_params.parameters = (char**)&(code_params->params);
+    imas_code_params.parameters = (char**)&(code_params_str);
     imas_code_params.default_param = NULL;
     imas_code_params.schema = NULL;
     {% endif %}
@@ -130,13 +127,13 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters  %}
             imas_code_params,
 {% endif %}
-            status_code, status_msg );
+            *out_status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         // converting status info
-    convert_status_info(status_info, status_code, status_msg);
+    convert_status_info(status_msg, out_status_message);
 
-	if(status_info->code < 0)
+	if(*out_status_code < 0)
 		return;
    // ------------ Provenance information --------------
 {% for argument in code_description.arguments if argument.intent == 'OUT' %}

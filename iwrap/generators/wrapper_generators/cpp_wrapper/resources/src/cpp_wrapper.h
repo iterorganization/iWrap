@@ -11,9 +11,9 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_parameters_t* code_params,
+                char* code_params_str,
 {% endif %}
-                status_t* status_info);
+                int* out_status_code, char** out_status_message);
 
 {% endif %}
 
@@ -21,7 +21,7 @@ extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(status_t* status_info);
+extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(int* out_status_code, char** out_status_message);
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -32,8 +32,8 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_parameters_t* code_params,
+                char* code_params_str,
 {% endif %}
-                status_t* status_info);
+                int* out_status_code, char** out_status_message);
 
 #endif // _CPP_WRAPPER
