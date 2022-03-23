@@ -114,7 +114,7 @@ subroutine {{actor_description.actor_name}}_wrapper(&
 {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
-    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
+    character(kind=c_char), dimension(:), intent(IN) :: code_params_cstr
     integer :: ssize, i
 
 

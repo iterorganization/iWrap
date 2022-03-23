@@ -23,7 +23,6 @@ program standalone
     character(len=:), allocatable :: xml_string
     character(kind=c_char), dimension(:), pointer :: code_params_cstr
 
-
 {% if code_description.settings.mpi_compiler_cmd %}
     !----  MPI  ----
     logical :: was_mpi_finalized
@@ -49,9 +48,6 @@ program standalone
         {% endif %}
                 status_code, status_msg)
     {% endif %}
-
-
-
 
     !-----------Open DB entries---------------------
     call open_db_entries(db_entry_desc_array)
@@ -95,6 +91,11 @@ program standalone
     !----  MPI Finalization ----
     call MPI_finalized(was_mpi_finalized, status)
     if (.not. was_mpi_finalized)   call MPI_Finalize(status)
+{% endif %}
+
+{% if code_description.implementation.code_parameters.parameters %}
+    !----------- Cleaning code parameters ---------------------
+    deallocate(code_params_cstr)
 {% endif %}
 
 end program
