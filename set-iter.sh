@@ -33,7 +33,7 @@ fi
 
 # INTEL
 if [ "$FCOMPILER" == "ifort" ]; then
-  module load XMLlib/3.3.1-intel-2018a
+  module load XMLlib/3.3.1-intel-2020b
   OBJ=obj_ifort
 else
 # GFORTRAN
