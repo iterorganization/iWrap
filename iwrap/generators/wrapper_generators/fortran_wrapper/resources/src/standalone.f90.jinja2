@@ -17,7 +17,7 @@ program standalone
 
     !----  Status info  ----
     integer :: status_code = 0
-    type(C_PTR) :: status_msg
+    type(C_PTR) :: status_msg = C_NULL_PTR
 
     !----  Code parameters  ----
     character(len=:), allocatable :: xml_string
