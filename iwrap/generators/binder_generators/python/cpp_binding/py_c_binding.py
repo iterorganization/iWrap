@@ -50,7 +50,11 @@ class CppBinderGenerator( BinderGenerator ):
         self.__info_output_stream = info_output_stream
 
     def initialize(self, project_settings: dict):
-        install_dir = ProjectSettings.get_settings().actor_description._install_dir
+        install_dir = None
+
+        if project_settings:
+            install_dir = project_settings['actor_description'].get( 'install_dir' )
+
         if not install_dir:
             install_dir = PlatformSettings().directories.actor_install_dir
         self.install_dir: str = str(
@@ -58,8 +62,6 @@ class CppBinderGenerator( BinderGenerator ):
 
     def generate(self, project_settings: dict):
         self.temp_dir = tempfile.TemporaryDirectory().name
-        code_description = ProjectSettings.get_settings().code_description
-        generation_env = {'temp_dir': self.install_dir}
 
         def filter_func(x: str) -> bool:
             if "__pycache__" in x:
@@ -72,16 +74,6 @@ class CppBinderGenerator( BinderGenerator ):
         process_template_dir( 'iwrap.generators.binder_generators.python', 'common', self.install_dir,
                               project_settings, filter_func=filter_func, output_stream=self.__info_output_stream, )
 
-        #print('TMP2: ', self.jinja_env.loader.provider.module_path)
-
-        #src = self.jinja_env.loader.provider.module_path + "/" + self.jinja_env.loader.package_path
-
-        # shutil.copytree(src,  self.install_dir, copy_function=self.copy_file)
-
-        #self.wrapper_generator.init(dictionary, generation_env)
-
-        #self.wrapper_generator.generate()
-        #self.__copy_code_params_files(project_settings)
 
     def build(self, project_settings: dict):
         ...
