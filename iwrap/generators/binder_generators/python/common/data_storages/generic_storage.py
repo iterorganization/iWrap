@@ -50,7 +50,9 @@ class LegacyIDSStorage( GenericIDSStorage ):
                                  shot=shot,
                                  run=run )
 
-        db_entry.create()
+        status, _not_used = db_entry.create()
+        if status != 0:
+            raise Exception(f"Error creating the temporary DB: backend={backend_id} name={db_name} shot={shot} run={run}")
 
         return db_entry
 
