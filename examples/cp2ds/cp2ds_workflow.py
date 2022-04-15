@@ -47,10 +47,12 @@ class ExampleWorkflowManager:
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # # #
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
+        runtime_settings = None
+        if actor_run_mode == 'STANDALONE':
+            print('Running STANDALONE version.')
+            runtime_settings = self.actor_cp2ds.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
 
-        runtime_settings = self.actor_cp2ds.get_runtime_settings()
-        runtime_settings.run_mode = RunMode.STANDALONE
-        #runtime_settings.debug_mode = DebugMode.STANDALONE
         code_parameters = self.actor_cp2ds.get_code_parameters()
         self.actor_cp2ds.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
 
