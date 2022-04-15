@@ -138,7 +138,7 @@ END FUNCTION create_ids_full_name
         call writefile(status_code)
 
         if ( C_ASSOCIATED(status_message)) then
-            str_len = c_str_length(status_message)
+            str_len = c_str_length(status_message) + 1
             call writefile(str_len)
             call writefile(convert_cptr2string(status_message))
         else

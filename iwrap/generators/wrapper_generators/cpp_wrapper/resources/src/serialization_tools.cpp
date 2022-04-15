@@ -33,9 +33,11 @@ void write_data(std::ofstream *stream, int var) {
     *stream << var << std::endl;
 }
 
-void write_data(std::ofstream *stream, char *var) {
-    *stream << *var << std::endl;
-}
+void write_data(std::ofstream *stream, char *text) {
+    size_t len = strlen(text);
+    stream->write(text,  strlen(text));
+
+    }
 
 
 

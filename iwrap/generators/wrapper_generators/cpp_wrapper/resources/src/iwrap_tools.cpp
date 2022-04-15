@@ -59,11 +59,11 @@ int write_output(int status_code, char* status_message)
     int str_len;
 
     fout.open("output.txt");
-    write_data(&fout, status_message);
+    write_data(&fout, status_code);
 
     if ( status_message != NULL)
     {
-        str_len = strlen(status_message) + 1;
+        str_len = strlen(status_message) ;
         write_data(&fout, str_len);
         write_data(&fout, status_message);
     }

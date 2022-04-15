@@ -64,12 +64,12 @@ class IDSConvertersRegistry:
             raise RuntimeError( 'ERROR! No valid ids converter can be found!' )
 
     @classmethod
-    def get_converter_class(cls, data_type: str, code_language: str) -> IDSConverter:
+    def get_converter(cls, data_type: str, code_language: str) -> IDSConverter:
 
         for converter_class in cls.__converters:
-            if data_type == converter_class.data_type() and code_language in converter_class.code_languages():
-                return converter_class
+            if data_type == converter_class().data_type() and code_language in converter_class.code_languages():
+                return converter_class()
 
-        types = [(converter_class.data_type(), converter_class.code_language()) for converter in cls.__converters]
+        types = [(converter_class.data_type(), converter_class.code_language()) for converter_class in cls.__converters]
         raise ValueError( f'ERROR: No converter found to bind ids of type "{data_type}" to "{code_language}" '
                           f'! Registered converters: "{types}".' )

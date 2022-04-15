@@ -64,12 +64,12 @@ class CBinder(Binder):
         self.__logger = logging.getLogger( 'binding' )
         self.__logger.setLevel( logging.DEBUG )
 
-        self.ids_converter_class = None
+        self.ids_converter = None
         self.actor = None
 
         self.actor_dir = None
 
-        self.runtime_settings : RuntimeSettings = None
+        self.runtime_settings: RuntimeSettings = None
         self.arg_metadata_list = None
 
         self.wrapper_init_func = None
@@ -81,14 +81,15 @@ class CBinder(Binder):
     def initialize(self, actor):
 
         IDSConvertersRegistry.initialize()
-        self.ids_converter_class = IDSConvertersRegistry.get_converter_class(actor.data_type, 'cpp')
+        self.ids_converter = IDSConvertersRegistry.get_converter(actor.data_type, 'cpp')
         self.actor = actor
 
         self.runtime_settings = actor._ActorBaseClass__runtime_settings
         self.arg_metadata_list = actor.arguments
+        self.ids_ctype_list = None
         self.actor_dir = actor.actor_dir
 
-        self.ids_converter_class.initialize(actor.is_standalone_run(), self.runtime_settings.ids_storage)
+        self.ids_converter.initialize(actor.unique_id, actor.is_standalone_run(), self.runtime_settings.ids_storage)
         actor_name = self.actor.name.lower()
         if self.actor.code_description['implementation']['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
@@ -97,13 +98,12 @@ class CBinder(Binder):
         sbrt_name = actor_name + "_wrapper"
         self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
 
-
         if self.actor.code_description['implementation']['subroutines'].get('finalize'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
 
     def finalize(self):
-        self.ids_converter_class.finalize()
+        self.ids_converter.finalize()
 
     def __check_inputs(self, ids_arguments_list):
         import functools
@@ -125,7 +125,7 @@ class CBinder(Binder):
         wrapper_fun = getattr( wrapper_lib, function_name )
         return wrapper_fun
 
-    def __status_check(self, status_info):
+    def __status_check(self, status_info: StatusCType):
 
         actor_name = self.actor.name
         if status_info.code < 0:
@@ -138,50 +138,17 @@ class CBinder(Binder):
                 "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      " +
                 str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
 
-    def get_converters(self, ids_list, code_parameters):
+    def __get_ids_ctypes(self):
 
-        ids_converters_list = None
-        if ids_list:
-            input_idses = list( ids_list )
+        ids_ctype_list = []
 
-            ids_converters_list = []
+        # LOOP over ids
+        for arg_meta_data in self.arg_metadata_list:
+            ids_ctype = self.ids_converter.prepare_native_type( arg_meta_data.type )
+            ids_ctype.intent = arg_meta_data.intent
+            ids_ctype_list.append( ids_ctype )
 
-            # LOOP over ids
-
-            for arg_meta_data in self.arg_metadata_list:
-                ids_value = None
-                if arg_meta_data.intent == Argument.IN:
-                    ids_value = input_idses.pop( 0 )
-
-                arg = self.ids_converter_class( arg_meta_data.type, arg_meta_data.intent, ids_value )
-                ids_converters_list.append( arg )
-
-        # XML Code Params
-        param_c = None
-        if code_parameters:
-            param_c = ParametersCType( code_parameters )
-
-
-        # DIAGNOSTIC INFO
-        status_info_converter = StatusCType()
-
-        return ids_converters_list, param_c, status_info_converter
-
-    def get_native_arguments(self, ids_converters_list, code_parameters_converter, status_info_converter):
-
-        c_arglist = []
-        if ids_converters_list:
-            c_idslist = [arg.convert_to_native_type() for arg in ids_converters_list]
-            c_arglist = c_arglist + c_idslist
-
-        if code_parameters_converter:
-            c_code_parameters = code_parameters_converter.convert_to_native_type()
-            c_arglist.append(c_code_parameters)
-
-        c_status_info = status_info_converter.convert_to_native_type()
-        c_arglist += c_status_info
-
-        return c_arglist
+        return ids_ctype_list
 
     def __save_input(self, full_arguments_list, code_parameters, sandbox_dir):
 
@@ -204,20 +171,31 @@ class CBinder(Binder):
             # Read status info
             status_info.read(file)
 
-    def run_standalone(self, ids_list, code_parameters, exec_command, sandbox_dir:str, output_stream):
+    def run_standalone(self, input_idses, code_parameters, exec_command, sandbox_dir:str, output_stream):
 
         self.__logger.debug( "RUNNING STDL" )
 
         # check if a number of provided arguments is correct
-        self.__check_inputs(ids_list)
+        self.__check_inputs(input_idses)
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
 
-        ids_converters_list, code_parameters_converter, status_info_converter = self.get_converters( ids_list, code_parameters)
-        c_arglist = self.get_native_arguments( ids_converters_list, code_parameters_converter, status_info_converter )
-        self.__save_input( ids_converters_list, code_parameters_converter, sandbox_dir )
+        ids_ctypes_list = self.__get_ids_ctypes()
+
+        tmp_ids_list = list(input_idses)
+        for ids_ctype in ids_ctypes_list:
+            if ids_ctype.intent == Argument.IN:
+                ids_object = tmp_ids_list.pop(0)
+                self.ids_converter.convert_to_native_type(ids_ctype, ids_ctype.intent, ids_object)
+
+
+        param_ctype = ParametersCType(code_parameters) if code_parameters  else  None
+        status_info_ctype = StatusCType()
+
+        # prepares input files
+        self.__save_input( ids_ctypes_list, param_ctype, sandbox_dir )
         self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
         exec_system_cmd(exec_command, output_stream=output_stream)
 
@@ -225,14 +203,17 @@ class CBinder(Binder):
         os.chdir(cwd)
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_converter )
+        self.__read_output(status_info_ctype, sandbox_dir)
+        self.__status_check( status_info_ctype )
 
         # get output data
         results = []
-        for arg in ids_converters_list:
-            if arg.intent == Argument.OUT:
-                results.append( arg.convert_to_actor_type() )
-            arg.release()
+        for ids_ctype in ids_ctypes_list:
+            if ids_ctype.intent == Argument.OUT:
+                results.append(self.ids_converter.convert_to_actor_type(ids_ctype))
+        self.ids_converter.release(ids_ctype)
+
+
 
         # final output
         if not results:
@@ -247,55 +228,83 @@ class CBinder(Binder):
         if not self.wrapper_init_func:
             return
 
-        _, code_parameters_converter, status_info_converter = self.get_converters( None, code_parameters)
-        c_arglist = self.get_native_arguments( _, code_parameters_converter, status_info_converter )
+        c_arglist = []
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
 
-        # call INIT
+        # Code Parameterss
+        if code_parameters:
+            param_ctype = ParametersCType(code_parameters)
+            c_param = param_ctype.convert_to_native_type()
+            c_arglist.append(c_param)
+
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        c_status_info = status_info_ctype.convert_to_native_type()
+        c_arglist += c_status_info
+
+        # call native INIT method of wrapper
         self.wrapper_init_func( *c_arglist )
 
         # go back to initial dir
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_converter )
+        self.__status_check( status_info_ctype )
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def call_main(self, input_idses, code_parameters:str, sandbox_dir:str):
         """
         """
-        print( 'RUN MODE: ', str( self.runtime_settings.run_mode ) )
+        c_arglist = []
+        self.__logger.debug( 'RUN MODE: '+ str( self.runtime_settings.run_mode ) )
 
         # check if a number of provided arguments is correct
         self.__check_inputs(input_idses)
-
-        ids_converters_list, code_parameters_converter, status_info_converter = self.get_converters( input_idses, code_parameters)
-
-        c_arglist = self.get_native_arguments( ids_converters_list, code_parameters_converter, status_info_converter )
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir( sandbox_dir )
 
+        ids_ctypes_list = self.__get_ids_ctypes()
+        tmp_ids_list = list(input_idses)
+        for ids_ctype in ids_ctypes_list:
+            ids_object = None
+            if ids_ctype.intent == Argument.IN:
+                ids_object = tmp_ids_list.pop(0)
 
+            c_ids = self.ids_converter.convert_to_native_type(ids_ctype, ids_ctype.intent, ids_object)
+            c_arglist.append(c_ids)
 
+        # Code Parameterss
+        if code_parameters:
+            param_ctype = ParametersCType(code_parameters)
+            c_param = param_ctype.convert_to_native_type()
+            c_arglist.append(c_param)
+
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        c_status_info = status_info_ctype.convert_to_native_type()
+        c_arglist += c_status_info
+
+        # call native MAIN method of wrapper
         self.wrapper_main_func( *c_arglist )
+
         # go back to initial dir
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        status_info_converter.convert_to_actor_type(c_arglist[-2], c_arglist[-1])
-        self.__status_check(status_info_converter)
+        status_info_ctype.convert_to_actor_type(c_arglist[-2], c_arglist[-1])
+        self.__status_check(status_info_ctype)
 
         # get output data
         results = []
-        for arg in ids_converters_list:
-            if arg.intent == Argument.OUT:
-                results.append( arg.convert_to_actor_type() )
-            arg.release()
+        for ids_ctype in ids_ctypes_list:
+            if ids_ctype.intent == Argument.OUT:
+                results.append( self.ids_converter.convert_to_actor_type(ids_ctype) )
+        self.ids_converter.release(ids_ctype)
 
         # final output
         if not results:
@@ -309,19 +318,19 @@ class CBinder(Binder):
         if not self.wrapper_finish_func:
             return
 
-        _, _, status_info_converter = self.get_converters( ids_list=None, code_parameters=None)
-
-        c_arg_list = self.get_native_arguments(_, _, status_info_converter )
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        c_status_info = status_info_ctype.convert_to_native_type()
 
         # go to sandbox
         cwd = os.getcwd()
         os.chdir(sandbox_dir)
 
         # call FINISH
-        self.wrapper_finish_func( *c_arg_list )
+        self.wrapper_finish_func( c_status_info)
 
         # go back to initial dir
         os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_converter )
+        self.__status_check( status_info_ctype )
