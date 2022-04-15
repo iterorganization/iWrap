@@ -327,7 +327,7 @@ class CBinder(Binder):
         os.chdir(sandbox_dir)
 
         # call FINISH
-        self.wrapper_finish_func( c_status_info)
+        self.wrapper_finish_func( *c_status_info)
 
         # go back to initial dir
         os.chdir( cwd )
