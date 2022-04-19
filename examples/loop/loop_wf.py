@@ -40,8 +40,8 @@ class ExampleWorkflowManager:
         runtime_settings = None
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-        runtime_settings = self.actor_loop.get_runtime_settings()
-        runtime_settings.run_mode = RunMode.STANDALONE
+            runtime_settings = self.actor_loop.get_runtime_settings()
+            runtime_settings.run_mode = RunMode.STANDALONE
 
         code_parameters = self.actor_loop.get_code_parameters()
         self.actor_loop.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
