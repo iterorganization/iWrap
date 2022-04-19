@@ -22,3 +22,6 @@ docstring_files/
 *.so
 .DS_Store
 /reports
+/docs/html
+/docs/doctrees
+*.tmp
