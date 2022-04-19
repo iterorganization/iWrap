@@ -107,8 +107,9 @@ class ActorBaseClass(Actor):
 
         self.sandbox = Sandbox(self)
 
-        self.__binder.initialize(actor=self)
         self.sandbox.initialize()
+        self.__binder.initialize(actor=self)
+
 
         Runner.initialize(self, self.__binder, self.sandbox.path, self.output_stream)
         is_standalone = self.is_standalone_run()
@@ -135,7 +136,7 @@ class ActorBaseClass(Actor):
 
         self.__runner.call_finalize()
 
-        self.sandbox.clean()
         self.__binder.finalize()
+        self.sandbox.clean()
         self.sandbox.remove()
 

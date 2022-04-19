@@ -34,7 +34,7 @@ class Sandbox:
             sandbox_dir = os.path.expandvars( sandbox_dir )
             sandbox_dir = os.path.expanduser( sandbox_dir )
             sandbox_path = Path( sandbox_dir, actor_id )
-            self.path = sandbox_path
+            self.path = str(sandbox_path)
 
     def initialize(self):
 
@@ -59,6 +59,9 @@ class Sandbox:
             for f in files:
                 os.unlink( os.path.join( root, f ) )
             for d in dirs:
+                if d in ('tmp', ):
+                    dirs.remove(d)
+                    continue
                 shutil.rmtree( os.path.join( root, d ) )
 
     def remove(self):

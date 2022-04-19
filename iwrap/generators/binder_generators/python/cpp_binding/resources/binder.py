@@ -89,7 +89,8 @@ class CBinder(Binder):
         self.ids_ctype_list = None
         self.actor_dir = actor.actor_dir
 
-        self.ids_converter.initialize(actor.unique_id, actor.is_standalone_run(), self.runtime_settings.ids_storage)
+        sandbox_dir = self.actor.sandbox.path
+        self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
         actor_name = self.actor.name.lower()
         if self.actor.code_description['implementation']['subroutines'].get('init'):
             sbrt_name = 'init_' + actor_name + "_wrapper"
@@ -167,7 +168,7 @@ class CBinder(Binder):
     def __read_output(self, status_info, sandbox_dir):
 
         file_path = Path(sandbox_dir, 'output.txt')
-        with open( file_path, "rt" ) as file:
+        with open( file_path, "rt", errors='replace' ) as file:
             # Read status info
             status_info.read(file)
 
@@ -211,7 +212,7 @@ class CBinder(Binder):
         for ids_ctype in ids_ctypes_list:
             if ids_ctype.intent == Argument.OUT:
                 results.append(self.ids_converter.convert_to_actor_type(ids_ctype))
-        self.ids_converter.release(ids_ctype)
+            self.ids_converter.release(ids_ctype)
 
 
 
@@ -304,7 +305,7 @@ class CBinder(Binder):
         for ids_ctype in ids_ctypes_list:
             if ids_ctype.intent == Argument.OUT:
                 results.append( self.ids_converter.convert_to_actor_type(ids_ctype) )
-        self.ids_converter.release(ids_ctype)
+            self.ids_converter.release(ids_ctype)
 
         # final output
         if not results:

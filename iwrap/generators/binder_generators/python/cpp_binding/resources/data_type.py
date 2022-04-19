@@ -19,14 +19,14 @@ class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
     def __init__(self):
         self.__data_storage = LegacyIDSStorage()
 
-    def initialize(self, actor_unique_id: str, is_standalone: bool, storage_settings: IdsStorageSettings) -> None:
+    def initialize(self, sandbox_dir: str, is_standalone: bool, storage_settings: IdsStorageSettings) -> None:
 
         db_name = storage_settings.db_name
         if is_standalone:
             backend_id = storage_settings.persistent_backend
         else:
             backend_id = storage_settings.backend
-        self.__data_storage.initialize(actor_unique_id, db_name,  backend_id)
+        self.__data_storage.initialize(sandbox_dir, db_name,  backend_id)
 
     def finalize(self) -> None:
         self.__data_storage.finalize()

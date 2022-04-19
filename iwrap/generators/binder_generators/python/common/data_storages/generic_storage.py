@@ -1,5 +1,7 @@
 import os
 from abc import ABC, abstractmethod
+from pathlib import Path
+
 import imas
 
 from ..data_c_binding import IDSCType
@@ -38,9 +40,12 @@ class LegacyIDSStorage( GenericIDSStorage ):
         occ = self.__occ_dict.get(ids_name, 1 )
         self.__occ_dict[ids_name] = occ - 1
 
-    def __create_cache_db(cls, db_name:str, backend_id, shot, run):
+    def __create_cache_db(cls, sandbox_dir:str, db_name:str, backend_id, shot, run):
+
+        Path(sandbox_dir, 'tmp', '3', '0').mkdir(parents=True, exist_ok=True)
 
         db_entry = imas.DBEntry( backend_id=backend_id,   # pylint: disable=no-member
+                                 user_name=sandbox_dir,   # AL hack to use sandbox dir
                                  db_name=db_name,
                                  shot=shot,
                                  run=run )
@@ -49,10 +54,10 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
         return db_entry
 
-    def initialize(self, actor_unique_id, db_name:str, backend_id):
-        shot = os.getpid() % 200_000  #MDS BE Limitation
+    def initialize(self, sandbox_dir: str, db_name:str, backend_id):
+        shot = 1
         run = 1
-        self.__db_entry =  self.__create_cache_db(db_name, backend_id, shot, run)
+        self.__db_entry =  self.__create_cache_db(sandbox_dir, db_name, backend_id, shot, run)
 
     def prepare_data(self, ids_name):
         occurrence = self.__get_occurrence( ids_name )
