@@ -146,8 +146,6 @@ class StatusCType( ):
 
         msg = stream.readlines()
         msg = ''.join(msg)
-        if msg_size != len(msg):
-            raise ValueError('ERROR: Message size differs!')
 
         self.message = msg.strip()
 
