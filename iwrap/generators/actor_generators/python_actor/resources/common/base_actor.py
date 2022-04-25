@@ -137,6 +137,5 @@ class ActorBaseClass(Actor):
         self.__runner.call_finalize()
 
         self.__binder.finalize()
-        self.sandbox.clean()
         self.sandbox.remove()
 
