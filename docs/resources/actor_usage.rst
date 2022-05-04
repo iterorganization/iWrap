@@ -283,17 +283,20 @@ Run mode
        # updates runtime_settings
        actor_object.initialize(runtime_settings=runtime_settings)
 
-Debug mode
+Debug settings
 =========================================================================================
+
+Debug mode
+-----------------------------------------------------
 
 -   Defined by setting one of predefined ``DebugMode`` enumeration class values
 
--   DebugMode.STANDALONE   - similarly to STANDALONE *run mode* - an actor runs *native code as executable
+-   ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *native code as executable
     in a separate system process*, but this time under debugger control. Debugged code can be run several
     times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable
     for most of the purposes.
 
--   DebugMode.ATTACH   - an actor runs a debugger as parallel process, attaching it to a running workflow
+-   ``DebugMode.ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
     and setting breakpoint on wrapped native code of the debugged actor.  Because debugger attaches to a
     workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be
     chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results from actor
@@ -305,25 +308,71 @@ Debug mode
 
       from <actor name>.common.runtime_settings import DebugMode
 
--   See `Batch settings`_ for details concerning batch job configuration
-
-
 -   Example of the usage:
 
-   .. code-block:: Python
+    .. code-block:: Python
+
+      from <actor name>.common.runtime_settings import DebugMode
+
+       ...
+      # gets runtime settings
+      runtime_settings = actor_object.get_runtime_settings()
+
+      #configures runtime settings
+      runtime_settings.debug_mode = DebugMode.STANDALONE
+
+      # updates runtime_settings
+      actor_object.initialize(runtime_settings=runtime_settings)
+
+
+Setting debugger
+-----------------------------------------------------
+More advanced users may use a debbuger, different than the default one, using an actor API
+
+-   Defined by setting ``debugger_cmd`` or ``debugger_attach_cmd`` attributes
+
+-   ``debugger_cmd``
+
+    - Used only if debug mode is set to ``DebugMode.STANDALONE``
+    - Attribute replaces default debugger
+    - It should be set to debugger executable (e.g. 'gdb', 'totalview', etc)
+    - Example of the usage:
+
+      .. code-block:: Python
 
        from <actor name>.common.runtime_settings import DebugMode
-
        ...
        # gets runtime settings
        runtime_settings = actor_object.get_runtime_settings()
 
        #configures runtime settings
        runtime_settings.debug_mode = DebugMode.STANDALONE
+       runtime_settings.debugger.debugger_cmd = 'gdb'
 
        # updates runtime_settings
        actor_object.initialize(runtime_settings=runtime_settings)
 
+
+-   ``debugger_attach_cmd``
+
+    - Used only if debug mode is set to ``DebugMode.ATTACH``
+    - Attribute replaces default command, which runs separate process that attaches to Python process
+    - The syntax of command is usually a bit comples (see example below)
+    - Example of the usage:
+
+      .. code-block:: Python
+
+           from <actor name>.common.runtime_settings import DebugMode
+           ...
+           # gets runtime settings
+           runtime_settings = actor_object.get_runtime_settings()
+
+           #configures runtime settings
+           runtime_settings.debug_mode = DebugMode.ATTACH
+           runtime_settings.debugger.debugger_attach_cmd = "xterm -e gdb  -ex 'set breakpoint pending on'  -ex 'attach ${process_id}' -ex 'break ${main_sbrt_name}' -ex 'continue'"
+
+           # updates runtime_settings
+           actor_object.initialize(runtime_settings=runtime_settings)
 
 MPI settings
 =========================================================================================
