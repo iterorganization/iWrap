@@ -81,12 +81,11 @@ END FUNCTION create_ids_full_name
         deallocate(status_info_array)
     END SUBROUTINE handle_status_info
 
-    FUNCTION read_input(db_entry_desc_array, xml_string) RESULT(status)
+    FUNCTION read_input(db_entry_desc_array) RESULT(status)
         use rwtool
         type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
-        character(len=:), allocatable, intent(OUT) :: xml_string
         integer :: i, status
-        integer :: ids_array_size, array_read_size, xml_read_size
+        integer :: ids_array_size, array_read_size
 
         status = 0
         ids_array_size = SIZE(db_entry_desc_array)
@@ -107,25 +106,20 @@ END FUNCTION create_ids_full_name
              call readids(db_entry_desc_array(i))
         end do
 
-        read(10,*) ! skip line " == Code Parameters =="
-        read(10,*) ! skip line " Length:"
-
-        read(10,*) xml_read_size
-
-        if ( xml_read_size < 1)  then
-            close(10)
-            return
-        end if
-
-        read(10,*) ! skip line " --- Value: ---"
-
-
-        allocate( character(len=xml_read_size) :: xml_string )
-        call read_string(xml_string, xml_read_size)
         close(10)
 
     END FUNCTION read_input
 
+
+    FUNCTION read_code_parameters(xml_parameters) RESULT(status)
+        use rwtool
+        character(len=:), allocatable, intent(OUT) :: xml_parameters
+        integer :: status
+
+        status = read_file("code_parameters.xml", xml_parameters)
+        if (status /= 0) return
+
+    END FUNCTION read_code_parameters
 
     SUBROUTINE write_output(status_code, status_message)
         use rwtool
@@ -206,20 +200,6 @@ END FUNCTION create_ids_full_name
       end if
    end do
     END SUBROUTINE close_db_entries
-
-FUNCTION read_codeparams_schema(xsd_file)  RESULT (xsd_string)
-    use rwtool
-    implicit none
-
-    character(len=*), intent(IN) :: xsd_file
-    character(len=:), allocatable :: xsd_string
-
-    if ( LEN(xsd_file) < 1 ) return
-
-    xsd_string = read_file(xsd_file)
-
-END FUNCTION read_codeparams_schema
-
 
 FUNCTION convert_codeparams(code_params_cstr)  RESULT (al_code_params)
     use iso_c_binding, ONLY: C_PTR

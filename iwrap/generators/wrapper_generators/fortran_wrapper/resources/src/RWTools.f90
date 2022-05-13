@@ -47,7 +47,8 @@ module rwtool
         character(STRING_SIZE)  :: line
         
         var(:) = char(0)
-        read(10,"(a)")  line        
+        read(10,"(a)")  line
+        
         ! -- convert string -> array
         do i = 1, STRING_SIZE
             var(i) = line(i : i)
@@ -55,49 +56,50 @@ module rwtool
 
    end subroutine
 
-FUNCTION read_file(filename) RESULT (str)
+    FUNCTION read_file(filename, str) RESULT(status)
+        implicit none
 
-    implicit none
+        character(len=*),intent(in) :: filename
+        character(len=:),allocatable, intent(out) :: str
 
-    character(len=*),intent(in) :: filename
-    character(len=:),allocatable :: str
+        !local variables:
+        integer :: iunit,istat,filesize, status
+        character(len=1) :: c
 
-    !local variables:
-    integer :: iunit,istat,filesize
-    character(len=1) :: c
+        open(newunit=iunit,file=filename,status='OLD',&
+                form='UNFORMATTED',access='STREAM',iostat=istat)
 
-    open(newunit=iunit,file=filename,status='OLD',&
-            form='UNFORMATTED',access='STREAM',iostat=istat)
-
-    if (istat==0) then
+        if (istat /=0) then
+            write(*,*) 'Error opening file: ', filename
+            status = -1
+            return
+        end if
 
         !how many characters are in the file:
         inquire(file=filename, size=filesize)
-        if (filesize>0) then
-
-            !read the file all at once:
-            allocate( character(len=filesize) :: str )
-            read(iunit,pos=1,iostat=istat) str
-
-            if (istat==0) then
-                !make sure it was all read by trying to read more:
-                read(iunit,pos=filesize+1,iostat=istat) c
-                if (.not. IS_IOSTAT_END(istat)) &
-                    write(*,*) 'Error: file was not completely read.'
-            else
-                write(*,*) 'Error reading file.'
-            end if
-
-            close(iunit, iostat=istat)
-
-        else
-            write(*,*) 'Error getting file size.'
+        if (filesize < 1) then
+            write(*,*) 'Error getting file size: ', filename
+            status = -1
+            return
         end if
-    else
-        write(*,*) 'Error opening file.'
-    end if
 
-    end function read_file
+        !read the file all at once:
+        allocate( character(len=filesize) :: str )
+        read(iunit,pos=1,iostat=istat) str
+
+        if (istat /=0 ) then
+            write(*,*) 'Error reading file: ', filename
+            status = -1
+            return
+        end if
+
+        !make sure it was all read by trying to read more:
+        read(iunit,pos=filesize+1,iostat=istat) c
+        if (.not. IS_IOSTAT_END(istat)) &
+            write(*,*) 'Error: file was not completely read.'
+
+        close(iunit, iostat=istat)
+   end function read_file
    !---------------------------------------------------
    subroutine read_string(var, isize)
     implicit none
@@ -111,15 +113,20 @@ FUNCTION read_file(filename) RESULT (str)
      io_stat = 0
 
      DO WHILE (read_count < isize .and. io_stat > -1)
-       line = ""
+       line = char(10)
        read(10,"(a)", iostat=io_stat)  line
 
+       line_length = len(line)
+       do i = 1, line_length
+           print *, i, " : ",  iachar(line(i:i)), " : ", line(i : i)
+       enddo
 
        line_length = len_trim(line)
        if(read_count + line_length > isize) then
         line_length = isize - read_count
        endif
 
+        print *, "Line length: ", line_length
        ! -- convert string -> array
        do i = 1, line_length
            var(read_count:read_count) = line(i : i)
@@ -128,6 +135,7 @@ FUNCTION read_file(filename) RESULT (str)
 
        ! -- add a new line at the end of line
        var(read_count:read_count) = char(10)
+       print *, "New line at: " , read_count
        read_count = read_count + 1
     END DO
 

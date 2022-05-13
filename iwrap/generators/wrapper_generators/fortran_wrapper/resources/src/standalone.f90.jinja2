@@ -32,10 +32,12 @@ program standalone
 {% endif %}
 
    !-----------Reading input ---------------------
-    status = read_input(db_entry_desc_array, xml_string)
+    status = read_input(db_entry_desc_array)
     if (status /= 0) STOP -1
 
 {% if code_description.implementation.code_parameters.parameters %}
+     status = read_code_parameters(xml_string)
+        if (status /= 0) STOP -1
     code_params_cstr => convert(xml_string)
     deallocate(xml_string)
 {% endif %}

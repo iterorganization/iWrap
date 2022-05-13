@@ -5,7 +5,6 @@ import subprocess
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
-from threading import Thread
 from typing import Any, List
 
 import imas
@@ -163,7 +162,9 @@ class CBinder(Binder):
             file.write( str( len( full_arguments_list ) ) + "\n" )
             for arg in full_arguments_list:
                 arg.save( file )
-            ParametersCType.save(code_parameters, file)
+
+            if code_parameters:
+                code_parameters.save(sandbox_dir)
 
     def __read_output(self, status_info, sandbox_dir):
 

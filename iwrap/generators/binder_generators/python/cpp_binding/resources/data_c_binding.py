@@ -1,5 +1,7 @@
 import logging
 import ctypes
+from pathlib import Path
+
 
 class IDSCType( ctypes.Structure ):
 
@@ -182,23 +184,12 @@ class ParametersCType(  ):
     def __init__(self, code_parameters: str):
         self.params = code_parameters
 
-    @classmethod
-    def save(cls, code_description, stream ):
-        stream.write( " Code Parameters ".center(70, '=') )
-        stream.write( "\n" )
-        stream.write( 'Length:' )
-        stream.write( "\n" )
-        if not code_description:
-            stream.write( '0\n' )
+    def save(self, sandbox_dir):
+
+        if not self.params:
             return
 
-        if not code_description.params:
-            stream.write( '0\n' )
-            return
+        file_path = Path(sandbox_dir, 'code_parameters.xml')
+        with open( file_path, "wt" ) as file:
+            file.write( self.params )
 
-        stream.write( str(len(code_description.params.encode('utf-8'))) )
-        stream.write( "\n" )
-        stream.write( ' Value: '.center(20, '-') )
-        stream.write( "\n" )
-        stream.write( code_description.params )
-        stream.write( "\n" )

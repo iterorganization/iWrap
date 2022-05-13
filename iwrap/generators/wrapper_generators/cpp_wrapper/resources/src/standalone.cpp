@@ -27,11 +27,13 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 {% endif %}
 
-  //----  Code parameters  ----
-      char *xml_string;
+    read_input(db_entry_desc_array, IDS_ARGS_NO);
 
-  read_input(db_entry_desc_array, IDS_ARGS_NO, &xml_string);
-
+    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+    //----  Code parameters  ----
+    char *xml_string;
+    read_code_parameters( &xml_string);
+    {% endif %}
 
      {% if code_description.implementation.subroutines.init %}
     // - - - - - - - - - - - - - - - - - -INIT SBRT CALL - - - - - - - - - - - - - - - - - - - - - - - - - -

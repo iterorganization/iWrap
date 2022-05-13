@@ -5,11 +5,10 @@
 #include "serialization_tools.h"
 
 
-int read_input(ids_description_t db_entry_desc_array[], int array_expected_size, char** xml_string)
+int read_input(ids_description_t db_entry_desc_array[], int array_expected_size)
 {
     ifstream fin;
     int array_read_size = -1;
-    int xml_read_size = -1;
 
     if (array_expected_size < 1)
         return 0;
@@ -30,27 +29,23 @@ int read_input(ids_description_t db_entry_desc_array[], int array_expected_size,
         read_data(&fin, &db_entry_desc_array[i]);
     }
     
-    fin.ignore(INT_MAX, '\n'); // skip line " == Code Parameters =="
-    fin.ignore(INT_MAX, '\n'); // skip line " Length:"
-    // read size of xml_string
-    read_data(&fin, &xml_read_size);
-
-    if (xml_read_size < 0)
-    {
-        fin.close();
-        return 0;
-    }
-
-
-    fin.ignore(INT_MAX, '\n'); // skip line " Length:"
-    *xml_string = (char*)malloc(xml_read_size + 1);
-
-    read_data(&fin, *xml_string, xml_read_size);
-
-
     fin.close();
 
     return 0;
+}
+
+int read_code_parameters( char** xml_string)
+{
+    FILE *f = fopen("code_parameters.xml", "rb");
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+
+    *xml_string = (char *)malloc(fsize + 1);
+    fread(*xml_string, fsize, 1, f);
+    fclose(f);
+
+    (*xml_string)[fsize] = 0;
 }
 
 int write_output(int status_code, char* status_message)
