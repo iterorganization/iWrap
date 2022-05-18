@@ -66,6 +66,8 @@ module rwtool
         integer :: iunit,istat,filesize, status
         character(len=1) :: c
 
+        status = 0
+
         open(newunit=iunit,file=filename,status='OLD',&
                 form='UNFORMATTED',access='STREAM',iostat=istat)
 
