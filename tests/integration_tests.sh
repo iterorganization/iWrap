@@ -59,6 +59,9 @@ else
   echo -e "\n++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
   # Source and run scripts with environment vars for CI server
   # set -e
+  # SET UP ENVIRONMENT FOR COMPILATION
+  . /usr/share/Modules/init/sh
+  module use /work/imas/etc/modules/all
   
   # Create reports directory
   mkdir -p $reports_dir
