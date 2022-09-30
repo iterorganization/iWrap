@@ -78,7 +78,7 @@ END FUNCTION create_ids_full_name
         print *, "-------Output flag    : ", status_code
         print *, "-------Status info: ", status_info_array
         print *, "---------------------------------------------------------"
-        deallocate(status_info_array)
+        ! deallocate(status_info_array)
     END SUBROUTINE handle_status_info
 
     FUNCTION read_input(db_entry_desc_array) RESULT(status)
