@@ -9,3 +9,5 @@ chmod a+x $envs_dir/00_load_imas_env.sh
 . `pwd`/venv/bin/activate
 . $envs_dir/12_python_env_install.sh
 
+echo -e "Using python from env: ${which python}"
+
