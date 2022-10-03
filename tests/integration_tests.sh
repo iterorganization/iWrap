@@ -83,6 +83,7 @@ else
       # Source neccessary modules and environment variables to run
       . ./set-iter.sh
       . `pwd`/venv/bin/activate
+      echo -e Python virtualenv active: `which python`
 
       # Navigate to the examples directory
       cd examples/

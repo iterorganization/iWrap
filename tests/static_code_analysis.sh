@@ -7,6 +7,7 @@ chmod a+x $envs_dir/00_load_imas_env.sh
 . $envs_dir/00_load_imas_env.sh
 . $envs_dir/10_python_set_env.sh
 . `pwd`/venv/bin/activate
+echo -e Python virtualenv active: `which python` 
 . $envs_dir/03_report_module_list.sh
 
 # Run pylint code check
