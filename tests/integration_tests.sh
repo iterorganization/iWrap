@@ -82,6 +82,7 @@ else
       chmod a+x ./set-iter.sh
       # Source neccessary modules and environment variables to run
       . ./set-iter.sh
+      . `pwd`/venv/bin/activate
 
       # Navigate to the examples directory
       cd examples/
