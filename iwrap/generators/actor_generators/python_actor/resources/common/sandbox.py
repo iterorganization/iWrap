@@ -2,7 +2,6 @@ import os
 import shutil
 from pathlib import Path
 
-from iwrap.common import utils
 from .runtime_settings import SandboxMode, SandboxLifeTime
 
 
