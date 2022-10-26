@@ -4,11 +4,15 @@ set -e
 
 envs_dir=`pwd`/envs/iter-bamboo
 venv_path=$(realpath $envs_dir/../../venv)
+activate_venv () {
+	. $venv_path/bin/activate
+}
+
 echo "Environement scripts path: $envs_dir"
 chmod a+x $envs_dir/00_load_imas_env.sh
 . $envs_dir/00_load_imas_env.sh
 . $envs_dir/10_python_set_env.sh
-. $venv_path/bin/activate
+activate_venv
 max_retry=20
 retry=0
 venv_status=2
