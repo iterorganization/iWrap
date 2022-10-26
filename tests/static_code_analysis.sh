@@ -3,31 +3,37 @@
 set -e
 
 envs_dir=`pwd`/envs/iter-bamboo
+venv_path=$(realpath $envs_dir/../../venv)
 echo "Environement scripts path: $envs_dir"
 chmod a+x $envs_dir/00_load_imas_env.sh
 . $envs_dir/00_load_imas_env.sh
 . $envs_dir/10_python_set_env.sh
-. $envs_dir/../../venv/bin/activate
-BACK_PID=$!
+. $venv_path/bin/activate
 max_retry=20
 retry=0
+venv_status=2
 while [ ${retry} -lt ${max_retry} ]; do
-	if [ kill -0 $BACK_PID 2>/dev/null ]; then
+	if [ -x $venv_path/bin/python ]; then
 		echo "Virtualenv ready!"
+		venv_status=0
 		sleep 1
+		break
 	else
 		echo "Waiting for virtualenv to activate! Retry: $retry"
-		venv_path=$(realpath $envs_dir/../../venv)
 		echo "Path to virtualenv: $venv_path"
-		ls $venv_path
 		(( retry = retry + 1 ))
 		sleep 1
 	fi
 done
+
+if [ $venv_status -ne 0 ]; then
+	echo "Virtual env not active!"
+	exit $venv_status
+fi
 
 echo -e Python virtualenv active: `which python` 
 . $envs_dir/03_report_module_list.sh
 
 # Run pylint code check
 echo "~~~~~====================PYLINT CODE CHECK====================~~~~~"
-python -m pylint -E --output-format=pylint_junit.JUnitReporter iwrap > pylint.xml
+$venv_path/bin/python -m pylint -E --output-format=pylint_junit.JUnitReporter iwrap > pylint.xml
