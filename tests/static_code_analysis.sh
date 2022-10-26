@@ -35,7 +35,7 @@ if [ $venv_status -ne 0 ]; then
 	exit $venv_status
 fi
 
-echo -e Python virtualenv active: `which python` 
+echo -e Python virtualenv active: `which ${venv_path/bin/python}` 
 source $envs_dir/03_report_module_list.sh
 
 # Run pylint code check
