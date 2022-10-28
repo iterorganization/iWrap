@@ -125,9 +125,10 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         programming language will be selected in combobox.
         """
         code_description = ProjectSettings.get_settings().code_description
+        code_languages = list( Engine().active_generator.code_languages )
+        self.programming_language_combobox['values'] = code_languages
 
-        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
-        programming_language = code_description.implementation.programming_language or ImplementationPane.default_programming_language
+        programming_language = code_description.implementation.programming_language or code_languages[0]
 
         if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
             programming_language = ImplementationPane.default_programming_language
@@ -155,8 +156,6 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.root_dir.set(code_description.implementation.root_dir or '')
         self.subroutines_pane.reload()
         self.code_parameters_pane.reload()
-
-        code_description.implementation.programming_language = self.programming_language_combobox.get()
 
     def on_click_file(self, path):
         """Open the filedialog when the browse button is clicked and insert selected path to the entry.
