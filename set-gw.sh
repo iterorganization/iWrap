@@ -1,7 +1,7 @@
 module purge
 module load cineca
 
-module load imasenv/3.33.0/gcc
+module load imasenv/3.37.0/gcc
 
 
 setenv PATH "${PWD}/bin:${PATH}"
