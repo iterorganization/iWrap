@@ -24,8 +24,12 @@ class FortranWrapperGenerator(WrapperGenerator):
 
 
     @property
-    def name(self) -> str:
+    def type(self) -> str:
         return 'python'
+
+    @property
+    def name(self) -> str:
+        return 'Fortran wrapper for simple Python actor'
 
     @property
     def description(self) -> str:

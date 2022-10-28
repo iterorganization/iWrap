@@ -64,10 +64,14 @@ class BinderGeneratorRegistry:
     @classmethod
     def get_generator(cls, actor_language: str, code_language: str) -> BinderGenerator:
 
+        # No binder actually needed
+        if actor_language is None or code_language is None:
+            return None
+
         for generator in cls.__generators:
             if actor_language == generator.actor_language and code_language in generator.code_languages:
                 return generator
 
-        types = [(generator.actor_language, generator.actor_language) for generator in cls.__generators]
+        types = [(generator.actor_language, generator.code_languages) for generator in cls.__generators]
         raise ValueError(f'ERROR: No generator found to bind  actor language "{actor_language}" to "{code_language}" '
-                         f'! Registered generators: "{types}".' )
+                         f'! Registered binders: "{types}".' )

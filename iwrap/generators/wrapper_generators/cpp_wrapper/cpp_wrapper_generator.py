@@ -25,6 +25,10 @@ class CppWrapperGenerator(WrapperGenerator):
 
 
     @property
+    def type(self) -> str:
+        return 'python'
+
+    @property
     def name(self) -> str:
         return 'python'
 

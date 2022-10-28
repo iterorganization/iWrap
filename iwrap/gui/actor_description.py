@@ -50,8 +50,9 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         ProjectSettings.get_settings().actor_description.actor_name = actor_name
 
         # updating actor type
-        actor_type = self.actor_type_combo.get()
-        ProjectSettings.get_settings().actor_description.actor_type = actor_type
+        selected_index = self.actor_type_combo.current()
+        generator = Engine().registered_generators[selected_index]
+        ProjectSettings.get_settings().actor_description.actor_type = generator.type
 
         # updating actor data type
         data_type = self.data_type_combo.get()

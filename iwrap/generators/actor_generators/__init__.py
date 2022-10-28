@@ -15,6 +15,11 @@ class ActorGenerator(AbstractGenerator):
 
     @property
     @abstractmethod
+    def type(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
     def name(self) -> str:
         ...
 
@@ -62,11 +67,11 @@ class ActorGeneratorRegistry:
         return cls.__generators
 
     @classmethod
-    def get_generator(cls, generator_name) -> ActorGenerator:
+    def get_generator(cls, generator_type) -> ActorGenerator:
 
         for generator in cls.__generators:
-            if generator.name == generator_name:
+            if generator.type.lower() == generator_type.lower():
                 return generator
 
-        types = [generator.name for generator in cls.__generators]
-        raise ValueError(f'ERROR: No registered generator for provided actor type <{generator_name}>! Registered generators: "{types}".' )
+        types = [generator.type for generator in cls.__generators]
+        raise ValueError(f'ERROR: No registered generator for provided actor type <{generator_type}>! Registered generators: "{types}".' )

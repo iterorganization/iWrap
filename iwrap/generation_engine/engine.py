@@ -64,6 +64,7 @@ class Engine:
     def generate_actor(self, info_output_stream=sys.stdout):
         from iwrap.settings.project import ProjectSettings
         from iwrap.settings.platform.platform_settings import PlatformSettings
+        generators = []
 
         project_root_dir = ProjectSettings.get_settings().root_dir_path
 
@@ -75,16 +76,25 @@ class Engine:
         project_settings_dict.update({'platform_settings': platform_settings_dict})
 
         actor_generator = Engine._active_generator
+        generators.append( actor_generator )
+
         actor_language = actor_generator.actor_language
+        actor_type = actor_generator.type
         actor_generator.initialize(project_settings_dict)
 
         code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
-        binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
-        binder_generator.initialize(project_settings_dict)
-        wrapper_generator = WrapperGeneratorRegistry.get_generator(code_language)
-        wrapper_generator.initialize(project_settings_dict)
 
-        generators = Engine._active_generator, binder_generator, wrapper_generator
+        # BINDER discovery
+        binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
+        if binder_generator is not None: # Some actors requires no binding
+            binder_generator.initialize(project_settings_dict)
+            generators.append(binder_generator)
+
+        # WRAPPER discovery
+        wrapper_generator = WrapperGeneratorRegistry.get_generator(actor_type, code_language)
+        if wrapper_generator is not None: # Wrapper could be optional in some use-cases
+            wrapper_generator.initialize(project_settings_dict)
+            generators.append(wrapper_generator)
 
         text_decoration = 20 * "-"
         print( text_decoration, 'VALIDATING AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
@@ -130,9 +140,9 @@ class Engine:
 
     @classmethod
     def validate_actor_type(cls, actor_type):
-        available_actor_types = [generator.name for generator in ActorGeneratorRegistry.generators()]
-        if actor_type not in available_actor_types:
-            raise ValueError( f'Unknown type of data handled by an actor : "{actor_type}"! Available types: {available_actor_types}.' )
+        available_actor_types = [generator.type.lower() for generator in ActorGeneratorRegistry.generators()]
+        if actor_type.lower() not in available_actor_types:
+            raise ValueError( f'Unknown actor type: "{actor_type}"! Available types: {available_actor_types}.' )
 
     @classmethod
     def validate_actor_data_type(cls, data_type):

@@ -15,6 +15,11 @@ class WrapperGenerator(AbstractGenerator):
 
     @property
     @abstractmethod
+    def type(self) -> str:
+        ...
+
+    @property
+    @abstractmethod
     def name(self) -> str:
         ...
 
@@ -52,12 +57,12 @@ class WrapperGeneratorRegistry:
         return cls.__generators
 
     @classmethod
-    def get_generator(cls, code_language: str) -> WrapperGenerator:
+    def get_generator(cls, type:str, code_language: str) -> WrapperGenerator:
 
         for generator in cls.__generators:
-            if code_language == generator.code_language:
+            if code_language == generator.code_language and type == generator.type:
                 return generator
 
         types = [generator.code_language for generator in cls.__generators]
-        raise ValueError(f'ERROR: No generator found to bind  code language "{code_language}" '
-                         f'! Registered generators: "{types}".' )
+        raise ValueError(f'ERROR: No generator found to wrap code language "{code_language}" for type "{type}"!'
+                         f'Registered generators: "{types}".' )

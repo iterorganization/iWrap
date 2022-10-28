@@ -30,8 +30,14 @@ def process_template_dir(
         dictionary (Dict[str, Any]): Dictionary containing all data needed to 'feed' templates
     """
     # TODO: Add excluded files /dirs list (?)
+
+    if template_pkg:
+        package_loader = jinja2.PackageLoader(template_pkg, template_dir)
+    else:
+        package_loader = jinja2.FileSystemLoader( template_dir )
+
     jinja_env = jinja2.Environment(
-        loader=jinja2.PackageLoader(template_pkg, template_dir),
+        loader=package_loader,
         autoescape=jinja2.select_autoescape(['html', 'xml']),
         trim_blocks=True,
         lstrip_blocks = True
