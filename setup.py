@@ -7,6 +7,7 @@ import site
 import sys
 import subprocess
 from glob import glob
+import versioneer
 
 # Import other stdlib packages
 from itertools import chain
@@ -77,6 +78,7 @@ install_requires = optional_reqs.pop("core")
 # collect all optional dependencies in a "all" target
 optional_reqs["all"] = list(chain(*optional_reqs.values()))
 
+
 if __name__ == "__main__":
     # Legacy setuptools support, e.g. `python setup.py something`
     # See [PEP-0517](https://www.python.org/dev/peps/pep-0517/) and
@@ -86,14 +88,17 @@ if __name__ == "__main__":
     # For allowed version strings, see:
     # https://packaging.python.org/specifications/core-metadata/ for allow version strings
 
+    cmdclassdict = versioneer.get_cmdclass()
+    cmdclassdict['clean']=CleanCommand
+    
     setup(
-        version=subprocess.getoutput('git describe --dirty'),
+        version=versioneer.get_version(),
         packages=find_packages(exclude=('tests*', 'testing*')),
         setup_requires=pyproject_data["build-system"]["requires"],
         include_package_data=True,
         install_requires=install_requires,
         extras_require=optional_reqs,
-        cmdclass={'clean': CleanCommand},
+        cmdclass=cmdclassdict,
         entry_points={
             'console_scripts': [
                 'iwrap-gui = bin.run:gui',
@@ -103,4 +108,3 @@ if __name__ == "__main__":
 		scripts=['bin/iwrap-doc'],
         data_files=list_docs_data_files(path_to_docs="./docs/html/")
     )
-
