@@ -9,7 +9,7 @@ class PythonPane( ttk.Frame, IWrapPane ):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, language=None):
         super().__init__( master )
         ttk.Label( self, text="Place for SPECIFIC Python settings", borderwidth=1, relief="solid" ).pack( fill=tk.BOTH, expand=1 )
 
