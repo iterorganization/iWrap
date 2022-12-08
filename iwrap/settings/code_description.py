@@ -409,9 +409,7 @@ class CodeDescription( SettingsBaseClass ):
             raise ValueError( 'Documentation must be a string (and it is not)!' )
 
         # settings
-        if not self.settings:
-            raise ValueError( 'Language specific data are not set!' )
-        elif isinstance(self.settings, SettingsBaseClass):
+        if isinstance(self.settings, SettingsBaseClass):
             self.settings.validate(engine, project_root_dir)  # pylint: disable=no-member
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
