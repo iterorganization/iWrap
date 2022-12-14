@@ -96,6 +96,8 @@ class Subroutines( SettingsBaseClass ):
         init (str): A name of subroutine that could be used to initialise the native code (optional)
         main (str): A name of the main subroutine that will be called from actor (mandatory)
         finalize (str): A name of subroutine that could be used to finalise the native code (optional)
+        get_status (str): A name of a subroutine returning information about internal model state.
+        set_status (str): A name of a subroutine restoring internal model state.
     """
 
     def __init__(self):
@@ -110,6 +112,10 @@ class Subroutines( SettingsBaseClass ):
         # A name of subroutine that could be used to finalise the native code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.finalize: str = ''
+
+        self.get_status = ''
+
+        self.set_status = ''
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         # validate correctness of XML
