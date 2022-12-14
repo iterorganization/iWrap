@@ -13,8 +13,8 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         init (tk.StringVar()): A name of subroutine that could be used to initialise the native code
         main (tk.StringVar()): A name of the main subroutine that will be called from actor
         finalize (tk.StringVar()): A name of subroutine that could be used to finalise the native code
-        get_status (tk.StringVar()): A name of a subroutine returning information about the internal model state.
-        set_status (tk.StringVar()): A name of a subroutine restoring the internal model state.
+        get_state (tk.StringVar()): A name of a subroutine returning information about the internal model state.
+        set_state (tk.StringVar()): A name of a subroutine restoring the internal model state.
     """
 
     # Class logger
@@ -30,8 +30,8 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         self.main = tk.StringVar()
         self.init = tk.StringVar()
         self.finalize = tk.StringVar()
-        self.get_status = tk.StringVar()
-        self.set_status = tk.StringVar()
+        self.get_state = tk.StringVar()
+        self.set_state = tk.StringVar()
 
         # SUBROUTINES LABEL FRAME
         labelframe_sub = ttk.Frame(self, height=100)
@@ -53,14 +53,14 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         text = ttk.Entry(labelframe_sub, textvariable=self.finalize)
         text.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
 
-        # get_status
+        # get_state
         ttk.Label(labelframe_sub, text="Get status:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.get_status)
+        text = ttk.Entry(labelframe_sub, textvariable=self.get_state)
         text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
 
-        # set_status
+        # set_state
         ttk.Label(labelframe_sub, text="Set status:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.set_status)
+        text = ttk.Entry(labelframe_sub, textvariable=self.set_state)
         text.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
 
     def update_settings(self, *args):
@@ -70,8 +70,8 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         code_description.implementation.subroutines.main = self.main.get()
         code_description.implementation.subroutines.finalize = self.finalize.get()
         code_description.implementation.subroutines.init = self.init.get()
-        code_description.implementation.subroutines.init = self.get_status.get()
-        code_description.implementation.subroutines.init = self.set_status.get()
+        code_description.implementation.subroutines.init = self.get_state.get()
+        code_description.implementation.subroutines.init = self.set_state.get()
 
     def reload(self):
         """Reload init, main, and finalize values then the project settings are changed".
@@ -80,5 +80,5 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         self.main.set(code_description.implementation.subroutines.main or '')
         self.finalize.set(code_description.implementation.subroutines.finalize or '')
         self.init.set(code_description.implementation.subroutines.init or '')
-        self.get_status.set(code_description.implementation.subroutines.get_status or '')
-        self.set_status.set(code_description.implementation.subroutines.set_status or '')
+        self.get_state.set(code_description.implementation.subroutines.get_state or '')
+        self.set_state.set(code_description.implementation.subroutines.set_state or '')
