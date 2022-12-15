@@ -70,8 +70,8 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         code_description.implementation.subroutines.main = self.main.get()
         code_description.implementation.subroutines.finalize = self.finalize.get()
         code_description.implementation.subroutines.init = self.init.get()
-        code_description.implementation.subroutines.init = self.get_state.get()
-        code_description.implementation.subroutines.init = self.set_state.get()
+        code_description.implementation.subroutines.get_state = self.get_state.get()
+        code_description.implementation.subroutines.set_state = self.set_state.get()
 
     def reload(self):
         """Reload init, main, and finalize values then the project settings are changed".

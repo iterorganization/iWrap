@@ -129,6 +129,8 @@ class Subroutines( SettingsBaseClass ):
         self.init = ''
         self.main = ''
         self.finalize = ''
+        self.get_state = ''
+        self.set_state = ''
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
