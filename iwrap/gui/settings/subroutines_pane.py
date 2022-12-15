@@ -41,27 +41,27 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         # INIT
         ttk.Label(labelframe_sub, text="Init:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.init)
-        text.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        text.grid(column=1, row=1, padx=10, pady=5)
 
         # MAIN
         ttk.Label(labelframe_sub, text="*Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.main)
-        text.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        text.grid(column=1, row=2, padx=10, pady=5)
 
         # Finalize
         ttk.Label(labelframe_sub, text="Finalize:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.finalize)
-        text.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        text.grid(column=1, row=3, padx=10, pady=5)
 
         # get_state
-        ttk.Label(labelframe_sub, text="Get status:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe_sub, text="Get status:").grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.get_state)
-        text.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
+        text.grid(column=3, row=1, padx=10, pady=5)
 
         # set_state
-        ttk.Label(labelframe_sub, text="Set status:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe_sub, text="Set status:").grid(column=2, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.set_state)
-        text.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
+        text.grid(column=3, row=2, padx=10, pady=5)
 
     def update_settings(self, *args):
         """Update settings in the ProjectSettings.
