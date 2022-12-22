@@ -32,6 +32,14 @@ class Actor(ABC):
     def finalize(self) -> None:
         ...
 
+    @abstractmethod
+    def get_state(self) -> str:
+        ...
+
+    @abstractmethod
+    def set_state(self, state: str) -> None:
+        ...
+
 class ActorBaseClass(Actor):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -139,3 +147,9 @@ class ActorBaseClass(Actor):
         self.__binder.finalize()
         self.sandbox.remove()
 
+    def get_state(self) -> str:
+        state = self.__runner.call_get_state()
+        return state
+
+    def set_state(self, state: str) -> None:
+        self.__runner.call_set_state(state)

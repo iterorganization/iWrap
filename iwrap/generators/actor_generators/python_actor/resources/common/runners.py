@@ -45,6 +45,14 @@ class Runner(ABC):
     def call_finalize(self):
         ...
 
+    @abstractmethod
+    def call_get_state(self) -> str:
+        ...
+
+    @abstractmethod
+    def call_set_state(self, state: str):
+        ...
+
 class StandaloneRunner( Runner ):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -219,6 +227,12 @@ class StandaloneRunner( Runner ):
     def call_finalize(self):
         ...
 
+    def call_get_state(self) -> str:
+        ...
+
+    def call_set_state(self, state: str):
+        ...
+
 
 class LibraryRunner( Runner ):
     # Class logger
@@ -270,3 +284,10 @@ class LibraryRunner( Runner ):
 
     def call_finalize(self):
         self._binder.call_finish( sandbox_dir=self._sandbox_dir )
+
+    def call_get_state(self) -> str:
+        state = self._binder.call_get_state( sandbox_dir=self._sandbox_dir )
+        return state
+
+    def call_set_state(self, state: str):
+        self._binder.call_set_state(state,  sandbox_dir=self._sandbox_dir )

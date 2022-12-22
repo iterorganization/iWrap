@@ -280,10 +280,15 @@ END FUNCTION convert_string2array
         use iso_c_binding
         implicit none
 
-        character(len=*), INTENT(IN) :: inString
+        character(len=:), pointer, INTENT(IN) :: inString
         type(C_PTR) :: outPtr
         INTEGER :: i, strSize
         character, dimension(:), pointer :: outArray
+
+        if(.not. associated(inString)) then
+             outPtr = C_NULL_PTR
+             return
+        end if
 
         strSize = LEN(inString)
         allocate(outArray(strSize + 1))
