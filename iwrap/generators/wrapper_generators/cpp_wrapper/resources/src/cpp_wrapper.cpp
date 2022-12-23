@@ -159,3 +159,53 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 {% endif %}
 
 }
+
+
+{% if code_description.implementation.subroutines.get_state %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  NATIVE GET STATUS SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
+                char** out_state,
+                int* out_status_code, char** out_status_message)
+{
+    std::string status_msg = "OK";
+    std::string state_str = "";
+
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{code_description.implementation.subroutines.get_state}}(state_str, *out_status_code, status_msg );
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // converting status info
+    convert_status_info(status_msg, out_status_message);
+    convert_status_info(state_str, out_state);
+
+	if(*out_status_code < 0)
+		return;
+}
+{% endif %}
+
+{% if code_description.implementation.subroutines.set_state %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  NATIVE SET STATUS SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
+                char* state, int* state_str_size,
+                int* out_status_code, char** out_status_message)
+{
+    std::string status_msg = "OK";
+    std::string state_str(state);
+
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{code_description.implementation.subroutines.set_state}}(state_str, *out_status_code, status_msg );
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // converting status info
+    convert_status_info(status_msg, out_status_message);
+
+	if(*out_status_code < 0)
+		return;
+}
+{% endif %}

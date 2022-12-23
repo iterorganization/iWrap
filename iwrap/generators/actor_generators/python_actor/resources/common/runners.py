@@ -256,7 +256,10 @@ class LibraryRunner( Runner ):
         debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
                                                                                  init_sbrt_name=f'init_{actor_name}_wrapper',
                                                                                  main_sbrt_name=f'{actor_name}_wrapper',
-                                                                                 finish_sbrt_name=f'finish_{actor_name}_wrapper' )
+                                                                                 finish_sbrt_name=f'finish_{actor_name}_wrapper',
+                                                                                 set_state_sbrt_name = f'set_state_{actor_name}_wrapper',
+                                                                                 get_state_sbrt_name=f'get_state_{actor_name}_wrapper'
+        )
 
         def start_debugger(debugger_attach_cmd):
             self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
