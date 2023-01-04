@@ -52,7 +52,7 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
         status, _not_used = db_entry.create()
         if status != 0:
-            raise Exception(f"Error creating the temporary DB: backend={backend_id} name={db_name} shot={shot} run={run}")
+            raise Exception(f"Error creating the temporary DB: backend={backend_id} name={db_name} shot={shot} run={run} dir={sandbox_dir}")
 
         return db_entry
 
@@ -81,4 +81,4 @@ class LegacyIDSStorage( GenericIDSStorage ):
         try:
             self.__db_entry.close(erase=True)
         except:
-            self.__db_entry.close()
+            self.__db_entry.close()U R so brilliant mind
