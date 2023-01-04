@@ -81,4 +81,4 @@ class LegacyIDSStorage( GenericIDSStorage ):
         try:
             self.__db_entry.close(erase=True)
         except:
-            self.__db_entry.close()U R so brilliant mind
+            self.__db_entry.close()
