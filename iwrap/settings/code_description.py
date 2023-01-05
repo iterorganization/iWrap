@@ -98,6 +98,7 @@ class Subroutines( SettingsBaseClass ):
         finalize (str): A name of subroutine that could be used to finalise the native code (optional)
         get_state (str): A name of a subroutine returning information about internal model state.
         set_state (str): A name of a subroutine restoring internal model state.
+        get_timestamp (tk.StringVar()): A name of a subroutine providing time of the computed step of simulation.
     """
 
     def __init__(self):
@@ -117,6 +118,8 @@ class Subroutines( SettingsBaseClass ):
 
         self.set_state = ''
 
+        self.get_timestamp = ''
+
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         # validate correctness of XML
 
@@ -131,6 +134,7 @@ class Subroutines( SettingsBaseClass ):
         self.finalize = ''
         self.get_state = ''
         self.set_state = ''
+        self.get_timestamp = ''
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.

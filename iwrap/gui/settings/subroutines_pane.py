@@ -15,6 +15,7 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         finalize (tk.StringVar()): A name of subroutine that could be used to finalise the native code
         get_state (tk.StringVar()): A name of a subroutine returning information about the internal model state.
         set_state (tk.StringVar()): A name of a subroutine restoring the internal model state.
+        get_timestamp (tk.StringVar()): A name of a subroutine providing time of the computed step of simulation.
     """
 
     # Class logger
@@ -32,6 +33,7 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         self.finalize = tk.StringVar()
         self.get_state = tk.StringVar()
         self.set_state = tk.StringVar()
+        self.get_timestamp = tk.StringVar()
 
         # SUBROUTINES LABEL FRAME
         labelframe_sub = ttk.Frame(self, height=100)
@@ -63,6 +65,11 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         text = ttk.Entry(labelframe_sub, textvariable=self.set_state)
         text.grid(column=3, row=2, padx=10, pady=5)
 
+        # get_timestamp
+        ttk.Label(labelframe_sub, text="Get timestamp:").grid(column=2, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        text = ttk.Entry(labelframe_sub, textvariable=self.get_timestamp)
+        text.grid(column=3, row=3, padx=10, pady=5)
+
     def update_settings(self, *args):
         """Update settings in the ProjectSettings.
         """
@@ -72,6 +79,7 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         code_description.implementation.subroutines.init = self.init.get()
         code_description.implementation.subroutines.get_state = self.get_state.get()
         code_description.implementation.subroutines.set_state = self.set_state.get()
+        code_description.implementation.subroutines.get_timestamp = self.get_timestamp.get()
 
     def reload(self):
         """Reload init, main, and finalize values then the project settings are changed".
@@ -82,3 +90,4 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         self.init.set(code_description.implementation.subroutines.init or '')
         self.get_state.set(code_description.implementation.subroutines.get_state or '')
         self.set_state.set(code_description.implementation.subroutines.set_state or '')
+        self.get_timestamp.set(code_description.implementation.subroutines.get_timestamp or '')
