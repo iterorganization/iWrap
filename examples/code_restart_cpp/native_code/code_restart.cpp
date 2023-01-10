@@ -6,12 +6,14 @@
 //             GET STATE
 //=======================================
 
+int code_state = 0;
+
 void get_code_state( std::string& state_out, int& status_code, std::string& status_message)
 {
     status_code = 0;
 
-   status_message = "INITIALISATION: OK";
-   state_out = "<Representation of code internal state>";
+    status_message = "INITIALISATION: OK";
+    state_out = std::to_string(code_state);
 
     std::cout << "=======================================================" << std::endl;
     std::cout << "Code restart CPP: GET STATE called" << std::endl;
@@ -27,22 +29,20 @@ void restore_code_state( std::string state, int& status_code, std::string& statu
     status_code = 0;
     status_message = "FINALISATION: OK";
 
+    code_state = std::stoi( state );
     std::cout << "=======================================================" << std::endl;
     std::cout << "Code lifecycle CPP: RESTORE STATE called" << std::endl;
-    std::cout << "STATE TO BE RESTORED : " << state << std::endl;
+    std::cout << "STATE TO BE RESTORED : " << code_state << std::endl;
     std::cout << "=======================================================" << std::endl;
 }
 
 // =======================================
 //             MAIN
 //=======================================
-void code_restart(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
-                     IdsNs::codeparam_t xml_params,
+void code_restart(const IdsNs::IDS::equilibrium& in_equilibrium,
                      int& status_code, std::string& status_message)
 {
-    int idsSize = -1;
-    int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
-    
+
     // INITIALISATION OF ERROR FLAG
     status_code = 0;
     
@@ -50,39 +50,22 @@ void code_restart(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::equ
     std::cout <<  "=======================================" << std::endl;
     std::cout <<  "START OF PHYSICS CODE" << std::endl;
     
-    // CHECK IF INPUT IDS IS VALID
-    idsSize = in_equilibrium.time.extent(0);
-    idsTimeMode = in_equilibrium.ids_properties.homogeneous_time;
-    if ( idsTimeMode != IDS_TIME_MODE_HOMOGENEOUS && idsSize > 0)
-    {   
-        // ERROR IF THE CODE DOES NOT COMPLETE TO THE END
-        status_code = -1;
-        status_message = "Error in code_lifecycle: input IDS not valid";
-        return;
-    }
-    
-    // MANDATORY FLAG (UNIFORM TIME HERE)
-    out_equilibrium.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
-    out_equilibrium.time.resize(idsSize);
 
-    // Fill in the output IDS (Physical data)
-    for(int i=0; i < idsSize; i++)
+    std::cout <<  "Starting from: " << code_state << std::endl;
+
+
+
+    for (int i = 0; i < 20; i++)
     {
-        // Time : copy from input IDS
-        out_equilibrium.time(i) = in_equilibrium.time(i);
+        // COMPUTATIONS
+        code_state++;
     }
 
-    out_equilibrium.ids_properties.homogeneous_time = 1;
-    out_equilibrium.code.name   = "code_restart_cpp";
-    out_equilibrium.code.version   = "1.0";
-    out_equilibrium.code.parameters = "my_code_specific_parameters";
-    out_equilibrium.code.output_flag.resize(1);
-    out_equilibrium.code.output_flag(0) = 0;
 
-    std::cout << "Size of input IDS  = " << idsSize << std::endl;
+    std::cout <<  "Counting to : " << code_state << std::endl;
 
     // INITIALISATION OF STATUS INFO
-    status_message = "Status info of code_lifecycle CPP";
+    status_message = "Status info of code_restart CPP";
 
     
     // FINAL DISPLAY
