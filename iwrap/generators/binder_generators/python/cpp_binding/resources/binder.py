@@ -86,6 +86,8 @@ class CBinder(Binder):
         self.wrapper_set_state_func = None
         self.wrapper_get_state_func = None
 
+        self.wrapper_get_timestamp_func = None
+
     def initialize(self, actor):
 
         IDSConvertersRegistry.initialize()
@@ -118,6 +120,10 @@ class CBinder(Binder):
         if self.actor.code_description['implementation']['subroutines'].get( 'set_state' ):
             sbrt_name = 'set_state_' + actor_name + "_wrapper"
             self.wrapper_set_state_func = self.__get_wrapper_function( sbrt_name )
+
+        if self.actor.code_description['implementation']['subroutines'].get( 'get_timestamp' ):
+            sbrt_name = 'get_timestamp_' + actor_name + "_wrapper"
+            self.wrapper_get_timestamp_func = self.__get_wrapper_function( sbrt_name )
 
 
     def finalize(self):
@@ -389,7 +395,6 @@ class CBinder(Binder):
         if not self.wrapper_get_state_func:
             return None
 
-        c_arglist = []
         state = None
 
         # go to sandbox
@@ -398,13 +403,10 @@ class CBinder(Binder):
 
         c_ptr_state = ctypes.c_char_p()
         cref_state = ctypes.pointer( c_ptr_state )
-        c_arglist.append( cref_state )
 
         # Add status info to argument list
         status_info_ctype = StatusCType()
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
-        c_arglist.append( cref_code )
-        c_arglist.append( cref_msg )
 
         # call native MAIN method of wrapper
         self.wrapper_get_state_func( cref_state, cref_code, cref_msg )
@@ -421,4 +423,33 @@ class CBinder(Binder):
             state = state_raw.decode('utf-8','replace')
 
         return state
+
+    def call_get_timestamp(self, sandbox_dir: str) -> float:
+        if not self.wrapper_get_timestamp_func:
+            return None
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( sandbox_dir )
+
+        c_double_timestamp = ctypes.c_double( 0.0 )
+        cref_timestamp = ctypes.pointer( c_double_timestamp )
+
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
+
+        # call native MAIN method of wrapper
+        self.wrapper_get_timestamp_func( cref_timestamp, cref_code, cref_msg )
+
+        # go back to initial dir
+        os.chdir( cwd )
+
+        # Checking returned DIAGNOSTIC INFO
+        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
+        self.__status_check( status_info_ctype )
+
+        timestamp = cref_timestamp.contents.value
+
+        return timestamp
 

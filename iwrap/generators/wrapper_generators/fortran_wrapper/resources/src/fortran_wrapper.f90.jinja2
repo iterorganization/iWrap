@@ -271,4 +271,33 @@ SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_
 END SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper
 {% endif %}
 
+{% if code_description.implementation.subroutines.get_timestamp %}
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE GET TIMESTAMP SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+SUBROUTINE get_timestamp_{{actor_description.actor_name}}_wrapper(timestamp_out, status_code, out_status_msg) BIND(C)
+     use iwrap_tools
+
+     integer,parameter :: DP=kind(1.0D0)
+     real(kind=DP), intent(out) :: timestamp_out
+
+     !----  Diagnostic info  ----
+  	 integer :: status_code
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.get_timestamp}}( timestamp_out, status_code, status_msg)
+
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+    out_status_msg = convert_string2Cptr(status_msg)
+
+
+END SUBROUTINE get_timestamp_{{actor_description.actor_name}}_wrapper
+{% endif %}
+
 end module wrapper

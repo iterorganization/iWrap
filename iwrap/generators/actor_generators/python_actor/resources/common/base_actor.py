@@ -40,6 +40,10 @@ class Actor(ABC):
     def set_state(self, state: str) -> None:
         ...
 
+    @abstractmethod
+    def get_timestamp(self) -> float:
+        ...
+
 class ActorBaseClass(Actor):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -153,3 +157,7 @@ class ActorBaseClass(Actor):
 
     def set_state(self, state: str) -> None:
         self.__runner.call_set_state(state)
+
+    def get_timestamp(self) -> float:
+        timestamp = self.__runner.call_get_timestamp()
+        return timestamp

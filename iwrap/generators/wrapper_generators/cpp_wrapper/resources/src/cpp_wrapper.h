@@ -36,12 +36,31 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 {% endif %}
                 int* out_status_code, char** out_status_message);
 
+{% if code_description.implementation.subroutines.get_state %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   NATIVE GET STATE SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
                 char** status_out,
                 int* out_status_code, char** out_status_message);
+{% endif %}
 
+{% if code_description.implementation.subroutines.set_state %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   NATIVE SET STATE SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
                 char* state, int* state_str_size,
                 int* out_status_code, char** out_status_message);
+{% endif %}
+
+{% if code_description.implementation.subroutines.get_timestamp %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   NATIVE GET TIMESTAMP SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
+                double* timestamp_out,
+                int* out_status_code, char** out_status_message);
+{% endif %}
 
 #endif // _CPP_WRAPPER

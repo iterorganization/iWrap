@@ -209,3 +209,25 @@ extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
 		return;
 }
 {% endif %}
+
+{% if code_description.implementation.subroutines.get_timestamp %}
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  NATIVE GET STATUS SBRT CALL
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
+                double* out_timestamp,
+                int* out_status_code, char** out_status_message)
+{
+    std::string status_msg = "OK";
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{code_description.implementation.subroutines.get_timestamp}}(*out_timestamp, *out_status_code, status_msg );
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    // converting status info
+    convert_status_info(status_msg, out_status_message);
+
+	if(*out_status_code < 0)
+		return;
+}
+{% endif %}

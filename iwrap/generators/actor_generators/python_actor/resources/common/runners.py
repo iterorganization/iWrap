@@ -53,6 +53,9 @@ class Runner(ABC):
     def call_set_state(self, state: str):
         ...
 
+    def call_get_timestamp(self) -> float:
+        ...
+
 class StandaloneRunner( Runner ):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -233,6 +236,8 @@ class StandaloneRunner( Runner ):
     def call_set_state(self, state: str):
         ...
 
+    def call_get_timestamp(self) -> float:
+        ...
 
 class LibraryRunner( Runner ):
     # Class logger
@@ -258,7 +263,9 @@ class LibraryRunner( Runner ):
                                                                                  main_sbrt_name=f'{actor_name}_wrapper',
                                                                                  finish_sbrt_name=f'finish_{actor_name}_wrapper',
                                                                                  set_state_sbrt_name = f'set_state_{actor_name}_wrapper',
-                                                                                 get_state_sbrt_name=f'get_state_{actor_name}_wrapper'
+                                                                                 get_state_sbrt_name=f'get_state_{actor_name}_wrapper',
+                                                                                 get_timestamp_sbrt_name=f'get_timestamp_{actor_name}_wrapper'
+
         )
 
         def start_debugger(debugger_attach_cmd):
@@ -294,3 +301,7 @@ class LibraryRunner( Runner ):
 
     def call_set_state(self, state: str):
         self._binder.call_set_state(state,  sandbox_dir=self._sandbox_dir )
+
+    def call_get_timestamp(self) -> float:
+        timestamp = self._binder.call_get_timestamp( sandbox_dir=self._sandbox_dir )
+        return timestamp
