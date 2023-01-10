@@ -252,7 +252,7 @@ SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_
      !----  Diagnostic info  ----
   	 integer :: status_code
      type(C_PTR) :: state_out
-     character(len=:), pointer :: state_str
+     character(len=:), allocatable :: state_str
      type(C_PTR) :: out_status_msg
 	 character(len=:), pointer :: status_msg
 
@@ -265,7 +265,7 @@ SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
     out_status_msg = convert_string2Cptr(status_msg)
-    state_out = convert_string2Cptr(state_str)
+    state_out = convert2Cptr(state_str)
 
 
 END SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper

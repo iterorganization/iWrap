@@ -14,7 +14,8 @@ module iwrap_tools
  
   interface convert2Cptr
    module procedure &
-       convert_string2Cptr
+       convert_string2Cptr, &
+       convert_allocatable_string2c_ptr
  end interface
 
     interface
@@ -275,6 +276,32 @@ END FUNCTION convert_string2array
 
 ! ======================================================================================
 ! ======================================================================================
+
+       FUNCTION convert_allocatable_string2c_ptr(inString)  RESULT (outPtr)
+        use iso_c_binding
+        implicit none
+
+        character(len=:), allocatable, INTENT(IN) :: inString
+        type(C_PTR) :: outPtr
+        INTEGER :: i, strSize
+        character, dimension(:), pointer :: outArray
+
+        if(.not. allocated(inString)) then
+             outPtr = C_NULL_PTR
+             return
+        end if
+
+        strSize = LEN(inString)
+        allocate(outArray(strSize + 1))
+
+        DO i = 1,strSize
+           outArray(i) = inString(i:i)
+        END DO
+
+        outArray(strSize + 1) =  C_NULL_CHAR
+        outPtr = C_LOC(outArray)
+
+    END FUNCTION convert_allocatable_string2c_ptr
 
     FUNCTION convert_string2Cptr(inString)  RESULT (outPtr)
         use iso_c_binding
