@@ -12,22 +12,28 @@ Introduction
       be wrapped by iWrap - without the detailed knowledge
       of method signature iWrap cannot built an actor.
 
-iWrap actor calls three methods of the native code:
+iWrap actor can call following methods of the native code:
 
--  The initialisation method
--  The main ("step") method
--  The finalisation method
+- Basic methods:
+
+  -  *INIT* - Initialisation method
+  -  *MAIN* - Mandatory main ("step") method
+  -  *FINALIZE* - Finalisation method
+
+- Code restarting methods
+
+  - *GET_STATE* - Method for getting internal state of the code
+  - *SET_STATE* - Method for setting internal stae of the code
 
 Signatures of methods may differ, depending of features of
 programming language being used, however the main principia
 remains the same.
 
 
-The method API
+Basic methods
 ################
 
-
-Initialisation method
+*INIT* method
 ======================
 
 .. image:: /resources/attachments/70877452/77370373.png
@@ -55,10 +61,10 @@ Initialisation method
     -  Type: string
     -  Intent: OUT
 
-Main method
+*MAIN* method
 ======================
 
-.. image:: attachments/70877452/70877459.png                                                          |
+.. image:: /resources/attachments/70877452/70877459.png                                                          |
 
 -  A **mandatory** method that native code **must** provide
 -  The method can be run an arbitrary numer of times (e.g. in a loop)
@@ -89,7 +95,7 @@ Main method
       -  Type: string
       -  Intent: OUT
 
-Finalize method
+*FINALIZE* method
 ======================
    .. image:: attachments/70877452/77370389.png
 
@@ -98,15 +104,82 @@ Finalize method
 -  The method can be of arbitrary name (the name has to be specified in the code YAML description)
 -  Method arguments:
 
-    -  Status code:
+   -  Status code:
 
-       -  **Mandatory**\  argument
-       -  Type: Integer
-       -  Intent: OUT
+      -  **Mandatory**\  argument
+      -  Type: Integer
+      -  Intent: OUT
+
    -  Status message
-       -  **Mandatory**\  argument
-       -  Type: string
-       -  Intent: OUT
+
+      -  **Mandatory**\  argument
+      -  Type: string
+      -  Intent: OUT
+
+Code restarting methods
+################
+The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
+and the actor cannot force the wrapped ``MAIN`` method to save a checkpoint at an arbitrary time,
+while it is executed.
+
+``GET_STATE`` and  ``SET_STATE`` methods enable restart stateful, sometimes compute demanding,
+codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
+about its internal state using ``GET_STATE`` method. After restart, the code state can be restored
+using ``SET_STATE`` method.
+
+An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
+to the code developer concerning format and content of state description.
+It is a kind of a ‘black box’ returned from ``GET_STATE`` and passed to ``SET_STATE`` method during restart,
+so the only requirement is that information returned by ``GET_STATE`` is understandable to ``SET_STATE``.
+
+*GET_STATE* method
+======================
+
+- An optional method used for getting internal state of native code
+- The method must be run **after** a call of ``INIT`` (if provided)
+- The method can be of arbitrary name (the name has to be specified in the code YAML description)
+- Method arguments:
+
+  - Code state:
+
+    -  **Mandatory** argument
+    -  Type: string
+    -  Intent: OUT
+  - Status code:
+
+    -  **Mandatory** argument
+    -  Type: Integer
+    -  Intent: OUT
+  - Status message
+
+    -  **Mandatory** argument
+    -  Type: string
+    -  Intent: OUT
+
+*SET_STATE* method
+======================
+
+- An optional method used for restoring internal state of native code
+- The method must be run **after** a call of ``INIT`` (if provided)
+- The method can be of arbitrary name (the name has to be specified in the code YAML description)
+- Method arguments:
+
+  - Code state:
+
+    -  **Mandatory** argument
+    -  Type: string
+    -  Intent: IN
+  - Status code:
+
+    -  **Mandatory** argument
+    -  Type: Integer
+    -  Intent: OUT
+  - Status message
+
+    -  **Mandatory** argument
+    -  Type: string
+    -  Intent: OUT
+
 
 .. warning::
        Important!
@@ -172,7 +245,34 @@ Native code signature
        character(len=:), pointer, intent(OUT) :: status_message
 
      end subroutine <finish subroutine name>
-     end module <module name>
+
+    !
+    !    GET_STATE SUBROUTINE
+    !
+    subroutine <get_state subroutine name> (state_str, status_code, status_message)
+
+        implicit none
+        character(len=:), allocatable, intent(out) :: state_str
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+
+    end subroutine <get_state subroutine name>
+
+
+    !
+    !    SET_STATE SUBROUTINE
+    !
+    subroutine <set_state subroutine name> (state_str, status_code, status_message)
+
+        implicit none
+        character(len=:), allocatable, intent(in) :: state_str
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+    end subroutine <set_state subroutine name>
+
+    end module <module name>
 
 
 Module
@@ -195,71 +295,107 @@ Subroutines
 Arguments
 -----------------------
 
-*Initialisation subroutine:*
+*INIT subroutine:*
 
 -  XML parameters:
 
-   -  **Optional**\  argument
+   -  **Optional**  argument
    -  Intent: IN
-   -  Defined as
-      "  type(ids_parameters_input), intent(IN)"
+   -  Defined as ``type(ids_parameters_input), intent(IN)``
 
 -  Status code:
 
-   -  **Mandatory**\  argument
+   -  **Mandatory**  argument
    -  Intent: OUT
-   -  Defined as  "  integer, intent(OUT)"
+   -  Defined as  ``integer, intent(OUT)``
 
 -  Status message
 
    -  **Mandatory**\  argument
    -  Intent: OUT
-   -  Defined
-      as: \   character(len=:), pointer, intent(OUT)
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
-*Main subroutine:*
+*MAIN subroutine:*
 
 -  Input and output IDSes:
 
-   -  **Optional**\  arguments
+   -  **Optional** arguments
    -  Intent: IN or OUT
-   -  Defined as "  type(ids_<ids_name>)  \  "
+   -  Defined as ``type(ids_<ids_name>)``
 
 -  XML parameters:
 
-   -  **Optional**\  argument
+   -  **Optional** argument
    -  Intent: IN
-   -  Defined as
-      "  type(ids_parameters_input), intent(IN)"
+   -  Defined as ``type(ids_parameters_input), intent(IN)``
 
 -  Status code:
 
-   -  **Mandatory**\  argument
+   -  **Mandatory**  argument
    -  Intent: OUT
-   -  Defined as  "  integer, intent(OUT)"  \
+   -  Defined as  ``integer, intent(OUT)``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
+
+*FINALIZE subroutine:*
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as  ``integer, intent(OUT)``
 
 -  Status message
 
    -  **Mandatory**\  argument
    -  Intent: OUT
-   -  Defined
-      as: \   character(len=:), pointer, intent(OUT)
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
-*Finalisation subroutine:*
+
+*GET_STATE subroutine:*
+
+-  Code state:
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as ``character(len=:), allocatable, intent(OUT)``
 
 -  Status code:
 
-   -  **Mandatory**\  argument
+   -  **Mandatory**  argument
    -  Intent: OUT
-   -  Defined as  "  integer, intent(OUT)"  \
+   -  Defined as  ``integer, intent(OUT)``
 
 -  Status message
 
    -  **Mandatory**\  argument
    -  Intent: OUT
-   -  Defined
-      as: \   character(len=:), pointer, intent(OUT)
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
+
+*SET_STATE subroutine:*
+
+-  Code state:
+
+   -  **Mandatory**  argument
+   -  Intent: IN
+   -  Defined as ``character(len=:), allocatable, intent(IN)``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as  ``integer, intent(OUT)``
+
+-  Status message
+
+   -  **Mandatory**\  argument
+   -  Intent: OUT
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
 .. warning::
    Only XML parameters are passed to native code, so only ``parameters_value`` field
@@ -328,8 +464,48 @@ Example
 
      end subroutine clean_up
 
+    !
+    !    GET_STATE SUBROUTINE
+    !
+    subroutine get_code_state (state_str, status_code, status_message)
 
-     end module physics_ii_mod
+        implicit none
+        character(len=:), allocatable, intent(out) :: state_str
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+
+        ! Setting status to SUCCESS
+        status_code = 0
+        allocate(character(50):: status_message)
+        status_message = 'OK'
+
+         write(*,*) '============ The subroutine body ============='
+
+    end subroutine get_code_state
+
+
+    !
+    !    SET_STATE SUBROUTINE
+    !
+    subroutine restore_code_state (state_str, status_code, status_message)
+
+        implicit none
+        character(len=:), allocatable, intent(in) :: state_str
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+
+        ! Setting status to SUCCESS
+        status_code = 0
+        allocate(character(50):: status_message)
+        status_message = 'OK'
+
+        write(*,*) '============ The subroutine body ============='
+
+    end subroutine restore_code_state
+
+    end module physics_ii_mod
 
 C++
 ======================
@@ -342,14 +518,20 @@ Native code signature
 
      #include "UALClasses.h"
 
-     /* * * Initialisation method * * */
+     /* * * INIT method * * */
      void <method name>([IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
 
-     /* * * Main method * * */
+     /* * * MAIN method * * */
      void <method name>([IdsNs::IDS::<ids_name>& ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
 
-     /* * * Finalisation method * * */
+     /* * * FINALIZE method * * */
      void <method name>(int& status_code, std::string& status_message)
+
+     /* * * GET_STATE method * * */
+    void <method name>( std::string& state_out, int& status_code, std::string& status_message);
+
+     /* * * SET_STATE method * * */
+    void <method name>( std::string state, int& status_code, std::string& status_message);
 
 Header
 -----------------------
@@ -369,35 +551,108 @@ Method
 Arguments
 -----------------------
 
-Arguments shall be provided in a strict order:
-
--  Input IDSes:
-
-   -  **Optional**\  arguments
-   -  Defined as   ``const IdsNs::IDS::<ids_name>&``
-
--  Output IDSes:
-
-   -  **Optional**\  arguments
-   -  Defined as   ``IdsNs::IDS::<ids_name>&``
+*INIT subroutine:*
 
 -  XML parameters:
 
-   -  **Optional**\  argument
+   -  **Optional**  argument
    -  Input argument
    -  Defined as   ``IdsNs::codeparam_t``
 
 -  Status code:
 
-   -  **Mandatory**\  argument
+   -  **Mandatory**  argument
    -  Output argument
-   -  Defined as    ``int&``
+   -  Defined as: ``int&``
 
 -  Status message
 
    -  **Mandatory**\  argument
    -  Output argument
    -  Defined as: ``std::string&``
+
+*MAIN subroutine:*
+
+-  Input and output IDSes:
+
+   -  **Optional** arguments
+   -  Input or output argument
+   -  Defined as ``const IdsNs::IDS::<ids_name>`` (input) or ``IdsNs::IDS::<ids_name>&`` (output)
+
+-  XML parameters:
+
+   -  **Optional** argument
+   -  Input argument
+   -  Defined as   ``IdsNs::codeparam_t``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``int&``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
+
+*FINALIZE subroutine:*
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``int&``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
+
+
+*GET_STATE subroutine:*
+
+-  Code state:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``int&``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
+
+
+*SET_STATE subroutine:*
+
+-  Code state:
+
+   -  **Mandatory**  argument
+   -  Input argument
+   -  Defined as: ``std::string``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``int&``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
+
 
 No INOUT arguments are allowed!
 
@@ -430,6 +685,11 @@ Example
      /* * *   FINALISATION method   * * */
      void clean_up(int& status_code, std::string& status_message);
 
+     /* * * GET_STATE method * * */
+    void get_code_state( std::string& state_out, int& status_code, std::string& status_message);
+
+     /* * * SET_STATE method * * */
+    void restore_code_state( std::string state, int& status_code, std::string& status_message);
 
      #endif // _LEVEL_II_CPP
 
@@ -465,6 +725,24 @@ Example
      // method body
      ...
      }
+
+     /* * * GET_STATE method * * */
+    void get_code_state( std::string& state_out, int& status_code, std::string& status_message)
+    {
+         ...
+         // method body
+         ...
+    }
+
+     /* * * SET_STATE method * * */
+    void restore_code_state( std::string state, int& status_code, std::string& status_message)
+    {
+         ...
+         // method body
+         ...
+    }
+
+
 
 MPI
 ################
