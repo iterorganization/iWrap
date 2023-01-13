@@ -69,6 +69,12 @@ only in a strict order:
        def finalize(self) -> None:
            ...
 
+       def get_state(self) -> str:
+           ...
+
+       def set_state(self, state: str) -> None:
+           ...
+
 Creation of the actor object
 =========================================================================================
 
@@ -163,6 +169,61 @@ This method of the actor is usually used to perform internal finalisation action
 - Actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
 - Actor sandbox directory is removed (depending on `Sandbox settings`_)
 - Typically this method should be run when workflow finishes its execution
+
+Additional actor methods
+######################################################################################################################
+
+Code restarting methods
+=========================================================================================
+
+.. code-block:: Python
+
+   code_state : str = actor_object.get_state()
+
+   actor_object.set_state(code_state)
+
+
+The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
+and the actor cannot force the wrapped ``main`` method to save a checkpoint at an arbitrary time,
+while it is executed.
+
+An actor ``get_state`` and  ``set_state`` methods enable restart stateful, sometimes compute demanding,
+codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
+about its internal state using ``get_state`` method. After restart, the code state can be restored
+using ``set_state`` method.
+
+An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
+to the code developer concerning format and content of state description.
+It is a kind of a ‘black box’ returned from ``get_state`` and passed to ``set_state`` method during restart,
+so the only requirement is that information returned by ``get_state`` is understandable to ``set_state``.
+
+- Example of the usage:
+
+.. code-block:: Python
+
+        # ACTOR INITIALIZATION
+        ...
+        # restore the code state if file keeping state exists
+        if file_exists('code_state.txt'):
+            with open( 'code_state.txt', 'r' ) as file:
+                code_state = file.read()
+
+            # Starting from the saved code state
+            self.actor.set_state(code_state)
+        else:
+            # Starting from the begin
+
+        # COMPUTATIONS
+        ...
+
+        # ACTOR FINALIZATION
+        ...
+        # Getting internal code state
+        code_state = self.actor.get_state()
+
+        # save code state to file
+        with open( 'code_state.txt', 'w' ) as file:
+            file.write(code_state)
 
 Physics model parameters
 ######################################################################################################################
