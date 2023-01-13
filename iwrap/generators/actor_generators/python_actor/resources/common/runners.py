@@ -45,6 +45,14 @@ class Runner(ABC):
     def call_finalize(self):
         ...
 
+    @abstractmethod
+    def call_get_state(self) -> str:
+        ...
+
+    @abstractmethod
+    def call_set_state(self, state: str):
+        ...
+
 class StandaloneRunner( Runner ):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -219,6 +227,12 @@ class StandaloneRunner( Runner ):
     def call_finalize(self):
         ...
 
+    def call_get_state(self) -> str:
+        ...
+
+    def call_set_state(self, state: str):
+        ...
+
 
 class LibraryRunner( Runner ):
     # Class logger
@@ -242,7 +256,10 @@ class LibraryRunner( Runner ):
         debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
                                                                                  init_sbrt_name=f'init_{actor_name}_wrapper',
                                                                                  main_sbrt_name=f'{actor_name}_wrapper',
-                                                                                 finish_sbrt_name=f'finish_{actor_name}_wrapper' )
+                                                                                 finish_sbrt_name=f'finish_{actor_name}_wrapper',
+                                                                                 set_state_sbrt_name = f'set_state_{actor_name}_wrapper',
+                                                                                 get_state_sbrt_name=f'get_state_{actor_name}_wrapper'
+        )
 
         def start_debugger(debugger_attach_cmd):
             self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
@@ -270,3 +287,10 @@ class LibraryRunner( Runner ):
 
     def call_finalize(self):
         self._binder.call_finish( sandbox_dir=self._sandbox_dir )
+
+    def call_get_state(self) -> str:
+        state = self._binder.call_get_state( sandbox_dir=self._sandbox_dir )
+        return state
+
+    def call_set_state(self, state: str):
+        self._binder.call_set_state(state,  sandbox_dir=self._sandbox_dir )

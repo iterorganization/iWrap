@@ -23,6 +23,8 @@ platform_settings:
                 -e 'dbreak -pending ${init_sbrt_name}'
                 -e 'dbreak -pending ${main_sbrt_name}'
                 -e 'dbreak -pending ${finish_sbrt_name}'
+                -e 'dbreak -pending ${set_state_sbrt_name}'
+                -e 'dbreak -pending ${get_state_sbrt_name}'
                 -e 'puts  \"\\n\\nTotalView attached to a running Python process.\\n\"'
                 -e 'puts  \"Press any key to continue!\n\"'
                 -e 'puts  \"WARNING:\\tRestarting or killing debugged process will close the workflow!\"'

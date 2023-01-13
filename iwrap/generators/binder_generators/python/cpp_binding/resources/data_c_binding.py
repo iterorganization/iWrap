@@ -121,7 +121,7 @@ class StatusCType( ):
         c_ptr_msg = ctypes.c_char_p()
         cref_msg = ctypes.pointer( c_ptr_msg )
 
-        return [cref_code, cref_msg]
+        return cref_code, cref_msg
 
     def convert_to_actor_type(self, c_ptr_status, c_ptr_msg):
 

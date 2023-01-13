@@ -1,0 +1,27 @@
+code_description:
+    implementation:
+        subroutines:
+            main:   code_restart
+            get_state: get_code_state
+            set_state: restore_code_state
+        data_type: legacy
+        code_path: ./native_code/libcode_restart_cpp.a
+        include_path: ./native_code/code_restart.h
+        programming_language: cpp
+    arguments:
+    -   name: equilibrium_in
+        type: equilibrium
+        intent: IN
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    settings:
+        compiler_cmd: g++
+        mpi_compiler_cmd:
+        open_mp_switch: false
+        extra_libraries:
+            pkg_config_defined:
+            path_defined:
+
+

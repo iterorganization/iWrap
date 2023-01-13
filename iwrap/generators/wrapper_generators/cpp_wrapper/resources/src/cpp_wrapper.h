@@ -36,4 +36,12 @@ extern "C" void {{actor_description.actor_name | lower}}_wrapper(
 {% endif %}
                 int* out_status_code, char** out_status_message);
 
+extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
+                char** status_out,
+                int* out_status_code, char** out_status_message);
+
+extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
+                char* state, int* state_str_size,
+                int* out_status_code, char** out_status_message);
+
 #endif // _CPP_WRAPPER

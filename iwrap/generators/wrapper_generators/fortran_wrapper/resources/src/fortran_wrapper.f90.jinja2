@@ -74,13 +74,10 @@ subroutine finish_{{actor_description.actor_name}}_wrapper(status_code, out_stat
 	 status_code = 0
 
         ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.implementation.subroutines.finalize}}( &
-            status_code, status_msg)
+    call  {{code_description.implementation.subroutines.finalize}}( status_code, status_msg)
 
-        ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 if(associated(status_msg)) then
-		 out_status_msg = convert_string2Cptr(status_msg)
-     endif
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+     out_status_msg = convert_string2Cptr(status_msg)
 
     ! Return in case of 'soft' crash (diagnostic info < 0)
 	if(status_code < 0 ) RETURN
@@ -169,9 +166,8 @@ subroutine {{actor_description.actor_name}}_wrapper(&
        ! --- called only for RANK 0 process
 {% endif %}
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 if(associated(status_msg)) then
-		 out_status_msg = convert_string2Cptr(status_msg)
-     endif
+     out_status_msg = convert_string2Cptr(status_msg)
+
 
 	 ! Return in case of 'soft' crash (diagnostic info < 0)  
 	 if(status_code < 0 ) RETURN
@@ -208,5 +204,71 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
 {% endif %}
 end
+
+        {% if code_description.implementation.subroutines.set_state %}
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE SET STATE SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+SUBROUTINE set_state_{{actor_description.actor_name}}_wrapper(state_in, state_size, status_code, out_status_msg) BIND(C)
+     use iwrap_tools
+
+    !----  Status  ----
+
+    integer :: state_size
+    character(kind=C_CHAR), dimension(state_size), intent(in) :: state_in
+    character(len=:), allocatable :: state_str
+
+     !----  Diagnostic info  ----
+  	 integer :: status_code
+
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
+
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
+
+    !----  ISO_C_BINDING -> Fortran conversions ----
+    state_str = convert(state_in)
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.set_state}}( state_str, status_code, status_msg)
+
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+    out_status_msg = convert_string2Cptr(status_msg)
+
+
+END SUBROUTINE set_state_{{actor_description.actor_name}}_wrapper
+{% endif %}
+
+{% if code_description.implementation.subroutines.get_state %}
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+!                                   NATIVE SET STATE SBRT CALL
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_code, out_status_msg) BIND(C)
+     use iwrap_tools
+
+     !----  Diagnostic info  ----
+  	 integer :: status_code
+     type(C_PTR) :: state_out
+     character(len=:), allocatable :: state_str
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{code_description.implementation.subroutines.get_state}}( state_str, status_code, status_msg)
+
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+    out_status_msg = convert_string2Cptr(status_msg)
+    state_out = convert2Cptr(state_str)
+
+
+END SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper
+{% endif %}
 
 end module wrapper

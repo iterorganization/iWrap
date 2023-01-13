@@ -53,6 +53,14 @@ class Binder (ABC):
         ...
 
     @abstractmethod
+    def call_set_state(self, state:str, sandbox_dir:str):
+        ...
+
+    @abstractmethod
+    def call_get_state(self, sandbox_dir: str) -> None:
+        ...
+
+    @abstractmethod
     def run_standalone(self, ids_list:List[Any], code_parameters:str, exec_command:str, sandbox_dir:str, output_stream) -> None:
         ...
 
@@ -75,7 +83,8 @@ class CBinder(Binder):
         self.wrapper_main_func = None
         self.wrapper_finish_func = None
 
-
+        self.wrapper_set_state_func = None
+        self.wrapper_get_state_func = None
 
     def initialize(self, actor):
 
@@ -101,6 +110,15 @@ class CBinder(Binder):
         if self.actor.code_description['implementation']['subroutines'].get('finalize'):
             sbrt_name = 'finish_' + actor_name + "_wrapper"
             self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
+
+        if self.actor.code_description['implementation']['subroutines'].get( 'get_state' ):
+            sbrt_name = 'get_state_' + actor_name + "_wrapper"
+            self.wrapper_get_state_func = self.__get_wrapper_function( sbrt_name )
+
+        if self.actor.code_description['implementation']['subroutines'].get( 'set_state' ):
+            sbrt_name = 'set_state_' + actor_name + "_wrapper"
+            self.wrapper_set_state_func = self.__get_wrapper_function( sbrt_name )
+
 
     def finalize(self):
         self.ids_converter.finalize()
@@ -336,3 +354,71 @@ class CBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info_ctype )
+
+    def call_set_state(self, state:str, sandbox_dir:str):
+        if not self.wrapper_set_state_func:
+            return
+
+        if not state:
+            return
+
+        encoded_state = state.encode('utf-8')
+
+        cref_state = ctypes.c_char_p(encoded_state)
+        state_size = len(encoded_state)
+        cref_state_size = ctypes.byref(ctypes.c_int(state_size))
+
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir(sandbox_dir)
+
+        # call FINISH
+        self.wrapper_set_state_func(cref_state, cref_state_size,  cref_code, cref_msg)
+
+        # go back to initial dir
+        os.chdir( cwd )
+
+        # Checking returned DIAGNOSTIC INFO
+        self.__status_check( status_info_ctype )
+
+    def call_get_state(self, sandbox_dir: str) -> str:
+        if not self.wrapper_get_state_func:
+            return None
+
+        c_arglist = []
+        state = None
+
+        # go to sandbox
+        cwd = os.getcwd()
+        os.chdir( sandbox_dir )
+
+        c_ptr_state = ctypes.c_char_p()
+        cref_state = ctypes.pointer( c_ptr_state )
+        c_arglist.append( cref_state )
+
+        # Add status info to argument list
+        status_info_ctype = StatusCType()
+        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
+        c_arglist.append( cref_code )
+        c_arglist.append( cref_msg )
+
+        # call native MAIN method of wrapper
+        self.wrapper_get_state_func( cref_state, cref_code, cref_msg )
+
+        # go back to initial dir
+        os.chdir( cwd )
+
+        # Checking returned DIAGNOSTIC INFO
+        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
+        self.__status_check( status_info_ctype )
+
+        state_raw = cref_state.contents.value
+        if state_raw:
+            state = state_raw.decode('utf-8','replace')
+
+        return state
+
