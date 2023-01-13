@@ -75,6 +75,9 @@ only in a strict order:
        def set_state(self, state: str) -> None:
            ...
 
+       def get_timestamp(self) -> float:
+           ...
+
 Creation of the actor object
 =========================================================================================
 
@@ -224,6 +227,17 @@ so the only requirement is that information returned by ``get_state`` is underst
         # save code state to file
         with open( 'code_state.txt', 'w' ) as file:
             file.write(code_state)
+
+
+Get timestamp method
+=========================================================================================
+
+.. code-block:: Python
+
+   timestamp : float = actor_object.get_timestamp()
+
+``get_timestamp`` method allows to obtain currently computed physical time.
+Such information can help support consistent physical time handling throughout the coupled simulation.
 
 Physics model parameters
 ######################################################################################################################

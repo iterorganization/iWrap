@@ -23,7 +23,11 @@ iWrap actor can call following methods of the native code:
 - Code restarting methods
 
   - *GET_STATE* - Method for getting internal state of the code
-  - *SET_STATE* - Method for setting internal stae of the code
+  - *SET_STATE* - Method for setting internal state of the code
+
+- Auxiliary methods
+
+  - *GET_TIMESTAMP* - Method for getting currently computed physical time
 
 Signatures of methods may differ, depending of features of
 programming language being used, however the main principia
@@ -186,6 +190,35 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
           A native code wrapped by iWrap that will become a part of workflow should be compiled using the same
           environment in which workflow will be run!
 
+
+Auxiliary methods
+################
+
+
+*GET_TIMESTAMP* method
+======================
+
+- An optional method used for getting currently computed physical time point
+- The method must be run **after** a call of ``INIT`` (if provided)
+- The method can be of arbitrary name (the name has to be specified in the code YAML description)
+- Method arguments:
+
+  - Timestamp:
+
+    -  **Mandatory** argument
+    -  Type: double float
+    -  Intent: OUT
+  - Status code:
+
+    -  **Mandatory** argument
+    -  Type: Integer
+    -  Intent: OUT
+  - Status message
+
+    -  **Mandatory** argument
+    -  Type: string
+    -  Intent: OUT
+
 API implementation
 #######################
 
@@ -271,6 +304,18 @@ Native code signature
         character(len=:), pointer, intent(out) :: status_message
 
     end subroutine <set_state subroutine name>
+
+    !
+    !    GET_TIMESTAMP SUBROUTINE
+    !
+    subroutine <get_timestamp subroutine name>(timestamp_out, status_code, status_message)
+
+        real(8), intent(out) :: timestamp_out
+        !----  Status info  ----
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+    end subroutine <get_timestamp subroutine name>
 
     end module <module name>
 
@@ -397,6 +442,27 @@ Arguments
    -  Intent: OUT
    -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
+*GET_TIMESTAMP subroutine:*
+
+-  Timestamp:
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as ``real(8), intent(OUT)``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Intent: OUT
+   -  Defined as  ``integer, intent(OUT)``
+
+-  Status message
+
+   -  **Mandatory**\  argument
+   -  Intent: OUT
+   -  Defined as: ``character(len=:), pointer, intent(OUT)``
+
+
 .. warning::
    Only XML parameters are passed to native code, so only ``parameters_value`` field
    of ``ids_parameters_input`` derived type is valid !
@@ -505,6 +571,21 @@ Example
 
     end subroutine restore_code_state
 
+    !
+    !    GET TIMESTAMP SUBROUTINE
+    !
+    subroutine get_timestamp(timestamp_out, status_code, status_message)
+
+        real(8), intent(out) :: timestamp_out
+        !----  Status info  ----
+        integer, intent(out) :: status_code
+        character(len=:), pointer, intent(out) :: status_message
+
+        write(*,*) '============ The subroutine body ============='
+
+    end subroutine get_timestamp
+
+
     end module physics_ii_mod
 
 C++
@@ -532,6 +613,8 @@ Native code signature
 
      /* * * SET_STATE method * * */
     void <method name>( std::string state, int& status_code, std::string& status_message);
+
+void get_timestamp_cpp(double& timestamp_out, int& status_code, std::string& status_message);
 
 Header
 -----------------------
@@ -653,6 +736,25 @@ Arguments
    -  Output argument
    -  Defined as: ``std::string&``
 
+*GET_TIMESTAMP subroutine:*
+
+-  Timestamp:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``double&``
+
+-  Status code:
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``int&``
+
+-  Status message
+
+   -  **Mandatory**  argument
+   -  Output argument
+   -  Defined as: ``std::string&``
 
 No INOUT arguments are allowed!
 
@@ -690,6 +792,9 @@ Example
 
      /* * * SET_STATE method * * */
     void restore_code_state( std::string state, int& status_code, std::string& status_message);
+
+     /* * * GET_TIMESTAMP method * * */
+    void get_timestamp_cpp(double& timestamp_out, int& status_code, std::string& status_message);
 
      #endif // _LEVEL_II_CPP
 
@@ -742,7 +847,13 @@ Example
          ...
     }
 
-
+     /* * * GET_TIMESTAMP method * * */
+    void get_timestamp_cpp(double& timestamp_out, int& status_code, std::string& status_message)
+    {
+         ...
+         // method body
+         ...
+    }
 
 MPI
 ################
