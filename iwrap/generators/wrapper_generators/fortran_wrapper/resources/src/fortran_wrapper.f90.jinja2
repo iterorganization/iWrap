@@ -265,7 +265,7 @@ SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
     out_status_msg = convert_string2Cptr(status_msg)
-    state_out = convert2Cptr(state_str)
+    state_out = convert_allocatable_string2c_ptr(state_str)
 
 
 END SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper
