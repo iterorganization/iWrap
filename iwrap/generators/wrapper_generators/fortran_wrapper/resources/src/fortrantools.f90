@@ -14,8 +14,7 @@ module iwrap_tools
  
   interface convert2Cptr
    module procedure &
-       convert_string2Cptr, &
-       convert_allocatable_string2c_ptr
+       convert_string2Cptr
  end interface
 
     interface
