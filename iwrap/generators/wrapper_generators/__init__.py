@@ -60,7 +60,7 @@ class WrapperGeneratorRegistry:
     def get_generator(cls, type:str, code_language: str) -> WrapperGenerator:
 
         for generator in cls.__generators:
-            if code_language == generator.code_language and type == generator.type:
+            if code_language.lower() == generator.code_language.lower() and type.lower() == generator.type.lower():
                 return generator
 
         types = [generator.code_language for generator in cls.__generators]

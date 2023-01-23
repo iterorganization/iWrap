@@ -137,6 +137,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
                                               f"{ImplementationPane.default_programming_language}.")
         self.programming_language_combobox.set('')
         self.programming_language_combobox.set(programming_language.lower())
+        self.programming_language_combobox.event_generate("<<ComboboxSelected>>")
 
         self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         if self.data_type not in self.data_type_combobox['values']:

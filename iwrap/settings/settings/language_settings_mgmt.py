@@ -8,8 +8,7 @@ class LanguageSettingsManager:
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    _language_settings_handlers = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings(),
-                                   'python': None}
+    _language_settings_handlers = {'fortran': FortranSpecificSettings(), 'cpp': FortranSpecificSettings()}
 
     # TODO: Add dynamic discovery of settings handlers
 
@@ -40,4 +39,4 @@ class LanguageSettingsManager:
         Returns: Settings object.
 
         """
-        return cls._language_settings_handlers[language]
+        return cls._language_settings_handlers.get(language)
