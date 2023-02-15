@@ -19,6 +19,9 @@ PLATFORM_SETTINGS = {{platform_settings | pprint | indent(width=8)}}
 
 # {{ "".center(80, '=') }}
 
+AUXILIARY_DATA = {{auxiliary_data | pprint | indent(width=8)}}
+
+# {{ "".center(80, '=') }}
 
 class {{actor_description.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
@@ -27,6 +30,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # Provenance info
     actor_description = ACTOR_DESCRIPTION
     code_description = CODE_DESCRIPTION
+    auxiliary_data = AUXILIARY_DATA
     # {{ "".center(80, '=') }}
 
 
@@ -70,3 +74,8 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
         self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
 
+        # setting auxiliary data
+        self.iwrap_version = self.auxiliary_data.get('IWRAP_VERSION')
+        self.imas_version = self.auxiliary_data.get('IMAS_VERSION')
+        self.imas_prefix = self.auxiliary_data.get('IMAS_PREFIX')
+        self.generation_date = self.auxiliary_data.get('GENERATION_DATE')

@@ -1,9 +1,12 @@
 import logging
 import sys
 import traceback
+from datetime import datetime
 from typing import Set, List
+from iwrap import __version__
 
 import imas
+from os import getenv
 
 from iwrap.generators.actor_generators import ActorGenerator, ActorGeneratorRegistry
 from iwrap.generators.binder_generators import BinderGeneratorRegistry
@@ -74,7 +77,21 @@ class Engine:
                                                                        project_root_dir=project_root_dir )
 
         project_settings_dict.update({'platform_settings': platform_settings_dict})
+        #-------------------------------------------
+        IMAS_VERSION = getenv('IMAS_VERSION')
+        IWRAP_VERSION = __version__
+        IMAS_PREFIX = getenv('IMAS_PREFIX').split('/IMAS/',1)[1]
+        GENERATION_DATE = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        auxiliary_data_dict = {
+            'IWRAP_VERSION': IWRAP_VERSION,
+            'IMAS_VERSION': IMAS_VERSION,
+            'IMAS_PREFIX': IMAS_PREFIX,
+            'GENERATION_DATE': GENERATION_DATE
+        }
+        project_settings_dict.update({'auxiliary_data': auxiliary_data_dict})
+
+        # -------------------------------------------
         actor_generator = Engine._active_generator
         generators.append( actor_generator )
 
