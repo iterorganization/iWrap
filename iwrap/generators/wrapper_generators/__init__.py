@@ -57,12 +57,16 @@ class WrapperGeneratorRegistry:
         return cls.__generators
 
     @classmethod
-    def get_generator(cls, type:str, code_language: str) -> WrapperGenerator:
+    def get_generator(cls, type:str, actor_language: str, code_language: str) -> WrapperGenerator:
+
+        # No wrapper actually needed
+        if actor_language.lower() == code_language.lower():
+            return None
 
         for generator in cls.__generators:
             if code_language.lower() == generator.code_language.lower() and type.lower() == generator.type.lower():
                 return generator
 
         types = [generator.code_language for generator in cls.__generators]
-        raise ValueError(f'ERROR: No generator found to wrap code language "{code_language}" for type "{type}"!'
+        raise ValueError(f'ERROR: No generator found to wrap code language "{code_language}" for type "{type}"! \n'
                          f'Registered generators: "{types}".' )

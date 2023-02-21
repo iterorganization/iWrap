@@ -13,6 +13,10 @@ class BinderGenerator(AbstractGenerator):
     def __str__(self):
         return self.name
 
+    @abstractmethod
+    def type(self) -> str:
+        ...
+
     @property
     @abstractmethod
     def name(self) -> str:
@@ -62,14 +66,20 @@ class BinderGeneratorRegistry:
         return cls.__generators
 
     @classmethod
-    def get_generator(cls, actor_language: str, code_language: str) -> BinderGenerator:
+    def get_generator(cls, type:str, actor_language: str, code_language: str) -> BinderGenerator:
 
         # No binder actually needed
         if actor_language is None or code_language is None:
             return None
 
+        # No binder actually needed
+        if actor_language.lower() == code_language.lower():
+            return None
+
         for generator in cls.__generators:
-            if actor_language == generator.actor_language and code_language in generator.code_languages:
+            if actor_language == generator.actor_language \
+                    and code_language in generator.code_languages \
+                    and type.lower() == generator.type.lower():
                 return generator
 
         types = [(generator.actor_language, generator.code_languages) for generator in cls.__generators]

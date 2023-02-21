@@ -85,13 +85,13 @@ class Engine:
         code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
 
         # BINDER discovery
-        binder_generator = BinderGeneratorRegistry.get_generator(actor_language, code_language)
+        binder_generator = BinderGeneratorRegistry.get_generator(actor_type, actor_language, code_language)
         if binder_generator is not None: # Some actors requires no binding
             binder_generator.initialize(project_settings_dict)
             generators.append(binder_generator)
 
         # WRAPPER discovery
-        wrapper_generator = WrapperGeneratorRegistry.get_generator(actor_type, code_language)
+        wrapper_generator = WrapperGeneratorRegistry.get_generator(actor_type, actor_language, code_language)
         if wrapper_generator is not None: # Wrapper could be optional in some use-cases
             wrapper_generator.initialize(project_settings_dict)
             generators.append(wrapper_generator)
