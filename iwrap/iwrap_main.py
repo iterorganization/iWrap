@@ -73,10 +73,10 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
 
     if args.list_actor_types:
         print()
-        print( 'ID', '\t' * 3, 'Description' )
+        print( 'Id'.center(20),  ':',  'Name'.center(30),  ':',  'Description' )
         print( '-' * 70 )
         for generator in Engine().registered_generators:
-            print(generator.name, '\t\t:\t', generator.description )
+            print(generator.type.center(20), ':', generator.name.center(30),  ':',  generator.description )
         return 0
 
     if args.list_actor_details:
