@@ -16,6 +16,11 @@ class CppBinderGenerator( BinderGenerator ):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
+
+    @property
+    def type(self) -> str:
+        return 'python'
+
     @property
     def name(self) -> str:
         return 'Python2CPP'
