@@ -19,8 +19,6 @@ class ExampleWorkflowManager:
         print(self.actor_cp2ds.code_description['implementation']['data_type'])
         for arg in self.actor_cp2ds.code_description['arguments']:
             print(arg)
-        for arg in self.actor_cp2ds.arguments:
-            print(arg)
         self.input_entry = None
         self.output_entry = None
 

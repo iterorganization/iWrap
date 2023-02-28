@@ -42,13 +42,6 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         self.native_language = '{{code_description.implementation.programming_language | lower}}'
         self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
-        # Auto-generated list of arguments meta-data
-    {% for argument in code_description.arguments %}
-        argument = Argument(name='{{ argument.name }}', type='{{argument.type}}', intent='{{argument.intent}}')
-        self.arguments.append(argument)
-    {% endfor %}
-
-
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
         # Static code parameters
         default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
