@@ -66,10 +66,3 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         # setting DEBUGGER parameters
         self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
         self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
-
-        # setting auxiliary data
-        self.iwrap_version = self.build_info.get('iwrap_version')
-        self.imas_version = self.build_info.get('imas_version')
-        self.imas_prefix = self.build_info.get('imas_prefix')
-        self.al_version = self.build_info.get('al_version')
-        self.generation_date = self.build_info.get('generation_date')

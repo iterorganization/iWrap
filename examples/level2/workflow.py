@@ -60,17 +60,19 @@ class ExampleWorkflowManager:
 
         output_equilibrium = self.actor_physics_ii(input_equilibrium)
         
-        
         # SAVE IDSS INTO OUTPUT FILE
         print('=> Export output IDSs to local database')
         self.output_entry.put(output_equilibrium)
         print('Done exporting.')
 
+        print('=> Actor build info')
         print(f'IWRAP_VERSION:   {self.actor_physics_ii.build_info.get("iwrap_version")}')
         print(f'IMAS_VERSION:    {self.actor_physics_ii.build_info.get("imas_version")}')
         print(f'IMAS_PREFIX:     {self.actor_physics_ii.build_info.get("imas_prefix")}')
         print(f'AL_VERSION:      {self.actor_physics_ii.build_info.get("al_version")}')
         print(f'GENERATION_DATE: {self.actor_physics_ii.build_info.get("generation_date")}')
+
+
 
 
     def end_workflow(self):
