@@ -76,10 +76,10 @@ class Engine:
         project_settings_dict.update({'platform_settings': platform_settings_dict})
 
         #add provenance info
-        from iwrap.settings.actor_provenance import ActorProvenance
+        from iwrap.settings.actor_build_info import ActorBuildInfo
 
-        actor_provenance = ActorProvenance()
-        project_settings_dict.update({'actor_provenance': actor_provenance.to_dict()})
+        actor_build_info = ActorBuildInfo()
+        project_settings_dict.update({'build_info': actor_build_info.to_dict()})
 
         actor_generator = Engine._active_generator
         generators.append( actor_generator )
