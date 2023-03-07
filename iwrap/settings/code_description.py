@@ -173,10 +173,8 @@ class Implementation( SettingsBaseClass ):
 
     @programming_language.setter
     def programming_language(self, value: str):
-        self._programming_language = ''
-        if value:
-            self._programming_language = value.lower()
-            self._master.change_language_specific()
+        self._programming_language =  value.lower() if value else value
+        self._master.change_language_specific()
 
     def __init__(self, master):
         self.root_dir = '.'
@@ -190,10 +188,11 @@ class Implementation( SettingsBaseClass ):
         self.subroutines: Subroutines = Subroutines()
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+
+        is_dummy_actor = False if self.programming_language else True
+
         # programming_language
-        if not self.programming_language:
-            raise ValueError( 'Programming language is not set!' )
-        else:
+        if is_dummy_actor:
             engine.validate_programming_language( self.programming_language )
 
         # data_type
@@ -203,23 +202,25 @@ class Implementation( SettingsBaseClass ):
             engine.validate_code_data_type( self.data_type )
 
         # code path
-        if not self.code_path:
-            raise ValueError( 'Path to native code is not set!' )
+        if not is_dummy_actor:
+            if not self.code_path:
+                raise ValueError( 'Path to native code is not set!' )
 
-        __path = utils.resolve_path( self.code_path, project_root_dir )
-        if not Path(__path).exists():
-            raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
+            __path = utils.resolve_path( self.code_path, project_root_dir )
+            if not Path(__path).exists():
+                raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
 
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
 
         # include path
-        if not self.include_path:
-            raise ValueError( 'Path to include/module file is not set!' )
+        if not is_dummy_actor:
+            if not self.include_path:
+                raise ValueError( 'Path to include/module file is not set!' )
 
-        __path = utils.resolve_path( self.include_path, project_root_dir)
-        if not Path(__path).exists():
-            raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
+            __path = utils.resolve_path( self.include_path, project_root_dir)
+            if not Path(__path).exists():
+                raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
         if not self.data_dictionary_compliant:
             raise ValueError('Data Dictionary compliant version is not set!')

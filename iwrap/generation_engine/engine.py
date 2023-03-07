@@ -177,6 +177,9 @@ class Engine:
 
     @classmethod
     def validate_programming_language(cls, language):
+        if str(language).lower() == 'none':
+            return
+
         available_languages = [lang.lower() for lang in Engine._active_generator.code_languages]
         if language not in available_languages:
             raise ValueError(

@@ -69,7 +69,7 @@ class BinderGeneratorRegistry:
     def get_generator(cls, type:str, actor_language: str, code_language: str) -> BinderGenerator:
 
         # No binder actually needed
-        if actor_language is None or code_language is None:
+        if str(actor_language).lower() == 'none' or str(code_language).lower() == 'none':
             return None
 
         # No binder actually needed

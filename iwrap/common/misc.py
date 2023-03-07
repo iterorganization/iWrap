@@ -29,6 +29,8 @@ class Dictionarizable( ABC ):
             if isinstance( attr, Dictionarizable ):
                 attr.from_dict( value )
             else:
+                if str(value).lower() == 'none' or value == '':
+                    value = None
                 setattr( self, name, value )
 
     def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:

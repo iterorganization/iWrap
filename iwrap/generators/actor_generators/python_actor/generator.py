@@ -72,6 +72,7 @@ class PythonActorGenerator(ActorGenerator):
         self.__info_output_stream = info_output_stream
 
     def generate(self, project_settings: dict):
+        self.cleanup()
         self.temp_dir = tempfile.TemporaryDirectory().name
         generation_env = {'temp_dir': self.install_dir}
 
@@ -80,14 +81,12 @@ class PythonActorGenerator(ActorGenerator):
                 return False
             return  True
 
-        #if os.path.isdir(self.install_dir):
-        #    shutil.rmtree(self.install_dir)
         process_template_dir('iwrap.generators.actor_generators.python_actor', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
 
         self.__copy_code_params_files(project_settings)
 
     def build(self, project_settings: dict):
-        self.cleanup()
+        ...
 
     def install(self, project_settings: dict):
         pass
@@ -118,4 +117,5 @@ class PythonActorGenerator(ActorGenerator):
         shutil.copy( schema_file, destination_dir )
 
     def cleanup(self):
-        ...
+        if os.path.isdir(self.install_dir):
+            shutil.rmtree(self.install_dir)

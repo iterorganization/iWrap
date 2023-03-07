@@ -118,7 +118,9 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         """Update settings in the ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_description.implementation.programming_language = self.programming_language_combobox.get()
+        programming_language = self.programming_language_combobox.get()
+        programming_language = None if programming_language.lower() == 'none' else programming_language
+        code_description.implementation.programming_language = programming_language
         code_description.implementation.code_path = self.code_path.get()
         code_description.implementation.data_type = self.data_type_combobox.get()
         code_description.implementation.root_dir = self.root_dir.get()
@@ -133,7 +135,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         programming language will be selected in combobox.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_languages = list( Engine().active_generator.code_languages )
+        code_languages = [None] + list( Engine().active_generator.code_languages )
         self.programming_language_combobox['values'] = code_languages
 
         programming_language = code_description.implementation.programming_language or code_languages[0]
