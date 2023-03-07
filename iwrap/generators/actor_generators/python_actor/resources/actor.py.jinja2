@@ -1,72 +1,93 @@
 import os
+from typing import Union, List, Any
 
+{%  if code_description.implementation.programming_language %}
+from .common.python_actor import PythonActor
+{% else %}
 from .common.base_actor import ActorBaseClass
-from .common.definitions import Argument
+{% endif %}
+
 from .common.code_parameters import CodeParameters
 from .common.runtime_settings import RuntimeSettings
 
-# {{ " PROVENANCE INFO ".center(80, '=') }}
-
-ACTOR_DESCRIPTION = {{actor_description | pprint | wordwrap(width=80, wrapstring='\n\t\t')}}
-
-# {{ "".center(60, '-') }}
-
-CODE_DESCRIPTION = {{code_description | pprint | indent(width=8)}}
-
-# {{ "".center(60, '-') }}
-
-PLATFORM_SETTINGS = {{platform_settings | pprint | indent(width=8)}}
-
-# {{ "".center(80, '=') }}
-
-
+{%  if code_description.implementation.programming_language %}
+class {{actor_description.actor_name}}(PythonActor):
+{% else %}
 class {{actor_description.actor_name}}(ActorBaseClass):
+{% endif %}
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
-
-    # Provenance info
-    actor_description = ACTOR_DESCRIPTION
-    code_description = CODE_DESCRIPTION
-    # {{ "".center(80, '=') }}
-
-
 
     def __init__(self):
         super().__init__()
         self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        self.data_type = '{{code_description.implementation.data_type | lower}}'
-        self.native_language = '{{code_description.implementation.programming_language | lower}}'
-        self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
 
-        # Auto-generated list of arguments meta-data
-    {% for argument in code_description.arguments %}
-        argument = Argument(name='{{ argument.name }}', type='{{argument.type}}', intent='{{argument.intent}}')
-        self.arguments.append(argument)
-    {% endfor %}
+    {%  if not code_description.implementation.programming_language %}
+    # {{ "".center(80, '=') }}
+    # {{ " ACTOR METHODS TEMPLATES ".center(80, '=') }}
+    # {{ "".center(80, '=') }}
+
+    # {{ "".center(80, '-') }}
+    # {{ " INITIALIZE ".center(80) }}
+    # {{ "".center(80, '-') }}
+    def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
+        """
+        The method performs initialisation actions
+
+        Args:
+            runtime_settings (RuntimeSettings, optional): property tells the actor how native code should
+            code_parameters (CodeParameters, optional): physics model parameters
+        """
+        super().initialize(runtime_settings, code_parameters)
+        ...
+
+    def run(self, *args) -> Union[List[Any], Any]:
+        """
+        The main (aka 'step', 'run') method. Could be called in a loop.
+        Args:
+            args - a list of input IDSes
+        Returns:
+            A list of output IDSes
+        """
+        ...
+
+    def finalize(self) -> None:
+        """
+        The method is used to perform finalisation actions (clean up the environment etc).
+        """
+        ...
+
+    def get_state(self) -> str:
+        """
+        A method returning information about internal model state
+
+        Returns:
+              An internal state of the code as a string. The iWrap gives a full flexibility to the code developer
+              concerning format and content of state description.  It is a kind of a ‘black box’ returned
+              from get_state and passed to set_state method during restart, so the only requirement is that
+              information returned by get_state is understandable to set_state.
+
+        """
+        ...
+
+    def set_state(self, state: str) -> None:
+        """
+        A method restoring internal state of the model.
+
+        Args:
+            state (str) -  An internal state of the code as a string returned by a call of `get_state`
+        """
+        ...
+
+    def get_timestamp(self) -> float:
+        """
+        The method allows to obtain currently computed physical time. Such information can help support consistent
+        physical time handling throughout the coupled simulation
+
+        Returns:
+            Timestamp: currently computed physical time
+        """
+        ...
 
 
-    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-        # Static code parameters
-        default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
-        schema_file = '{{code_description.implementation.code_parameters.schema | basename}}'
-        self._ActorBaseClass__code_parameters = CodeParameters(default_parameters_file, schema_file)
-    {% endif %}
-
-        self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
-
-       {% if code_description.settings.mpi_compiler_cmd %}
-        # setting MPI parameters
-        self._ActorBaseClass__runtime_settings.mpi = RuntimeSettings.MPISettings()
-        self._ActorBaseClass__runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
-        self._ActorBaseClass__runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
-        {% endif %}
-
-        # setting BATCH parameters
-        self._ActorBaseClass__runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
-        self._ActorBaseClass__runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
-
-
-        # setting DEBUGGER parameters
-        self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
-        self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
-
+ {%  endif %}

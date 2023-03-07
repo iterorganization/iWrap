@@ -1,0 +1,142 @@
+import os
+import logging
+import sys
+
+from . import actor_info
+from .code_parameters import CodeParameters
+from .definitions import Argument
+from .runtime_settings import RuntimeSettings, DebugMode, RunMode
+from .definitions import Actor
+from .sandbox import Sandbox
+
+
+class ActorBaseClass(Actor):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
+    __instance_index = 0
+
+    # Provenance info
+    actor_description = actor_info.ACTOR_DESCRIPTION
+    code_description = actor_info.CODE_DESCRIPTION
+
+    @property
+    def unique_id(self):
+        class_name = self.__class__.__name__
+        idx = self.__instance_index
+        pid = os.getpid()
+        uid = f'{class_name}_{idx}#{pid}'
+        return uid
+
+    def __new__(cls):
+        new_object = object.__new__( cls )
+        cls.__instance_index += 1
+        return new_object
+
+    def get_runtime_settings(self) -> RuntimeSettings:
+        return self.__runtime_settings
+
+    def get_code_parameters(self) -> CodeParameters:
+        return self.__code_parameters
+
+    def __init__(self):
+        self.output_stream = sys.stdout
+        self.is_mpi_code = False
+        self.__runtime_settings: RuntimeSettings = RuntimeSettings()
+        self.sandbox: Sandbox = None
+        self.arguments = []
+        self.is_standalone = False
+        self.__code_parameters: CodeParameters = None
+        self.name = self.__class__.__name__
+
+        self.data_type = '{{code_description.implementation.data_type | lower}}'
+        self.native_language = '{{code_description.implementation.programming_language | lower}}'
+        self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True  {% endif %}
+
+        # Auto-generated list of arguments meta-data
+        {%  for argument in code_description.arguments %}
+        argument = Argument( name='{{ argument.name }}', type='{{argument.type}}', intent='{{argument.intent}}' )
+        self.arguments.append( argument )
+        {% endfor %}
+
+        {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
+        # Static code parameters
+        default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
+        schema_file = '{{code_description.implementation.code_parameters.schema | basename}}'
+        self.__code_parameters = CodeParameters( default_parameters_file, schema_file )
+        {% endif %}
+
+        self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'
+
+        runtime_settings = self.get_runtime_settings()
+        {% if code_description.settings.mpi_compiler_cmd %}
+        # setting MPI parameters
+        self.__runtime_settings.mpi = RuntimeSettings.MPISettings()
+        self.__runtime_settings.mpi._default_runner = '{{ platform_settings.mpi_jobs.runner  or "" }}'
+        self.__runtime_settings.mpi._default_options = '{{ platform_settings.mpi_jobs.options or "" }}'
+        {% endif %}
+
+        # setting BATCH parameters
+        self.__runtime_settings.batch._default_runner = '{{ platform_settings.batch_jobs.runner  or "" }}'
+        self.__runtime_settings.batch._default_options = '{{ platform_settings.batch_jobs.options  or "" }}'
+
+        # setting DEBUGGER parameters
+        self.__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
+        self.__runtime_settings.debugger._default_attach_cmd = "{{ platform_settings.debugger.attach_cmd  or "" }}"
+
+
+    def is_standalone_run(self):
+        if self.is_mpi_code:
+            return True
+
+        if self.__runtime_settings.debug_mode == DebugMode.STANDALONE:
+            return True
+
+        if self.__runtime_settings.run_mode == RunMode.STANDALONE:
+            return True
+
+        if self.__runtime_settings.run_mode == RunMode.BATCH:
+            return True
+
+        return False
+
+    # # #  Actor lifecycle methods # # #
+
+    def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None):
+        """
+        Attributes:
+            runtime_settings (RuntimeSettings): Path to a XML file with code parameters
+            code_parameters (CodeParameters): Path to a XSD file with schema definition for code parameters file
+        """
+
+        if self.__code_parameters:
+            if code_parameters:
+                self.__code_parameters = code_parameters
+
+            self.__code_parameters.initialize()
+
+        if runtime_settings:
+            self.__runtime_settings = runtime_settings
+
+        self.is_standalone = self.is_standalone_run()
+        self.sandbox = Sandbox(self)
+
+        self.sandbox.initialize()
+
+    def __call__(self, *args):
+        return self.run( *args )
+
+    def run(self, *args):
+        ...
+
+    def finalize(self):
+        ...
+
+    def get_state(self) -> str:
+        ...
+
+    def set_state(self, state: str) -> None:
+        ...
+
+    def get_timestamp(self) -> float:
+        ...

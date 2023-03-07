@@ -59,6 +59,9 @@ class WrapperGeneratorRegistry:
     @classmethod
     def get_generator(cls, type:str, actor_language: str, code_language: str) -> WrapperGenerator:
 
+        if str(code_language).lower() == 'none':
+            return None
+
         # No wrapper actually needed
         if actor_language.lower() == code_language.lower():
             return None

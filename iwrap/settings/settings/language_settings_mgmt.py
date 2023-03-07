@@ -16,6 +16,9 @@ class LanguageSettingsManager:
     def get_settings_handler(cls, language, values=None):
         """ Returns language settings.
         """
+        if not language:
+            return {}
+
         language = language.lower()
         # no special handler
         if language not in cls._language_settings_handlers:
