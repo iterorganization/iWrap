@@ -1,7 +1,7 @@
 # iWrap
 _**Disclaimer**_  
-_iWrap is still under development, so all procedures described below are temporary, prepared for demonstration purposes only!_
-## Description
+_iWrap is still under development, so its API and features may change!_
+
 iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex computing scenarios designed in other language (e.g. Python).
 
 It's plug-in based modular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC data for instance)
@@ -10,10 +10,12 @@ For user conveniency it provides two kinds of interfaces:
 * user friendly graphical interface that allows non-experienced users to define an actor in intuitive way 
 * command line interface foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
 
-## Installation
+# Configuration of working environment
+
+## Downloading software
     git clone ssh://git@git.iter.org/imex/iwrap.git
     cd iwrap
-    git checkout develop
+    git checkout <branch>
 
 ## Environment configuration
 To configure an environment, please go to `iwrap` main directory and execute from commandline: 
@@ -67,36 +69,66 @@ Additional information:
 For more information, visit <https://confluence.iter.org/display/IMP/IMAS+component+generator>.
 ```
 ## Actor generation
-`iwrap -a <actor_name> -f <path/to/code_description.yaml>`
+`shell> iwrap -a <actor_name> -f <path/to/code_description.yaml>`
 
 ... will generate an actor based on code description stored in yaml, where ...
 
-`iwrap-gui -a <actor_name> -f <path/to/code_description.yaml>`
+`shell> iwrap-gui -a <actor_name> -f <path/to/code_description.yaml>`
 
 ... will launch iWrap GUI filled in with information coming from code description 
 
-## Examples
+# Manuals
+To launch a browser with documentation, simply run:
+
+`shell> iwrap-doc`
+
+# Examples
 Examples placed in directory `iwrap/examples` can be an excellent source of knowledge
 related to _code description_ syntax, actors API and the way actors are called from workflow.
 
-### Example 1: _cp2ds_
-1. Navigating to example directory   
-   `shell> cd iwrap/examples/cp2ds`
-2. Preparing native code  
-    `shell> make native`
-3. Generating an actor  
-   `iwrap -a core2dist -f ./cp2ds.yaml`
-4. Running workflow  
-    `python ./cp2ids_workflow.py`
+## Introduction
 
-### Example 2: _level2_
-1. Navigating to example directory   
-   `shell> cd iwrap/examples/level2`
-2. Preparing native code  
-    `shell> make native`
-3. Generating an actor  
-   `iwrap -a physics_ii -f ./physics_ii.yaml`
-4. Running workflow  
-    `python ./workflow.py`
+A content of a directory is similar for all examples and consist of:
+ 
+- `native_code` directory - containing a physics model to be wrapped 
+- `YAML` file - providing all information essential for iWrap to generate an actor from the native code
+- `Makefile` that simplifies all the steps requires from building a native code to running an example
+-  Python script - containing simple scenario (aka workflow) that allow to run given example
 
+## Prerequisites
 
+Following software must be available to run the examples:
+
+- IMAS built with Access Layer of version 4.11 (or later)
+- XMLLib library - necessary to build and run actors that wraps code using XML parameters - should be available via pkg-config mechanism
+
+To simplify setting up a working environment, configuration scripts are available for two of the platforms
+commonly utilized by IMAS users:
+- `set-iter.sh` for the ITER Organisation computing cluster (SDCC)
+- `set-gw.(ba)sh` for the EUROfusion Gateway
+
+All scripts need to be **sourced**
+
+## Building and running examples 
+
+Following steps need to be performed to build and run an example:
+
+1. Jump to example directory:
+    ```Shell
+    cd <example_dir>
+    ```
+
+2. Build the native code:
+     ```Shell
+    make native
+    ```
+
+3. Generate a Python actor:
+    ```Shell
+    make actor
+    ```
+   
+4. Run a simple scenario:
+    ```Shell
+    make wf-run
+    ```
