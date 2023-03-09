@@ -8,6 +8,7 @@ from .runtime_settings import SandboxMode, SandboxLifeTime
 class Sandbox:
 
     def __init__(self, actor):
+        self.__current_dir = None
         self.actor = actor
         self.sandbox_settings = actor._ActorBaseClass__runtime_settings.sandbox
         self.path = None
@@ -25,7 +26,6 @@ class Sandbox:
             if not path.is_dir():
                 raise ValueError(f"Actor {self.actor.name}: Sandbox path points to a file and not directory ({path})")
 
-
             self.path =  self.sandbox_settings.path
         else:
             actor_id = self.actor.unique_id
@@ -41,6 +41,15 @@ class Sandbox:
         self.create()
         self.clean()
 
+    def jump_in(self):
+        # go to sandbox
+        self.__current_dir = os.getcwd()
+        os.chdir(self.path)
+
+    def jump_out(self):
+        # go back to initial dir
+        if self.__current_dir:
+            os.chdir( self.__current_dir )
 
     def create(self):
         Path(self.path).mkdir( parents=True, exist_ok=True)
@@ -48,6 +57,9 @@ class Sandbox:
     def clean(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
             return # It is the user duty to clean sbx in manual mode
+
+        if self.sandbox_settings.life_time == SandboxLifeTime.WORKFLOW_RUN:
+            return # Sbx content will be cleaned up by 'finalize'
 
         if self.sandbox_settings.life_time == SandboxLifeTime.PERSISTENT:
             return # Sbx content should be kept forever
