@@ -30,6 +30,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ "".center(80, '-') }}
     # {{ " INITIALIZE ".center(80) }}
     # {{ "".center(80, '-') }}
+    @ActorBaseClass.use_sandbox
     def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
         """
         The method performs initialisation actions
@@ -41,6 +42,10 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         super().initialize(runtime_settings, code_parameters)
         ...
 
+    # {{ "".center(80, '-') }}
+    # {{ " RUN ".center(80) }}
+    # {{ "".center(80, '-') }}
+    @ActorBaseClass.use_sandbox
     def run(self, *args) -> Union[List[Any], Any]:
         """
         The main (aka 'step', 'run') method. Could be called in a loop.
@@ -51,12 +56,21 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         ...
 
+    # {{ "".center(80, '-') }}
+    # {{ " FINALIZE ".center(80) }}
+    # {{ "".center(80, '-') }}
+    @ActorBaseClass.remove_sandbox
+    @ActorBaseClass.use_sandbox
     def finalize(self) -> None:
         """
         The method is used to perform finalisation actions (clean up the environment etc).
         """
         ...
 
+    # {{ "".center(80, '-') }}
+    # {{ " GET_STATE ".center(80) }}
+    # {{ "".center(80, '-') }}
+    @ActorBaseClass.use_sandbox
     def get_state(self) -> str:
         """
         A method returning information about internal model state
@@ -70,6 +84,10 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         ...
 
+    # {{ "".center(80, '-') }}
+    # {{ " SET_STATE ".center(80) }}
+    # {{ "".center(80, '-') }}
+    @ActorBaseClass.use_sandbox
     def set_state(self, state: str) -> None:
         """
         A method restoring internal state of the model.
@@ -79,6 +97,10 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         ...
 
+    # {{ "".center(80, '-') }}
+    # {{ " GET_TIMESTAMP ".center(80) }}
+    # {{ "".center(80, '-') }}
+    @ActorBaseClass.use_sandbox
     def get_timestamp(self) -> float:
         """
         The method allows to obtain currently computed physical time. Such information can help support consistent
