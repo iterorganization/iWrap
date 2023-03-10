@@ -11,7 +11,7 @@ class Sandbox:
         self.__current_dir = None
         self.actor = actor
         self.sandbox_settings = actor._ActorBaseClass__runtime_settings.sandbox
-        self.path = None
+        self.path = ''
 
     def __set_path(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
@@ -43,13 +43,20 @@ class Sandbox:
 
     def jump_in(self):
         # go to sandbox
-        self.__current_dir = os.getcwd()
+        cwd = os.getcwd()
+        if os.path.realpath(cwd) == os.path.realpath(self.path):
+            return # we are in the sandbox already
+
+        self.__current_dir = cwd
         os.chdir(self.path)
+        print( 'JUMP IN: ', self.path )
 
     def jump_out(self):
         # go back to initial dir
         if self.__current_dir:
             os.chdir( self.__current_dir )
+        self.clean()
+        print('JUMP OUT: ', self.path, " -> ", self.__current_dir )
 
     def create(self):
         Path(self.path).mkdir( parents=True, exist_ok=True)
@@ -85,3 +92,4 @@ class Sandbox:
         sandbox_path = self.path
         if Path(sandbox_path).exists():
             shutil.rmtree( sandbox_path )
+            print( 'REMOVING: ', self.path )

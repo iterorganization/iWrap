@@ -53,8 +53,6 @@ class PythonActor(ActorBaseClass):
         out = self.__runner.call_main( *args , code_parameters=code_parameters_str)
         self.sandbox.jump_out()
 
-        self.sandbox.clean()
-
         return out
 
     def finalize(self):
