@@ -33,8 +33,6 @@ class ImplementationPane(ttk.Frame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    default_programming_language = 'fortran'
-
     def __init__(self, master=None):
         """Initialize the code settings pane.
 
@@ -127,18 +125,18 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         programming language will be selected in combobox.
         """
         code_description = ProjectSettings.get_settings().code_description
-        code_languages = [None] + list( Engine().active_generator.code_languages )
-        self.programming_language_combobox['values'] = code_languages
+        available_code_languages = ['None'] + list( Engine().active_generator.code_languages )
+        self.programming_language_combobox['values'] = available_code_languages
 
-        programming_language = code_description.implementation.programming_language or code_languages[0]
+        programming_language = str(code_description.implementation.programming_language).lower() # can be NONE!
 
-        if programming_language.lower() not in [x.lower() for x in self.programming_language_combobox['values']]:
-            programming_language = ImplementationPane.default_programming_language
+        if programming_language not in [x.lower() for x in available_code_languages]:
             messagebox.showwarning("Warning", f"Unknown programming language. "
-                                              f"The programming language set to "
-                                              f"{ImplementationPane.default_programming_language}.")
+                                              f"The programming language set to 'None'")
+            programming_language = 'none'
+
         self.programming_language_combobox.set('')
-        self.programming_language_combobox.set(programming_language.lower())
+        self.programming_language_combobox.set(programming_language)
         self.programming_language_combobox.event_generate("<<ComboboxSelected>>")
 
         self.data_type_combobox['values'] = Engine().active_generator.code_data_types
