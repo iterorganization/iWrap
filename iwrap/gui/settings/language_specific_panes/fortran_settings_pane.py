@@ -261,7 +261,7 @@ class PkgConfigPane:
         """
         self.table.delete_data_from_table()
 
-        if not self.settings.extra_libraries.pkg_config_defined:
+        if not self.settings or not self.settings.extra_libraries.pkg_config_defined:
             return
 
         data = []
@@ -489,6 +489,9 @@ class LibraryPathPane:
     def __add_path_from_settings(self):
         """Add custom libraries from the ProjectSettings to the Table widget.
         """
+        if not self.settings:
+            return
+
         data = []
         if self.settings.extra_libraries.path_defined is not None:
             for cus_lib in self.settings.extra_libraries.path_defined:
@@ -517,7 +520,9 @@ class LibraryPathPane:
         """
         from iwrap.settings.project import ProjectSettings
 
-        self.settings = ProjectSettings.get_settings().code_description.settings
+        settings = ProjectSettings.get_settings().code_description.settings
+        if settings:
+            self.settings = settings
 
         self.__add_path_from_settings()
 
