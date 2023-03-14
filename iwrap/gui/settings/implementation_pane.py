@@ -27,7 +27,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         code_path_entry(Entry): Entry for code path.
         root_dir_entry(Entry): Entry for root dir.
         include_path(StringVar): StringVar for include path.
-        imas_compliant_version(StringVar): StringVar for first IMAS compliant version.
+        data_dictionary_compliant(StringVar): StringVar for first Data Dictionary compliant version.
         subroutines_pane(SubroutinesPane): Pane contains subroutines.
         code_parameters_pane(CodeParametersPane): Pane contains code parameters.
     """
@@ -48,7 +48,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.selected_programming_language = tk.StringVar()
         self.root_dir = tk.StringVar()
         self.data_type = None
-        self.imas_compliant_version = tk.StringVar()
+        self.data_dictionary_compliant = tk.StringVar()
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Implementation", borderwidth=2, relief="groove")
@@ -70,9 +70,9 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.data_type_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # ENTRY FOR IMAS COMPLIANT VERSION
-        ttk.Label(labelframe, text="IMAS compliant version:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
-        self.imas_compliant_version_entry = ttk.Entry(labelframe, textvariable=self.imas_compliant_version)
-        self.imas_compliant_version_entry.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Label(labelframe, text="*Data Dictionary compliant:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.data_dictionary_compliant_entry = ttk.Entry(labelframe, textvariable=self.data_dictionary_compliant)
+        self.data_dictionary_compliant_entry.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # BROWSE BUTTON AND ENTRY FOR PATH
         ttk.Label(labelframe, text="*Code path:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -122,7 +122,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         code_description.implementation.code_path = self.code_path.get()
         code_description.implementation.data_type = self.data_type_combobox.get()
         code_description.implementation.root_dir = self.root_dir.get()
-        code_description.implementation.imas_compliant_version = self.imas_compliant_version.get()
+        code_description.implementation.data_dictionary_compliant = self.data_dictionary_compliant.get()
         code_description.implementation.include_path = self.include_path.get()
         self.subroutines_pane.update_settings()
         self.code_parameters_pane.update_settings()
@@ -160,7 +160,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.code_path_entry.delete(0, tk.END)
         self.code_path.set(code_description.implementation.code_path or '')
         self.include_path.set(code_description.implementation.include_path or '')
-        self.imas_compliant_version.set(code_description.implementation.imas_compliant_version or '')
+        self.data_dictionary_compliant.set(code_description.implementation.data_dictionary_compliant or '')
 
         self.root_dir_entry.delete(0, tk.END)
         self.root_dir.set(code_description.implementation.root_dir or '')
