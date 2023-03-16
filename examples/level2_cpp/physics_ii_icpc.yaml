@@ -8,6 +8,7 @@ code_description:
             main:   physics_ii_cpp
         data_type: legacy
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         code_path: ./native_code/libphysics_ii_cpp.a
         include_path: ./native_code/physics_ii.h
         code_parameters:

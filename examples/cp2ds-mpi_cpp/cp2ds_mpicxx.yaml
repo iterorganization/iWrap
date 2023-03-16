@@ -4,6 +4,7 @@ code_description:
             main:   cp2ds_mpi_cpp
         data_type: legacy
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         code_path: ./native_code/libcp2ds_mpi_cpp.a
         include_path: ./native_code/cp2ds_mpi.h
         code_parameters:

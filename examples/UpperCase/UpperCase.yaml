@@ -5,6 +5,7 @@ code_description:
             main:   UpperCase
             finalize: CleanUp
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_path: ./native_code/libUpperCase.a
         include_path: ./native_code/mod_uppercase.mod

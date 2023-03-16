@@ -8,6 +8,7 @@ code_description:
         code_path: ./native_code/libcode_lifecycle_cpp.a
         include_path: ./native_code/code_lifecycle.h
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         code_parameters:
             parameters: ./input/input_physics.xml
             schema: ./input/input_physics.xsd

@@ -5,6 +5,7 @@ code_description:
             main:   coreprofiles2distsource_mpi
             finalize:
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         code_path: ./native/libcp2ds-mpi.a
         include_path: ./native/mod_cp2ds_mpi.mod
         data_type: legacy

@@ -10,6 +10,7 @@ code_description:
             main:   coreprofiles2distsource_cpp
             finalize:
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_path: ./native_code/libcp2ds_cpp.a
         include_path: ./native_code/coreprofiles2distsource.h

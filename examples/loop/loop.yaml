@@ -4,6 +4,7 @@ code_description:
             main:   loop
         data_type: legacy
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         code_path: ./native_code/libloop.a
         include_path: ./native_code/mod_loop.mod
         code_parameters:
