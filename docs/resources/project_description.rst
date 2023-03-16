@@ -87,6 +87,12 @@ Generic information common for all programming languages handled by iWrap:
         -   value: one of predefined values: 'Fortran', 'CPP'
         -   example: 'Fortran'
 
+    -   *data_dictionary_compliant:*
+
+        -   meaning:  oldest known version of Data Directory compatible with actor
+        -   value: any string representing Data Directory version
+        -   example: '3.37.0'
+
     -   *root_dir:*
 
         -   **optional** entry
@@ -277,6 +283,7 @@ Example - description of an actor wrapping Fortran code x
                 main:   code_lifecycle
                 finalize: clean_up
             programming_language: Fortran
+            data_directory_compliant: 3.37.0
             data_type: legacy
             code_path: ./native_code/libcode_lifecycle.a
             include_path: ./native_code/mod_code_lifecycle.mod

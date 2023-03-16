@@ -623,7 +623,36 @@ attribute of ``runtime_settings``. If not set, the automatically generated comma
    The only exception is ``${exec}`` tag (representing full path to executable binary),
    which MUST be present in the commandline.
 
+Actor build info
+######################################################################################################################
 
+.. _actor_build_info_anchor:
+
+Actor build info can be accessed through actor instance's ``build_info`` attribute.
+All fields are filled automatically during actor build process and cannot be changed.
+
+
+Build info contains:
+    - iWrap version - version of iWrap used to generate accessed actor eg. ``0.6.0``
+    - IMAS (DD) version - version of IMAS loaded during actor generation eg. ``3.37.0``
+    - IMAS prefix - full prefix of IMAS eg. ``/gw/swimas/core/IMAS/3.37.0/AL/4.11.0/gcc/7.3.0``
+    - AL version - version of Access Layer loaded during actor generation eg. ``4.11.0``
+    - Generation date - full datetime of actor generation eg. ``2023-01-01 06:12:24``
+
+Workflow developer may access actor build info as follows:
+
+.. code-block:: python
+
+    from physics_ii.actor import physics_ii
+
+    actor_physics_ii = physics_ii()
+    build_info_dict = actor_physics_ii.build_info
+
+    iwrap_version = build_info_dict.get("iwrap_version")
+    imas_version = build_info_dict.get("imas_version")
+    imas_prefix = build_info_dict.get("imas_prefix")
+    al_version = build_info_dict.get("al_version")
+    generation_date = build_info_dict.get("generation_date")
 
 
 The workflow example

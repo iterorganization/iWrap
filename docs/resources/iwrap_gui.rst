@@ -104,6 +104,7 @@ Implementation
 
 -  **Programming language** - a user code language
 -  **Data** **type** - data type handled by the physics code
+-  **Data Dictionary compliant** - oldest known version of Data Directory compatible with actor
 -  **Rood dir** - the root directory
 -  **Code** **path** - path to system library (C, CPP),
    script (Python), etc, containing the physics code and
