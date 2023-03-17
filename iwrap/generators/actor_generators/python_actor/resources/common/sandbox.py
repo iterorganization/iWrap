@@ -47,6 +47,7 @@ class Sandbox:
         if os.path.realpath(cwd) == os.path.realpath(self.path):
             return # we are in the sandbox already
 
+        self.create()
         self.__current_dir = cwd
         os.chdir(self.path)
         print( 'JUMP IN: ', self.path )
