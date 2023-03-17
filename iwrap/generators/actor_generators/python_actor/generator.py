@@ -67,12 +67,13 @@ class PythonActorGenerator(ActorGenerator):
             install_dir = PlatformSettings().directories.actor_install_dir
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name))
 
-
     def configure(self, info_output_stream=sys.stdout):
         self.__info_output_stream = info_output_stream
 
     def generate(self, project_settings: dict):
         self.cleanup()
+        os.makedirs( self.install_dir, exist_ok=True )
+
         self.temp_dir = tempfile.TemporaryDirectory().name
         generation_env = {'temp_dir': self.install_dir}
 
