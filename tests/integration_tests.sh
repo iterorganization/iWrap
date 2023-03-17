@@ -5,6 +5,7 @@ declare -i test_exit_code
 declare -r project_root=${PWD}
 declare -r reports_dir=$project_root/reports
 
+test_dirs+=("dummy_actor")
 test_dirs+=("cp2ds")
 test_dirs+=("cp2ds_cpp")
 test_dirs+=("level2")
@@ -13,6 +14,7 @@ test_dirs+=("cp2ds-mpi")
 test_dirs+=("cp2ds-mpi_cpp")
 test_dirs+=("code_lifecycle")
 test_dirs+=("code_lifecycle_cpp")
+test_dirs+=("loop")
 
 PASSED='\033[1;32m- Passed.\033[0m'
 FAILED='\033[1;31m- Failed.\033[1;33m See log.txt.\033[0m Continuing...'
