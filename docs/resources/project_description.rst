@@ -67,6 +67,7 @@ Actor description syntax
    -  example: 'legacy'
 
 .. _yaml_code_description_anchor:
+
 Native code description
 #######################################################################################################################
 
