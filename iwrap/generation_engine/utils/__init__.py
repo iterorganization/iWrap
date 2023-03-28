@@ -15,18 +15,24 @@ def discover_generators(builtin_pkg_name: str, plugin_pkg_name: str, generator_b
         for finder, name, ispkg in packages:
             importlib.import_module( name )
 
+    except ModuleNotFoundError as exc:
+        __logger.exception(f'No built-in {generator_base_class.__name__} plug-ins have been loaded:\n{exc}' )
     except Exception as exc:
-        print(traceback.format_exc())
-        __logger.warning(f'No built-in {generator_base_class.__name__} plug-ins have been loaded:\n{exc}' )
+        __logger.exception(f'Error while loading built-in {generator_base_class.__name__} plug-in {name}"')
+        raise
 
     try:
         generator_module = importlib.import_module( plugin_pkg_name )
         packages = pkgutil.walk_packages( generator_module.__path__, generator_module.__name__ + "." )
         for finder, name, ispkg in packages:
-            importlib.import_module( name )
+            try:
+                importlib.import_module( name )
+                __logger.info(f'External {generator_base_class.__name__} plug-in found: "{name}"')
+            except:
+                __logger.exception(f'Error while loading external {generator_base_class.__name__} plug-in "{name}"')
 
-    except Exception as exc:
-        __logger.warning(f'INFO: No external {generator_base_class.__name__} plug-ins have been found' )
+    except ModuleNotFoundError as exc:
+        __logger.info(f'No external {generator_base_class.__name__} plug-ins have been found' )
 
     generators_class_list = generator_base_class.__subclasses__()
 
