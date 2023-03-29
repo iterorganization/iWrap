@@ -205,10 +205,6 @@ class CBinder(Binder):
         # check if a number of provided arguments is correct
         self.__check_inputs(input_idses)
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
-
         ids_ctypes_list = self.__get_ids_ctypes()
 
         tmp_ids_list = list(input_idses)
@@ -226,9 +222,6 @@ class CBinder(Binder):
         self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
         exec_system_cmd(exec_command, output_stream=output_stream)
 
-        # go back to initial dir
-        os.chdir(cwd)
-
         # Checking returned DIAGNOSTIC INFO
         self.__read_output(status_info_ctype, sandbox_dir)
         self.__status_check( status_info_ctype )
@@ -239,8 +232,6 @@ class CBinder(Binder):
             if ids_ctype.intent == Argument.OUT:
                 results.append(self.ids_converter.convert_to_actor_type(ids_ctype))
             self.ids_converter.release(ids_ctype)
-
-
 
         # final output
         if not results:
@@ -257,10 +248,6 @@ class CBinder(Binder):
 
         c_arglist = []
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
-
         # Code Parameterss
         if code_parameters:
             param_ctype = ParametersCType(code_parameters)
@@ -275,9 +262,6 @@ class CBinder(Binder):
         # call native INIT method of wrapper
         self.wrapper_init_func( *c_arglist )
 
-        # go back to initial dir
-        os.chdir( cwd )
-
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info_ctype )
 
@@ -290,10 +274,6 @@ class CBinder(Binder):
 
         # check if a number of provided arguments is correct
         self.__check_inputs(input_idses)
-
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir( sandbox_dir )
 
         ids_ctypes_list = self.__get_ids_ctypes()
         tmp_ids_list = list(input_idses)
@@ -319,9 +299,6 @@ class CBinder(Binder):
         # call native MAIN method of wrapper
         self.wrapper_main_func( *c_arglist )
 
-        # go back to initial dir
-        os.chdir( cwd )
-
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type(c_arglist[-2], c_arglist[-1])
         self.__status_check(status_info_ctype)
@@ -341,7 +318,7 @@ class CBinder(Binder):
         else:
             return tuple( results )
 
-    def call_finish(self, sandbox_dir: str):
+    def call_finish(self):
         if not self.wrapper_finish_func:
             return
 
@@ -349,20 +326,13 @@ class CBinder(Binder):
         status_info_ctype = StatusCType()
         c_status_info = status_info_ctype.convert_to_native_type()
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
-
         # call FINISH
         self.wrapper_finish_func( *c_status_info)
-
-        # go back to initial dir
-        os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info_ctype )
 
-    def call_set_state(self, state:str, sandbox_dir:str):
+    def call_set_state(self, state:str):
         if not self.wrapper_set_state_func:
             return
 
@@ -379,28 +349,17 @@ class CBinder(Binder):
         status_info_ctype = StatusCType()
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir(sandbox_dir)
-
         # call FINISH
         self.wrapper_set_state_func(cref_state, cref_state_size,  cref_code, cref_msg)
-
-        # go back to initial dir
-        os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info_ctype )
 
-    def call_get_state(self, sandbox_dir: str) -> str:
+    def call_get_state(self) -> str:
         if not self.wrapper_get_state_func:
             return None
 
         state = None
-
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir( sandbox_dir )
 
         c_ptr_state = ctypes.c_char_p()
         cref_state = ctypes.pointer( c_ptr_state )
@@ -412,9 +371,6 @@ class CBinder(Binder):
         # call native MAIN method of wrapper
         self.wrapper_get_state_func( cref_state, cref_code, cref_msg )
 
-        # go back to initial dir
-        os.chdir( cwd )
-
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
         self.__status_check( status_info_ctype )
@@ -425,13 +381,9 @@ class CBinder(Binder):
 
         return state
 
-    def call_get_timestamp(self, sandbox_dir: str) -> float:
+    def call_get_timestamp(self) -> float:
         if not self.wrapper_get_timestamp_func:
             return None
-
-        # go to sandbox
-        cwd = os.getcwd()
-        os.chdir( sandbox_dir )
 
         c_double_timestamp = ctypes.c_double( 0.0 )
         cref_timestamp = ctypes.pointer( c_double_timestamp )
@@ -442,9 +394,6 @@ class CBinder(Binder):
 
         # call native MAIN method of wrapper
         self.wrapper_get_timestamp_func( cref_timestamp, cref_code, cref_msg )
-
-        # go back to initial dir
-        os.chdir( cwd )
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
