@@ -638,7 +638,7 @@ For list of available actor description information see: :ref:`yaml_actor_descri
 
 For list of available code description information see: :ref:`yaml_code_description_anchor`
 
-actor_description example content:
+``actor_description`` attribute example value:
 
 .. code-block:: python
 
@@ -652,7 +652,7 @@ actor_description example content:
      'data_type': '',
      'install_dir': ''}
 
-code_description example content:
+``code_description`` attribute example value:
 
 .. code-block:: python
 
