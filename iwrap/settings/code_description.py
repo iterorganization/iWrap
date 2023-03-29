@@ -178,10 +178,10 @@ class Implementation( SettingsBaseClass ):
 
     def __init__(self, master):
         self.root_dir = '.'
-        self._programming_language: str = ''
+        self._programming_language  = None
         self.data_type: str = None
         self.code_path: str = None
-        self.include_path = ''
+        self.include_path = None
         self.data_dictionary_compliant: str = None
         self._master = master
         self.code_parameters: CodeParameters = CodeParameters()
