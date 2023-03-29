@@ -74,7 +74,6 @@ class ActorBaseClass(Actor):
         self.is_mpi_code = False
         self.__runtime_settings: RuntimeSettings = RuntimeSettings()
         self.sandbox: Sandbox = None
-        self.arguments = []
         self.__code_parameters: CodeParameters = None
 
         self.name = self.__class__.__name__

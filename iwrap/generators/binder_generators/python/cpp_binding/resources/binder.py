@@ -89,10 +89,11 @@ class CBinder(Binder):
         self.wrapper_get_timestamp_func = None
 
     def initialize(self, actor):
+        self.actor = actor
 
         IDSConvertersRegistry.initialize()
-        self.ids_converter = IDSConvertersRegistry.get_converter(actor.data_type, 'cpp')
-        self.actor = actor
+        data_type = self.actor.code_description['implementation']['data_type']
+        self.ids_converter = IDSConvertersRegistry.get_converter(data_type, 'cpp')
 
         self.runtime_settings = actor._ActorBaseClass__runtime_settings
         self.arg_metadata_list = actor.code_description.get('arguments')
