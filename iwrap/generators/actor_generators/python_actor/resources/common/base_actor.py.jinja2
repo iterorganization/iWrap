@@ -149,10 +149,7 @@ class ActorBaseClass(Actor):
             self.__runtime_settings = runtime_settings
 
         self.is_standalone = self.is_standalone_run()
-
-
         self.sandbox.initialize()
-        self.sandbox.jump_in()
 
     def __call__(self, *args):
         return self.run( *args )

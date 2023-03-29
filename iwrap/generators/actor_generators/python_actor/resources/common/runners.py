@@ -5,6 +5,7 @@ import logging
 import string
 from threading import Thread
 
+
 from .runtime_settings import RuntimeSettings, RunMode, DebugMode
 from . import exec_system_cmd
 
@@ -15,30 +16,39 @@ class Runner(ABC):
 
 
     @classmethod
-    def get_runner(cls, is_standalone: bool):
-        if is_standalone:
+    def get_runner(cls, actor):
+        cls.initialize(actor)
+        if actor.is_standalone:
             return cls.__standalone_runner
 
         return cls.__library_runner
 
     @classmethod
-    def initialize(cls, actor, binder, sandbox_dir, output_stream):
-        cls.__standalone_runner = StandaloneRunner(actor, binder, sandbox_dir, output_stream)
-        cls.__library_runner = LibraryRunner(actor, binder, sandbox_dir, output_stream)
+    def initialize(cls, actor):
+        cls.__standalone_runner = StandaloneRunner(actor)
+        cls.__library_runner = LibraryRunner(actor)
 
-    def __init__(self, actor, binder, sandbox_dir, output_stream):
+    def __init__(self, actor):
+        from ..binding.binder import CBinder
         self._actor = actor
-        self._binder = binder
-        self._output_stream = output_stream
-        self._sandbox_dir = sandbox_dir
-        self._runtime_settings = actor._ActorBaseClass__runtime_settings
+        self._binder = CBinder()
+        self._output_stream = actor.output_stream
+        self._runtime_settings = actor.get_runtime_settings()
+        self._binder.initialize(actor=actor)
+
+    def get_code_parameters(self):
+        code_parameters = self._actor.get_code_parameters()
+        if not code_parameters:
+            return None
+
+        return code_parameters.parameters
 
     @abstractmethod
-    def call_initialize(self, code_parameters: str):
+    def call_initialize(self):
         ...
 
     @abstractmethod
-    def call_main(self, *ids_list, code_parameters: str):
+    def call_main(self, *ids_list):
         ...
 
     @abstractmethod
@@ -60,12 +70,11 @@ class StandaloneRunner( Runner ):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
-    def __init__(self, actor, binder, sandbox_dir, output_stream):
-        super().__init__( actor, binder,sandbox_dir, output_stream)
+    def __init__(self, actor):
+        super().__init__( actor)
 
-    def call_initialize(self, code_parameters: str):
+    def call_initialize(self):
         ...
-
 
     def call_finalize(self):
         ...
@@ -200,7 +209,7 @@ class StandaloneRunner( Runner ):
         if not '${exec}' in exec_command:
             raise ValueError( 'ERROR: User provided command must contain "${exec}" string ' )
 
-    def call_main(self, *ids_list, code_parameters: str):
+    def call_main(self, *ids_list):
 
         self.__logger.debug( "RUNNING STDL" )
 
@@ -223,8 +232,10 @@ class StandaloneRunner( Runner ):
         print( f'COMMAND: {exec_command}' )
         # debug_mode:            exec_command.append( 'totalview' )
 
+        code_parameters = self.get_code_parameters()
+        sandbox_dir = self._actor.sandbox.path
         results = self._binder.run_standalone( ids_list, code_parameters, exec_command,
-                                                self._sandbox_dir, self._output_stream )
+                                                sandbox_dir, self._output_stream )
         return results
 
     def call_finalize(self):
@@ -239,12 +250,13 @@ class StandaloneRunner( Runner ):
     def call_get_timestamp(self) -> float:
         ...
 
+
 class LibraryRunner( Runner ):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
-    def __init__(self, actor, binder, sandbox_dir, output_stream):
-        super().__init__( actor, binder, sandbox_dir, output_stream )
+    def __init__(self, actor):
+        super().__init__( actor)
 
     def __attach_debugger(self):
         actor_name = self._actor.name
@@ -277,31 +289,34 @@ class LibraryRunner( Runner ):
         t.start()
         input()  # just to wait until debugger starts
 
-    def call_initialize(self, code_parameters: str):
+    def call_initialize(self):
 
         if self._runtime_settings.debug_mode != DebugMode.NONE:
             self.__attach_debugger()
 
-        self._binder.call_init( code_parameters=code_parameters, sandbox_dir=self._sandbox_dir )
+        code_parameters = self.get_code_parameters()
+        sandbox_dir = self._actor.sandbox.path
+        self._binder.call_init( code_parameters=code_parameters, sandbox_dir=sandbox_dir )
 
-
-    def call_main(self, *ids_list, code_parameters: str):
+    def call_main(self, *ids_list):
 
         self.__logger.debug( "RUNNING Lib" )
-
-        results = self._binder.call_main(ids_list, code_parameters=code_parameters, sandbox_dir=self._sandbox_dir)
+        sandbox_dir = self._actor.sandbox.path
+        code_parameters = self.get_code_parameters()
+        results = self._binder.call_main(ids_list, code_parameters=code_parameters, sandbox_dir=sandbox_dir)
         return results
 
     def call_finalize(self):
-        self._binder.call_finish( sandbox_dir=self._sandbox_dir )
+        self._binder.call_finish()
+        self._binder.finalize()
 
     def call_get_state(self) -> str:
-        state = self._binder.call_get_state( sandbox_dir=self._sandbox_dir )
+        state = self._binder.call_get_state()
         return state
 
     def call_set_state(self, state: str):
-        self._binder.call_set_state(state,  sandbox_dir=self._sandbox_dir )
+        self._binder.call_set_state(state)
 
     def call_get_timestamp(self) -> float:
-        timestamp = self._binder.call_get_timestamp( sandbox_dir=self._sandbox_dir )
+        timestamp = self._binder.call_get_timestamp()
         return timestamp
