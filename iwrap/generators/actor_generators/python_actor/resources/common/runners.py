@@ -17,7 +17,10 @@ class Runner(ABC):
 
     @classmethod
     def get_runner(cls, actor):
-        cls.initialize(actor)
+
+        if not cls.__library_runner or not cls.__standalone_runner:
+            cls.initialize(actor)
+
         if actor.is_standalone:
             return cls.__standalone_runner
 
