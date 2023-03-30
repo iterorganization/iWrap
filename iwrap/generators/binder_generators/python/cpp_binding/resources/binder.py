@@ -89,13 +89,14 @@ class CBinder(Binder):
         self.wrapper_get_timestamp_func = None
 
     def initialize(self, actor):
-
-        IDSConvertersRegistry.initialize()
-        self.ids_converter = IDSConvertersRegistry.get_converter(actor.data_type, 'cpp')
         self.actor = actor
 
+        IDSConvertersRegistry.initialize()
+        data_type = self.actor.code_description['implementation']['data_type']
+        self.ids_converter = IDSConvertersRegistry.get_converter(data_type, 'cpp')
+
         self.runtime_settings = actor._ActorBaseClass__runtime_settings
-        self.arg_metadata_list = actor.arguments
+        self.arg_metadata_list = actor.code_description.get('arguments')
         self.ids_ctype_list = None
         self.actor_dir = actor.actor_dir
 
@@ -132,7 +133,7 @@ class CBinder(Binder):
     def __check_inputs(self, ids_arguments_list):
         import functools
 
-        inputs_number = functools.reduce(lambda nbr, arg: nbr + 1 if arg.intent == Argument.IN else nbr,
+        inputs_number = functools.reduce(lambda nbr, arg: nbr + 1 if arg['intent'] == Argument.IN else nbr,
                                          self.arg_metadata_list, 0 )
 
         # check if a number of provided arguments is correct
@@ -168,8 +169,8 @@ class CBinder(Binder):
 
         # LOOP over ids
         for arg_meta_data in self.arg_metadata_list:
-            ids_ctype = self.ids_converter.prepare_native_type( arg_meta_data.type )
-            ids_ctype.intent = arg_meta_data.intent
+            ids_ctype = self.ids_converter.prepare_native_type( arg_meta_data['type'] )
+            ids_ctype.intent = arg_meta_data['intent']
             ids_ctype_list.append( ids_ctype )
 
         return ids_ctype_list

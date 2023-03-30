@@ -27,6 +27,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         code_path_entry(Entry): Entry for code path.
         root_dir_entry(Entry): Entry for root dir.
         include_path(StringVar): StringVar for include path.
+        data_dictionary_compliant(StringVar): StringVar for first Data Dictionary compliant version.
         subroutines_pane(SubroutinesPane): Pane contains subroutines.
         code_parameters_pane(CodeParametersPane): Pane contains code parameters.
     """
@@ -47,6 +48,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.selected_programming_language = tk.StringVar()
         self.root_dir = tk.StringVar()
         self.data_type = None
+        self.data_dictionary_compliant = tk.StringVar()
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Implementation", borderwidth=2, relief="groove")
@@ -67,28 +69,33 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.data_type_combobox.current(0)
         self.data_type_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
 
+        # ENTRY FOR IMAS COMPLIANT VERSION
+        ttk.Label(labelframe, text="*Data Dictionary compliant:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        self.data_dictionary_compliant_entry = ttk.Entry(labelframe, textvariable=self.data_dictionary_compliant)
+        self.data_dictionary_compliant_entry.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+
         # BROWSE BUTTON AND ENTRY FOR PATH
-        ttk.Label(labelframe, text="*Code path:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Code path:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.code_path_entry = ttk.Entry(labelframe, textvariable=self.code_path)
-        self.code_path_entry.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.code_path), width=10).grid(column=2, row=4, padx=10, pady=5)
+        self.code_path_entry.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.code_path), width=10).grid(column=2, row=5, padx=10, pady=5)
 
         # BROWSE BUTTON AND ENTRY FOR ROOT DIR
-        ttk.Label(labelframe, text="Root dir:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="Root dir:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.root_dir_entry = ttk.Entry(labelframe, textvariable=self.root_dir)
-        self.root_dir_entry.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=3, padx=10,
+        self.root_dir_entry.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=4, padx=10,
                                                                                            pady=5)
 
         # MODULE PATH
         self.include_path = tk.StringVar()
         self.include_path.set(ProjectSettings.get_settings().code_description.implementation.include_path or '')
-        ttk.Label(labelframe, text="*Include path:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(labelframe, text="*Include path:").grid(column=0, row=6, padx=10, pady=5, sticky=(tk.W, tk.N))
         browse_button = ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.include_path), width=10)
         browse_button.bind("<FocusIn>", self.handle_focus)
         browse_text = ttk.Entry(labelframe, textvariable=self.include_path)
-        browse_text.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
-        browse_button.grid(column=2, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
+        browse_text.grid(column=1, row=6, padx=10, pady=5, sticky=(tk.W, tk.E))
+        browse_button.grid(column=2, row=6, padx=10, pady=5, sticky=(tk.W, tk.E))
 
         # TABS FRAME
         tab_frame = ttk.Frame(self)
@@ -115,6 +122,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         code_description.implementation.code_path = self.code_path.get()
         code_description.implementation.data_type = self.data_type_combobox.get()
         code_description.implementation.root_dir = self.root_dir.get()
+        code_description.implementation.data_dictionary_compliant = self.data_dictionary_compliant.get()
         code_description.implementation.include_path = self.include_path.get()
         self.subroutines_pane.update_settings()
         self.code_parameters_pane.update_settings()
@@ -151,7 +159,8 @@ class ImplementationPane(ttk.Frame, IWrapPane):
 
         self.code_path_entry.delete(0, tk.END)
         self.code_path.set(code_description.implementation.code_path or '')
-        self.include_path.set(code_description.implementation.include_path or "")
+        self.include_path.set(code_description.implementation.include_path or '')
+        self.data_dictionary_compliant.set(code_description.implementation.data_dictionary_compliant or '')
 
         self.root_dir_entry.delete(0, tk.END)
         self.root_dir.set(code_description.implementation.root_dir or '')

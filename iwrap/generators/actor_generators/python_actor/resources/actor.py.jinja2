@@ -1,7 +1,6 @@
 import os
 
 from .common.base_actor import ActorBaseClass
-from .common.definitions import Argument
 from .common.code_parameters import CodeParameters
 from .common.runtime_settings import RuntimeSettings
 
@@ -19,6 +18,9 @@ PLATFORM_SETTINGS = {{platform_settings | pprint | indent(width=8)}}
 
 # {{ "".center(80, '=') }}
 
+BUILD_INFO = {{build_info | pprint | indent(width=8)}}
+
+# {{ "".center(80, '=') }}
 
 class {{actor_description.actor_name}}(ActorBaseClass):
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
@@ -27,6 +29,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # Provenance info
     actor_description = ACTOR_DESCRIPTION
     code_description = CODE_DESCRIPTION
+    build_info = BUILD_INFO
     # {{ "".center(80, '=') }}
 
 
@@ -34,16 +37,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     def __init__(self):
         super().__init__()
         self.actor_dir = os.path.dirname( os.path.realpath( __file__ ) )
-        self.data_type = '{{code_description.implementation.data_type | lower}}'
-        self.native_language = '{{code_description.implementation.programming_language | lower}}'
         self.is_mpi_code = {% if not code_description.settings.mpi_compiler_cmd or code_description.settings.mpi_compiler_cmd == 'None' %} False {% else %} True {% endif %}
-
-        # Auto-generated list of arguments meta-data
-    {% for argument in code_description.arguments %}
-        argument = Argument(name='{{ argument.name }}', type='{{argument.type}}', intent='{{argument.intent}}')
-        self.arguments.append(argument)
-    {% endfor %}
-
 
     {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
         # Static code parameters
@@ -69,4 +63,3 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         # setting DEBUGGER parameters
         self._ActorBaseClass__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
         self._ActorBaseClass__runtime_settings.debugger._default_attach_cmd= "{{ platform_settings.debugger.attach_cmd  or "" }}"
-

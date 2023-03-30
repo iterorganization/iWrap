@@ -10,6 +10,7 @@ code_description:
             main:   coreprofiles2distsource
             finalize:
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_path: ./native/libcp2ds.a
         include_path: ./native/mod_coreprofiles2distsource.mod

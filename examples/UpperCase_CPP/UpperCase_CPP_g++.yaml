@@ -8,6 +8,7 @@ code_description:
         code_path: ./native_code/libUpperCaseCPP.a
         include_path: ./native_code/UpperCase.h
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         code_parameters:
             parameters: ./input/input_physics.xml
             schema: ./input/input_physics.xsd

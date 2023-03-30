@@ -163,6 +163,7 @@ class Implementation( SettingsBaseClass ):
         code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
             method/subroutine to be run
         include path (str): a module's / header's file path
+        data_dictionary_compliant (str): first known compliant version of the data dictionary environment
         code_parameters (:obj:CodeParameters): user defined parameters of the native code
         subroutines (:obj:Subroutines): name of user method / subroutine to be called, used also as an actor name
     """
@@ -183,6 +184,7 @@ class Implementation( SettingsBaseClass ):
         self.data_type: str = None
         self.code_path: str = None
         self.include_path = ''
+        self.data_dictionary_compliant: str = None
         self._master = master
         self.code_parameters: CodeParameters = CodeParameters()
         self.subroutines: Subroutines = Subroutines()
@@ -219,6 +221,9 @@ class Implementation( SettingsBaseClass ):
         if not Path(__path).exists():
             raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
 
+        if not self.data_dictionary_compliant:
+            raise ValueError('Data Dictionary compliant version is not set!')
+
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
@@ -234,6 +239,7 @@ class Implementation( SettingsBaseClass ):
         self.programming_language = None
         self.data_type = None
         self.code_path = None
+        self.data_dictionary_compliant = None
         self.subroutines.clear()
         self.code_parameters.clear()
 

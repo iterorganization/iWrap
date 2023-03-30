@@ -8,6 +8,7 @@ code_description:
         code_path: ./native_code/libcode_restart_cpp.a
         include_path: ./native_code/code_restart.h
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
     arguments:
     -   name: equilibrium_in
         type: equilibrium

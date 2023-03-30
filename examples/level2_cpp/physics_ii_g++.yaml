@@ -23,6 +23,7 @@ code_description:
         data_type: legacy
         include_path: ./native_code/physics_ii.h
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         root_dir: .
         subroutines:
             finalize: ''

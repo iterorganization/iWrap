@@ -275,7 +275,7 @@ can be change in runtime
         # gets code parameters
         code_parameters = actor_object.get_code_parameters()
         #overwrites default value
-        code_parameters.parameters_path= '/gss_efgw_work/scratch/g2bpalak/tmp/xml_new_location.xml'
+        code_parameters.parameters_path= '/gss_efgw_work/scratch/username/tmp/xml_new_location.xml'
         # checks value of node
         value = code_parameters.get_parametr_value('parameters/multiplication_factor')
         # sets value of node
@@ -623,7 +623,115 @@ attribute of ``runtime_settings``. If not set, the automatically generated comma
    The only exception is ``${exec}`` tag (representing full path to executable binary),
    which MUST be present in the commandline.
 
+Actor information
+######################################################################################################################
 
+.. _actor_and_code_descriptions_anchor:
+
+Actor and code descriptions
+=========================================================================================
+
+Actor and code descriptions can be obtained using generated actor's ``actor_description`` and ``code_description`` attributes.
+Both attributes are type of dictionary and store information defined in yaml file used for actor generation.
+
+For list of available actor description information see: :ref:`yaml_actor_description_anchor`
+
+For list of available code description information see: :ref:`yaml_code_description_anchor`
+
+``actor_description`` attribute example value:
+
+.. code-block:: python
+
+    from physics_ii.actor import physics_ii
+
+    actor_physics_ii = physics_ii()
+    print(actor_physics_ii.actor_description)
+    >>>
+    {'actor_name': 'physics_ii',
+     'actor_type': '',
+     'data_type': '',
+     'install_dir': ''}
+
+``code_description`` attribute example value:
+
+.. code-block:: python
+
+    from physics_ii.actor import physics_ii
+
+    actor_physics_ii = physics_ii()
+    print(actor_physics_ii.code_description)
+    >>>
+    {'arguments':
+     [
+      {'intent': 'IN', 'name': 'equilibrium_in', 'type': 'equilibrium'},
+      {'intent': 'OUT', 'name': 'equilibrium_out', 'type': 'equilibrium'}
+     ],
+     'documentation': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
+      'implementation':
+       {'code_parameters':
+        {'parameters': '/gss_efgw_work/work/username/iwrap/examples/level2/input/input_physics.xml',
+         'schema': '/gss_efgw_work/work/username/iwrap/examples/level2/input/input_physics.xsd'
+        },
+        'code_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/libphysics_ii.a',
+        'data_dictionary_compliant': '3.37.0',
+        'data_type': 'legacy',
+        'include_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/mod_physics_ii.mod',
+        'programming_language': 'fortran',
+        'root_dir': '.',
+        'subroutines':
+        {'finalize': '',
+         'get_state': '',
+         'get_timestamp': '',
+         'init': '',
+         'main': 'physics_ii',
+         'set_state': ''
+        }
+       },
+       'settings':
+       {'compiler_cmd': 'gfortran',
+        'extra_libraries':
+         {'path_defined': [],
+          'pkg_config_defined': ['xmllib']
+         },
+         'mpi_compiler_cmd': None,
+         'open_mp_switch': False
+       }
+    }
+
+
+
+.. _actor_build_info_anchor:
+
+Actor build info
+=========================================================================================
+
+
+
+Actor build info can be accessed through actor instance's ``build_info`` attribute.
+All fields are filled automatically during actor build process and cannot be changed.
+
+
+Build info contains:
+    - iWrap version - version of iWrap used to generate accessed actor eg. ``0.6.0``
+    - IMAS (DD) version - version of IMAS loaded during actor generation eg. ``3.37.0``
+    - IMAS prefix - full prefix of IMAS eg. ``/gw/swimas/core/IMAS/3.37.0/AL/4.11.0/gcc/7.3.0``
+    - AL version - version of Access Layer loaded during actor generation eg. ``4.11.0``
+    - Generation date - full datetime of actor generation eg. ``2023-01-01 06:12:24``
+
+Workflow developer may access actor build info as follows:
+
+.. code-block:: python
+
+    from physics_ii.actor import physics_ii
+
+    actor_physics_ii = physics_ii()
+    build_info_dict = actor_physics_ii.build_info
+
+    iwrap_version = build_info_dict.get("iwrap_version")
+    imas_version = build_info_dict.get("imas_version")
+    imas_prefix = build_info_dict.get("imas_prefix")
+    al_version = build_info_dict.get("al_version")
+    generation_date = build_info_dict.get("generation_date")
 
 
 The workflow example

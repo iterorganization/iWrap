@@ -11,6 +11,7 @@ code_description:
             finalize:
             get_timestamp: get_timestamp_cpp
         programming_language: cpp
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_path: ./native_code/libtimestamps_cpp.a
         include_path: ./native_code/timestamps.h

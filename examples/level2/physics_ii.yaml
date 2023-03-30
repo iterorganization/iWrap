@@ -4,6 +4,7 @@ code_description:
             main:  physics_ii
         data_type: legacy
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         code_path: ./native_code/libphysics_ii.a
         include_path: ./native_code/mod_physics_ii.mod
         code_parameters:

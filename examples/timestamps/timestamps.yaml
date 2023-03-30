@@ -11,6 +11,7 @@ code_description:
             finalize:
             get_timestamp: get_timestamp
         programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_path: ./native/libtimestamps.a
         include_path: ./native/mod_timestamps.mod
