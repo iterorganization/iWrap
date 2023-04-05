@@ -8,8 +8,10 @@ from .common.runtime_settings import RuntimeSettings
 from .common.runners import Runner
 
 class {{actor_description.actor_name}}(ActorBaseClass):
+{%  if code_description.documentation %}
     """{{code_description.documentation | wordwrap(width=80, wrapstring='\n\t\t') }}
     """
+{%  endif %}
 
     def __init__(self):
         super().__init__()
