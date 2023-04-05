@@ -26,6 +26,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ "".center(80, '-') }}
     # {{ " INITIALIZE ".center(80) }}
     # {{ "".center(80, '-') }}
+    @ActorBaseClass.init_parameters
     @ActorBaseClass.use_sandbox
     def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
         """

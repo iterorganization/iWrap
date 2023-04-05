@@ -22,6 +22,27 @@ class ActorBaseClass(Actor):
     build_info = actor_info.BUILD_INFO
 
     # {{ "DECORATORS".center(80, '=') }}
+
+    @staticmethod
+    def init_parameters(func):
+        def decorator_actions(self,  *args, **kwargs):
+
+            import os
+            cwd = os.getcwd()
+            print ('CWD INI: ', cwd)
+            if self.__code_parameters:
+                code_parameters = kwargs.get('code_parameters')
+                if code_parameters:
+                    self.__code_parameters = code_parameters
+
+                self.__code_parameters.initialize()
+
+                value = func(self,  *args, **kwargs )
+
+                return value
+
+        return decorator_actions
+
     @staticmethod
     def use_sandbox(func):
         def decorator_actions(self,  *args, **kwargs):
@@ -133,13 +154,6 @@ class ActorBaseClass(Actor):
             runtime_settings (RuntimeSettings): Path to a XML file with code parameters
             code_parameters (CodeParameters): Path to a XSD file with schema definition for code parameters file
         """
-
-        if self.__code_parameters:
-            if code_parameters:
-                self.__code_parameters = code_parameters
-
-            self.__code_parameters.initialize()
-
         if runtime_settings:
             self.__runtime_settings = runtime_settings
 
