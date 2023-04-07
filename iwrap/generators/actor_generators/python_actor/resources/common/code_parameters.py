@@ -24,6 +24,9 @@ class CodeParameters:
 
     @parameters_path.setter
     def parameters_path(self, path: str) -> None:
+        if not Path(path).is_absolute():
+            path = Path(path).resolve()
+
         self.__parameters_path = path
         self.__new_path_set = True
 
