@@ -43,7 +43,8 @@ class CodeParameters:
 
         # if index in current node
         if re.search(pattern, current_node):
-            index = int(re.search(r'\d+', current_node).group()) - 1
+            array_index_string = re.search(r'\(\d+\)', current_node).group()
+            index = int(re.search(r'\d+', array_index_string).group()) - 1
             current_node = current_node[:-3]
 
         # remove current node from path and run function again
@@ -59,14 +60,31 @@ class CodeParameters:
         return self.__get_xml_value(path, tree.findall(current_node)[index])
 
     def __set_xml_value(self, path, tree, value):
-        if self.__is_leaf(tree):
+
+        pattern = r'\([0-9]+\)'
+        cutted_path = re.sub(pattern, '', path)
+
+        splitted_path = cutted_path.split('/')
+
+        if tree.tag == splitted_path[-1]:
             tree.text = str(value)
             return
 
         path, index, current_node = self.__get_tree_info(path)
+
+        current_node_children = tree.findall(current_node)
+
+        if len(current_node_children) <= index:
+            number_of_nodes_to_add = (index+1) - len(current_node_children)
+
+            for x in range(number_of_nodes_to_add):
+                new_node = et.Element(current_node)
+                tree.append(new_node)
+
+
         return self.__set_xml_value(path, tree.findall(current_node)[index], value)
 
-    def get_parametr_value(self, path_to_node:str) -> str:
+    def get_parameter_value(self, path_to_node:str) -> str:
         if not self.__default_parameters_path:
             return
 
@@ -78,7 +96,7 @@ class CodeParameters:
 
         return self.__get_xml_value(path_to_node, root)
 
-    def set_parametr_value(self, path_to_node:str, value) -> None:
+    def set_parameter_value(self, path_to_node:str, value) -> None:
         if not self.__default_parameters_path:
             return
         if not self.__parameters_str or self.__new_path_set:
