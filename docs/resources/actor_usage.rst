@@ -268,6 +268,10 @@ can be change in runtime
 
 - Code parameters are validated while calling actor ``initialize`` method
 
+- ``path_to_node`` contains XML node names separated by ``/`` character.
+
+- One can access n-th node from group of nodes by using ``()`` operator i.e. ``code_parameters.get_parameter_value('parameters/multiplication_factor(3)')`` (counting from 1)
+
 - Example of the usage:
 
 .. code-block:: Python
