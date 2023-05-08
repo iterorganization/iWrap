@@ -270,7 +270,9 @@ can be change in runtime
 
 - ``path_to_node`` contains XML node names separated by ``/`` character.
 
-- One can access n-th node from group of nodes by using ``()`` operator i.e. ``code_parameters.get_parameter('parameters/multiplication_factor(3)')`` (counting from 1)
+- One can access n-th node from group of nodes by using ``()`` operator i.e. ``code_parameters.get_parameter('parameters/multiplication_factor(3)')`` (counting from 0)
+
+- ``set_parameter`` method can take as argument any object convertable to ``str``, or any list of objects convertable to ``str``. List will be converted to space-separated string value
 
 - Example of the usage:
 
@@ -284,6 +286,10 @@ can be change in runtime
         value = code_parameters.get_parameter('parameters/multiplication_factor')
         # sets value of node
         code_parameters.set_parameter( 'parameters/multiplication_factor', 0.5 )
+
+        # can also take list as argument
+        # code_parameters.set_parameter( 'parameters/multiplication_factor', [0.1, 0.2, 0.3] )
+        # <multiplication_factor>0.1 0.2 0.3</multiplication_factor>
 
         # updates (and validates) parameters
         actor_object.initialize(code_parameters=code_parameters)
