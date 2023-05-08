@@ -126,6 +126,50 @@ class ActorBaseClass(Actor):
         self.__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
         self.__runtime_settings.debugger._default_attach_cmd = "{{ platform_settings.debugger.attach_cmd  or "" }}"
 
+    def logging_config(self, level, stream='console', file_path=f'{__name__}.log'):
+        """
+        Configures logging of information on various levels and allows
+        users to decide which level of logging to use for each actor
+        individually.
+        Args:
+            level (str | int): Logging severity below which messages are
+                not logged. Must be one of: debug, info, warning, error,
+                critical (case-insensitive). Required.
+            stream (str): A stream to which logging output will be sent.
+                Must be one of: console, file. Optional, defauls to
+                "console".
+            file_path (str): A path to a file to which logging output
+                will be sent if the stream argument is set to "file".
+                Optional, defaults to <name-of-the-module>.log.
+        Returns:
+            logging.Logger: A configured logger with a name of an actor.
+            Usage: <logger>.debug("message"), <logger>.error("message"), etc.
+        """
+        stream_ = stream.strip().lower()
+        if not stream_ in ['file', 'console']:
+            print(f'ERROR: Incorrect stream: "{stream}". Logging disabled. Available streams: file, console.')
+            return
+        try:
+            self.__logger.setLevel(
+                level.strip().upper() if isinstance(level, str) else level)
+        except ValueError:
+            print(f'ERROR: Incorrect logging level: "{level}". Logging disabled. Available logging levels: debug, info, warning, error, critical (case-insensitive).')
+        else:
+            if stream_ == 'console':
+                handler = logging.StreamHandler()
+            elif stream_ == 'file':
+                try:
+                    handler = logging.FileHandler(file_path)
+                except PermissionError as e:
+                    print(f'ERROR: Cannot open file "{e.filename}" for writing: {e.args[1]}. Logging disabled.')
+                    return
+                except FileNotFoundError as e:
+                    print(f'ERROR: Incorrect path: "{e.filename}". Logging disabled.')
+                    return
+            handler.setFormatter(logging.Formatter(
+                '%(asctime)s [%(name)s] %(levelname)s: %(message)s'))
+            self.__logger.addHandler(handler)
+            return self.__logger
 
     def is_standalone_run(self):
         if self.is_mpi_code:
