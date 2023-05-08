@@ -260,17 +260,17 @@ can be change in runtime
 
 -   Methods:
 
-    -   ``def get_parameter_value(self, path_to_node:str) -> str:`` - gets value of XML node
+    -   ``def get_parameter(self, path_to_node:str) -> str:`` - gets value of XML node
         described by ``path/to/node``
 
-    -   ``def set_parameter_value(self, path_to_node:str, value:str) -> str:`` - sets ``value`` to XML node
+    -   ``def set_parameter(self, path_to_node:str, value:str) -> str:`` - sets ``value`` to XML node
         described by ``path/to/node``
 
 - Code parameters are validated while calling actor ``initialize`` method
 
 - ``path_to_node`` contains XML node names separated by ``/`` character.
 
-- One can access n-th node from group of nodes by using ``()`` operator i.e. ``code_parameters.get_parameter_value('parameters/multiplication_factor(3)')`` (counting from 1)
+- One can access n-th node from group of nodes by using ``()`` operator i.e. ``code_parameters.get_parameter('parameters/multiplication_factor(3)')`` (counting from 1)
 
 - Example of the usage:
 
@@ -281,9 +281,9 @@ can be change in runtime
         #overwrites default value
         code_parameters.parameters_path= '/gss_efgw_work/scratch/username/tmp/xml_new_location.xml'
         # checks value of node
-        value = code_parameters.get_parameter_value('parameters/multiplication_factor')
+        value = code_parameters.get_parameter('parameters/multiplication_factor')
         # sets value of node
-        code_parameters.set_parameter_value( 'parameters/multiplication_factor', 0.5 )
+        code_parameters.set_parameter( 'parameters/multiplication_factor', 0.5 )
 
         # updates (and validates) parameters
         actor_object.initialize(code_parameters=code_parameters)
@@ -788,8 +788,8 @@ The workflow example
             runtime_settings.sandbox.life_time  = SandboxLifeTime.PERSISTENT
 
             code_parameters = self.actor_physics_ii.get_code_parameters()
-            value = code_parameters.get_parameter_value('parameters/multiplication_factor')
-            code_parameters.set_parameter_value( 'parameters/multiplication_factor', 0.5 )
+            value = code_parameters.get_parameter('parameters/multiplication_factor')
+            code_parameters.set_parameter( 'parameters/multiplication_factor', 0.5 )
             self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
 
         def execute_workflow(self):

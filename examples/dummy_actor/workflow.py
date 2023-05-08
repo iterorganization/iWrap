@@ -24,10 +24,10 @@ class ExampleWorkflowManager:
         code_parameters = self.actor_dummy_actor.get_code_parameters()
 
         code_parameters = self.actor_dummy_actor.get_code_parameters()
-        xxx = code_parameters.get_parameter_value('parameters/multiplication_factor')
+        xxx = code_parameters.get_parameter('parameters/multiplication_factor')
         print(xxx)
-        code_parameters.set_parameter_value( 'parameters/multiplication_factor', 0.5 )
-        xxx = code_parameters.get_parameter_value( 'parameters/multiplication_factor' )
+        code_parameters.set_parameter( 'parameters/multiplication_factor', 0.5 )
+        xxx = code_parameters.get_parameter( 'parameters/multiplication_factor' )
         print( xxx )
         code_parameters.parameters_path = 'input/input_physics2.xml'
         self.actor_dummy_actor.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)

@@ -44,9 +44,9 @@ class ExampleWorkflowManager:
             runtime_settings.run_mode = RunMode.STANDALONE
 
         code_parameters = self.actor_physics_ii.get_code_parameters()
-        xxx = code_parameters.get_parameter_value('parameters/multiplication_factor')
-        code_parameters.set_parameter_value( 'parameters/multiplication_factor', 0.5 )
-        xxx = code_parameters.get_parameter_value( 'parameters/multiplication_factor' )
+        xxx = code_parameters.get_parameter('parameters/multiplication_factor')
+        code_parameters.set_parameter( 'parameters/multiplication_factor', 0.5 )
+        xxx = code_parameters.get_parameter( 'parameters/multiplication_factor' )
         self.actor_physics_ii.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
     
     def execute_workflow(self):
