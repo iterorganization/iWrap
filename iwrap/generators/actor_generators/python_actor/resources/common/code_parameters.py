@@ -12,10 +12,14 @@ class CodeParameters:
 
     @property
     def schema(self):
+        if not self.__schema_str:
+            self.initialize()
         return self.__schema_str
 
     @property
     def parameters(self):
+        if not self.__parameters_str  or self.__new_path_set:
+            self.initialize()
         return self.__parameters_str
 
     @property
