@@ -58,10 +58,27 @@ class CodeParameters:
 
     def __get_xml_value(self, path, tree):
         if self.__is_leaf(tree):
-            return tree.text.strip()
+            #remove index from path to compare node.tag with path
+            pattern = r'\([0-9]+\)'
+            cutted_path = re.sub(pattern, '', path)
+
+            if cutted_path.replace('/','') == tree.tag:
+                return tree.text.strip()
+            else:
+                print(f'tag: {tree.tag} : {tree.text.strip()}')
+                raise Exception(f'Node <{tree.tag}> is already XML leaf, but remaining path \"{path}\" contains child nodes')
+
 
         path, index, current_node = self.__get_tree_info(path)
-        return self.__get_xml_value(path, tree.findall(current_node)[index])
+
+        if index < 0:
+            raise IndexError('XML path index cannot be negative')
+
+        found_nodes = tree.findall(current_node)
+        if index+1 > len(found_nodes):
+            raise Exception(f'XML node was not found. Searched node <{path}>, found {len(found_nodes)} nodes, tried to access index [{index}]')
+
+        return self.__get_xml_value(path, found_nodes[index])
 
     def __set_xml_value(self, path, tree, value):
         cleared_value = value
