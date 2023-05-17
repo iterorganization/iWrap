@@ -57,17 +57,18 @@ class CodeParameters:
         return path, index, current_node
 
     def __get_xml_value(self, path, tree):
-        if self.__is_leaf(tree):
-            #remove index from path to compare node.tag with path
-            pattern = r'\([0-9]+\)'
-            cutted_path = re.sub(pattern, '', path)
+        # remove index from path to compare node.tag with path
+        pattern = r'\([0-9]+\)'
+        cutted_path = re.sub(pattern, '', path)
 
+        if self.__is_leaf(tree):
             if cutted_path.replace('/','') == tree.tag:
                 return tree.text.strip()
             else:
                 print(f'tag: {tree.tag} : {tree.text.strip()}')
                 raise Exception(f'Node <{tree.tag}> is already XML leaf, but remaining path \"{path}\" contains child nodes')
-
+        elif cutted_path.replace('/','') == tree.tag:
+            raise Exception(f'Node <{tree.tag}> is not a leaf node, thus it cannot be last element in provided path')
 
         path, index, current_node = self.__get_tree_info(path)
 
