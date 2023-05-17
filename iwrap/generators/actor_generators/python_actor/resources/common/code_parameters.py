@@ -118,6 +118,13 @@ class CodeParameters:
         tree = et.ElementTree(et.fromstring(self.__parameters_str))
         root = tree.getroot()
 
+        if path_to_node[0] == '/':
+            path_to_node = path_to_node[1:]
+        path_root = path_to_node.split('/')[0]
+
+        if path_root != root.tag:
+            raise Exception(f'Path root tag does not match XML document root. Path root is "{path_root}", while document root is "{root.tag}"')
+
         return self.__get_xml_value(path_to_node, root)
 
     def set_parameter(self, path_to_node:str, value) -> None:
