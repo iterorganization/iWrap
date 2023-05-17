@@ -65,7 +65,6 @@ class CodeParameters:
             if cutted_path.replace('/','') == tree.tag:
                 return tree.text.strip()
             else:
-                print(f'tag: {tree.tag} : {tree.text.strip()}')
                 raise Exception(f'Node <{tree.tag}> is already XML leaf, but remaining path \"{path}\" contains child nodes')
         elif cutted_path.replace('/','') == tree.tag:
             raise Exception(f'Node <{tree.tag}> is not a leaf node, thus it cannot be last element in provided path')
