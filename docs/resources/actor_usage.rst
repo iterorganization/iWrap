@@ -758,7 +758,15 @@ critical  50       logging.CRITICAL
 
 ``logging_config`` method returns ``logging.Logger``: a configured logger with a name of an actor.
 
-Usage: ``<logger>.debug("message")``, ``<logger>.error("message")``, etc. For a usage example see ``examples/dummy_actor``.
+Usage:
+
+.. code-block:: python
+
+        logger = self.actor.logging_config('info', 'console')
+        logger.info('test logging')
+        logger.warning('some warning')
+
+For a usage example see ``examples/dummy_actor``.
 
 
 The workflow example
