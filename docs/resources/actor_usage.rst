@@ -734,6 +734,33 @@ Workflow developer may access actor build info as follows:
     generation_date = build_info_dict.get("generation_date")
 
 
+Logging
+######################################################################################################################
+
+The ``logging_config`` method configures logging of information on various levels and allows users to decide which level of logging to use for each actor individually.
+
+It takes the following arguments:
+
+- ``level`` (str | int): Logging severity below which messages are not logged. May be passed as one of the following: a string (case-insensitive) or an integer that correspond to the ``logging`` library level, or a ``logging`` library constant (see table below). Required argument.
+
+========  =======  ================
+string    integer  constant
+========  =======  ================
+debug     10       logging.DEBUG
+info      20       logging.INFO
+warning   30       logging.WARNING
+error     40       logging.ERROR
+critical  50       logging.CRITICAL
+========  =======  ================
+
+- ``stream`` (str): A stream to which logging output will be sent. Must be one of: "console", "file". Optional, defauls to "console".
+- ``file_path`` (str): A path to a file to which logging output will be sent if the ``stream`` argument is set to "file". Optional, defaults to "<name-of-the-module>.log".
+
+``logging_config`` method returns ``logging.Logger``: a configured logger with a name of an actor.
+
+Usage: ``<logger>.debug("message")``, ``<logger>.error("message")``, etc. For a usage example see ``examples/dummy_actor``.
+
+
 The workflow example
 ######################################################################################################################
 
