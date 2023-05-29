@@ -297,7 +297,7 @@ The ``runtime_settings`` property tells the actor how native code should be run 
 -   Batch settings
 -   Temporary IDS storage settings
 -   Command line to be run
-    
+
 *runtime_settings*  cannot be accessed directly, but only via a special getter method:
 
 .. code-block:: Python
@@ -753,8 +753,7 @@ error     40       logging.ERROR
 critical  50       logging.CRITICAL
 ========  =======  ================
 
-- ``stream`` (str): A stream to which logging output will be sent. Must be one of: "console", "file". Optional, defauls to "console".
-- ``file_path`` (str): A path to a file to which logging output will be sent if the ``stream`` argument is set to "file". Optional, defaults to "<name-of-the-module>.log".
+- ``file`` (str): Defines a stream to which logging output will be sent. If given, logging output will be sent to a file with a provided name, else to console. Optional, by default redirecting logging messages to console.
 
 ``logging_config`` method returns ``logging.Logger``: a configured logger with a name of an actor.
 
@@ -762,7 +761,7 @@ Usage:
 
 .. code-block:: python
 
-        logger = self.actor.logging_config('info', 'console')
+        logger = self.actor.logging_config('info', 'actor.log')
         logger.info('test logging')
         logger.warning('some warning')
 
