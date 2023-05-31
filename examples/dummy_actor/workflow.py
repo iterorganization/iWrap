@@ -12,7 +12,8 @@ class ExampleWorkflowManager:
 
     def init_workflow(self):
         print('=> Workflow initialization')
-        logger = self.actor_dummy_actor.logging_config('debug', 'dummy_actor.log')
+        log_file = open('dummy_actor.log', 'a')
+        logger = self.actor_dummy_actor.logging_config('debug', log_file)
         logger.info('test logging in init_workflow')
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         runtime_settings = None

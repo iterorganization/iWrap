@@ -761,7 +761,8 @@ Usage:
 
 .. code-block:: python
 
-        logger = self.actor.logging_config('info', 'actor.log')
+        log_file = open('actor.log', 'a')
+        logger = self.actor.logging_config('info', log_file)
         logger.info('test logging')
         logger.warning('some warning')
 
