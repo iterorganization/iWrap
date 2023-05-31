@@ -753,7 +753,7 @@ error     40       logging.ERROR
 critical  50       logging.CRITICAL
 ========  =======  ================
 
-- ``file`` (str): Defines a stream to which logging output will be sent. If given, logging output will be sent to a file with a provided name, else to console. Optional, by default redirecting logging messages to console.
+- ``stream``: Defines a stream to which logging output will be sent: it could be to streams such as sys.stdout, sys.stderr or any file-like object (any object which supports write() method). Optional, defaults to stderr.
 
 ``logging_config`` method returns ``logging.Logger``: a configured logger with a name of an actor.
 
