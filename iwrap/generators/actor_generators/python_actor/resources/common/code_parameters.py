@@ -3,6 +3,7 @@ from pathlib import Path
 from xml.etree import ElementTree as et
 import re
 from lxml import etree
+from lxml.etree import DocumentInvalid
 
 
 class CodeParameters:
@@ -188,5 +189,16 @@ class CodeParameters:
         # Parse XML file:
         xml_tree = etree.fromstring(bytes(self.__parameters_str, encoding='utf8'))
 
-        # Perform validation:
-        xml_schema_validator.assertValid( xml_tree )
+        try:
+            # Perform validation:
+            xml_schema_validator.assertValid( xml_tree )
+        except DocumentInvalid:
+            message = "\n\nXML validation error(s):\n"
+
+            if self.parameters_path:
+                message = message + f'File: {self.parameters_path}\n'
+            else:
+                message = message + f'File: {Path(self.__default_params_dir, Path(self.__default_parameters_path))}\n'
+            for error in xml_schema_validator.error_log:
+                message = message + f'  Line {error.line}: {error.message} \n'
+            raise DocumentInvalid(message)
