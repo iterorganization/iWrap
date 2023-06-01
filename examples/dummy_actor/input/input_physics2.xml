@@ -25,7 +25,7 @@
     <local_db>user_environment_variable</local_db>
 
     <!-- LOCAL MACHINE NAME TO WRITE INTO LOCAL IMAS DATABASE -->
-    <local_machine>NEW MACHINE/local_machine>
+    <local_machine>NEW MACHINE</local_machine>
 
 </parameters>
 

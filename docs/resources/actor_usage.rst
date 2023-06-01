@@ -307,7 +307,7 @@ The ``runtime_settings`` property tells the actor how native code should be run 
 -   Batch settings
 -   Temporary IDS storage settings
 -   Command line to be run
-    
+
 *runtime_settings*  cannot be accessed directly, but only via a special getter method:
 
 .. code-block:: Python
@@ -742,6 +742,41 @@ Workflow developer may access actor build info as follows:
     imas_prefix = build_info_dict.get("imas_prefix")
     al_version = build_info_dict.get("al_version")
     generation_date = build_info_dict.get("generation_date")
+
+
+Logging
+######################################################################################################################
+
+The ``logging_config`` method configures logging of information on various levels and allows users to decide which level of logging to use for each actor individually.
+
+It takes the following arguments:
+
+- ``level`` (str | int): Logging severity below which messages are not logged. May be passed as one of the following: a string (case-insensitive) or an integer that correspond to the ``logging`` library level, or a ``logging`` library constant (see table below). Required argument.
+
+========  =======  ================
+string    integer  constant
+========  =======  ================
+debug     10       logging.DEBUG
+info      20       logging.INFO
+warning   30       logging.WARNING
+error     40       logging.ERROR
+critical  50       logging.CRITICAL
+========  =======  ================
+
+- ``stream``: Defines a stream to which logging output will be sent: it could be to streams such as sys.stdout, sys.stderr or any file-like object (any object which supports write() method). Optional, defaults to stderr.
+
+``logging_config`` method returns ``logging.Logger``: a configured logger with a name of an actor.
+
+Usage:
+
+.. code-block:: python
+
+        log_file = open('actor.log', 'a')
+        logger = self.actor.logging_config('info', log_file)
+        logger.info('test logging')
+        logger.warning('some warning')
+
+For a usage example see ``examples/dummy_actor``.
 
 
 The workflow example

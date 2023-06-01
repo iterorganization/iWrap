@@ -66,11 +66,10 @@ class Binder (ABC):
 
 
 class CBinder(Binder):
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self.__logger = logging.getLogger( 'binding' )
-        self.__logger.setLevel( logging.DEBUG )
-
         self.ids_converter = None
         self.actor = None
 

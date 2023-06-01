@@ -11,8 +11,10 @@ class ExampleWorkflowManager:
         self.actor_dummy_actor = dummy_actor()
 
     def init_workflow(self):
-
         print('=> Workflow initialization')
+        log_file = open('dummy_actor.log', 'a')
+        logger = self.actor_dummy_actor.logging_config('debug', log_file)
+        logger.info('test logging in init_workflow')
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
         runtime_settings = None
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
@@ -48,12 +50,12 @@ class ExampleWorkflowManager:
     def end_workflow(self):
 
         print('=> Workflow finalization')
-        # Finalize ALL actors 
+        # Finalize ALL actors
         self.actor_dummy_actor.finalize()
 
         with open( 'wf_output.txt', 'w' ) as file:
             file.write( 'SUCCESS' )
-        
+
         #other finalization actions
         ...
 

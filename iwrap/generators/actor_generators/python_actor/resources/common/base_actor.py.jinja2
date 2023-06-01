@@ -126,6 +126,35 @@ class ActorBaseClass(Actor):
         self.__runtime_settings.debugger._default_cmd = '{{ platform_settings.debugger.cmd   or "" }}'
         self.__runtime_settings.debugger._default_attach_cmd = "{{ platform_settings.debugger.attach_cmd  or "" }}"
 
+    def logging_config(self, level, stream=None):
+        """
+        Configures logging of information on various levels and allows
+        users to decide which level of logging to use for each actor
+        individually.
+        Args:
+            level (str | int): Logging severity below which messages are
+                not logged. Must be one of: debug, info, warning, error,
+                critical (case-insensitive). Required.
+            stream: Defines a stream to which logging output will be sent:
+                it could be to streams such as sys.stdout, sys.stderr or
+                any file-like object (any object which supports write()
+                method). Optional, defaults to stderr.
+        Returns:
+            logging.Logger: A configured logger with a name of an actor.
+            Usage: <logger>.debug("message"), <logger>.error("message"), etc.
+        """
+        actor_package_logger = logging.getLogger(__name__.split('.')[0])
+        try:
+            actor_package_logger.setLevel(
+                level.strip().upper() if isinstance(level, str) else level)
+        except ValueError:
+            print(f'ERROR: Incorrect logging level: "{level}". Logging disabled. Available logging levels: debug, info, warning, error, critical (case-insensitive).')
+        else:
+            handler = logging.StreamHandler(stream)
+            handler.setFormatter(logging.Formatter(
+                '%(asctime)s [%(name)s] %(levelname)s: %(message)s'))
+            actor_package_logger.addHandler(handler)
+            return actor_package_logger
 
     def is_standalone_run(self):
         if self.is_mpi_code:
