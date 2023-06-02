@@ -77,7 +77,8 @@ class ExampleWorkflowManager:
         output_ids = self.output_entry.get('distribution_sources')
 
         with open( 'wf_output.txt', 'w' ) as file:
-            file.write( str(output_ids.time) )
+            for time in output_ids.time:
+                print(time, file=file)
 
 
 
