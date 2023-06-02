@@ -1,6 +1,8 @@
 #ifndef _DEFS
 #define _DEFS
 
+const int MPI_ROOT_RANK = 0;
+
 typedef struct
 {
   char ids_name[132];
