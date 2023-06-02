@@ -65,7 +65,6 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
 
         # set active generator in combo
         active_generator = Engine().active_generator
-        self.actor_type_combo.current( 0 )
         self.actor_type_combo.set( active_generator )
 
         # set values of actor data type combo

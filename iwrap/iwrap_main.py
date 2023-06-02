@@ -26,7 +26,6 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                    help="user defined name of the actor" )
 
     generation_group.add_argument( '-t', '--actor-type', type=str,
-                                   default='python',
                                    help="type of an actor to be generated" )
 
     generation_group.add_argument( '-d', '--data-type', type=str,
@@ -71,6 +70,8 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
 
     Engine().startup()
 
+    project_settings = ProjectSettings.get_settings()
+
     if args.list_actor_types:
         print()
         print( 'Id'.center(20),  ':',  'Name'.center(30),  ':',  'Description' )
@@ -98,16 +99,18 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
     if args.file:
         with args.file as file:
             load_code_description( file )
-            ProjectSettings.get_settings().project_file_path = file.name
+            project_settings.project_file_path = file.name
 
     if args.install_dir:
-        ProjectSettings.get_settings().actor_description._install_dir = args.install_dir
+        project_settings.actor_description._install_dir = args.install_dir
 
     if args.actor_name:
-        ProjectSettings.get_settings().actor_description.actor_name = args.actor_name
+        project_settings.actor_description.actor_name = args.actor_name
 
     if args.actor_type:
         Engine().active_generator = args.actor_type
+    elif project_settings.actor_description.actor_type:
+        Engine().active_generator = project_settings.actor_description.actor_type
 
     if args.gui:
         from iwrap.gui.application import launch_gui
