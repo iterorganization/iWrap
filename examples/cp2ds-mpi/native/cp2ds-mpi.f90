@@ -15,7 +15,7 @@ subroutine coreprofiles2distsource_mpi(coreprofilesin, distsourceout, error_flag
     character(len=:), pointer, intent(out) :: error_message
 
     integer :: i
-    integer :: p, id, error
+    integer :: mpi_world_size, mpi_rank, error
 
     write(0,*) 'Entering subroutine coreprofiles2distsource_mpi'
 
@@ -23,11 +23,11 @@ subroutine coreprofiles2distsource_mpi(coreprofilesin, distsourceout, error_flag
 
 
 
-    call MPI_Comm_size ( MPI_COMM_WORLD, p, error )
-    call MPI_Comm_rank ( MPI_COMM_WORLD, id, error )
+    call MPI_Comm_size ( MPI_COMM_WORLD, mpi_world_size, error )
+    call MPI_Comm_rank ( MPI_COMM_WORLD, mpi_rank, error )
 
 
-    write (*,*) 'Info: process <', id, '> out of: ', p
+    write (*,*) 'Info: process <', mpi_rank, '> out of: ', mpi_world_size
 
 
     write(0,*) 'size of input IDS  = ',size(coreprofilesin%time)
@@ -47,7 +47,7 @@ subroutine coreprofiles2distsource_mpi(coreprofilesin, distsourceout, error_flag
     ! Fill in the output IDS (Physical data)
     do i=1,size(coreprofilesin%time)
        ! Time : copy from input IDS
-       distsourceout%time(i) = coreprofilesin%time(i)
+       distsourceout%time(i) = 10000 * mpi_rank + coreprofilesin%time(i)
        ! THE TIME FIELD MUST BE FILLED (MANDATORY) in case of multiple time slice mode for the IDS;
 
     enddo
