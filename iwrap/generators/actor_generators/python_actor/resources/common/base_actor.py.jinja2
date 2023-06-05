@@ -97,6 +97,7 @@ class ActorBaseClass(Actor):
         self.is_standalone = False
         self.__code_parameters: CodeParameters = None
         self.name = self.__class__.__name__
+        self.__initialized = False
 
         self.data_type = '{{code_description.implementation.data_type | lower}}'
         self.native_language = '{{code_description.implementation.programming_language | lower}}'
@@ -179,6 +180,8 @@ class ActorBaseClass(Actor):
             runtime_settings (RuntimeSettings): Path to a XML file with code parameters
             code_parameters (CodeParameters): Path to a XSD file with schema definition for code parameters file
         """
+        self.__initialized = True
+
         if runtime_settings:
             self.__runtime_settings = runtime_settings
 
@@ -186,6 +189,9 @@ class ActorBaseClass(Actor):
         self.sandbox.initialize()
 
     def __call__(self, *args):
+        if not self.__initialized:
+            message = 'Actor was not initialized. Always remember to initialize actor by explicitly calling actor.initialize() method'
+            raise RuntimeError(message)
         return self.run( *args )
 
     def run(self, *args):
