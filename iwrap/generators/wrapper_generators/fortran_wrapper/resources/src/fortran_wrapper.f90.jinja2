@@ -128,7 +128,13 @@ subroutine {{actor_description.actor_name}}_wrapper(&
     logical :: was_mpi_initialized, was_mpi_finalized
 
     call MPI_initialized(was_mpi_initialized, ierr)
-    if (.not. was_mpi_initialized)   call MPI_Init(ierr)
+    if (.not. was_mpi_initialized)   then
+        call MPI_Init(ierr)
+        if (ierr /= MPI_SUCCESS) then
+            write(*,*) "MPI initialization fails with code: ", ierr
+            STOP ierr
+        endif
+    endif
     call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
 {% endif %}
 

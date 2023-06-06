@@ -34,6 +34,7 @@ fi
 # INTEL
 if [ "$FCOMPILER" == "ifort" ]; then
   module load XMLlib/3.3.1-intel-2020b
+  module load IMAS/3.38.1-4.11.4-intel-2020b
   OBJ=obj_ifort
 else
 # GFORTRAN
@@ -42,16 +43,13 @@ else
   #module unload Python PyYAML Tkinter matplotlib iimpi
   # Load foss dependencies
   
-  module load Python/3.8.6-GCCcore-10.2.0
-  module load PyYAML/5.3.1-GCCcore-10.2.0
   module load XMLlib/3.3.1-GCC-10.2.0
-  module load gompi/2020b
   module load lxml/4.6.2-GCCcore-10.2.0
-
+  module load IMAS/3.38.1-4.11.4-foss-2020b
   OBJ=obj_gfortran
 fi
 
-module load IMAS 
+
 
 # TEST IF LOADING SUCCEEDED
 if ! echo $LOADEDMODULES | tr : '\n' | grep '^IMAS/' >/dev//null ;then

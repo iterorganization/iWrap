@@ -18,12 +18,19 @@ int main(int argc, char **argv)
 
 {% if code_description.settings.mpi_compiler_cmd %}
     //----  MPI  ----
-    int mpi_rank;
+    int mpi_rank, ierr;
     int was_mpi_finalized, was_mpi_initialized;
 
     MPI_Initialized(&was_mpi_initialized);
     if (!was_mpi_initialized)
-        MPI_Init(NULL, NULL);
+    {
+        ierr = MPI_Init(NULL, NULL);
+        if (ierr != MPI_SUCCESS)
+        {
+            printf("MPI initialization fails with code: %d\n", ierr);
+            exit(ierr);
+        }
+    }
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 {% endif %}
 

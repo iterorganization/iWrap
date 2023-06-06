@@ -36,7 +36,7 @@ void cp2ds_mpi_cpp(const IdsNs::IDS::core_profiles& in_core_profiles,
     for(int i=0; i < idsSize; i++)
     {
         // Time : copy from input IDS
-        out_distribution_sources.time(i) = in_core_profiles.time(i);
+        out_distribution_sources.time(i) = 10000 * mpi_rank + in_core_profiles.time(i);
     }
 
     out_distribution_sources.ids_properties.homogeneous_time = 1;
