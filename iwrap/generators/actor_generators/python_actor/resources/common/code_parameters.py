@@ -201,4 +201,4 @@ class CodeParameters:
                 message = message + f'File: {Path(self.__default_params_dir, Path(self.__default_parameters_path))}\n'
             for error in xml_schema_validator.error_log:
                 message = message + f'  Line {error.line}: {error.message} \n'
-            raise DocumentInvalid(message)
+            raise DocumentInvalid(message) from None
