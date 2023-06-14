@@ -189,10 +189,12 @@ class ActorBaseClass(Actor):
         self.sandbox.initialize()
 
     def __call__(self, *args):
-        if not self.__initialized:
-            message = 'Actor was not initialized. Always remember to initialize actor by explicitly calling actor.initialize() method'
-            raise RuntimeError(message)
         return self.run( *args )
+
+    def check_is_initialized(self):
+        if not self.__initialized:
+                message = 'Actor was not initialized. Always remember to initialize actor by explicitly calling actor.initialize() method'
+                raise RuntimeError(message)
 
     def run(self, *args):
         ...
