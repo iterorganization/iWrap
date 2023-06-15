@@ -1,0 +1,215 @@
+{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+
+SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
+{% for argument in arguments %}
+                {{ argument.name }}_desc,  &
+{% endfor %}
+{% if code_parameters %}
+                code_params_cstr,  &
+{% endif %}
+                status_code, out_status_msg) BIND(C)
+
+    {{ ids_macro.imports() }}
+    use iwrap_defs
+    use iwrap_tools
+
+    implicit none
+    character(132):: ids_full_name
+
+{% for argument in arguments %}
+    ! {{ argument.name }}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
+{% endfor %}
+
+{% if code_parameters %}
+	!----  Code parameters ----
+    type(ids_parameters_input) :: imas_code_params
+    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
+    integer :: ssize, i
+
+{% endif %}
+
+ !----  Diagnostic info  ----
+  	 integer :: status_code
+     type(C_PTR) :: out_status_msg
+	 character(len=:), pointer :: status_msg
+
+{% if mpi_compiler_cmd %}
+    !----  MPI  ----
+    integer :: ierr, process_rank
+    logical :: was_mpi_initialized, was_mpi_finalized
+
+    call MPI_initialized(was_mpi_initialized, ierr)
+    if (.not. was_mpi_initialized)   call MPI_Init(ierr)
+    call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
+{% endif %}
+
+
+     !----  Initialize status info  ----
+	 nullify(status_msg)
+	 status_code = 0
+
+    {% for argument in arguments if argument.intent == 'IN' %}
+    !--------- Get IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.get( argument.name) }}
+    {% endfor %}
+
+    {% if code_parameters %}
+    ! ------------------ code parameters ----------------------------
+    imas_code_params = convert_codeparams(code_params_cstr)
+    {% endif %}
+
+
+	! ------------- Input data conversion [ISO_C_BINDING] --------------
+
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{sbrt_name}}( &
+{% for argument in arguments %}
+            {{ argument.name }}, &
+{% endfor %}
+{% if code_parameters %}
+            imas_code_params,  &
+{% endif %}
+            status_code, status_msg)
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+{% if mpi_compiler_cmd %}
+    if (process_rank == 0) then
+       ! --- called only for RANK 0 process
+{% endif %}
+    ! ------------ Output data conversion [ISO_C_BINDING] --------------
+     out_status_msg = convert_string2Cptr(status_msg)
+
+
+	 ! Return in case of 'soft' crash (diagnostic info < 0)
+	 if(status_code < 0 ) RETURN
+
+   ! ------------ Provenance information --------------
+ {% for argument in arguments if argument.intent == 'OUT' %}
+
+    {{ ids_macro.provenance( argument.name , sbrt_name) }}
+    {% endfor %}
+
+     {% for argument in arguments if argument.intent == 'OUT' %}
+    !--------- PUT IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.put( argument.name) }}
+    {% endfor %}
+
+
+{% if mpi_compiler_cmd %}
+    endif ! --- The end of section called only for RANK 0 process
+{% endif %}
+    !--------- Dealloacting IDSes ------------------------
+    {% for argument in arguments %}
+     {{ ids_macro.deallocate( argument.name) }}
+    {% endfor %}
+
+    {% if code_parameters %}
+    ! ------Deallocating code parameters ----------------------------
+    deallocate(imas_code_params%parameters_value)
+    {% endif %}
+
+
+{% if mpi_compiler_cmd %}
+    !----  MPI Finalization ----
+    call MPI_finalized(was_mpi_finalized, ierr)
+    if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
+{% endif %}
+END SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}
+
+{%- endmacro -%}
+
+
+{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+
+!======================================================================================================
+!                        STANDALONE {{ sbrt_role | upper }}
+!======================================================================================================
+PROGRAM standalone_{{ sbrt_role | upper }}
+
+{% if mpi_compiler_cmd %}
+    use mpi
+{% endif %}
+    use iwrap_defs
+    use iwrap_tools
+    use wrapper
+
+    implicit none
+
+    !---------------------------------------------------------
+    integer, parameter :: IDS_ARGS_NO = {{arguments | length}}
+    type(ids_description_t), dimension(IDS_ARGS_NO) :: db_entry_desc_array
+    integer :: status
+
+    !----  Status info  ----
+    integer :: status_code = 0
+    type(C_PTR) :: status_msg = C_NULL_PTR
+
+    !----  Code parameters  ----
+    character(len=:), allocatable :: xml_string
+    character(kind=c_char), dimension(:), pointer :: code_params_cstr
+
+{% if mpi_compiler_cmd %}
+    !----  MPI  ----
+    logical :: was_mpi_finalized
+    integer :: process_rank
+    call MPI_Init(status)
+    call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, status)
+{% endif %}
+
+
+{% if code_parameters %}
+     status = read_code_parameters(xml_string)
+        if (status /= 0) STOP -1
+    code_params_cstr => convert(xml_string)
+    deallocate(xml_string)
+{% endif %}
+
+    !-----------Reading input ---------------------
+    status = read_input("{{ sbrt_role }}.in", db_entry_desc_array)
+    if (status /= 0) STOP -1
+
+    !-----------Open DB entries---------------------
+    call open_db_entries(db_entry_desc_array)
+
+    !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
+    CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&
+{% for argument in arguments %}
+                db_entry_desc_array({{loop.index}}),  &
+{% endfor %}
+{% if code_parameters %}
+                code_params_cstr,  &
+{% endif %}
+                status_code, status_msg)
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+{% if mpi_compiler_cmd %}
+    if (process_rank == 0) then
+       ! --- called only for RANK 0 process
+{% endif %}
+
+    !-----------Check status info ---------------------
+    call handle_status_info(status_code, status_msg, "{{actor_name}}")
+
+    !-----------Writing output data to file ---------------------
+    call write_output("{{ sbrt_role }}.out", status_code, status_msg)
+
+{% if mpi_compiler_cmd %}
+    endif ! --- The end of section called only for RANK 0 process
+{% endif %}
+    !-----------Close DB entries---------------------
+    call close_db_entries(db_entry_desc_array)
+
+    {% if mpi_compiler_cmd %}
+    !----  MPI Finalization ----
+    call MPI_finalized(was_mpi_finalized, status)
+    if (.not. was_mpi_finalized)   call MPI_Finalize(status)
+{% endif %}
+
+{% if code_parameters %}
+    !----------- Cleaning code parameters ---------------------
+    deallocate(code_params_cstr)
+{% endif %}
+
+end program
+{%- endmacro -%}

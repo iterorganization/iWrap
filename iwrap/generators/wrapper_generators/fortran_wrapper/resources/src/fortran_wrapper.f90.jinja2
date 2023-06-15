@@ -1,4 +1,5 @@
 {% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+{% import './macros/subroutines.jinja2' as sbrt_macro %}
 
 module wrapper
 
@@ -12,210 +13,32 @@ contains
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE INIT SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine init_{{actor_description.actor_name}}_wrapper(&
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_params_cstr,  &
-{% endif %}
-                status_code, out_status_msg) BIND(C)
-    {{ ids_macro.imports() }}
-    use iwrap_defs
-    use iwrap_tools
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-	!----  Code parameters ----
-    type(ids_parameters_input) :: imas_code_params
-    character(kind=C_CHAR) :: code_params_cstr(*)
-{% endif %}
-	 !----  Diagnostic info  ----
-  	 integer :: status_code
-     type(C_PTR) :: out_status_msg
-	 character(len=:), pointer :: status_msg
 
-     !----  Initialize status info  ----
-	 nullify(status_msg)
-	 status_code = 0
-
-        {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-    ! ------------------ code parameters ----------------------------
-        imas_code_params = convert_codeparams(code_params_cstr)
-    {% endif %}
-
-        ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.implementation.subroutines.init}}( &
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-            imas_code_params,  &
-{% endif %}
-            status_code, status_msg)
-        ! ------------ Output data conversion [ISO_C_BINDING] --------------
-	 if(associated(status_msg)) then
-		 out_status_msg = convert_string2Cptr(status_msg)
-     endif
-
-	 ! Return in case of 'soft' crash (diagnostic info < 0)
-	 if(status_code < 0 ) RETURN
-end
+    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
+    code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 {% if code_description.implementation.subroutines.finalize %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE FINISH SBRT CALL
+!                                   NATIVE FINALIZE SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine finish_{{actor_description.actor_name}}_wrapper(status_code, out_status_msg) BIND(C)
-    {{ ids_macro.imports() }}
-    use iwrap_defs
-    use iwrap_tools
 
-	 !----  Diagnostic info  ----
-  	 integer :: status_code
-     type(C_PTR) :: out_status_msg
-	 character(len=:), pointer :: status_msg
-
-     !----  Initialize status info  ----
-	 nullify(status_msg)
-	 status_code = 0
-
-        ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.implementation.subroutines.finalize}}( status_code, status_msg)
-
-    ! ------------ Output data conversion [ISO_C_BINDING] --------------
-     out_status_msg = convert_string2Cptr(status_msg)
-
-    ! Return in case of 'soft' crash (diagnostic info < 0)
-	if(status_code < 0 ) RETURN
-end
+    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
+    None, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE MAIN SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-subroutine {{actor_description.actor_name}}_wrapper(&
-{% for argument in code_description.arguments %}
-                {{ argument.name }}_desc,  &
-{% endfor %}
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                code_params_cstr,  &
-{% endif %}
-                status_code, out_status_msg) BIND(C)
 
-    {{ ids_macro.imports() }}
-    use iwrap_defs
-    use iwrap_tools
-
-    implicit none
-    character(132):: ids_full_name
-
-{% for argument in code_description.arguments %}
-    ! {{ argument.name }}
-    {{ ids_macro.declare(argument.type,  argument.name) }}
-{% endfor %}
-
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-	!----  Code parameters ----
-    type(ids_parameters_input) :: imas_code_params
-    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
-    integer :: ssize, i
-
-
-{% endif %}
-
- !----  Diagnostic info  ----
-  	 integer :: status_code
-     type(C_PTR) :: out_status_msg
-	 character(len=:), pointer :: status_msg
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    !----  MPI  ----
-    integer :: ierr, process_rank
-    logical :: was_mpi_initialized, was_mpi_finalized
-
-    call MPI_initialized(was_mpi_initialized, ierr)
-    if (.not. was_mpi_initialized)   then
-        call MPI_Init(ierr)
-        if (ierr /= MPI_SUCCESS) then
-            write(*,*) "MPI initialization fails with code: ", ierr
-            STOP ierr
-        endif
-    endif
-    call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, ierr)
-{% endif %}
-
-
-     !----  Initialize status info  ----
-	 nullify(status_msg)
-	 status_code = 0
-
-    {% for argument in code_description.arguments if argument.intent == 'IN' %}
-    !--------- Get IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.get( argument.name) }}
-    {% endfor %}
-
-    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-    ! ------------------ code parameters ----------------------------
-    imas_code_params = convert_codeparams(code_params_cstr)
-    {% endif %}
-
- 
-	! ------------- Input data conversion [ISO_C_BINDING] --------------
-
-    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    call  {{code_description.implementation.subroutines.main}}( &
-{% for argument in code_description.arguments %}
-            {{ argument.name }}, &
-{% endfor %}
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-            imas_code_params,  &
-{% endif %}
-            status_code, status_msg)
-    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    if (process_rank == 0) then
-       ! --- called only for RANK 0 process
-{% endif %}
-    ! ------------ Output data conversion [ISO_C_BINDING] --------------
-     out_status_msg = convert_string2Cptr(status_msg)
-
-
-	 ! Return in case of 'soft' crash (diagnostic info < 0)  
-	 if(status_code < 0 ) RETURN
-
-   ! ------------ Provenance information --------------
- {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-
-    {{ ids_macro.provenance( argument.name , code_description.implementation.subroutines.main) }}
-    {% endfor %}
-
-     {% for argument in code_description.arguments if argument.intent == 'OUT' %}
-    !--------- PUT IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.put( argument.name) }}
-    {% endfor %}
-
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    endif ! --- The end of section called only for RANK 0 process
-{% endif %}
-    !--------- Dealloacting IDSes ------------------------
-    {% for argument in code_description.arguments %}
-     {{ ids_macro.deallocate( argument.name) }}
-    {% endfor %}
-
-    {% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-    ! ------Deallocating code parameters ----------------------------
-    deallocate(imas_code_params%parameters_value)
-    {% endif %}
-
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    !----  MPI Finalization ----
-    call MPI_finalized(was_mpi_finalized, ierr)
-    if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
-{% endif %}
-end
+{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
+code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 
         {% if code_description.implementation.subroutines.set_state %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE SET STATE SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-SUBROUTINE set_state_{{actor_description.actor_name}}_wrapper(state_in, state_size, status_code, out_status_msg) BIND(C)
+SUBROUTINE {{actor_description.actor_name}}_wrapper_set_state(state_in, state_size, status_code, out_status_msg) BIND(C)
      use iwrap_tools
 
     !----  Status  ----
@@ -245,14 +68,14 @@ SUBROUTINE set_state_{{actor_description.actor_name}}_wrapper(state_in, state_si
     out_status_msg = convert_string2Cptr(status_msg)
 
 
-END SUBROUTINE set_state_{{actor_description.actor_name}}_wrapper
+END SUBROUTINE {{actor_description.actor_name}}_wrapper_set_state
 {% endif %}
 
 {% if code_description.implementation.subroutines.get_state %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE SET STATE SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_code, out_status_msg) BIND(C)
+SUBROUTINE {{actor_description.actor_name}}_wrapper_get_state(state_out, status_code, out_status_msg) BIND(C)
      use iwrap_tools
 
      !----  Diagnostic info  ----
@@ -274,14 +97,14 @@ SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper(state_out, status_
     state_out = convert_allocatable_string2c_ptr(state_str)
 
 
-END SUBROUTINE get_state_{{actor_description.actor_name}}_wrapper
+END SUBROUTINE {{actor_description.actor_name}}_wrapper_get_state
 {% endif %}
 
 {% if code_description.implementation.subroutines.get_timestamp %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                                   NATIVE GET TIMESTAMP SBRT CALL
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-SUBROUTINE get_timestamp_{{actor_description.actor_name}}_wrapper(timestamp_out, status_code, out_status_msg) BIND(C)
+SUBROUTINE {{actor_description.actor_name}}_wrapper_get_timestamp(timestamp_out, status_code, out_status_msg) BIND(C)
      use iwrap_tools
 
      integer,parameter :: DP=kind(1.0D0)
@@ -303,7 +126,13 @@ SUBROUTINE get_timestamp_{{actor_description.actor_name}}_wrapper(timestamp_out,
     out_status_msg = convert_string2Cptr(status_msg)
 
 
-END SUBROUTINE get_timestamp_{{actor_description.actor_name}}_wrapper
+END SUBROUTINE {{actor_description.actor_name}}_wrapper_get_timestamp
 {% endif %}
 
 end module wrapper
+
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+

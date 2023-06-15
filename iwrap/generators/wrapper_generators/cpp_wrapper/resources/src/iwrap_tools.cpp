@@ -5,7 +5,7 @@
 #include "serialization_tools.h"
 
 
-int read_input(ids_description_t db_entry_desc_array[], int array_expected_size)
+int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size)
 {
     ifstream fin;
     int array_read_size = -1;
@@ -13,7 +13,7 @@ int read_input(ids_description_t db_entry_desc_array[], int array_expected_size)
     if (array_expected_size < 1)
         return 0;
 
-    fin.open("input.txt");
+    fin.open(file_name);
     fin.ignore(INT_MAX, '\n'); // skip line " === Arguments ===="
     fin.ignore(INT_MAX, '\n'); // skip line " Length:"
     read_data(&fin, &array_read_size);
@@ -48,12 +48,12 @@ int read_code_parameters( char** xml_string)
     (*xml_string)[fsize] = 0;
 }
 
-int write_output(int status_code, char* status_message)
+int write_output(const char* file_name, int status_code, char* status_message)
 {
     ofstream fout;
     int str_len;
 
-    fout.open("output.txt");
+    fout.open(file_name);
     write_data(&fout, status_code);
 
     if ( status_message != NULL)

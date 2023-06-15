@@ -55,9 +55,19 @@ FC=$(MPIFC)
 {% endif %}
 
 
-all: ../bin/$(ACTOR_NAME).exe   ../lib/lib$(ACTOR_NAME).so
+all:
+    {%- if code_description.implementation.subroutines.init %}
+      ../bin/$(ACTOR_NAME)_init.exe  \
+    {% endif %}
+    {%- if code_description.implementation.subroutines.main %}
+      ../bin/$(ACTOR_NAME)_main.exe  \
+    {% endif %}
+    {%- if code_description.implementation.subroutines.finalize %}
+      ../bin/$(ACTOR_NAME)_finalize.exe  \
+    {% endif %}
+      ../lib/lib$(ACTOR_NAME).so
 
-../bin/$(ACTOR_NAME).exe: src/standalone.f90 build/defs.o build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
+../bin/$(ACTOR_NAME)_%.exe: src/standalone_%.f90 build/defs.o build/RWTools.o  build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../bin
 	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
@@ -67,7 +77,7 @@ build/%.o: src/%.f90
 	@mkdir -p ./build
 	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
-../lib/lib$(ACTOR_NAME).so: build/defs.o build/fortran_wrapper.o  build/RWTools.o build/fortrantools.o
+../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
 	$(FC) $(FCLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/

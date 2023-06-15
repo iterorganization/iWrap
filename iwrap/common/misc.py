@@ -21,13 +21,18 @@ class Dictionarizable( ABC ):
            Args:
                dictionary (Dict[str], Any): Data to be used to restore object
            """
+        if type(dictionary) is not dict:
+            error_msg = f'ERROR: Incorrect type of "{dictionary}" field! Configuration seems to be not a valid iWrap file!'
+            raise ValueError(error_msg)
+
         for name, value in dictionary.items():
             if not hasattr( self, name ):
                 error_msg = f'ERROR: Unknown field "{name}". Configuration seems to be not a valid iWrap file!'
                 raise ValueError(error_msg)
             attr = getattr( self, name )
             if isinstance( attr, Dictionarizable ):
-                attr.from_dict( value )
+                if value:
+                    attr.from_dict( value )
             else:
                 if str(value).lower() == 'none' or value == '':
                     value = None

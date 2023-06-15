@@ -47,9 +47,18 @@ INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
 LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED)  $(CODE_LIB_DEF)
 
 
-all:  ../lib/lib$(ACTOR_NAME).so  ../bin/$(ACTOR_NAME).exe
+all: {%- if code_description.implementation.subroutines.init %}
+      ../bin/$(ACTOR_NAME)_init.exe  \
+    {% endif %}
+    {%- if code_description.implementation.subroutines.main %}
+      ../bin/$(ACTOR_NAME)_main.exe  \
+    {% endif %}
+    {%- if code_description.implementation.subroutines.finalize %}
+      ../bin/$(ACTOR_NAME)_finalize.exe  \
+    {% endif %}
+      ../lib/lib$(ACTOR_NAME).so
 
-../bin/$(ACTOR_NAME).exe: src/standalone.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
+../bin/$(ACTOR_NAME)_%.exe: src/standalone_%.cpp build/serialization_tools.o build/cpp_wrapper.o build/iwrap_tools.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../bin
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/

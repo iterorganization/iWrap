@@ -81,8 +81,9 @@ END FUNCTION create_ids_full_name
         ! deallocate(status_info_array)
     END SUBROUTINE handle_status_info
 
-    FUNCTION read_input(db_entry_desc_array) RESULT(status)
+    FUNCTION read_input(file_name, db_entry_desc_array) RESULT(status)
         use rwtool
+        character(*), intent(IN) :: file_name
         type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
         integer :: i, status
         integer :: ids_array_size, array_read_size
@@ -90,7 +91,11 @@ END FUNCTION create_ids_full_name
         status = 0
         ids_array_size = SIZE(db_entry_desc_array)
 
-        open(10,file='input.txt',form='formatted',access='sequential',status='old', iostat=status)
+        open(10,file=file_name, form='formatted',access='sequential',status='old', iostat=status)
+        if (status /=0) then
+            write(*,*) 'Error opening file: ', file_name
+            return
+        end if
 
         read(10,*) ! skip line " === Arguments ===="
         read(10,*) ! skip line " Length:"
@@ -121,14 +126,19 @@ END FUNCTION create_ids_full_name
 
     END FUNCTION read_code_parameters
 
-    SUBROUTINE write_output(status_code, status_message)
+    SUBROUTINE write_output(file_name, status_code, status_message)
         use rwtool
+        character(*), intent(IN) :: file_name
         integer, intent(IN) :: status_code
         type(C_PTR) :: status_message
         integer :: str_len, istat
 
         !-----------Writing output data to file ---------------------
-        open(10,file='output.txt',form='formatted',access='sequential',status='unknown', iostat=istat)
+        open(10,file=file_name ,form='formatted',access='sequential',status='unknown', iostat=istat)
+        if (istat /=0) then
+            write(*,*) 'Error opening file: ', file_name
+            return
+        end if
         call writefile(status_code)
 
         if ( C_ASSOCIATED(status_message)) then

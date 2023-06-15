@@ -28,9 +28,10 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ "".center(80, '-') }}
     # {{ " INITIALIZE ".center(80) }}
     # {{ "".center(80, '-') }}
-    @ActorBaseClass.init_parameters
+    @ActorBaseClass.init_actor
     @ActorBaseClass.use_sandbox
-    def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
+    def initialize(self,
+                runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
         """
         The method performs initialisation actions
 
@@ -38,7 +39,6 @@ class {{actor_description.actor_name}}(ActorBaseClass):
             runtime_settings (RuntimeSettings, optional): property tells the actor how native code should
             code_parameters (CodeParameters, optional): physics model parameters
         """
-        super().initialize(runtime_settings, code_parameters)
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.init %}
         Runner.get_runner(self).call_initialize()
     {%  endif %}
@@ -66,8 +66,9 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.main %}
         self.check_is_initialized()
-        args = list(locals().values())[1:]
-        out = Runner.get_runner(self).call_main(*args)
+        out = Runner.get_runner(self).call_main({%- for argument in code_description.arguments if argument.intent == 'IN' -%}
+                                                    {{ argument.name }},
+                                                    {%- endfor -%})
         return out
         {%  endif %}
         ...

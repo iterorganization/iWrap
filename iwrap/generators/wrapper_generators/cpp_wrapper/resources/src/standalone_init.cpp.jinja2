@@ -1,0 +1,6 @@
+{% import './macros/subroutines.jinja2' as sbrt_macro %}
+
+{% if code_description.implementation.subroutines.init %}
+    {{ sbrt_macro.standalone_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
+    code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
+{% endif %}

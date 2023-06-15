@@ -4,11 +4,11 @@
 #include "UALClasses.h"
 #include "defs.h"
 
-int read_input(ids_description_t db_entry_desc_array[], int array_expected_size);
+int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size);
 
 int read_code_parameters(char** xml_string);
 
-int write_output(int status_code, char* status_message);
+int write_output(const char* file_name, int status_code, char* status_message);
 
 int handle_status_info(int status_code, char* status_message, const char* actor_name);
 

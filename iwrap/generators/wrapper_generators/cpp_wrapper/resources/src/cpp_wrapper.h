@@ -1,4 +1,5 @@
 {% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+{% import './macros/subroutines.jinja2' as sbrt_macro %}
 #ifndef _CPP_WRAPPER
 #define _CPP_WRAPPER
 
@@ -9,32 +10,26 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                char* code_params_str,
-{% endif %}
-                int* out_status_code, char** out_status_message);
-
+    {{ sbrt_macro.sbrt_declaration("init", actor_description.actor_name,
+                                    code_description.implementation.subroutines.init, [],
+                                    code_description.implementation.code_parameters.parameters ) }}
 {% endif %}
 
 {% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(int* out_status_code, char** out_status_message);
+    {{ sbrt_macro.sbrt_declaration("finalize", actor_description.actor_name,
+                                    code_description.implementation.subroutines.finalize, [],
+                                    None ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE MAIN SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void {{actor_description.actor_name | lower}}_wrapper(
-{% for argument in code_description.arguments %}
-                ids_description_t* {{ argument.name }}_desc,
-{% endfor %}
-{% if code_description.implementation.code_parameters.parameters and code_description.implementation.code_parameters.schema %}
-                char* code_params_str,
-{% endif %}
-                int* out_status_code, char** out_status_message);
+    {{ sbrt_macro.sbrt_declaration("main", actor_description.actor_name,
+                                    code_description.implementation.subroutines.main, code_description.arguments,
+                                    code_description.implementation.code_parameters.parameters ) }}
 
 {% if code_description.implementation.subroutines.get_state %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

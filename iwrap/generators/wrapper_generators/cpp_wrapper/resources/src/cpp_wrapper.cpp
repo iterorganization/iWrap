@@ -1,4 +1,6 @@
 {% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+{% import './macros/subroutines.jinja2' as sbrt_macro %}
+
 #include <string>
 
 
@@ -15,168 +17,24 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void init_{{actor_description.actor_name | lower}}_wrapper(
-{% if code_description.implementation.code_parameters.parameters   %}
-                char* code_params_str,
+    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
+    code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
-                int* out_status_code, char** out_status_message)
-{
-    std:string status_msg = "OK";
-{% if code_description.implementation.code_parameters.parameters %}
-	//----  Code parameters ----
-    IdsNs::codeparam_t imas_code_params;
-    imas_code_params.parameters = (char**)&(code_params_str);
-    imas_code_params.default_param = NULL;
-    imas_code_params.schema = NULL;
-
-    {% endif %}
-
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.implementation.subroutines.init}}(
-{% if code_description.implementation.code_parameters.parameters  %}
-            imas_code_params,
-{% endif %}
-            *out_status_code, status_msg );
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // converting status info
-    convert_status_info(status_msg, out_status_message);
-
-	if(*out_status_code < 0)
-		return;
-}
-{% endif %}
-
 
 {% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                   NATIVE FINISH SBRT CALL
+//                                   NATIVE FINALIZE SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void finish_{{actor_description.actor_name | lower}}_wrapper(
-            int *out_status_code, char **out_status_message )
-{
-    std:string status_msg = "OK";
-
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.implementation.subroutines.finalize}}(*out_status_code, status_msg );
-     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    // converting status info
-    convert_status_info(status_msg, out_status_message);
-
-	if(*out_status_code < 0)
-		return;
-}
+    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
+    None, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE MAIN SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-extern "C" void {{actor_description.actor_name | lower}}_wrapper(
-{% for argument in code_description.arguments %}
-                ids_description_t* {{ argument.name }}_desc,
-{% endfor %}
-{% if code_description.implementation.code_parameters.parameters %}
-                char* code_params_str,
-{% endif %}
-                int* out_status_code, char** out_status_message)
-{
-    std:string status_msg = "OK";
-
-{% for argument in code_description.arguments %}
-    // IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.declare(argument.type, argument.name ) }}
-{% endfor %}
-
-{% if code_description.implementation.code_parameters.parameters %}
-	//----  Code parameters ----
-    IdsNs::codeparam_t imas_code_params;
-{% endif %}
-
-
-    {% if code_description.settings.mpi_compiler_cmd %}
-    //----  MPI  ----
-    int mpi_rank, ierr;
-    int was_mpi_initialized, was_mpi_finalized;
-
-    MPI_Initialized(&was_mpi_initialized);
-    if (!was_mpi_initialized)
-    {
-        ierr = MPI_Init(NULL, NULL);
-        if (ierr != MPI_SUCCESS)
-        {
-            printf("MPI initialization fails with code: %d\n", ierr);
-            exit(ierr);
-        }
-    }
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-    {% endif %}
-
-
-    {% for argument in code_description.arguments if argument.intent == 'IN' %}
-    //--------- Get IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.get( argument.name) }}
-    {% endfor %}
-
-        {% if code_description.implementation.code_parameters.parameters  %}
-    // ------------------ code parameters ----------------------------
-    imas_code_params.parameters = (char**)&(code_params_str);
-    imas_code_params.default_param = NULL;
-    imas_code_params.schema = NULL;
-    {% endif %}
-
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    {{code_description.implementation.subroutines.main}}(
-{% for argument in code_description.arguments %}
-            {{ argument.name }},
-{% endfor %}
-{% if code_description.implementation.code_parameters.parameters  %}
-            imas_code_params,
-{% endif %}
-            *out_status_code, status_msg );
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-        // converting status info
-    convert_status_info(status_msg, out_status_message);
-
-	if(*out_status_code < 0)
-		return;
-
-   {% if code_description.settings.mpi_compiler_cmd %}
-    if (mpi_rank == MPI_ROOT_RANK)
-    {
-       // --- called only for RANK 0 process
-   {% endif %}
-
-   // ------------ Provenance information --------------
-{% for argument in code_description.arguments if argument.intent == 'OUT' %}
-    {{ ids_macro.provenance( argument.name , code_description.implementation.subroutines.main) }}
-{% endfor %}
-
-{% for argument in code_description.arguments if argument.intent == 'OUT' %}
-    //--------- PUT IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.put( argument.name) }}
-{% endfor %}
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    } //The end of section called only for RANK 0 process
-{% endif %}
-
-{% for argument in code_description.arguments %}
-    //--------- CLEAN UP IDS : {{ argument.name }} ------------------------
-    {{ ids_macro.deallocate( argument.name) }}
-{% endfor %}
-
-
-{% if code_description.settings.mpi_compiler_cmd %}
-    //----  MPI Finalization ----
-    MPI_Finalized(&was_mpi_finalized);
-    if (!was_mpi_finalized)
-       MPI_Finalize();
-{% endif %}
-
-}
+{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
+code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 
 
 {% if code_description.implementation.subroutines.get_state %}
