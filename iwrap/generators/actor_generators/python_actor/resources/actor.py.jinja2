@@ -65,6 +65,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         {% endfor %}
         """
         {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.main %}
+        self.check_is_initialized()
         args = list(locals().values())[1:]
         out = Runner.get_runner(self).call_main(*args)
         return out
@@ -81,6 +82,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         The method is used to perform finalisation actions (clean up the environment etc).
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.finalize %}
+        self.check_is_initialized()
         Runner.get_runner(self).call_finalize()
     {%  endif %}
         ...
@@ -101,6 +103,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
 
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.get_state %}
+        self.check_is_initialized()
         state = Runner.get_runner(self).call_get_state()
         return state
     {%  endif %}
@@ -118,6 +121,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
             state (str) -  An internal state of the code as a string returned by a call of `get_state`
         """
 {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.set_state %}
+        self.check_is_initialized()
         Runner.get_runner(self).call_set_state(state)
     {%  endif %}
         ...
@@ -135,6 +139,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
             timestamp (float): currently computed physical time
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.get_timestamp %}
+        self.check_is_initialized()
         timestamp = Runner.get_runner(self).call_get_timestamp()
         return timestamp
     {%  endif %}
