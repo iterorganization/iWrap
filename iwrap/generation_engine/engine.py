@@ -86,58 +86,45 @@ class Engine:
 
         actor_language = actor_generator.actor_language
         actor_type = actor_generator.type
-        actor_generator.initialize(project_settings_dict)
 
         code_language = ProjectSettings.get_settings().code_description.implementation.programming_language
 
         # BINDER discovery
         binder_generator = BinderGeneratorRegistry.get_generator(actor_type, actor_language, code_language)
         if binder_generator is not None: # Some actors requires no binding
-            binder_generator.initialize(project_settings_dict)
             generators.append(binder_generator)
 
         # WRAPPER discovery
         wrapper_generator = WrapperGeneratorRegistry.get_generator(actor_type, actor_language, code_language)
         if wrapper_generator is not None: # Wrapper could be optional in some use-cases
-            wrapper_generator.initialize(project_settings_dict)
             generators.append(wrapper_generator)
 
-        text_decoration = 20 * "-"
-        print( text_decoration, 'GENERIC VALIDATION OF AN ACTOR DESCRIPTION', text_decoration, file=info_output_stream )
         try:
+            print( 'GENERIC VALIDATION'.center( 20, ' ' ).center( 60, '-' ), file=info_output_stream )
             ProjectSettings.get_settings().validate( self )
+            for generator in generators:
+                generator_name: str = generator.__class__.__name__
+                print(f'  {generator_name}  '.center(80, '='), file=info_output_stream)
+                generator.configure(info_output_stream = info_output_stream)
+                print('VALIDATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
+                generator.validate(project_settings_dict)
+                print(  'INITIALIZATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream )
+                generator.initialize( project_settings_dict )
+                print( 'GENERATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
+                generator.generate(project_settings_dict)
+                print( 'BUILD'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream )
+                generator.build(project_settings_dict)
+                print( 'GENERATION COMPLETE!'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
+
         except Exception as exc:
-            print( 'VALIDATION FAILED!', file=info_output_stream )
+            print( 'GENERATION FAILED!', file=info_output_stream )
+            print( exc, file=info_output_stream )
             try:
                 info_output_stream.set_label('Actor generation stopped on error')
             except AttributeError:
                 pass # ignore if the current stream does not implement set_label
-            print( exc, file=info_output_stream )
             traceback.print_tb( exc.__traceback__ )
             return 1
-
-        for generator in generators:
-            try:
-                generator_name: str = generator.__class__.__name__
-                print(f'  {generator_name}  '.center(80, '='), file=info_output_stream)
-                generator.configure(info_output_stream = info_output_stream)
-                print(text_decoration, 'ACTOR SPECIFIC VALIDATION', text_decoration, file=info_output_stream)
-                generator.validate(project_settings_dict)
-                print(text_decoration, 'GENERATING', text_decoration, file=info_output_stream)
-                generator.generate(project_settings_dict)
-                print(text_decoration, 'BUILDING', text_decoration, file=info_output_stream )
-                generator.build(project_settings_dict)
-                print(text_decoration, 'GENERATION COMPLETE!', text_decoration, file=info_output_stream)
-
-            except Exception as exc:
-                print( 'GENERATION FAILED!', file=info_output_stream )
-                print( exc, file=info_output_stream )
-                try:
-                    info_output_stream.set_label('Actor generation stopped on error')
-                except AttributeError:
-                    pass # ignore if the current stream does not implement set_label
-                traceback.print_tb( exc.__traceback__ )
-                return 1
 
         print( 'ALL DONE!', file=info_output_stream )
         try:
