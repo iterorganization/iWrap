@@ -99,22 +99,19 @@ class Engine:
         if wrapper_generator is not None: # Wrapper could be optional in some use-cases
             generators.append(wrapper_generator)
 
+        generator_methods = 'validate', 'initialize', 'generate', 'build', 'install'
         try:
-            print( 'GENERIC VALIDATION'.center( 20, ' ' ).center( 60, '-' ), file=info_output_stream )
+            print( ' ACTOR GENERATION '.center( 80, '=' ), file=info_output_stream )
             ProjectSettings.get_settings().validate( self )
             for generator in generators:
-                generator_name: str = generator.__class__.__name__
-                print(f'  {generator_name}  '.center(80, '='), file=info_output_stream)
-                generator.configure(info_output_stream = info_output_stream)
-                print('VALIDATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
-                generator.validate(project_settings_dict)
-                print(  'INITIALIZATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream )
-                generator.initialize( project_settings_dict )
-                print( 'GENERATION'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
-                generator.generate(project_settings_dict)
-                print( 'BUILD'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream )
-                generator.build(project_settings_dict)
-                print( 'GENERATION COMPLETE!'.center( 20, ' ' ).center( 60, '-' ),  file=info_output_stream)
+                generator.configure( info_output_stream=info_output_stream )
+
+            for generator_method in generator_methods:
+                print( f'  {generator_method}  '.upper().center( 80, '-' ), file=info_output_stream )
+                for generator in generators:
+                    getattr(generator, generator_method)(project_settings_dict)
+
+            print( 'GENERATION COMPLETE!'.center( 20, ' ' ).center( 60, '=' ),  file=info_output_stream)
 
         except Exception as exc:
             print( 'GENERATION FAILED!', file=info_output_stream )
