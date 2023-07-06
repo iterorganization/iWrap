@@ -99,40 +99,32 @@ class Converter:
 
     @staticmethod
     def convert(yaml_dict):
-        for mapping in mappings.mappings:
-            # delete everything after '#' character to allow using comments in mapping
-            m = mapping.lower().split('#', 1)[0].replace('#', '').strip()
+        for mapping in mappings:
 
-            # skip comment-only mappings
-            if m == '':
-                continue
-
-            args = m.split(' ')
-
-            print(args)
-            if args[0] == 'add':
-                path = args[1]
+            print(mapping)
+            if mapping[0] == 'add':
+                path = mapping[1]
                 try:
-                    value = args[2]
+                    value = mapping[2]
                 except IndexError:
                     value = None
 
                 Converter.__set(yaml_dict, path.split('/'), value)
 
-            elif args[0] == 'delete':
-                path = args[1]
+            elif mapping[0] == 'delete':
+                path = mapping[1]
                 try:
-                    filter = args[2]
+                    filter = mapping[2]
                 except IndexError:
                     filter = None
 
                 Converter.__delete(yaml_dict, path.split('/'), filter)
 
-            elif args[0] == 'move':
-                path1 = args[1]
-                path2 = args[2]
+            elif mapping[0] == 'move':
+                path1 = mapping[1]
+                path2 = mapping[2]
                 try:
-                    filter = args[3]
+                    filter = mapping[3]
                 except IndexError:
                     filter = None
 
