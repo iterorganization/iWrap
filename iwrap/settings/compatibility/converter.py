@@ -100,6 +100,7 @@ class Converter:
     @staticmethod
     def convert(yaml_dict):
         for mapping in mappings:
+            mapping = tuple(s.lower() for s in mapping)
 
             print(mapping)
             if mapping[0] == 'add':
