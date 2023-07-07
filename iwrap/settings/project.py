@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 import yaml
-
+from iwrap.settings.compatibility.converter import Converter
 
 from iwrap.common.misc import Dictionarizable
 from iwrap.settings import SettingsBaseClass
@@ -124,11 +124,16 @@ class ProjectSettings( SettingsBaseClass ):
         if not dict_read:
             raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
-        actor_description_dict = dict_read.get('actor_description')
+        # dict_updated = Converter.convert(dict_read)
+        # will be uncommented if actor description will change and will need convertion to newest format
+        # until that - just copy dicts
+        dict_updated = dict_read
+
+        actor_description_dict = dict_updated.get('actor_description')
         if actor_description_dict:
             self.actor_description.from_dict(actor_description_dict)
 
-        code_descritption_dict = dict_read.get('code_description')
+        code_descritption_dict = dict_updated.get('code_description')
         if code_descritption_dict:
             self.code_description.from_dict( code_descritption_dict )
         else:
