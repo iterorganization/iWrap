@@ -7,6 +7,20 @@ from os.path import splitext
 class Converter:
     @staticmethod
     def __delete(root, splitted_path, filter):
+        '''
+          Deletes key from dict.
+          Args:
+           root (dict): Root of the dictionary.
+           splitted_path (list): List of the following nodes (path to node).
+           filter (str): Code used as additional condition for key to be deleted.
+        '''
+
+        '''
+        Function's workflow is splitted into 2 paths:
+        - if root is last but one on the splitted_path list - filter and delete key
+        - else - just jump along path to next node (recursive call)
+        '''
+
         if len(splitted_path) == 1:
             if filter == None:
                 del root[splitted_path[0]]
@@ -46,6 +60,14 @@ class Converter:
 
     @staticmethod
     def __get(root, splitted_path, filter):
+        '''
+          Gets node from dict.
+          Args:
+           root (dict): Root of the dictionary.
+           splitted_path (list): List of the following nodes (path to node).
+           filter (str): Code used as additional condition for node to be extracted.
+        '''
+
         #if we are at the end of path_to_node
         if len(splitted_path) == 1:
 
@@ -60,7 +82,6 @@ class Converter:
 
                 #if result contains more than one entry, run evaluate string on it to throw unnecesary ones
                 if isinstance(res,list):
-
                     res2 = []
                     for x in res:
                         if(eval(f'x{filter}')):
@@ -83,6 +104,14 @@ class Converter:
 
     @staticmethod
     def __set(root, splitted_path, value):
+        '''
+          Sets value in dict.
+          Args:
+           root (dict): Root of the dictionary.
+           splitted_path (list): List of the following nodes (path to node).
+           value: Value to be set. Could be literal, list or dict.
+        '''
+
         if len(splitted_path) == 1:
             root[splitted_path[0]] = value
             return
@@ -99,6 +128,14 @@ class Converter:
 
     @staticmethod
     def convert(yaml_dict):
+        '''
+          Main method used to convert yaml using mappings.
+          NOTE: Mappings are read from mappings package.
+
+          Args:
+           yaml_dict (dict): Dictionary to be converted.
+
+        '''
         for mapping in mappings:
             mapping = tuple(s.lower() for s in mapping)
 
