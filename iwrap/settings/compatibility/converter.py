@@ -3,8 +3,12 @@ import argparse
 from .mappings import mappings
 from os import rename
 from os.path import splitext
+import logging
 
 class Converter:
+    # Class logger
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
+
     @staticmethod
     def __delete(root, splitted_path, filter):
         '''
@@ -23,11 +27,15 @@ class Converter:
 
         if len(splitted_path) == 1:
             if filter == None:
-                del root[splitted_path[0]]
-                return
+                try:
+                    del root[splitted_path[0]]
+                except (TypeError,KeyError):
+                    #Cannot be deleted because does not exists, proceed
+                    return False
+                return True
             else:
                 if isinstance(root[splitted_path[0]], list):
-                    filter = filter.replace("arg1", "root[splitted_path[0]][x]")
+                    filter = filter.replace("$arg1", "root[splitted_path[0]][x]")
                     del_indexes = []
 
                     for x in range(len(root[splitted_path[0]])):
@@ -39,18 +47,26 @@ class Converter:
 
                     for i in del_indexes:
                         del root[splitted_path[0]][i]
+                    else:
+                        #if nothing was deleted return false
+                        return False
 
-                    return
+                    return True
                 else:
-                    filter = filter.replace("arg1", "root[splitted_path[0]]")
+                    filter = filter.replace("$arg1", "root[splitted_path[0]]")
                     if (eval(filter)):
-                        del root[splitted_path[0]]
-                    return
+                        try:
+                            del root[splitted_path[0]]
+                        except (TypeError, KeyError):
+                            # Cannot be deleted because does not exists, proceed
+                            return False
+                    return True
         else:
             try:
                 new_root = root.get(splitted_path[0])
             except  KeyError:
-                raise KeyError(f'node \"{splitted_path[0]}\" not found') from None
+                return False
+                #raise KeyError(f'node \"{splitted_path[0]}\" not found') from None
 
             if isinstance(new_root, list):
                 for x in new_root:
@@ -73,12 +89,16 @@ class Converter:
 
             if filter == None:
                 #if there is no filter, just return what you got
-                res = root[splitted_path[0]]
+                try:
+                    res = root[splitted_path[0]]
+                except KeyError:
+                    #if there is no node from path
+                    return None
                 return res
             else:
                 #save result
                 res = root[splitted_path[0]]
-                filter = filter.replace("arg1", "")
+                filter = filter.replace("$arg1", "")
 
                 #if result contains more than one entry, run evaluate string on it to throw unnecesary ones
                 if isinstance(res,list):
@@ -114,7 +134,7 @@ class Converter:
 
         if len(splitted_path) == 1:
             root[splitted_path[0]] = value
-            return
+            return True
 
         try:
             if root[splitted_path[0]] is None:
@@ -127,15 +147,17 @@ class Converter:
         return Converter.__set(new_root, splitted_path[1:], value)
 
     @staticmethod
-    def convert(yaml_dict):
+    def convert(yaml_dict, command_line=False):
         '''
           Main method used to convert yaml using mappings.
           NOTE: Mappings are read from mappings package.
 
           Args:
            yaml_dict (dict): Dictionary to be converted.
+           command_line (bool): Indicates if function was called by user (true), or called implicit by iWrap (false).
 
         '''
+        transform_counter = 0
         for mapping in mappings:
             mapping = tuple(s.lower() for s in mapping)
 
@@ -147,7 +169,8 @@ class Converter:
                 except IndexError:
                     value = None
 
-                Converter.__set(yaml_dict, path.split('/'), value)
+                if Converter.__set(yaml_dict, path.split('/'), value):
+                    transform_counter+=1
 
             elif mapping[0] == 'delete':
                 path = mapping[1]
@@ -156,7 +179,8 @@ class Converter:
                 except IndexError:
                     filter = None
 
-                Converter.__delete(yaml_dict, path.split('/'), filter)
+                if Converter.__delete(yaml_dict, path.split('/'), filter):
+                    transform_counter += 1
 
             elif mapping[0] == 'move':
                 path1 = mapping[1]
@@ -167,11 +191,26 @@ class Converter:
                     filter = None
 
                 value = Converter.__get(yaml_dict, path1.split('/'), filter)
-                Converter.__delete(yaml_dict, path1.split('/'), filter)
-                Converter.__set(yaml_dict, path2.split('/'), value)
+                target = Converter.__get(yaml_dict, path2.split('/'), None)
+
+                #dont replace existing value with None if target value exists
+                if value is None and target is not None:
+                    continue
+
+                if Converter.__delete(yaml_dict, path1.split('/'), filter):
+                    transform_counter += 1
+
+                if Converter.__set(yaml_dict, path2.split('/'), value):
+                    transform_counter += 1
+
+
             else:
                 message = f'MAPPING: {mapping} COULD NOT BE PROCESSED. COMMAND UNRECOGNISED.'
                 raise RuntimeError(message)
+
+        if not command_line and transform_counter>0:
+            Converter.__logger.warning('[WARNING]: You are using outdated code description.'
+                                       ' Consider using iwrap-yaml-update script to keep your description up to date.')
         return yaml_dict
 
 
@@ -225,7 +264,7 @@ def main():
 
     yaml_dict = yaml.load(data, Loader=yaml.Loader)
 
-    result_dict = Converter.convert(yaml_dict)
+    result_dict = Converter.convert(yaml_dict, command_line=True)
 
     if args.in_place:
         output_filename = input_filename
