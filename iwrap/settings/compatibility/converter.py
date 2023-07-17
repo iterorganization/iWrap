@@ -92,7 +92,7 @@ class Converter:
                 # if there is no condition, just return what you got
                 try:
                     res = root[splitted_path[0]]
-                except KeyError:
+                except (TypeError, KeyError):
                     # if there is no node from path
                     return None
                 return res
