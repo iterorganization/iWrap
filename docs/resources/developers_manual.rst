@@ -22,4 +22,5 @@ iWrap developers manual
 
    /resources/developers_manual/actor_architecture.rst
    /resources/developers_manual/actor_generators.rst
+   /resources/developers_manual/code_desc_compatibility.rst
 

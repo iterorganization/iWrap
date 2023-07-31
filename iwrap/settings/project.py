@@ -5,12 +5,13 @@ from pathlib import Path
 from typing import Any, Dict
 
 import yaml
-
+from iwrap.settings.compatibility.converter import Converter
 
 from iwrap.common.misc import Dictionarizable
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.actor_description import ActorDescription
 from iwrap.settings.code_description import CodeDescription
+from iwrap import __version__
 
 #from iwrap.generation_engine.engine import Engine
 
@@ -107,6 +108,7 @@ class ProjectSettings( SettingsBaseClass ):
         code_description_dict = self.code_description.to_dict()
         dumped = {'actor_description': actor_description_dict, 'code_description': code_description_dict}
 
+        file.write(f'# Saved with iWrap {__version__}\n')
         yaml.dump( dumped, stream=file,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
 
         file_real_path = os.path.realpath( file.name )
@@ -124,11 +126,16 @@ class ProjectSettings( SettingsBaseClass ):
         if not dict_read:
             raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
-        actor_description_dict = dict_read.get('actor_description')
+        # dict_updated = Converter.convert(dict_read)
+        # will be uncommented if actor description will change and will need convertion to newest format
+        # until that - just copy dicts
+        dict_updated = dict_read
+
+        actor_description_dict = dict_updated.get('actor_description')
         if actor_description_dict:
             self.actor_description.from_dict(actor_description_dict)
 
-        code_descritption_dict = dict_read.get('code_description')
+        code_descritption_dict = dict_updated.get('code_description')
         if code_descritption_dict:
             self.code_description.from_dict( code_descritption_dict )
         else:
