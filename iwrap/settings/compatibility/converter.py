@@ -5,28 +5,29 @@ from os import rename
 from os.path import splitext
 import logging
 
+
 class Converter:
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @staticmethod
-    def __delete(root, splitted_path, filter):
-        '''
+    def __delete(root, splitted_path, condition):
+        """
           Deletes key from dict.
           Args:
            root (dict): Root of the dictionary.
            splitted_path (list): List of the following nodes (path to node).
-           filter (str): Code used as additional condition for key to be deleted.
-        '''
+           condition (str): Code used as additional condition for key to be deleted.
+        """
 
         '''
         Function's workflow is splitted into 2 paths:
-        - if root is last but one on the splitted_path list - filter and delete key
+        - if root is last but one on the splitted_path list - condition and delete key
         - else - just jump along path to next node (recursive call)
         '''
 
         if len(splitted_path) == 1:
-            if filter == None:
+            if condition is None:
                 try:
                     del root[splitted_path[0]]
                 except (TypeError,KeyError):
@@ -35,11 +36,11 @@ class Converter:
                 return True
             else:
                 if isinstance(root[splitted_path[0]], list):
-                    filter = filter.replace("$arg1", "root[splitted_path[0]][x]")
+                    condition = condition.replace("$arg1", "root[splitted_path[0]][x]")
                     del_indexes = []
 
                     for x in range(len(root[splitted_path[0]])):
-                        if (eval(filter)):
+                        if eval( condition ):
                             del_indexes.append(x)
 
                     # Sort the indexes in descending order to prevent index shifting
@@ -53,8 +54,8 @@ class Converter:
 
                     return True
                 else:
-                    filter = filter.replace("$arg1", "root[splitted_path[0]]")
-                    if (eval(filter)):
+                    condition = condition.replace("$arg1", "root[splitted_path[0]]")
+                    if eval( condition ):
                         try:
                             del root[splitted_path[0]]
                         except (TypeError, KeyError):
@@ -66,50 +67,50 @@ class Converter:
                 new_root = root.get(splitted_path[0])
             except  KeyError:
                 return False
-                #raise KeyError(f'node \"{splitted_path[0]}\" not found') from None
+                # raise KeyError(f'node \"{splitted_path[0]}\" not found') from None
 
             if isinstance(new_root, list):
                 for x in new_root:
-                    Converter.__delete(x, splitted_path[1:], filter)
+                    Converter.__delete(x, splitted_path[1:], condition)
             else:
-                Converter.__delete(new_root, splitted_path[1:], filter)
+                Converter.__delete(new_root, splitted_path[1:], condition)
 
     @staticmethod
-    def __get(root, splitted_path, filter):
-        '''
+    def __get(root, splitted_path, condition):
+        """
           Gets node from dict.
           Args:
            root (dict): Root of the dictionary.
            splitted_path (list): List of the following nodes (path to node).
-           filter (str): Code used as additional condition for node to be extracted.
-        '''
+           condition (str): Code used as additional condition for node to be extracted.
+        """
 
-        #if we are at the end of path_to_node
+        # if we are at the end of path_to_node
         if len(splitted_path) == 1:
 
-            if filter == None:
-                #if there is no filter, just return what you got
+            if condition is None:
+                # if there is no condition, just return what you got
                 try:
                     res = root[splitted_path[0]]
-                except KeyError:
-                    #if there is no node from path
+                except (TypeError, KeyError):
+                    # if there is no node from path
                     return None
                 return res
             else:
-                #save result
+                # save result
                 res = root[splitted_path[0]]
-                filter = filter.replace("$arg1", "")
+                condition = condition.replace("$arg1", "")
 
                 #if result contains more than one entry, run evaluate string on it to throw unnecesary ones
                 if isinstance(res,list):
                     res2 = []
                     for x in res:
-                        if(eval(f'x{filter}')):
+                        if(eval(f'x{condition}')):
                             res2.append(x)
                     return res2
 
                 elif isinstance(res,(dict, str, int, float)):
-                    if (eval(f'res{filter}')):
+                    if (eval(f'res{condition}')):
                         return res
                     return None
                 else:
@@ -120,17 +121,17 @@ class Converter:
             new_root = root[splitted_path[0]]
         except  KeyError:
             raise KeyError(f'node \"{splitted_path[0]}\" not found') from None
-        return Converter.__get(new_root, splitted_path[1:], filter)
+        return Converter.__get(new_root, splitted_path[1:], condition)
 
     @staticmethod
     def __set(root, splitted_path, value):
-        '''
+        """
           Sets value in dict.
           Args:
            root (dict): Root of the dictionary.
            splitted_path (list): List of the following nodes (path to node).
            value: Value to be set. Could be literal, list or dict.
-        '''
+        """
 
         if len(splitted_path) == 1:
             root[splitted_path[0]] = value
@@ -148,7 +149,7 @@ class Converter:
 
     @staticmethod
     def convert(yaml_dict, command_line=False):
-        '''
+        """
           Main method used to convert yaml using mappings.
           NOTE: Mappings are read from mappings package.
 
@@ -156,7 +157,7 @@ class Converter:
            yaml_dict (dict): Dictionary to be converted.
            command_line (bool): Indicates if function was called by user (true), or called implicit by iWrap (false).
 
-        '''
+        """
         transform_counter = 0
         for mapping in mappings:
             mapping = tuple(s.lower() for s in mapping)
@@ -175,29 +176,29 @@ class Converter:
             elif mapping[0] == 'delete':
                 path = mapping[1]
                 try:
-                    filter = mapping[2]
+                    condition = mapping[2]
                 except IndexError:
-                    filter = None
+                    condition = None
 
-                if Converter.__delete(yaml_dict, path.split('/'), filter):
+                if Converter.__delete(yaml_dict, path.split('/'), condition):
                     transform_counter += 1
 
             elif mapping[0] == 'move':
                 path1 = mapping[1]
                 path2 = mapping[2]
                 try:
-                    filter = mapping[3]
+                    condition = mapping[3]
                 except IndexError:
-                    filter = None
+                    condition = None
 
-                value = Converter.__get(yaml_dict, path1.split('/'), filter)
+                value = Converter.__get(yaml_dict, path1.split('/'), condition)
                 target = Converter.__get(yaml_dict, path2.split('/'), None)
 
                 #dont replace existing value with None if target value exists
                 if value is None and target is not None:
                     continue
 
-                if Converter.__delete(yaml_dict, path1.split('/'), filter):
+                if Converter.__delete(yaml_dict, path1.split('/'), condition):
                     transform_counter += 1
 
                 if Converter.__set(yaml_dict, path2.split('/'), value):
