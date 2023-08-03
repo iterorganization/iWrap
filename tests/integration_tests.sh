@@ -60,7 +60,7 @@ then
 else
   echo -e "\n++++++++++++++++++++!!!--------------ONBAMBOO--------------!!!++++++++++++++++++++"
   # Source and run scripts with environment vars for CI server
-  # set -e
+  set -e
   # SET UP ENVIRONMENT FOR COMPILATION
   . /usr/share/Modules/init/sh
   module use /work/imas/etc/modules/all
