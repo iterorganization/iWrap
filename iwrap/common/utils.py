@@ -13,6 +13,26 @@ def resolve_path(in_path: str, root_dir: str = None):
     return out_path
 
 
+def resolve_variable(in_text: str):
+    # check if None
+    if not in_text:
+        return in_text
+
+    #check if environment var
+    if not in_text.startswith( '$' ):
+        return in_text
+
+    # removing starting $
+    env_variable = in_text[1:]
+
+    try:
+        out_text =  os.environ[env_variable]
+    except KeyError as ex:
+        raise KeyError( f"System variable '{env_variable}' cannot be resolved!" ) from ex
+
+    return out_text
+
+
 def make_relative(in_path: str, root_dir: str = None):
     if not in_path:
         return in_path

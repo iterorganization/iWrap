@@ -129,5 +129,14 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        return super().to_dict(resolve_path, make_relative, project_root_dir)
+
+        ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
+        if resolve_path:
+            compiler_cmd = utils.resolve_variable( self.compiler_cmd )
+            ret_dict.update( {'compiler_cmd': compiler_cmd} )
+
+            mpi_compiler_cmd = utils.resolve_variable( self.mpi_compiler_cmd )
+            ret_dict.update( {'mpi_compiler_cmd': mpi_compiler_cmd} )
+
+        return ret_dict
 
