@@ -30,7 +30,7 @@ code_description:
             init: ''
             main: physics_ii_cpp
     settings:
-        compiler_cmd: g++
+        compiler_cmd: $CXX
         extra_libraries:
             path_defined:
             - ./native_code/libxmlIMAS.a

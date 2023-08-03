@@ -24,8 +24,8 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: gfortran
-        mpi_compiler_cmd: mpifort
+        compiler_cmd: $FC
+        mpi_compiler_cmd: $MPIFC
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:

@@ -9,7 +9,7 @@ wf-run:
 actor:
 	iwrap -a core2dist -f ./cp2ds.yaml
 
-actor-gui: native
+actor-gui:
 	iwrap-gui -a core2dist -f ./cp2ds.yaml
 
 native:

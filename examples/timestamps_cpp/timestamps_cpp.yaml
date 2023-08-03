@@ -1,5 +1,5 @@
 actor_description:
-    actor_name: core2dist_cpp
+    actor_name: timestamps_cpp
     actor_type: python
     data_type: legacy
 
@@ -7,13 +7,14 @@ code_description:
     implementation:
         subroutines:
             init:
-            main:   coreprofiles2distsource_cpp
+            main:   timestamps_cpp
             finalize:
+            get_timestamp: get_timestamp_cpp
         programming_language: cpp
         data_dictionary_compliant: 3.37.0
         data_type: legacy
-        code_path: ./native_code/libcp2ds_cpp.a
-        include_path: ./native_code/coreprofiles2distsource.h
+        code_path: ./native_code/libtimestamps_cpp.a
+        include_path: ./native_code/timestamps.h
         code_parameters:
             parameters:
             schema:
@@ -29,7 +30,7 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: g++
+        compiler_cmd: $CXX
         mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:

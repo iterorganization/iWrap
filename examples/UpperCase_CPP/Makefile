@@ -1,5 +1,3 @@
-COMPILER ?= g++
-
 .PHONY: native actor actor-gui wf-run
 
 wf-run:  workflow_cpp.py
@@ -9,10 +7,10 @@ wf-run:  workflow_cpp.py
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a UpperCase_CPP -f ./UpperCase_CPP_$(COMPILER).yaml
+	iwrap -a UpperCase_CPP -f ./UpperCase_CPP.yaml
 
 actor-gui: native
-	iwrap-gui -a UpperCase_CPP -f ./UpperCase_CPP_$(COMPILER).yaml
+	iwrap-gui -a UpperCase_CPP -f ./UpperCase_CPP.yaml
 
 native:
 	make -C ./native_code clean

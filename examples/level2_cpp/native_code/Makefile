@@ -1,5 +1,3 @@
-COMPILER ?= g++
-CXX = $(COMPILER)
 CXXFLAGS = -std=c++14 -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
 LIBS =   `pkg-config --libs imas-cpp libxml-2.0`

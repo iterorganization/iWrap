@@ -1,5 +1,3 @@
-COMPILER ?= g++
-
 .PHONY: native actor actor-gui wf-run
 
 wf-run:
@@ -9,10 +7,10 @@ wf-run:
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a timestamps_cpp -f ./timestamps_$(COMPILER).yaml
+	iwrap -a timestamps_cpp -f ./timestamps_cpp.yaml
 
 actor-gui: native
-	iwrap-gui -a timestamps_cpp -f ./timestamps_$(COMPILER).yaml
+	iwrap-gui -a timestamps_cpp -f ./timestamps_cpp.yaml
 
 native:
 	make -C ./native_code clean

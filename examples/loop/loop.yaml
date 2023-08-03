@@ -22,7 +22,7 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: gfortran
+        compiler_cmd: $FC
         mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:

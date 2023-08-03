@@ -1,24 +1,30 @@
 code_description:
     implementation:
         subroutines:
-            main:   code_restart
-            get_state: get_code_state
-            set_state: restore_code_state
+            init:   init_code
+            main:   code_lifecycle
+            finalize: clean_up
         data_type: legacy
-        code_path: ./native_code/libcode_restart_cpp.a
-        include_path: ./native_code/code_restart.h
+        code_path: ./native_code/libcode_lifecycle_cpp.a
+        include_path: ./native_code/code_lifecycle.h
         programming_language: cpp
         data_dictionary_compliant: 3.37.0
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
     arguments:
     -   name: equilibrium_in
         type: equilibrium
         intent: IN
+    -   name: equilibrium_out
+        type: equilibrium
+        intent: OUT
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: g++
+        compiler_cmd: $CXX
         mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:

@@ -1,35 +1,30 @@
-actor_description:
-    actor_name: core2dist_cpp
-    actor_type: python
-    data_type: legacy
-
 code_description:
     implementation:
         subroutines:
-            init:
-            main:   coreprofiles2distsource_cpp
-            finalize:
+            init:   InitCode
+            main:   UpperCase
+            finalize: CleanUp
+        data_type: legacy
+        code_path: ./native_code/libUpperCaseCPP.a
+        include_path: ./native_code/UpperCase.h
         programming_language: cpp
         data_dictionary_compliant: 3.37.0
-        data_type: legacy
-        code_path: ./native_code/libcp2ds_cpp.a
-        include_path: ./native_code/coreprofiles2distsource.h
         code_parameters:
-            parameters:
-            schema:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
     arguments:
-    -   name: core_profiles_in
-        type: core_profiles
+    -   name: equilibrium_in
+        type: equilibrium
         intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
+    -   name: equilibrium_out
+        type: equilibrium
         intent: OUT
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: icpc
+        compiler_cmd: $CXX
         mpi_compiler_cmd:
         open_mp_switch: false
         extra_libraries:

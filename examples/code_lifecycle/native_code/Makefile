@@ -1,4 +1,3 @@
-FC?=gfortran
 ifeq ($(FC), ifort)
 # INTEL - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
   F90=ifort

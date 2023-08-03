@@ -22,8 +22,8 @@ code_description:
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. '
     settings:
-        compiler_cmd: icpc
-        mpi_compiler_cmd: mpiicpc
+        compiler_cmd: $CXX
+        mpi_compiler_cmd: $MPICXX
         open_mp_switch: false
         extra_libraries:
             pkg_config_defined:
