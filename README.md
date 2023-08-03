@@ -27,6 +27,7 @@ The scripts provide very simple operations. It:
 * purges modules
 * loads `IMAS`
 * sets `PATH` and `PYTHONPATH`
+* sets compiler flags like `CXX`, `FC`, `MPICXX`, `MPIFC`
 
 ## Launching iWrap
 To launch _iWrap_, just execute on commandline:
@@ -101,6 +102,7 @@ Following software must be available to run the examples:
 
 - IMAS built with Access Layer of version 4.11 (or later)
 - XMLLib library - necessary to build and run actors that wraps code using XML parameters - should be available via pkg-config mechanism
+- compiler flags: `CXX`, `FC`, `MPICXX`, `MPIFC` must be set
 
 To simplify setting up a working environment, configuration scripts are available for two of the platforms
 commonly utilized by IMAS users:
