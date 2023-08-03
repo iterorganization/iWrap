@@ -341,7 +341,8 @@ Run mode
 
 -   ``RunMode.STANDALONE``   - an actor runs native code as executable in a separate system process, having its
     own environment and (usually) bigger system resources available. This mode is set automatically for MPI
-    applications, however it can be set automatically e.g. for memory demanding code.
+    applications, however it can be set automatically e.g. for memory demanding code. It  has also its limitations:
+    only `INIT`, `MAIN` and `FINALIZE` methods of the native code can be run in the 'STANDALONE mode.
 
 -   ``RunMode.BATCH`` - an actor standalone executable is submitted to a batch queue.
     See `Batch settings`_ for details concerning batch job configuration
