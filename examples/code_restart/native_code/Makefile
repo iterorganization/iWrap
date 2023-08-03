@@ -1,13 +1,13 @@
 ifeq ($(FC), ifort)
 # INTEL - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
-  F90=ifort
-  F90FLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS
+  FC=ifort
+  FFLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS
   INCLUDE=-I. `pkg-config imas-ifort --cflags`
   LIBS=`pkg-config imas-ifort --libs        `
 else
 # GFORTRAN - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
-  F90=gfortran
-  F90FLAGS= -g -fPIC -cpp # FPIC AND PREPROCESSING OPTIONS
+  FC=gfortran
+  FFLAGS= -g -fPIC -cpp # FPIC AND PREPROCESSING OPTIONS
   INCLUDE=-I. `pkg-config imas-gfortran --cflags`
   LIBS=`pkg-config imas-gfortran --libs         `
 endif
@@ -20,7 +20,7 @@ INCLUDE+=`pkg-config xmllib --cflags`
 OBJS_ACTOR = code_restart.o
 
 # LIBRARY COMPILATION
-libcode_restart.a: ${OBJS_ACTOR}
+libcode_restart.a: $(OBJS_ACTOR)
 	@ar -cr $@ *.o
 
 # COMPILE THE IMAS ACTOR
@@ -29,7 +29,7 @@ install: libcode_restart.a
 
 # RULES FOR ALL OBJECT FILES
 %.o:%.f90
-	$(F90) ${F90FLAGS} -c  $< $(INCLUDE)
+	$(FC) ${FFLAGS} -c  $< $(INCLUDE)
 
 # CLEAN DIRECTORY
 clean:

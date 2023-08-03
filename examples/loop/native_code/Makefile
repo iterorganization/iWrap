@@ -1,13 +1,13 @@
 ifeq ($(FC), ifort)
 # INTEL - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
   FC=ifort
-  FLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS
+  FFLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS
   INCLUDE=-I. `pkg-config imas-ifort --cflags`
   LIBS=`pkg-config imas-ifort --libs        `
 else
 # GFORTRAN - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
   FC=gfortran
-  FLAGS= -g -fPIC -cpp # FPIC AND PREPROCESSING OPTIONS
+  FFLAGS= -g -fPIC -cpp # FPIC AND PREPROCESSING OPTIONS
   INCLUDE=-I. `pkg-config imas-gfortran --cflags`
   LIBS=`pkg-config imas-gfortran --libs         `
 endif
@@ -37,7 +37,7 @@ install: libloop.a
 
 # RULES FOR ALL OBJECT FILES
 %.o:%.f90
-	$(FC) $(FLAGS) -c  $< $(INCLUDE)
+	$(FC) $(FFLAGS) -c  $< $(INCLUDE)
 
 # CLEAN DIRECTORY
 clean:

@@ -1,4 +1,4 @@
-CFLAGS = -g -fPIC
+FFLAGS = -g -fPIC
 LIBS =   `pkg-config --libs imas-$(FC)`
 INCLUDES = `pkg-config --cflags imas-$(FC)`
 
@@ -8,7 +8,7 @@ libcp2ds-mpi.a: cp2ds-mpi.o
 	@ar -rcs $@ $^
 
 cp2ds-mpi.o: cp2ds-mpi.f90
-	$(MPIFC) $(CFLAGS) -c -o $@ $^ ${INCLUDES} $(LIBS)
+	$(MPIFC) $(FFLAGS) -c -o $@ $^ ${INCLUDES} $(LIBS)
 
 clean:
 	rm -f *.o *.a
