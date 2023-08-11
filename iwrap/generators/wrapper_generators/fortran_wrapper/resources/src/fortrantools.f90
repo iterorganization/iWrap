@@ -18,7 +18,7 @@ module iwrap_tools
  end interface
 
     interface
-        function C_strlen(s) result(result) bind(C,name="strlen")
+        function iwrap_C_strlen(s) result(result) bind(C,name="strlen")
             use iso_c_binding
 
             integer(C_SIZE_T) :: result
@@ -38,7 +38,7 @@ contains
         if (.not. C_ASSOCIATED(c_string_ptr)) then
             length = 0
         else
-            length = C_strlen(c_string_ptr)
+            length = iwrap_C_strlen(c_string_ptr)
         end if
     end FUNCTION c_str_length
 
