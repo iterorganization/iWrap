@@ -13,7 +13,7 @@
 
 {%- macro provenance(ids_var_name, sbrt_name) -%}
    {{ ids_var_name }}.code.name = "{{sbrt_name}}";
-   {{ ids_var_name }}.code.version = "";
+   {{ ids_var_name }}.code.parameters = std::string(code_params_str);
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
