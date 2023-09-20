@@ -87,7 +87,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
    ! ------------ Provenance information --------------
  {% for argument in arguments if argument.intent == 'OUT' %}
 
-    {{ ids_macro.provenance( argument.name , sbrt_name) }}
+    {{ ids_macro.provenance( argument.name , sbrt_name, code_parameters) }}
     {% endfor %}
 
      {% for argument in arguments if argument.intent == 'OUT' %}
