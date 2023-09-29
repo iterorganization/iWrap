@@ -11,9 +11,11 @@
 	{{ ids_var_name }}.get({{ ids_var_name }}_desc->occurrence);
 {%- endmacro -%}
 
-{%- macro provenance(ids_var_name, sbrt_name) -%}
+{%- macro provenance(ids_var_name, sbrt_name, code_parameters) -%}
    {{ ids_var_name }}.code.name = "{{sbrt_name}}";
-   {{ ids_var_name }}.code.version = "";
+   {% if code_parameters %}
+       {{ ids_var_name }}.code.parameters = std::string(code_params_str);
+   {% endif %}
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
