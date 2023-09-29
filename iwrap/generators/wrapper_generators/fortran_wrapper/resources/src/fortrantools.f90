@@ -358,7 +358,37 @@ FUNCTION convert_cptr2string(in_c_ptr) RESULT( out_string)
 
 end FUNCTION
 
+! ------------------------
 
+FUNCTION convert_char_arr_to_al_str(in_char_arr) RESULT (al_str)
+    ! converts long string (character(len>132)) to array of strings no longer than 132 characters
+    use iso_c_binding, ONLY: C_NULL_CHAR
+    implicit none
+
+    character(kind=c_char), dimension(*), intent(IN) :: in_char_arr
+    character(len=132), dimension(:), pointer :: al_str(:)
+
+    integer :: iloopmax, string_size
+
+    string_size=0
+    do
+       if (in_char_arr(string_size+1) == C_NULL_CHAR) exit
+       string_size = string_size + 1
+    end do
+
+    iloopmax=string_size/132
+    if (mod(string_size,132)/=0) then
+        iloopmax = iloopmax + 1
+    endif
+    allocate(al_str(iloopmax))
+
+    al_str = transfer(in_char_arr(1:string_size), al_str)
+
+    if(mod(string_size,132)/=0) then
+        al_str(iloopmax)(mod(string_size,132)+1:132) = ' '
+    endif
+
+END FUNCTION convert_char_arr_to_al_str
 
 end module iwrap_tools
 
