@@ -1,8 +1,11 @@
 module purge
 module load cineca
 
-module load imasenv/3.37.0/gcc
+module load imasenv/3.39.0/gcc
 
+if [[ ! -n $AL_VERSION ]]; then
+    export AL_VERSION=$UAL_VERSION
+fi
 
 export PATH="$PWD/bin:$PATH"
 export PYTHONPATH=$PWD:$PYTHONPATH

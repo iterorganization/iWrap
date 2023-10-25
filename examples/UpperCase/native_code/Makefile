@@ -1,15 +1,15 @@
-ifeq ($(FC), ifort)
-# INTEL - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
-  FC=ifort
-  FFLAGS= -g -fPIC -fpp # FPIC AND PREPROCESSING OPTIONS
-  INCLUDE=-I. `pkg-config imas-ifort --cflags`
-  LIBS=`pkg-config imas-ifort --libs        `
-else
-# GFORTRAN - LINKS TO THE IMAS LIBRARY AND INCLUDE DIRECTORY
-  FC=gfortran
-  FFLAGS= -g -fPIC -cpp  # FPIC AND PREPROCESSING OPTIONS
-  INCLUDE=-I. `pkg-config imas-gfortran --cflags`
-  LIBS=`pkg-config imas-gfortran --libs         `
+AL_MAJOR := $(firstword $(subst ., ,$(AL_VERSION)))
+
+FFLAGS= -g -fPIC # FPIC AND PREPROCESSING OPTIONS
+
+ifeq ($(AL_MAJOR),)
+    $(error Could not extract major AL version from AL_VERSION system variable. Is your IMAS module loaded?)
+else ifeq ($(AL_MAJOR), 5)
+	INCLUDE=-I. `pkg-config al-fortran --cflags`
+	LIBS=`pkg-config al-fortran --libs`
+else ifeq ($(AL_MAJOR), 4)
+  INCLUDE=-I. `pkg-config imas-$(FC) --cflags`
+  LIBS=`pkg-config imas-$(FC) --libs`
 endif
 
 # XMLLIB LIBRARIES

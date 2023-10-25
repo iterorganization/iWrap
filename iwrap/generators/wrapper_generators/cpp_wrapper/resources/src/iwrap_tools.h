@@ -1,8 +1,13 @@
 #ifndef _IWRAP_TOOLS
 #define _IWRAP_TOOLS
 
-#include "UALClasses.h"
 #include "defs.h"
+
+{% if build_info.al_version.startswith('4.')   %}
+    #include "UALClasses.h"
+{% else %}
+    #include "ALClasses.h"
+{% endif %}
 
 int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size);
 

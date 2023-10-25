@@ -1,8 +1,12 @@
 module purge
 module load cineca
 
-module load imasenv/3.38.1/gcc
+module load imasenv/3.39.0/gcc
+#module load imasenv/3.39.0-5.0.0-test/gcc
 
+if ( ! $?AL_VERSION ) then
+	setenv AL_VERSION $UAL_VERSION
+endif
 
 setenv PATH "${PWD}/bin:${PATH}"
 setenv PYTHONPATH ${PWD}:${PYTHONPATH}

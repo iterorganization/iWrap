@@ -8,7 +8,7 @@
 #include <mpi.h>
 {% endif %}
 
-{{ ids_macro.imports() }}
+{{ ids_macro.imports(build_info.al_version) }}
 #include "defs.h"
 #include "iwrap_tools.h"
 #include  "{{code_description.implementation.include_path | basename }}"

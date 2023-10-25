@@ -3,7 +3,7 @@
 #ifndef _CPP_WRAPPER
 #define _CPP_WRAPPER
 
-{{ ids_macro.imports() }}
+{{ ids_macro.imports(build_info.al_version) }}
 #include "defs.h"
 
 {% if code_description.implementation.subroutines.init %}

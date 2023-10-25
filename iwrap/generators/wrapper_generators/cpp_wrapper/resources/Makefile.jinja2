@@ -14,16 +14,25 @@ WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
 OPENMPFLAG={{ code_description.settings.open_mp_switch or '' }}
 
-CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG)
-
+{% if build_info.al_version.startswith('4.')   %}
+AL_MAJOR=4
+{% else %}
+AL_MAJOR=5
+{% endif %}
+CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG) -DAL_MAJOR=${AL_MAJOR}
 
 CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
-
 # main IMAS libs to be used
-CORE_LIBS_FLAGS= $(shell pkg-config --cflags imas-cpp)
-CORE_LIBS=$(shell pkg-config --libs imas-cpp)
+{% if build_info.al_version.startswith('4.')   %}
+IMAS_LIB_NAME=imas-cpp
+{% else %}
+IMAS_LIB_NAME=al-cpp
+{% endif %}
+
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags $(IMAS_LIB_NAME))
+CORE_LIBS=$(shell pkg-config --libs $(IMAS_LIB_NAME))
 
 # required libs published using pkg-config mechanism
 {% if code_description.settings.extra_libraries.pkg_config_defined %}
