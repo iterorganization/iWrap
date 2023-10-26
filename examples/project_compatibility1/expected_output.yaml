@@ -16,6 +16,7 @@ code_description:
         name: clean_up
       init:
         name: init_code
+        needs_code_parameters: true
       main:
         arguments:
         - intent: IN
@@ -25,6 +26,7 @@ code_description:
           name: equilibrium_out
           type: equilibrium
         name: code_lifecycle
+        needs_code_parameters: true
   settings:
     compiler_cmd: gfortran
     extra_libraries:
