@@ -1,6 +1,11 @@
-.PHONY: native actor actor-gui wf-run
+test: output/updated_1_v0.6.0.yaml output/updated_1_v0.7.0.yaml output/updated_1_newest.yaml
 
-test:
-	iwrap-yaml-update  -f ./input/outdated.yaml -o updated.yaml
-	@cmp expected_output.txt updated.yaml &> /dev/null || \
-	(echo 'ERROR: expected and real output differs!' && exit 1 )
+IMAS_VERSION=3.37.0
+output/updated_%.yaml: input/test_%.yaml
+	mkdir -p output
+	iwrap-yaml-update  -f $< -o $@
+	@cmp expected_output.yaml $@ &> /dev/null || \
+	   (echo 'ERROR: expected and real output differs!' && exit 1 )
+
+clean:
+	rm -f output/*

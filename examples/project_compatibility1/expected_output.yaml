@@ -1,0 +1,37 @@
+code_description:
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+      parameters: ./input/input_physics.xml
+      schema: ./input/input_physics.xsd
+    code_path: ./native_code/libcode_lifecycle.a
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path: ./native_code/mod_code_lifecycle.mod
+    programming_language: Fortran
+    subroutines:
+      finalize:
+        name: clean_up
+      init:
+        name: init_code
+        needs_code_parameters: true
+      main:
+        arguments:
+        - intent: IN
+          name: equilibrium_in
+          type: equilibrium
+        - intent: OUT
+          name: equilibrium_out
+          type: equilibrium
+        name: code_lifecycle
+        needs_code_parameters: true
+  settings:
+    compiler_cmd: gfortran
+    extra_libraries:
+      path_defined:
+      pkg_config_defined:
+      - xmllib
+    mpi_compiler_cmd:
+    open_mp_switch: false
