@@ -2,12 +2,12 @@
 
 
 ## Version 0.8.0
-* Compatibility with AL5.x [IMAS-4463
-* Custom actor logging method [IMAS-4461]
-* YAML compatibility [IMAS-4727]
-* 'Specific' code desc validation depending on actor type [IMAS-4768]
-* Usage of system vars to specify compiler [IMAS-4737]
-* Improvements of the code parameters handling
+* Compatibility with Access-Layer 5.x 
+* Adding custom actor logging method 
+* Adding mechanism for backward compatibility of YAML description
+* Adding specific checks for code description of a given actor type
+* Allow usage of system variables to specify compiler 
+* Improved handling of code parameters 
 * Minor bugs corrections
 
 ## Version 0.7.0

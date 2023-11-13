@@ -105,6 +105,6 @@ if __name__ == "__main__":
                 'iwrap = bin.run:cmd_line',
             ]
         },
-		scripts=['bin/iwrap-doc'],
+	scripts=['bin/iwrap-doc','bin/iwrap-yaml-update'],
         data_files=list_docs_data_files(path_to_docs="./docs/html/")
     )
