@@ -1,9 +1,10 @@
+AL_VERSION ?= $(UAL_VERSION)
 AL_MAJOR := $(firstword $(subst ., ,$(AL_VERSION)))
 
 FFLAGS= -g -fPIC # FPIC AND PREPROCESSING OPTIONS
 
-ifeq ($(AL_MAJOR),5)
-    $(error Could not extract major AL version from AL_VERSION system variable. Is your IMAS module loaded?)
+ifeq ($(AL_MAJOR),)
+    $(error Could not extract major AL version from UAL_VERSION/AL_VERSION system variable. Is your IMAS module loaded?)
 else ifeq ($(AL_MAJOR), 5)
 	INCLUDE=-I. `pkg-config al-fortran --cflags`
 	LIBS=`pkg-config al-fortran --libs`
@@ -20,7 +21,7 @@ INCLUDE+=`pkg-config xmllib --cflags`
 OBJS_ACTOR = code_lifecycle.o
 
 # LIBRARY COMPILATION
-libcode_lifecycle.a: ${OBJS_ACTOR}
+libcode_lifecycle.a: $(OBJS_ACTOR)
 	@ar -cr $@ *.o
 
 # COMPILE THE IMAS ACTOR
@@ -29,7 +30,7 @@ install: libcode_lifecycle.a
 
 # RULES FOR ALL OBJECT FILES
 %.o:%.f90
-	$(FC) ${FFLAGS} -c  $< $(INCLUDE)
+	$(FC) $(FFLAGS) -c  $< $(INCLUDE)
 
 # CLEAN DIRECTORY
 clean:
