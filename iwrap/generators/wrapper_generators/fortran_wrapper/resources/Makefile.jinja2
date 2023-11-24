@@ -1,8 +1,3 @@
-AL_MAJOR := $(firstword $(subst ., ,$(AL_VERSION)))
-ifeq ($(AL_MAJOR),)
-	$(error Could not extract major AL version from AL_VERSION system variable. Is your IMAS module loaded?)
-endif
-
 # actor name
 ACTOR_NAME={{actor_description.actor_name}}
 
