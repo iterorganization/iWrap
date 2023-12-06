@@ -120,7 +120,6 @@ Generic information common for all programming languages handled by iWrap:
 
                 -  name of user method / subroutine to be called,
                 -  must be \ **exactly the same** as name of called  method / subroutine
-                -  it is used also as an actor name and the name of directory where actor is installed
 
             -  value: string
             -  example: 'my_subroutine'

@@ -5,6 +5,7 @@ from tkinter import ttk
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
@@ -18,17 +19,21 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
         ttk.Label( self, text="*Actor name:" ).grid( column=0, row=0, padx=10, pady=5, sticky=tk.W )
         self.actor_name = ttk.Entry( self )
         self.actor_name.grid( column=1, columnspan=10, row=0, padx=10, pady=5, sticky=(tk.W, tk.E) )
+        ToolTip(self.actor_name, 'actor_name')
+
 
         ttk.Label( self, text="*Actor type:" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
 
         self.actor_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.actor_type_combo.grid( column=1, columnspan=10, row=1, padx=10, pady=5, sticky=(tk.E, tk.W) )
         self.actor_type_combo.bind( "<<ComboboxSelected>>", self.actor_type_combo_action )
+        ToolTip(self.actor_type_combo, 'actor_type')
 
         ttk.Label( self, text="*Data type:" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
 
         self.data_type_combo = ttk.Combobox( self, width=15, state='readonly' )
         self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
+        ToolTip(self.data_type_combo, 'data_type')
 
         self.columnconfigure( 1, weight=3 )
 

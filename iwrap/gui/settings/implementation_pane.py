@@ -11,6 +11,7 @@ from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
 from iwrap.gui.settings.subroutines_pane import SubroutinesPane
 from iwrap.gui.menu import MenuBar
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class ImplementationPane(ttk.Frame, IWrapPane):
@@ -59,6 +60,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
         self.programming_language_combobox.current(0)
         self.programming_language_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ToolTip(self.programming_language_combobox, 'programming_language')
 
         # DATA TYPE COMBOBOX
         ttk.Label(labelframe, text="*Data type:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
@@ -66,24 +68,27 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.data_type_combobox['values'] = Engine().active_generator.code_data_types
         self.data_type_combobox.current(0)
         self.data_type_combobox.grid(column=1, row=2, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ToolTip(self.data_type_combobox, 'data_type')
 
         # ENTRY FOR IMAS COMPLIANT VERSION
         ttk.Label(labelframe, text="*Data Dictionary compliant:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.data_dictionary_compliant_entry = ttk.Entry(labelframe, textvariable=self.data_dictionary_compliant)
         self.data_dictionary_compliant_entry.grid(column=1, row=3, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ToolTip(self.data_dictionary_compliant_entry, 'data_dictionary_compliant')
 
-        # BROWSE BUTTON AND ENTRY FOR PATH
+        # BROWSE BUTTON AND ENTRY FOR CODE PATH
         ttk.Label(labelframe, text="*Code path:").grid(column=0, row=5, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.code_path_entry = ttk.Entry(labelframe, textvariable=self.code_path)
         self.code_path_entry.grid(column=1, row=5, padx=10, pady=5, sticky=(tk.W, tk.E))
         ttk.Button(labelframe, text="Browse...", command=lambda: self.on_click_file(self.code_path), width=10).grid(column=2, row=5, padx=10, pady=5)
+        ToolTip(self.code_path_entry, 'code_path')
 
         # BROWSE BUTTON AND ENTRY FOR ROOT DIR
         ttk.Label(labelframe, text="Root dir:").grid(column=0, row=4, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.root_dir_entry = ttk.Entry(labelframe, textvariable=self.root_dir)
         self.root_dir_entry.grid(column=1, row=4, padx=10, pady=5, sticky=(tk.W, tk.E))
-        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=4, padx=10,
-                                                                                           pady=5)
+        ttk.Button(labelframe, text="Browse...", command=self.on_click_dir, width=10).grid(column=2, row=4, padx=10, pady=5)
+        ToolTip(self.root_dir_entry, 'root_dir')
 
         # MODULE PATH
         self.include_path = tk.StringVar()
@@ -94,6 +99,7 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         browse_text = ttk.Entry(labelframe, textvariable=self.include_path)
         browse_text.grid(column=1, row=6, padx=10, pady=5, sticky=(tk.W, tk.E))
         browse_button.grid(column=2, row=6, padx=10, pady=5, sticky=(tk.W, tk.E))
+        ToolTip(browse_text, 'include_path')
 
         # TABS FRAME
         tab_frame = ttk.Frame(self)

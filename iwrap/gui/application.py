@@ -13,6 +13,7 @@ from iwrap.gui.menu import MenuBar
 
 from iwrap.gui.settings.main_pane import SettingsMainPane
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class ButtonPane(ttk.Frame):
@@ -35,6 +36,7 @@ class ButtonPane(ttk.Frame):
 
         self.install_dir_entry = ttk.Entry(self, textvariable=self.install_dir)
         self.install_dir_entry.pack(side=tk.LEFT, pady=5, padx=5, expand=True, fill=tk.X)
+        ToolTip(self.install_dir_entry, 'install_dir')
 
     def generate_action(self):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow

@@ -4,6 +4,7 @@ from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class SubroutinesPane(ttk.Frame, IWrapPane):
@@ -44,31 +45,37 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         ttk.Label(labelframe_sub, text="Init:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.init)
         text.grid(column=1, row=1, padx=10, pady=5)
+        ToolTip(text, 'init')
 
         # MAIN
         ttk.Label(labelframe_sub, text="*Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.main)
         text.grid(column=1, row=2, padx=10, pady=5)
+        ToolTip(text, 'main')
 
         # Finalize
         ttk.Label(labelframe_sub, text="Finalize:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.finalize)
         text.grid(column=1, row=3, padx=10, pady=5)
+        ToolTip(text, 'finalize')
 
         # get_state
         ttk.Label(labelframe_sub, text="Get status:").grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.get_state)
         text.grid(column=3, row=1, padx=10, pady=5)
+        ToolTip(text, 'get_status')
 
         # set_state
         ttk.Label(labelframe_sub, text="Set status:").grid(column=2, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.set_state)
         text.grid(column=3, row=2, padx=10, pady=5)
+        ToolTip(text, 'set_status')
 
         # get_timestamp
         ttk.Label(labelframe_sub, text="Get timestamp:").grid(column=2, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
         text = ttk.Entry(labelframe_sub, textvariable=self.get_timestamp)
         text.grid(column=3, row=3, padx=10, pady=5)
+        ToolTip(text, 'get_timestamp')
 
     def update_settings(self, *args):
         """Update settings in the ProjectSettings.
