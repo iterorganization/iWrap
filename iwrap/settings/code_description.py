@@ -374,7 +374,7 @@ class CodeDescription( SettingsBaseClass ):
         arguments (list [:obj:`Arguments`]): list of the in/out arguments of the code
         documentation (str): human readable description of the code
         settings (dict): code settings
-        implementation(:obj:`Implementation`): details on the implementation of the code 
+        implementation(:obj:`Implementation`): details on the implementation of the code
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
