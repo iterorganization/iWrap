@@ -35,7 +35,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE GET STATE SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_get_state(
                 char** status_out,
                 int* out_status_code, char** out_status_message);
 {% endif %}
@@ -44,7 +44,7 @@ extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE SET STATE SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_set_state(
                 char* state, int* state_str_size,
                 int* out_status_code, char** out_status_message);
 {% endif %}
@@ -53,7 +53,7 @@ extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE GET TIMESTAMP SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_get_timestamp(
                 double* timestamp_out,
                 int* out_status_code, char** out_status_message);
 {% endif %}
