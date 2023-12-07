@@ -2,10 +2,12 @@ import logging
 import ctypes
 from pathlib import Path
 
+from .data_storages.data_descriptions import IDSDescription
 
-class IDSCType( ctypes.Structure ):
 
-    _fields_ = (("ids_name_", ctypes.c_byte * 132),
+class IDSCType( ctypes.Structure, IDSDescription ):
+
+    _fields_ = (("ids_type_", ctypes.c_byte * 132),
                 ("shot", ctypes.c_int),
                 ("run", ctypes.c_int),
                 ("occurrence", ctypes.c_int),
@@ -16,13 +18,13 @@ class IDSCType( ctypes.Structure ):
                 )
 
     @property
-    def ids_name(self):
-        return ''.join( (chr( x ) for x in self.ids_name_[:]) ).strip()
+    def ids_type(self):
+        return ''.join( (chr( x ) for x in self.ids_type_[:]) ).strip()
 
-    @ids_name.setter
-    def ids_name(self, ids_name_):
-        self.ids_name_[:] = len( self.ids_name_ ) * [ord( ' ' )]
-        self.ids_name_[:len( ids_name_ )] = [ord( x ) for x in ids_name_]
+    @ids_type.setter
+    def ids_type(self, ids_type_):
+        self.ids_type_[:] = len( self.ids_type_ ) * [ord( ' ' )]
+        self.ids_type_[:len( ids_type_ )] = [ord( x ) for x in ids_type_]
 
     @property
     def machine(self):
@@ -51,37 +53,18 @@ class IDSCType( ctypes.Structure ):
         self.version_[:] = len( self.version_ ) * [ord( ' ' )]
         self.version_[:len( version_ )] = [ord( x ) for x in version_]
 
+    def __init__(self, ids_description:IDSDescription):
+        self.ids_type = ids_description.ids_type
+        self.shot = ids_description.shot
+        self.run = ids_description.run
+        self.occurrence = ids_description.occurrence
+        self.idx = ids_description.idx
+        self.database = ids_description.database
+        self.user = ids_description.user
+        self.version = ids_description.version
 
-    def __init__(self, db_entry, ids_name, occurrence):
-
-        self.idx = db_entry.db_ctx
-        self.shot = db_entry.shot
-        self.run = db_entry.run
-        self.machine = db_entry.db_name
-        self.user = db_entry.user_name
-        self.version = db_entry.data_version
-        self.ids_name = ids_name
-        self.occurrence = occurrence
-
-    def save(self, stream):
-        stream.write( "------- IDS -------\n" )
-        stream.write( self.ids_name )
-        stream.write( "\n" )
-        stream.write( str( self.shot ) )
-        stream.write( "\n" )
-        stream.write( str( self.run ) )
-        stream.write( "\n" )
-        stream.write( str( self.occurrence ) )
-        stream.write( "\n" )
-        stream.write( str( self.idx ) )
-        stream.write( "\n" )
-        stream.write( self.machine )
-        stream.write( "\n" )
-        stream.write( self.user )
-        stream.write( "\n" )
-        stream.write( self.version )
-        stream.write( "\n" )
-
+    def convert_to_native_type(self):
+        return ctypes.byref( self )
 
 
 # # # # # # # #

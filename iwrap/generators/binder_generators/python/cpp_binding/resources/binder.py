@@ -1,73 +1,23 @@
 import ctypes
 import os
 import logging
-import subprocess
-import sys
-from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Any, List
 
-import imas
 from .data_storages import IDSConvertersRegistry
 
 from ..common.definitions import Argument
+from ..common.binder import Binder
 
-from .data_type import LegacyIDSConverter
-from .data_c_binding import ParametersCType, StatusCType
+from .data_c_binding import ParametersCType, StatusCType, IDSCType
 from ..common.runtime_settings import RuntimeSettings, RunMode, DebugMode
+from ..common import exec_system_cmd
 
-
-def exec_system_cmd(system_cmd: str,  output_stream=sys.stdout) :
-
-    proc = subprocess.Popen( system_cmd, shell=True,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-
-    for line in proc.stdout:
-        line = line.decode( errors='replace' )
-        print( line, end='', file=output_stream )
-
-    return_code = proc.wait()
-    if return_code:
-        raise RuntimeError( f'ERROR [{return_code}] while executing command: {system_cmd}' )
-
-class Binder (ABC):
-
-    @abstractmethod
-    def initialize(self, actor) -> None:
-        ...
-
-    @abstractmethod
-    def finalize(self) -> None:
-        ...
-
-    @abstractmethod
-    def call_init(self, code_parameters:str):
-        ...
-
-    @abstractmethod
-    def call_main(self, *input_idses, code_parameters:str):
-        ...
-
-    @abstractmethod
-    def call_finish(self):
-        ...
-
-    @abstractmethod
-    def call_set_state(self, state:str):
-        ...
-
-    @abstractmethod
-    def call_get_state(self) -> None:
-        ...
-
-    @abstractmethod
-    def run_standalone(self, ids_list:List[Any], code_parameters:str, exec_command:str, sandbox_dir:str, output_stream) -> None:
-        ...
-
-
-class CBinder(Binder):
+class LanguageBinder(Binder):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
+
+    def standalone_cmd(self, method_name:str) -> str:
+        exec_cmd = self.actor.actor_dir + '/bin/' + self.actor.name + '_' + method_name + '.exe'
+        return exec_cmd
 
     def __init__(self):
         self.ids_converter = None
@@ -77,15 +27,6 @@ class CBinder(Binder):
 
         self.runtime_settings: RuntimeSettings = None
         self.arg_metadata_list = None
-
-        self.wrapper_init_func = None
-        self.wrapper_main_func = None
-        self.wrapper_finish_func = None
-
-        self.wrapper_set_state_func = None
-        self.wrapper_get_state_func = None
-
-        self.wrapper_get_timestamp_func = None
 
     def initialize(self, actor):
         self.actor = actor
@@ -100,32 +41,6 @@ class CBinder(Binder):
 
         sandbox_dir = self.actor.sandbox.path
         self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
-        actor_name = self.actor.name.lower()
-        subroutines = self.actor.code_description['implementation']['subroutines']
-
-        if subroutines.get('init'):
-            sbrt_name = actor_name + "_wrapper_init"
-            self.wrapper_init_func = self.__get_wrapper_function(sbrt_name)
-
-        sbrt_name = actor_name + "_wrapper_main"
-        self.wrapper_main_func = self.__get_wrapper_function(sbrt_name)
-
-        if subroutines.get('finalize'):
-            sbrt_name = actor_name + "_wrapper_finalize"
-            self.wrapper_finish_func = self.__get_wrapper_function(sbrt_name)
-
-        if subroutines.get( 'get_state' ):
-            sbrt_name = actor_name + "_wrapper_get_state"
-            self.wrapper_get_state_func = self.__get_wrapper_function( sbrt_name )
-
-        if subroutines.get( 'set_state' ):
-            sbrt_name = actor_name + "_wrapper_set_state"
-            self.wrapper_set_state_func = self.__get_wrapper_function( sbrt_name )
-
-        if subroutines.get( 'get_timestamp' ):
-            sbrt_name = actor_name + "_wrapper_get_timestamp"
-            self.wrapper_get_timestamp_func = self.__get_wrapper_function( sbrt_name )
-
 
     def finalize(self):
         self.ids_converter.finalize()
@@ -140,14 +55,21 @@ class CBinder(Binder):
         if inputs_number != len(ids_arguments_list):
             raise RuntimeError(f'Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})')
 
-
     def __get_wrapper_function(self, function_name: str):
 
         actor_name = self.actor.name
         lib_path = self.actor_dir + '/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )
-        wrapper_fun = getattr( wrapper_lib, function_name )
+
+        subroutines = self.actor.code_description['implementation']['subroutines']
+
+        if not subroutines.get(function_name):
+            return None
+
+        sbrt_name = actor_name + "_wrapper_" + function_name
+
+        wrapper_fun = getattr( wrapper_lib, sbrt_name )
         return wrapper_fun
 
     def __status_check(self, status_info: StatusCType):
@@ -169,34 +91,11 @@ class CBinder(Binder):
 
         # LOOP over ids
         for arg_meta_data in arg_metadata_list:
-            ids_ctype = self.ids_converter.prepare_native_type( arg_meta_data['type'] )
+            ids_ctype = self.ids_converter.prepare_native_type(IDSCType, arg_meta_data['type'] )
             ids_ctype.intent = arg_meta_data['intent']
             ids_ctype_list.append( ids_ctype )
 
         return ids_ctype_list
-
-    def __save_input(self, method_name, full_arguments_list, code_parameters, sandbox_dir):
-
-        file_path = Path(sandbox_dir, f'{method_name}.in')
-        with open( file_path, "wt" ) as file:
-            # Save IDS arguments
-            file.write( ' Arguments '.center(70, '=') )
-            file.write( "\n" )
-            file.write( 'Length:' )
-            file.write( "\n" )
-            file.write( str( len( full_arguments_list ) ) + "\n" )
-            for arg in full_arguments_list:
-                arg.save( file )
-
-            if code_parameters:
-                code_parameters.save(sandbox_dir)
-
-    def __read_output(self, method_name, status_info, sandbox_dir):
-
-        file_path = Path(sandbox_dir, f'{method_name}.out')
-        with open( file_path, "rt", errors='replace' ) as file:
-            # Read status info
-            status_info.read(file)
 
     def run_standalone(self, *input_idses, method_name, arg_metadata_list, code_parameters, exec_command, sandbox_dir:str, output_stream):
 
@@ -218,12 +117,12 @@ class CBinder(Binder):
         status_info_ctype = StatusCType()
 
         # prepares input files
-        self.__save_input( method_name, ids_ctypes_list, param_ctype, sandbox_dir )
+        Binder.save_input( method_name, ids_ctypes_list, param_ctype, sandbox_dir )
         self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
         exec_system_cmd(exec_command, output_stream=output_stream)
 
         # Checking returned DIAGNOSTIC INFO
-        self.__read_output(method_name, status_info_ctype, sandbox_dir)
+        Binder.read_output(method_name, status_info_ctype, sandbox_dir)
         self.__status_check( status_info_ctype )
 
         # get output data
@@ -243,31 +142,31 @@ class CBinder(Binder):
 
     def call_init(self, code_parameters: str):
 
-        self.call_basic_method( self.wrapper_init_func, [], None,
+        self.call_basic_method( "init", [], None,
                                          code_parameters=code_parameters )
-
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def call_main(self, *input_idses, code_parameters:str):
         """
         """
         arg_metadata_list = self.actor.code_description.get('arguments')
-        output = self.call_basic_method( self.wrapper_main_func, arg_metadata_list, *input_idses,
+        output = self.call_basic_method( "main", arg_metadata_list, *input_idses,
                                          code_parameters=code_parameters)
         return output
 
     def call_finish(self):
 
-        self.call_basic_method(self.wrapper_finish_func, [], None,
+        self.call_basic_method("finalize", [], None,
                                         code_parameters=None)
 
-
-    def call_basic_method(self, basic_method, arg_metadata_list,
+    def call_basic_method(self, method_name, arg_metadata_list,
                           *input_idses, code_parameters = None):
         """
         """
 
-        if not basic_method:
+        method_implementation = self.__get_wrapper_function(method_name)
+
+        if not method_implementation:
             return
 
         c_arglist = []
@@ -300,7 +199,7 @@ class CBinder(Binder):
         c_arglist += c_status_info
 
         # call native MAIN method of wrapper
-        basic_method( *c_arglist )
+        method_implementation( *c_arglist )
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( c_arglist[-2], c_arglist[-1] )
@@ -322,7 +221,9 @@ class CBinder(Binder):
             return tuple( results )
 
     def call_set_state(self, state:str):
-        if not self.wrapper_set_state_func:
+        method_implementation = self.__get_wrapper_function( "set_state")
+
+        if not method_implementation:
             return
 
         if not state:
@@ -339,14 +240,16 @@ class CBinder(Binder):
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call FINISH
-        self.wrapper_set_state_func(cref_state, cref_state_size,  cref_code, cref_msg)
+        method_implementation(cref_state, cref_state_size,  cref_code, cref_msg)
 
         # Checking returned DIAGNOSTIC INFO
         self.__status_check( status_info_ctype )
 
     def call_get_state(self) -> str:
-        if not self.wrapper_get_state_func:
-            return None
+        method_implementation = self.__get_wrapper_function("get_state")
+
+        if not method_implementation:
+            return
 
         state = None
 
@@ -358,7 +261,7 @@ class CBinder(Binder):
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call native MAIN method of wrapper
-        self.wrapper_get_state_func( cref_state, cref_code, cref_msg )
+        method_implementation( cref_state, cref_code, cref_msg )
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
@@ -371,8 +274,10 @@ class CBinder(Binder):
         return state
 
     def call_get_timestamp(self) -> float:
-        if not self.wrapper_get_timestamp_func:
-            return None
+        method_implementation = self.__get_wrapper_function("get_timestamp")
+
+        if not method_implementation:
+            return
 
         c_double_timestamp = ctypes.c_double( 0.0 )
         cref_timestamp = ctypes.pointer( c_double_timestamp )
@@ -382,7 +287,7 @@ class CBinder(Binder):
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call native MAIN method of wrapper
-        self.wrapper_get_timestamp_func( cref_timestamp, cref_code, cref_msg )
+        method_implementation( cref_timestamp, cref_code, cref_msg )
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )

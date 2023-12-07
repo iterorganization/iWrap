@@ -86,15 +86,12 @@ def __create_mpi_cmd(executable: str, runtime_settings: RuntimeSettings):
     return cmd
 
 
-def resolve_cmd_tags(actor, method_name, cmd: str, runtime_settings: RuntimeSettings):
-    exec = actor.actor_dir + '/bin/' + actor.name + '_' + method_name + '.exe'
+def resolve_cmd_tags(full_cmd: str, exec: str, runtime_settings: RuntimeSettings):
 
-    cmd = string.Template( cmd ).safe_substitute( exec=exec )
+    full_cmd = string.Template( full_cmd ).safe_substitute( exec=exec )
 
-    cmd = __resolve_mpi_tags( cmd, runtime_settings )
-    return cmd
-
-
+    full_cmd = __resolve_mpi_tags( full_cmd, runtime_settings )
+    return full_cmd
 
 def create_cmd(runtime_settings: RuntimeSettings):
     cmd = []
