@@ -25,3 +25,4 @@ docstring_files/
 /docs/html
 /docs/doctrees
 *.tmp
+*.jar
