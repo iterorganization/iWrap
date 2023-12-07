@@ -1,0 +1,23 @@
+{% macro imports() -%}
+// IMAS AL library
+import imasjava.*;
+{%- endmacro -%}
+
+{% macro declare(argument) -%}
+    imas.{{ argument.type }} {{ argument.name }} = new imas.{{ argument.type }}();
+{%- endmacro -%}
+
+{% macro get(ids_var_name) -%}
+	{{ ids_var_name }}.setPulseCtx({{ ids_var_name }}_desc.idx);
+    {{ ids_var_name }}.get({{ ids_var_name }}_desc.occurrence);
+{%- endmacro -%}
+
+{%- macro provenance(ids_var_name, sbrt_name) -%}
+   {{ ids_var_name }}.code.name = "{{sbrt_name}}";
+   {{ ids_var_name }}.code.version = "";
+{%- endmacro -%}
+
+{% macro put(ids_var_name) -%}
+    {{ ids_var_name }}.setPulseCtx({{ ids_var_name }}_desc.idx);
+    {{ ids_var_name }}.put({{ ids_var_name }}_desc.occurrence);
+{%- endmacro -%}

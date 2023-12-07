@@ -1,0 +1,24 @@
+# actor name
+ACTOR_NAME={{actor_description.actor_name}}
+
+#WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+#CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
+#CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
+
+
+#INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
+#LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED)  $(CODE_LIB_DEF)
+
+
+all: ../jar/$(ACTOR_NAME).jar
+
+../jar/$(ACTOR_NAME).jar:
+	@echo "   * $@"
+	@mkdir -p ../jar
+	@mkdir -p ./build
+	javac src/*.java -cp ./lib/{{code_description.implementation.code_path | basename }}:$(CLASSPATH)  -d build/
+	jar cf $@ -C build/ .
+
+clean:
+#	-rm -f *.o build/*  ../jar/*
