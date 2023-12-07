@@ -1,4 +1,4 @@
-.. _code_api:
+.. _native_code_api:
 
 ############################################################
 Code standardisation
@@ -8,11 +8,11 @@ Introduction
 ############
 
 .. warning::
-      The signature of the code provided by the user must
-      follow strict rules - without the details on method's
-      signature iWrap cannot generate an actor.
+      A signature of user code must follow strict rules to
+      be wrapped by iWrap - without the detailed knowledge
+      of method signature iWrap cannot built an actor.
 
-iWrap actors can call the following methods from the code:
+iWrap actor can call following methods of the native code:
 
 - Basic methods:
 
@@ -20,7 +20,7 @@ iWrap actors can call the following methods from the code:
   -  *MAIN* - Mandatory main ("step") method
   -  *FINALIZE* - Finalisation method
 
-- Checkpoint/restart methods
+- Code restarting methods
 
   - *GET_STATE* - Method for getting internal state of the code
   - *SET_STATE* - Method for setting internal state of the code
@@ -29,9 +29,9 @@ iWrap actors can call the following methods from the code:
 
   - *GET_TIMESTAMP* - Method for getting currently computed physical time
 
-The name and signatures of each method may differ, depending of
-features of programming language being used, however the main
-principia remains the same.
+Signatures of methods may differ, depending of features of
+programming language being used, however the main principia
+remains the same.
 
 
 Basic methods
@@ -43,8 +43,8 @@ Basic methods
 .. image:: /resources/attachments/70877452/77370373.png
 
 
-- An optional method used for the initialization/configuration of the code
-- If provided - the method is called only when an actor is initialized
+- An optional method used for set-up of native code
+- If provided - the method is called only, when an actor is initialised
 - The method must be run **before** a call of *main* and *finalisation* (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -61,8 +61,8 @@ Basic methods
 
 .. image:: /resources/attachments/70877452/70877459.png                                                          |
 
--  A **mandatory** method in the code where it performs the main computation
--  Can correspond to the entire computation or to a step that can be run an arbitrary number of times (e.g. in a loop)
+-  A **mandatory** method that native code **must** provide
+-  The method can be run an arbitrary numer of times (e.g. in a loop)
 -  It can be of arbitrary name (the name has to be specified in the code YAML description)
 -  The method must be run **after** a call of *initialisation* (if provided) and **before** a call of *finalisation* (if provided)
 -  Method arguments:
@@ -92,10 +92,14 @@ Basic methods
 
 Code restarting methods
 ################
-``GET_STATE`` and  ``SET_STATE`` methods enable to restart stateful, sometimes compute demanding,
-codes without losing results obtained before computations were stopped. The actor ask periodically
-the code about its internal state using the ``GET_STATE`` method. After a restart, the code state
-can be restored using the ``SET_STATE`` method.
+The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
+and the actor cannot force the wrapped ``MAIN`` method to save a checkpoint at an arbitrary time,
+while it is executed.
+
+``GET_STATE`` and  ``SET_STATE`` methods enable restart stateful, sometimes compute demanding,
+codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
+about its internal state using ``GET_STATE`` method. After restart, the code state can be restored
+using ``SET_STATE`` method.
 
 An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
 to the code developer concerning format and content of state description.
@@ -105,7 +109,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 *GET_STATE* method
 ======================
 
-- An optional method used for getting the internal state of the code
+- An optional method used for getting internal state of native code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -116,10 +120,11 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
     -  Type: string
     -  Intent: OUT
 
+
 *SET_STATE* method
 ======================
 
-- An optional method used for restoring the internal state of the code
+- An optional method used for restoring internal state of native code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -133,7 +138,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 
 .. warning::
        Important!
-          A code wrapped by iWrap that will become a part of workflow should be compiled using the same
+          A native code wrapped by iWrap that will become a part of workflow should be compiled using the same
           environment in which workflow will be run!
 
 
@@ -158,7 +163,7 @@ Auxiliary methods
 
 Error and status reporting
 ################
-The code can communicate with a caller by throwing exceptions (Java)
+The wrapped code can communicate with a caller by throwing exceptions (Java)
 or using two **mandatory** output arguments (C++ and Fortran):
 
   - Status code:
@@ -180,9 +185,11 @@ or using two **mandatory** output arguments (C++ and Fortran):
 
 MPI
 ################
-All codes that use MPI should follow the rules described below:
+All native codes that use MPI should follow the rules described below:
 
--  Do not call MPI_Init and MPI_Finalize in the code's API, or add such conditional checks before:
+-  Please make initialisation and finalisation conditional checking if such action was already made.
+
+    Fortran
 
     .. code-block:: fortran
 
@@ -221,7 +228,7 @@ All codes that use MPI should follow the rules described below:
 
 Code packaging
 ################
-A code written in C++ or Fortran should be packed in a static Linux library. E.g. using the 'ar' tool:
+A native code written in C++ or Fortran should be packed within static Linux library using e.g. ar tool for that purpose.
 
 .. code-block:: console
 

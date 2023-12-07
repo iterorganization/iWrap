@@ -173,8 +173,8 @@ A code should be compiled and packed within Java archive (JAR).
 	javac src/*.java -d build/
 	jar cf basic_test.jar  -C build/ .
 
-
 Dependencies
 ################
 *Java* must be available in the system to generate and build an actor.
 To run it, beside *Java*, *JPype* Python package is utilised.
+
