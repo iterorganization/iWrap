@@ -9,7 +9,7 @@ wf-run:
 actor:
 	iwrap -a code_lifecycle --actor-type python --data-type legacy -f ./code_lifecycle.yaml
 
-actor-gui: native
+actor-gui:
 	iwrap-gui -a code_lifecycle -f ./code_lifecycle.yaml
 
 native:
