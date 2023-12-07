@@ -136,6 +136,42 @@ Generic information common for all programming languages handled by iWrap:
              -  value: string
              -  example: 'clean_up'
 
+        -    *get_state:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of user method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used, usually, to get current state of native code, however subroutine may contain any arbitrary actions
+
+             -  value: string
+             -  example: 'get_state'
+
+        -    *set_state:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of user method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used, usually, to set current state of native code, however subroutine may contain any arbitrary actions
+
+             -  value: string
+             -  example: 'set_state'
+
+        -    *get_timestamp:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of user method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used, usually, to get timestamp of native code, however subroutine may contain any arbitrary actions
+
+             -  value: string
+             -  example: 'get_timestamp'
+
     -   *data_type:*
 
         -   meaning: data type handled by the physics code
