@@ -36,13 +36,7 @@ class ExampleWorkflowManager:
         self.output_entry.create()
 
         # # # # # # # # Initialization of ALL actors  # # # # # # # #
-        runtime_settings = None
-        actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL' )
-        if actor_run_mode == 'STANDALONE':
-            print( 'Running STANDALONE version.' )
-            runtime_settings = self.actor_code_restart_java.get_runtime_settings()
-            runtime_settings.run_mode = RunMode.STANDALONE
-
+        runtime_settings = self.actor_code_restart_java.get_runtime_settings()
         code_parameters = self.actor_code_restart_java.get_code_parameters()
         self.actor_code_restart_java.initialize( runtime_settings=runtime_settings, code_parameters=code_parameters )
 
@@ -74,6 +68,9 @@ class ExampleWorkflowManager:
         self.input_entry.close()
         self.output_entry.close()
 
+
+if os.getenv('ACTOR_RUN_MODE', 'NORMAL') == 'STANDALONE':
+    exit(0)
 
 manager = ExampleWorkflowManager()
 
