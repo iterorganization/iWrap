@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class Table( ttk.Frame ):
@@ -347,6 +348,7 @@ class ArgumentWindow:
                     new_cell.current(0)
                     new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(radiobutton_combobox_cell_value)
+            ToolTip(new_cell, 'argument_window.' + column.label_var.get())
 
     def _set_label(self, row, label):
         """Set labels in the grid.

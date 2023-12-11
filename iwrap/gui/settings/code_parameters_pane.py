@@ -9,7 +9,7 @@ from typing import Tuple, Union, List
 from iwrap.common import utils
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
-
+from iwrap.gui.settings.tooltip import ToolTip
 
 class CodeParametersPane(ttk.Frame, IWrapPane):
     # Class logger
@@ -174,6 +174,11 @@ class CodeParameterBrowserPane(ttk.Frame):
         # An entry to display path dialog
         path_dialog = ttk.Entry(self, state='normal', textvariable=self.file_path.path)
         path_dialog.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
+
+        if file_type == "XML":
+            ToolTip(path_dialog, 'parameters_file')
+        elif file_type == "XSD":
+            ToolTip(path_dialog, 'schema_file')
 
         self.pack(expand=False, fill=tk.X, pady=5, ipady=5, padx=5, ipadx=5)
 
