@@ -12,6 +12,7 @@ from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManag
 from iwrap.gui.settings.implementation_pane import ImplementationPane
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class FortranPane( ttk.Frame, IWrapPane ):
@@ -73,13 +74,16 @@ class FortranPane( ttk.Frame, IWrapPane ):
         ttk.Label(frame, text="*Compiler cmd:").grid(column=0, row=2, padx=10, sticky=(tk.N, tk.W), pady=5)
         compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
         compiler_text.grid(column=1, row=2, padx=10, sticky=(tk.W, tk.E), pady=5)
+        ToolTip(compiler_text, 'compiler_cmd')
 
         # FRAME MPI
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
         self.openmp_switch_combobox = MpiCombo(frame, 0, 3, 10, "OpenMP switch:", self.settings.open_mp_switch)
+        ToolTip(self.openmp_switch_combobox.combobox, 'open_mp_switch')
         self.mpi_compiler_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
+        ToolTip(self.mpi_compiler_combobox.combobox, 'mpi_compiler_cmd')
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)

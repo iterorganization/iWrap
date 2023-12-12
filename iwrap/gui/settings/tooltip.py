@@ -89,6 +89,16 @@ tooltip_dict ={
                            'example: ’equilibrium00’\n'
                            'example argument\'s name usage: ’result = my_actor(equilibrium00=some_ids_variable)’',
     'argument_window.Input':'Determines if given argument is input or output one.',
-    'argument_window.Type':'A type of an IDS argument.'
+    'argument_window.Type':'A type of an IDS argument.',
+    'compiler_cmd':'Name/vendor of the compiler command used to compile native codes.\n\n'
+                               'examples:\n'
+                               '‘gfortran‘, ‘ifort‘, ‘g++‘',
+    'open_mp_switch':'A compiler switch to be used if native code use OpenMP.\n'
+                     'examples:\n'
+                     ' ‘-fopenmp’, ‘-qopenmp’',
+    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile native codes.\n'
+                       'IMPORTANT! The existence (or absence) of this entry, determines if native codes use MPI or not.\n\n'
+                       'examples:\n'
+                       '‘mpif90’, ‘ifort’'
 }
 tooltip_dict['argument_window.Output'] = tooltip_dict['argument_window.Input']
