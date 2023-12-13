@@ -17,7 +17,7 @@ class LanguageSettingsManager:
         """ Returns language settings.
         """
         if not language:
-            return {}
+            return values or {}
 
         language = language.lower()
         # no special handler
