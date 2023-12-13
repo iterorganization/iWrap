@@ -7,7 +7,7 @@ if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
   module load XMLlib/3.3.1-intel-2020b
   module load lxml/4.6.2-GCCcore-10.2.0
   module load IMAS/3.39.0-4.11.7-intel-2020b
-
+  module load JPype1/1.4.1-intel-2020b-Java-11
   export CXX="icpc"
   export FC="ifort"
   export MPICXX="mpiicpc"
@@ -17,6 +17,7 @@ else
   module load XMLlib/3.3.1-GCC-10.2.0
   module load lxml/4.6.2-GCCcore-10.2.0
   module load IMAS/3.39.0-4.11.7-foss-2020b
+  module load JPype1/1.4.1-foss-2020b-Java-11
   export CXX="g++"
   export FC="gfortran"
   export MPICXX="mpicxx"
@@ -27,6 +28,4 @@ echo "----- 00_load_imas_env.sh ----"
 module list
 echo "----- 00_load_imas_env.sh ----"
 echo WHICH PYTHON `which python`
-ldd `which python`
-echo LOADED PYTHON VERSION: `python -V`
-echo "----- 00_load_imas_env.sh --END--"
+
