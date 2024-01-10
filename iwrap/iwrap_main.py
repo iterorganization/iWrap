@@ -108,8 +108,12 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
         project_settings.actor_description.actor_name = args.actor_name
 
     if args.actor_type:
-        Engine().active_generator = args.actor_type
-    elif project_settings.actor_description.actor_type:
+        project_settings.actor_description.actor_type = args.actor_type
+
+    if args.data_type:
+        project_settings.actor_description.data_type = args.data_type
+
+    if project_settings.actor_description.actor_type:
         Engine().active_generator = project_settings.actor_description.actor_type
 
     if args.gui:
@@ -129,14 +133,16 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
 
 
 if __name__ == "__main__":
-    # GUI
-    # main( ['-a', 'my_actor', '-f', '../tests/code_description-01.yaml'], is_commandline_mode=False )
 
-    # main( ['-a', 'physics_ii', '-f', '../examples/level2/physics_ii.yaml'], is_commandline_mode=False )
-    # commandline
+    actor_name = "code_restart"
+    is_commandline_mode = True
 
-    main( ['-f', '../examples/cp2ds/cp2ds.yaml'], is_commandline_mode=True )
-    #main( ['-a', 'core2dist_mpi', '-f', '../examples/cp2ds-mpi/cp2ds-mpi.yaml'], is_commandline_mode=True )
+    main( ['-a', f'{actor_name}',
+           '--actor-type', 'python',
+           '--data-type', 'legacy',
+           '-f', f'../examples/{actor_name}/{actor_name}.yaml'],
+          is_commandline_mode=is_commandline_mode )
+
     # main( ['-h'] )
     # main(['--list-actor-types'])
     # main(is_commandline_mode = False)
