@@ -3,7 +3,7 @@ import tkinter as tk
 class ToolTip(object):
     def __init__(self, widget, tooltip_index=''):
         self.waittime = 500     #miliseconds
-        self.wraplength = 300   #pixels
+        self.wraplength = 450   #pixels
         self.widget = widget
 
         try:
@@ -56,10 +56,12 @@ class ToolTip(object):
             tw.destroy()
 
 tooltip_dict ={
-    'actor_name':'The arbitrary, user defined name of the actor. It determines e.g. : the name of class to be generated and directory where actor will be put.\n\n'
+    'actor_name':'The arbitrary, user defined name of the actor. \n\n'
                  'example: my_actor',
-    'actor_type':'Value: ‘python’ (currently only python type has been implemented)',
+    'actor_type':'The type of an actor to be generated\n\n'
+                 'default: ‘python’',
     'programming_language':'Language of physics code. One of predefined values: Fortran, CPP.',
+
     'data_dictionary_compliant':'Oldest known version of Data Directory compatible with actor.\n\n'
                                 'example: 3.39.0',
     'root_dir':'The root directory for ALL relative paths placed in code description. A relative path leading from YAML file location to actor project root dir.\n\n'
@@ -90,9 +92,6 @@ tooltip_dict ={
     'get_timestamp': 'Name of user method / subroutine to be called. It is used, usually, to get timestamp of native code, however subroutine may contain any arbitrary actions.\n'
            'IMPORTANT! method name must be the same as in native code.\n\n'
            'example: my_get_timestamp_method',
-    'parameters_path':'Path to XML file containing user defined parameters of the physics model.\n\n'
-       'example: ‘./code_parameters/parameters.xml’',
-    'schema_path':'Path to XSD file contains schema of XML parameters, enabling its validation.',
     'install_dir':'Path to directory where actor folder will be created.',
     'documentation':'Human readable description of native code.',
     'parameters_file':'Path to XML file containing user defined parameters of the physics model.\n\n'
