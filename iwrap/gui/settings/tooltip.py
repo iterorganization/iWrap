@@ -109,7 +109,7 @@ tooltip_dict ={
                      'examples:\n'
                      ' ‘-fopenmp’, ‘-qopenmp’',
     'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the physics code.\n'
-                       'IMPORTANT! The existence (or absence) of this entry, determines if native codes use MPI or not.\n\n'
+                       'IMPORTANT! The existence (or absence) of this entry, determines if the physics code uses MPI (or not).\n\n'
                        'examples:\n'
                        '‘mpif90’, ‘mpiifort’'
 }
