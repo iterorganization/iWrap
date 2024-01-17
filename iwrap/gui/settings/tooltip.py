@@ -94,7 +94,7 @@ tooltip_dict ={
            'example: my_get_timestamp_method',
     'install_dir':'Path to the directory where actor will be installed.',
     'documentation':'Human readable description of the physics code.',
-    'parameters_file':'Path to XML file containing user defined parameters of the physics model.\n\n'
+    'parameters_file':'Path to the code parameters (XML file) of the physics code.\n\n'
                       'example: ‘./code_parameters/parameters.xml’',
     'schema_file':'Path to XSD file contains schema of XML parameters, enabling its validation.\n\n'
                   'example: ‘./code_parameters/parameters.xsd’',
