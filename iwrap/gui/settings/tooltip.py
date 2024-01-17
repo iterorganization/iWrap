@@ -98,7 +98,7 @@ tooltip_dict ={
                       'example: ‘./code_parameters/parameters.xml’',
     'schema_file':'Path to the schema (XSD file) used to validate the XML code parameters.\n\n'
                   'example: ‘./code_parameters/parameters.xsd’',
-    'argument_window.Name':'User defined argument name. Can be used in actor\'s main method call.\n\n'
+    'argument_window.Name':'User defined argument name. Will be used in the actor.\n\n'
                            'example: ’equilibrium00’',
     'argument_window.Input':'Determines if given argument is input or output one.',
     'argument_window.Type':'A type of an IDS argument.',
