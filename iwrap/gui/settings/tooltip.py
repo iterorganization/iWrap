@@ -96,7 +96,7 @@ tooltip_dict ={
     'documentation':'Human readable description of the physics code.',
     'parameters_file':'Path to the code parameters (XML file) of the physics code.\n\n'
                       'example: ‘./code_parameters/parameters.xml’',
-    'schema_file':'Path to XSD file contains schema of XML parameters, enabling its validation.\n\n'
+    'schema_file':'Path to the schema (XSD file) used to validate the XML code parameters.\n\n'
                   'example: ‘./code_parameters/parameters.xsd’',
     'argument_window.Name':'User defined argument name. Can be used in actor\'s main method call.\n\n'
                            'example: ’equilibrium00’',
