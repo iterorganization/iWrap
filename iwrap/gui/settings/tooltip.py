@@ -56,7 +56,7 @@ class ToolTip(object):
             tw.destroy()
 
 tooltip_dict ={
-    'actor_name':'The arbitrary, user defined name of the actor. \n\n'
+    'actor_name':'The chosen name for the actor (may be identical or different from the name of the physics code). \n\n'
                  'example: my_actor',
     'actor_type':'The type/flavor of the actor to be generated.\n\n'
                  'default: ‘python’',
