@@ -111,6 +111,6 @@ tooltip_dict ={
     'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile native codes.\n'
                        'IMPORTANT! The existence (or absence) of this entry, determines if native codes use MPI or not.\n\n'
                        'examples:\n'
-                       '‘mpif90’, ‘ifort’'
+                       '‘mpif90’, ‘mpiifort’'
 }
 tooltip_dict['argument_window.Output'] = tooltip_dict['argument_window.Input']
