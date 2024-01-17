@@ -108,7 +108,7 @@ tooltip_dict ={
     'open_mp_switch':'A compiler switch to be used if native code use OpenMP.\n'
                      'examples:\n'
                      ' ‘-fopenmp’, ‘-qopenmp’',
-    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile native codes.\n'
+    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the physics code.\n'
                        'IMPORTANT! The existence (or absence) of this entry, determines if native codes use MPI or not.\n\n'
                        'examples:\n'
                        '‘mpif90’, ‘mpiifort’'
