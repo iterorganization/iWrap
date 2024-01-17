@@ -60,7 +60,7 @@ tooltip_dict ={
                  'example: my_actor',
     'actor_type':'The type/flavor of the actor to be generated.\n\n'
                  'default: ‘python’',
-    'programming_language':'Language of physics code. One of predefined values: Fortran, CPP.',
+    'programming_language':'Language of the physics code. One of the predefined values: Fortran, CPP, None (None will create a skeleton actor class in which calls to physics code have to be added manually).',
 
     'data_dictionary_compliant':'Oldest known version of Data Directory compatible with actor.\n\n'
                                 'example: 3.39.0',
