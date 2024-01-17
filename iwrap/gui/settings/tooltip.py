@@ -100,7 +100,7 @@ tooltip_dict ={
                   'example: ‘./code_parameters/parameters.xsd’',
     'argument_window.Name':'User defined argument name. Will be used in the actor.\n\n'
                            'example: ’equilibrium00’',
-    'argument_window.Input':'Determines if given argument is input or output one.',
+    'argument_window.Input':'Determines if the given argument is an input or an output one.',
     'argument_window.Type':'A type of an IDS argument.',
     'compiler_cmd':'Name/vendor of the compiler command used to compile native codes.\n\n'
                                'examples:\n'
