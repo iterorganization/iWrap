@@ -40,7 +40,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
             code_parameters (CodeParameters, optional): physics model parameters
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.init %}
-        Runner.get_runner(self).call_initialize()
+        self.runner.call_initialize()
     {%  endif %}
         ...
 
@@ -66,7 +66,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.main %}
         self.check_is_initialized()
-        out = Runner.get_runner(self).call_main({%- for argument in code_description.arguments if argument.intent == 'IN' -%}
+        out = self.runner.call_main({%- for argument in code_description.arguments if argument.intent == 'IN' -%}
                                                     {{ argument.name }},
                                                     {%- endfor -%})
         return out
@@ -76,7 +76,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ "".center(80, '-') }}
     # {{ " FINALIZE ".center(80) }}
     # {{ "".center(80, '-') }}
-    @ActorBaseClass.remove_sandbox
+    @ActorBaseClass.finalize_actor
     @ActorBaseClass.use_sandbox
     def finalize(self) -> None:
         """
@@ -84,7 +84,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.finalize %}
         self.check_is_initialized()
-        Runner.get_runner(self).call_finalize()
+        self.runner.call_finalize()
     {%  endif %}
         ...
 
@@ -105,7 +105,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.get_state %}
         self.check_is_initialized()
-        state = Runner.get_runner(self).call_get_state()
+        state = self.runner.call_get_state()
         return state
     {%  endif %}
         ...
@@ -123,7 +123,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
 {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.set_state %}
         self.check_is_initialized()
-        Runner.get_runner(self).call_set_state(state)
+        self.runner.call_set_state(state)
     {%  endif %}
         ...
 
@@ -141,7 +141,7 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.get_timestamp %}
         self.check_is_initialized()
-        timestamp = Runner.get_runner(self).call_get_timestamp()
+        timestamp = self.runner.call_get_timestamp()
         return timestamp
     {%  endif %}
         ...

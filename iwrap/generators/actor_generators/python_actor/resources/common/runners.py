@@ -5,32 +5,24 @@ import logging
 import string
 from threading import Thread
 
-
 from .runtime_settings import DebugMode
 from . import cmdln_utlis
 from . import exec_system_cmd
 
 
 class Runner(ABC):
-    __standalone_runner = None
-    __library_runner = None
-
 
     @classmethod
     def get_runner(cls, actor):
 
-        if not cls.__library_runner or not cls.__standalone_runner:
-            cls.initialize(actor)
-
         if actor.is_standalone:
-            return cls.__standalone_runner
+            runner = StandaloneRunner(actor)
+        else:
+            runner = LibraryRunner(actor)
 
-        return cls.__library_runner
+        runner.initialize()
 
-    @classmethod
-    def initialize(cls, actor):
-        cls.__standalone_runner = StandaloneRunner(actor)
-        cls.__library_runner = LibraryRunner(actor)
+        return runner
 
     def __init__(self, actor):
         from ..binding.binder import CBinder
@@ -38,7 +30,12 @@ class Runner(ABC):
         self._binder = CBinder()
         self._output_stream = actor.output_stream
         self._runtime_settings = actor.get_runtime_settings()
-        self._binder.initialize(actor=actor)
+
+    def initialize(self):
+        self._binder.initialize(actor=self._actor)
+
+    def finalize(self):
+        self._binder.finalize()
 
     def get_code_parameters(self):
         code_parameters = self._actor.get_code_parameters()
@@ -189,7 +186,7 @@ class LibraryRunner( Runner ):
 
     def call_finalize(self):
         self._binder.call_finish()
-        self._binder.finalize()
+
 
     def call_get_state(self) -> str:
         state = self._binder.call_get_state()

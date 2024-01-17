@@ -8,6 +8,7 @@ from .definitions import Argument
 from .runtime_settings import RuntimeSettings, DebugMode, RunMode
 from .definitions import Actor
 from .sandbox import Sandbox
+from .runners import Runner
 
 
 class ActorBaseClass(Actor):
@@ -40,6 +41,7 @@ class ActorBaseClass(Actor):
             self.is_standalone = self.is_standalone_run()
             self.sandbox.initialize()
             self.__initialized = True
+            self.runner = Runner.get_runner(self)
             value = func(self,  *args, **kwargs )
 
             return value
@@ -62,13 +64,16 @@ class ActorBaseClass(Actor):
         return decorator_actions
 
     @staticmethod
-    def remove_sandbox(func):
+    def finalize_actor(func):
         def decorator_actions(self,  *args, **kwargs):
 
             value = func(self,  *args, **kwargs )
 
+            # cleaning up sandbox
             if self.sandbox:
                 self.sandbox.remove()
+
+            self.runner.finalize()
 
             return value
 
@@ -104,6 +109,7 @@ class ActorBaseClass(Actor):
         self.is_standalone = False
         self.__code_parameters: CodeParameters = None
         self.name = self.__class__.__name__
+        self.runner = None
         self.__initialized = False
 
         self.data_type = '{{code_description.implementation.data_type | lower}}'
