@@ -58,7 +58,7 @@ class ToolTip(object):
 tooltip_dict ={
     'actor_name':'The arbitrary, user defined name of the actor. \n\n'
                  'example: my_actor',
-    'actor_type':'The type of an actor to be generated\n\n'
+    'actor_type':'The type/flavor of the actor to be generated.\n\n'
                  'default: ‘python’',
     'programming_language':'Language of physics code. One of predefined values: Fortran, CPP.',
 
