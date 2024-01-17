@@ -105,7 +105,7 @@ tooltip_dict ={
     'compiler_cmd':'Name/vendor of the compiler command used to compile native codes.\n\n'
                                'examples:\n'
                                '‘gfortran‘, ‘ifort‘, ‘g++‘',
-    'open_mp_switch':'A compiler switch to be used if native code use OpenMP.\n'
+    'open_mp_switch':'A compiler switch/flag to be used if the physics code uses OpenMP.\n'
                      'examples:\n'
                      ' ‘-fopenmp’, ‘-qopenmp’',
     'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the physics code.\n'
