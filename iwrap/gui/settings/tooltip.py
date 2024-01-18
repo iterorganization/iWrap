@@ -101,7 +101,7 @@ tooltip_dict ={
     'argument_window.Name':'User defined argument name. Will be used in the actor.\n\n'
                            'example: ’equilibrium00’',
     'argument_window.Intent':'Determines if the given argument is an input or an output one.',
-    'argument_window.Type':'A type of an IDS argument.',
+    'argument_window.Type':'The type of the IDS structure associated with this argument.',
     'compiler_cmd':'Name/vendor of the compiler command used to compile native codes.\n\n'
                                'examples:\n'
                                '‘gfortran‘, ‘ifort‘, ‘g++‘',
