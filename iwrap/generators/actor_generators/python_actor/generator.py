@@ -28,11 +28,11 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def name(self) -> str:
-        return 'Simple Python actor'
+        return 'python'
 
     @property
     def description(self) -> str:
-        return 'Simple Python actor'
+        return 'python'
 
     @property
     def actor_language(self) -> List[str]:
