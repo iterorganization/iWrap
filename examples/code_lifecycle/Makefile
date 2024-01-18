@@ -7,7 +7,7 @@ wf-run:
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a code_lifecycle -f ./code_lifecycle.yaml
+	iwrap -a code_lifecycle --actor-type python --data-type legacy -f ./code_lifecycle.yaml
 
 actor-gui: native
 	iwrap-gui -a code_lifecycle -f ./code_lifecycle.yaml
