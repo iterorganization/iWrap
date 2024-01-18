@@ -9,6 +9,7 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
@@ -82,6 +83,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         self.table = Table([], self.columns, table_frame, buttons)
+        ToolTip(self.table, 'argument_window.Type')
 
         # BIND BUTTONS WITH TABLE METHODS
         add_button['command'] = lambda: self.table.add_row("argument")
