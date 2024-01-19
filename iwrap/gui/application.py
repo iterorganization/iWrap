@@ -61,7 +61,7 @@ class MainWindow(tk.Tk, IWrapPane):
         import iwrap
         self.title(f'iWrap : {iwrap.__version__}')
         self.minsize(600, 300)
-        self.geometry('600x600')
+        self.geometry('600x660')
 
         # Sets application icon
         _icon = self._load_image(resource="imas_logo_round.gif")
