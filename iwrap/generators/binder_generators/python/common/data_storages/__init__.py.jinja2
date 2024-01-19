@@ -1,7 +1,10 @@
 import importlib
 import pkgutil
 from typing import List, Set
+import logging
 
+# Module logger
+__logger = logging.getLogger(__name__)
 
 class IDSConverter():
 
@@ -35,7 +38,7 @@ def discover_converters(builtin_pkg_name: str, plugin_pkg_name: str, converter_b
             importlib.import_module( name )
 
     except Exception as exc:
-        print( f'INFO: No built-in {converter_base_class.__name__} plug-ins have been loaded:\n{exc}' )
+        __logger.info( f'INFO: No built-in {converter_base_class.__name__} plug-ins have been loaded:\n{exc}' )
 
     try:
         converter_module = importlib.import_module( plugin_pkg_name )
@@ -44,7 +47,7 @@ def discover_converters(builtin_pkg_name: str, plugin_pkg_name: str, converter_b
             importlib.import_module( name )
 
     except Exception as exc:
-        print( f'INFO: No external {converter_base_class.__name__} plug-ins have been found' )
+        __logger.info( f'INFO: No external {converter_base_class.__name__} plug-ins have been found' )
 
     converters_class_list = converter_base_class.__subclasses__()
 
