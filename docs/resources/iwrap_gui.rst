@@ -118,20 +118,19 @@ A user code should be provided as a subroutine.
 
 |image8|
 
--  **Init** - a name of a subroutine that could be used to
-   initialize the native code (optional)
--  **Main** - a name of the main subroutine that will be
-   called from actor (mandatory)
--  **Finalize** - a name of a subroutine that could be used
-   to finalize the native code (optional)
+-  **Init** - the name of the subroutine that can be used to
+   initialize the code (optional)
+-  **Main** - the name of the main subroutine that will be
+   called from the actor (mandatory)
+-  **Finalize** - the name of the subroutine that can be used
+   to finalize the code (optional)
 
 Code parameters tab
 --------------------
 
 *Code parameters*\ are all parameters that are specific to
 the code (like switches, scaling parameters, and parameters
-for built-in analytical models) as well as parameters to
-explicitly overrule fields in the IMAS data structures.
+for built-in analytical models).
 
 |image9|
 
@@ -144,7 +143,7 @@ Settings
 |image10|
 
 -  **Compiler cmd** - the compiler command used to compile
-   native codes
+   the code
 -  **OpenMP switch** - theOpenMP switch
 -  **MPI compiler cmd** - the MPI compiler command
 
@@ -156,8 +155,7 @@ pkg-config defined:
 """""""""""""""""""
 
 pkg-configs defined are system libraries handled by the
-pkg-config mechanism and required for building the user
-code.
+pkg-config mechanism and required for linking with the code's library.
 
 |image13|
 

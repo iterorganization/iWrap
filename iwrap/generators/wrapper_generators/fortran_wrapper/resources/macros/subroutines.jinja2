@@ -62,7 +62,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 
 	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
-    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    ! - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
     call  {{sbrt_name}}( &
 {% for argument in arguments %}
             {{ argument.name }}, &

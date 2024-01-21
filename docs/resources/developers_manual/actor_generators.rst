@@ -79,7 +79,7 @@ These metadata describes:
 * ``description`` - user friendly description of generator
 * ``actor_language`` - programming language of the actor highest layers (and workflow)
 * ``actor_data_types`` - a list of types of data (IDSes) handled by the actor highest layers (and workflow)
-* ``code_languages`` - a list of native code programming languages that are handled by binder and wrapper
+* ``code_languages`` - a list of code programming languages that are handled by binder and wrapper
 * ``code_data_types`` - a list of types of data (IDSes) handled by binder and wrapper
 
 
@@ -186,7 +186,7 @@ Description of WHAT, HOW and WHERE build an actor is passed to generators' metho
 
 * ``actor_description`` - describes the actor parameters (see :ref:`here <yaml_actor_description_anchor>` for details)
 
-* ``code_description``  - describes the native code to be wrapped (see :ref:`here <yaml_code_description_anchor>` for details)
+* ``code_description``  - describes the code to be wrapped (see :ref:`here <yaml_code_description_anchor>` for details)
 
 * ``platform_settings`` - describe the values default for given platform/installation
   (see :ref:`here <yaml_platform_settings_anchor>` for details)

@@ -67,7 +67,7 @@ class ExtraLibraries( SettingsBaseClass ):
 class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     """ The fortran language specific settings.
     Attributes:
-        compiler_cmd (str): the compiler command used to compile native codes.
+        compiler_cmd (str): the compiler command used to compile the code and which will be used to compile the wrapper.
         _open_mp_switch (str): the OpenMP switch.
         _mpi_compiler_cmd (str): the MPI compiler command
         extra_libraries (:obj:`ExtraLibraries`): extra libraries defined by paths or pkg configs.

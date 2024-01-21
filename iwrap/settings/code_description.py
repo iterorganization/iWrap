@@ -22,12 +22,12 @@ class Intent( Enum ):
 
 
 class Argument( SettingsBaseClass ):
-    """The data class containing information about argument of the native code
+    """The data class containing information about the arguments of the code's API to be wrapped
 
     Attributes:
-        name (`str`): user name of the argument
+        name (`str`): name of the argument
         type (`str`): type of the IDS (e.g. 'equilibrium')
-        intent : determines if argument is IN or OUT
+        intent : determines if the argument is IN or OUT
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -90,19 +90,19 @@ class Argument( SettingsBaseClass ):
 
 
 class Subroutines( SettingsBaseClass ):
-    """The data class containing information about subroutines to be called from library provided by developer.
+    """The data class containing information about the subroutines to be called from the code's library.
 
     Attributes:
-        init (str): A name of subroutine that could be used to initialise the native code (optional)
-        main (str): A name of the main subroutine that will be called from actor (mandatory)
-        finalize (str): A name of subroutine that could be used to finalise the native code (optional)
-        get_state (str): A name of a subroutine returning information about internal model state.
-        set_state (str): A name of a subroutine restoring internal model state.
-        get_timestamp (tk.StringVar()): A name of a subroutine providing time of the computed step of simulation.
+        init (str): Name of the subroutine that can be used to initialize the code (optional)
+        main (str): Name of the main subroutine of the code that will be called from the actor (mandatory)
+        finalize (str): Name of the subroutine that can be used to finalize the code (optional)
+        get_state (str): Name of the subroutine returning the internal state of the code during a checkpoint (optional)
+        set_state (str): Name of the subroutine restoring the internal state of the code during a restart (optional)
+        get_timestamp (tk.StringVar()): Name of the subroutine providing the time in the simulation (optional)
     """
 
     def __init__(self):
-        # A name of subroutine that could be used to initialise the native code (optional)
+        # A name of subroutine that could be used to initialise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.init: str = ''
 
@@ -110,7 +110,7 @@ class Subroutines( SettingsBaseClass ):
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.main: str = ''
 
-        # A name of subroutine that could be used to finalise the native code (optional)
+        # A name of subroutine that could be used to finalise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
         self.finalize: str = ''
 
@@ -154,18 +154,18 @@ class Subroutines( SettingsBaseClass ):
 
 
 class Implementation( SettingsBaseClass ):
-    """The data class containing information about user code implementation.
+    """The data class containing information about the code implementation.
 
     Attributes:
         root dir (str): root directory
-        programming_language (str): language of native physics code
-        data_type (:obj:str):  data type handled by the physics code { 'Legacy IDS', 'HDC IDS'}
-        code_path  (str):  path to system library (C, CPP) , script (Python), etc, containing the physics code and
-            method/subroutine to be run
-        include path (str): a module's / header's file path
-        data_dictionary_compliant (str): first known compliant version of the data dictionary environment
-        code_parameters (:obj:CodeParameters): user defined parameters of the native code
-        subroutines (:obj:Subroutines): name of user method / subroutine to be called, used also as an actor name
+        programming_language (str): language of in which the code's API is implemented
+        data_type (:obj:str): data type handled by the code { 'Legacy IDS', 'HDC IDS'}
+        code_path  (str):  path to library (C, CPP), script (Python), etc, containing the code and
+            methods/subroutines to be called
+        include path (str): path to the module's / header's file defining the code's API signature
+        data_dictionary_compliant (str): oldest version of the data dictionary the code is compatible with
+        code_parameters (:obj:CodeParameters): code specific parameters
+        subroutines (:obj:Subroutines): name of the method/subroutine defined in the code's API
     """
     @property
     def programming_language(self):
@@ -197,18 +197,18 @@ class Implementation( SettingsBaseClass ):
 
         # data_type
         if not self.data_type:
-            raise ValueError( 'Type of data handled by native code is not set!' )
+            raise ValueError( 'Type of data handled by the code is not set!' )
         else:
             engine.validate_code_data_type( self.data_type )
 
         # code path
         if not is_dummy_actor:
             if not self.code_path:
-                raise ValueError( 'Path to native code is not set!' )
+                raise ValueError( 'Path to the code is not set!' )
 
             __path = utils.resolve_path( self.code_path, project_root_dir )
             if not Path(__path).exists():
-                raise ValueError( 'Path to native code points to not existing location ["' + str( __path ) + '"]' )
+                raise ValueError( 'Path to the code points to not existing location ["' + str( __path ) + '"]' )
 
         # code parameters
         self.code_parameters.validate( engine, project_root_dir )
@@ -216,11 +216,11 @@ class Implementation( SettingsBaseClass ):
         # include path
         if not is_dummy_actor:
             if not self.include_path:
-                raise ValueError( 'Path to include/module file is not set!' )
+                raise ValueError( 'Path to the include/module file is not set!' )
 
             __path = utils.resolve_path( self.include_path, project_root_dir)
             if not Path(__path).exists():
-                raise ValueError( f'Path to include/module file is not valid! {str( __path )}' )
+                raise ValueError( f'Path to the include/module file is not valid! {str( __path )}' )
 
         if not self.data_dictionary_compliant:
             raise ValueError('Data Dictionary compliant version is not set!')
@@ -276,7 +276,7 @@ class CodeParameters( SettingsBaseClass ):
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
-        #: A path to XML file containing native code parameters
+        #: A path to XML file containing the code specific parameters
         self.parameters: str = ''
 
         #: A path to XSD file containing schema that allows to validate code parameters XML description
@@ -368,13 +368,13 @@ class CodeParameters( SettingsBaseClass ):
 
 
 class CodeDescription( SettingsBaseClass ):
-    """Description of the native code used for wrapping the code within an actor.
+    """Description of the code used for wrapping the code within an actor.
 
     Attributes:
-        arguments (list [:obj:`Arguments`]): list of native code in/out arguments
-        documentation (str): human readable description of the native code
-        settings (dict): native code settings
-        implementation(:obj:`Implementation`): native code implementation info
+        arguments (list [:obj:`Arguments`]): list of the in/out arguments of the code
+        documentation (str): human readable description of the code
+        settings (dict): code settings
+        implementation(:obj:`Implementation`): details on the implementation of the code 
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -482,7 +482,7 @@ class CodeDescription( SettingsBaseClass ):
 
         code_description_dict = dict_read.get( 'code_description' )
         if not code_description_dict:
-            raise Exception( "The YAML file being loaded doesn't seem to contain valid description of the native code" )
+            raise Exception( "The YAML file being loaded doesn't seem to contain valid description of the code" )
 
         self.from_dict( code_description_dict )
 

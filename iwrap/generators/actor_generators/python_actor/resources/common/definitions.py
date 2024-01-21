@@ -7,7 +7,7 @@ from .runtime_settings import RuntimeSettings
 
 
 class Argument(  ):
-    """The data class containing information about argument of the native code
+    """The data class containing information about the arguments of the code
 
     """
     # Class logger

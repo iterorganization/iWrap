@@ -36,8 +36,8 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         The method performs initialisation actions
 
         Args:
-            runtime_settings (RuntimeSettings, optional): property tells the actor how native code should
-            code_parameters (CodeParameters, optional): physics model parameters
+            runtime_settings (RuntimeSettings, optional): property tells the actor how execute the code 
+            code_parameters (CodeParameters, optional): code specific parameters
         """
     {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.init %}
         Runner.get_runner(self).call_initialize()

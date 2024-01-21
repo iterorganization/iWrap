@@ -11,7 +11,7 @@ contains
 
         {% if code_description.implementation.subroutines.init %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE INIT SBRT CALL
+!                                   INIT SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
@@ -20,7 +20,7 @@ contains
 
 {% if code_description.implementation.subroutines.finalize %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE FINALIZE SBRT CALL
+!                                   FINALIZE SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
@@ -28,7 +28,7 @@ contains
 {% endif %}
 
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE MAIN SBRT CALL
+!                                   MAIN SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
@@ -36,7 +36,7 @@ code_description.implementation.code_parameters.parameters, code_description.set
 
         {% if code_description.implementation.subroutines.set_state %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE SET STATE SBRT CALL
+!                                   SET_STATE SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 SUBROUTINE {{actor_description.actor_name}}_wrapper_set_state(state_in, state_size, status_code, out_status_msg) BIND(C)
      use iwrap_tools
@@ -61,7 +61,7 @@ SUBROUTINE {{actor_description.actor_name}}_wrapper_set_state(state_in, state_si
     !----  ISO_C_BINDING -> Fortran conversions ----
     state_str = convert(state_in)
 
-    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    ! - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
     call  {{code_description.implementation.subroutines.set_state}}( state_str, status_code, status_msg)
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
@@ -73,7 +73,7 @@ END SUBROUTINE {{actor_description.actor_name}}_wrapper_set_state
 
 {% if code_description.implementation.subroutines.get_state %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE SET STATE SBRT CALL
+!                                   GET_STATE SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 SUBROUTINE {{actor_description.actor_name}}_wrapper_get_state(state_out, status_code, out_status_msg) BIND(C)
      use iwrap_tools
@@ -89,7 +89,7 @@ SUBROUTINE {{actor_description.actor_name}}_wrapper_get_state(state_out, status_
 	 nullify(status_msg)
 	 status_code = 0
 
-    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    ! - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
     call  {{code_description.implementation.subroutines.get_state}}( state_str, status_code, status_msg)
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------
@@ -102,7 +102,7 @@ END SUBROUTINE {{actor_description.actor_name}}_wrapper_get_state
 
 {% if code_description.implementation.subroutines.get_timestamp %}
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-!                                   NATIVE GET TIMESTAMP SBRT CALL
+!                                   GET_TIMESTAMP SBRT WRAPPER
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 SUBROUTINE {{actor_description.actor_name}}_wrapper_get_timestamp(timestamp_out, status_code, out_status_msg) BIND(C)
      use iwrap_tools
@@ -119,7 +119,7 @@ SUBROUTINE {{actor_description.actor_name}}_wrapper_get_timestamp(timestamp_out,
 	 nullify(status_msg)
 	 status_code = 0
 
-    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    ! - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
     call  {{code_description.implementation.subroutines.get_timestamp}}( timestamp_out, status_code, status_msg)
 
     ! ------------ Output data conversion [ISO_C_BINDING] --------------

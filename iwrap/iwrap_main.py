@@ -15,9 +15,9 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
     from iwrap import __version__
 
     # Management of input arguments
-    parser = argparse.ArgumentParser( description='iWrap - a modular component generator, used for creating IMAS '
-                                                  'actors from physics models.',
-                                      epilog='For more information, visit <http://iter.org/>.',
+    parser = argparse.ArgumentParser( description='iWrap - a modular IMAS actor generator, used for creating '
+                                                  'standardized actors from a code interfaced with IDSs.',
+                                      epilog='For more information, visit <https://imas.iter.org/>.',
                                       # formatter_class=argparse.ArgumentDefaultsHelpFormatter
                                       )
 
@@ -26,14 +26,14 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                    help="user defined name of the actor" )
 
     generation_group.add_argument( '-t', '--actor-type', type=str,
-                                   help="type of an actor to be generated" )
+                                   help="type of the actor to be generated" )
 
     generation_group.add_argument( '-d', '--data-type', type=str,
                                    default='legacy',
-                                   help="type of data to be used by the actor" )
+                                   help="type of IDS data structure to be used by the actor" )
 
     generation_group.add_argument( '-f', '--file', type=argparse.FileType( 'r' ),
-                                   help="a path to code/actor description *.yaml file" )
+                                   help="path to the code/actor description *.yaml file" )
 
     generation_group.add_argument( '-i', '--install-dir', type=str, required=False,
                                    help="actor installation directory" )
@@ -88,12 +88,12 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
             print(exc)
             return 1
 
-        print('Actor type:', '\t\t:\t', generator.name)
-        print('Actor IDS types', '\t:\t', ", ".join(generator.actor_data_types ))
-        print('Native code languages', '\t:\t', ", ".join(generator.code_languages))
-        print('Native code IDS types', '\t:\t', ", ".join(generator.code_data_types))
-        print('Description', '\t\t:\t', generator.description )
-        print('-' * 70 )
+        print('Actor type', '\t\t\t\t:\t', generator.type) 
+        print('Description', '\t\t\t\t:\t', generator.description )
+        print('Supported IDS types (actor)', '\t\t:\t', ", ".join(generator.actor_data_types ))
+        print('Supported languages (code/wrapper)', '\t:\t', ", ".join(generator.code_languages))
+        print('Supported IDS types (code/wrapper)', '\t:\t', ", ".join(generator.code_data_types))
+        print('-' * 80 )
 
         return 0
     if args.file:

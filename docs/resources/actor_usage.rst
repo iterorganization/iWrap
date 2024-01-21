@@ -92,7 +92,7 @@ An actor instance can be created, using already imported actor class, in usual '
 Configuration of an actor
 =========================================================================================
 
-Workflow developer can (re)configure an actor before its initialisation and native code execution.
+Workflow developer can (re)configure an actor before its initialisation and the execution of the code.
 
 Settings that can be changed include:
 
@@ -116,30 +116,30 @@ The ``initialize(...)`` method of the actor to perform internal initialisation a
 
 This method:
 
-* Updates an actor runtime settings
-* Updates native code parameters
-* Validate code parameters
-* Initialises *sandbox*:
+* Updates the actor runtime settings
+* Updates the code specific parameters
+* Validate the code parameters
+* Initialises the *sandbox*:
 
-  * Creates sandbox directory (if it doesn't exists)
-  * Clean up the content of sandbox directory (if it was previously created)
+  * Creates the sandbox directory (if it doesn't exists)
+  * Clean up the content of the sandbox directory (if it was previously created)
 
-* Initialises IDS temporary storage (used for passing IDSes to the native code)
-* Calls *initialisation* method of the native code
-* Typically this method should be run when workflow starts
+* Initializes IDS temporary storage (used for passing IDSes from the actor to the code)
+* Calls the *initialization* method of the code
+* Typically this method should be run at the start of the workflow 
 
 
 Main method call:
 =========================================================================================
 
-At this stage an actor call *main* method of the native code:
+At this stage an actor call the *main* method of the code:
 
 - This step can be repeated an arbitrary number of times
-- A list of inout/output IDS object has to be passed to method
-- Actor *main* method can be called:
+- A list of input/output IDS objects has to be passed to the method
+- The actor *main* method can be called:
 
   - Implicitly (the ``__call__(...)`` method is implemented so the method can be run
-    using object_name only (suggested method!):
+    using object_name only (preferred  method!):
 
 
     .. code-block:: Python
@@ -156,22 +156,22 @@ At this stage an actor call *main* method of the native code:
        e.g.
        output_distribution_sources = actor_object.run(input_core_profiles)
 
-- Actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
+- The actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
 
-Actor finalisation
+Actor finalization
 =========================================================================================
 
 .. code-block:: Python
 
    actor_object.finalize()
 
-This method of the actor is usually used to perform internal finalisation actions (clean up the environment etc):
+This method of the actor is usually used to perform any internal finalization actions in the code (clean up the environment etc):
 
-- Calls of a *finalize* method of the native code
+- Calls of the *finalize* method of the code
 - Cleans up IDS temporary storage
-- Actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
-- Actor sandbox directory is removed (depending on `Sandbox settings`_)
-- Typically this method should be run when workflow finishes its execution
+- The actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
+- The actor sandbox directory is removed (depending on `Sandbox settings`_)
+- Typically this method should be run when at the end of the workflow 
 
 Additional actor methods
 ######################################################################################################################
@@ -186,21 +186,17 @@ Code restarting methods
    actor_object.set_state(code_state)
 
 
-The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
-and the actor cannot force the wrapped ``main`` method to save a checkpoint at an arbitrary time,
-while it is executed.
+The actor ``get_state`` and  ``set_state`` methods enable restart stateful, sometimes compute demanding,
+codes without losing intermediate results that are not captured in the code's outputs. The code may be asked periodically
+about its internal state using the ``get_state`` method. After a restart, the code state can be restored
+using the ``set_state`` method.
 
-An actor ``get_state`` and  ``set_state`` methods enable restart stateful, sometimes compute demanding,
-codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
-about its internal state using ``get_state`` method. After restart, the code state can be restored
-using ``set_state`` method.
-
-An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
-to the code developer concerning format and content of state description.
+The internal state of the code has to be passed as a string, however iWrap gives full flexibility
+to the code developer concerning the format and content of state description.
 It is a kind of a ‘black box’ returned from ``get_state`` and passed to ``set_state`` method during restart,
-so the only requirement is that information returned by ``get_state`` is understandable to ``set_state``.
+so the only requirement is that information returned by ``get_state`` is understandable by ``set_state``.
 
-- Example of the usage:
+- Example of usage:
 
 .. code-block:: Python
 
@@ -239,11 +235,11 @@ Get timestamp method
 ``get_timestamp`` method allows to obtain currently computed physical time.
 Such information can help support consistent physical time handling throughout the coupled simulation.
 
-Physics model parameters
+Code-specific parameters
 ######################################################################################################################
 
-Native code parameters, which default value is provided (as a file path) while generating an actor,
-can be change in runtime
+Code-specific parameters, for which the default value is given (as a file path) when generating the actor,
+can be change at runtime
 
 -   *code_parameters*  cannot be accessed directly, but only via a special getter method:
 
@@ -299,7 +295,7 @@ can be change in runtime
 Actor runtime settings
 ######################################################################################################################
 
-The ``runtime_settings`` property tells the actor how native code should be run and defines:
+The ``runtime_settings`` property tells the actor how the code should be called and defines:
 
 -   Run mode
 -   Debug settings
@@ -308,7 +304,7 @@ The ``runtime_settings`` property tells the actor how native code should be run 
 -   Temporary IDS storage settings
 -   Command line to be run
 
-*runtime_settings*  cannot be accessed directly, but only via a special getter method:
+*runtime_settings* cannot be accessed directly, but only via a special getter method:
 
 .. code-block:: Python
 
@@ -335,14 +331,14 @@ Run mode
 
 -   Defined by setting one of predefined ``RunMode`` enumeration class values
 
--   ``RunMode.NORMAL`` (default) - native code is loaded from system library and called directly from Python,
-    within the same process (and environment) that workflow script. Usually system resources,
+-   ``RunMode.NORMAL`` (default) - the code is loaded as a library and its routines are called directly from Python,
+    within the same process (and environment) used for the workflow script. Usually system resources,
     shared with other Python threads are limited, however this mode is suitable for most of the actors.
 
--   ``RunMode.STANDALONE``   - an actor runs native code as executable in a separate system process, having its
+-   ``RunMode.STANDALONE``   - the actor runs the code as an executable in a separate process, having its
     own environment and (usually) bigger system resources available. This mode is set automatically for MPI
     applications, however it can be set automatically e.g. for memory demanding code. It  has also its limitations:
-    only `INIT`, `MAIN` and `FINALIZE` methods of the native code can be run in the 'STANDALONE mode.
+    only `INIT`, `MAIN` and `FINALIZE` methods of the code can be run in the 'STANDALONE mode.
 
 -   ``RunMode.BATCH`` - an actor standalone executable is submitted to a batch queue.
     See `Batch settings`_ for details concerning batch job configuration
@@ -377,15 +373,15 @@ Debug mode
 
 -   Defined by setting one of predefined ``DebugMode`` enumeration class values
 
--   ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *native code as executable
-    in a separate system process*, but this time under debugger control. Debugged code can be run several
+-   ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *the code as an executable
+    in a separate process*, but this time under debugger control. Debugged code can be run several
     times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable
     for most of the purposes.
 
 -   ``DebugMode.ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
-    and setting breakpoint on wrapped native code of the debugged actor.  Because debugger attaches to a
+    and setting breakpoint on wrapped code of the debugged actor.  Because debugger attaches to a
     workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be
-    chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results from actor
+    chosen if the issue within the code cannot be reproduced in STANDALONE mode and the issue results from actor
     interdependencies (e.g. one actor overwrites memory of the other one).
 
 -   Import of enumerated values:
@@ -413,7 +409,7 @@ Debug mode
 
 Setting debugger
 -----------------------------------------------------
-More advanced users may use a debbuger, different than the default one, using an actor API
+More advanced users may use a debbuger different than the default one. This can be controlled through the actor API
 
 -   Defined by setting ``debugger_cmd`` or ``debugger_attach_cmd`` attributes
 
@@ -492,7 +488,7 @@ MPI settings
 
 .. note::
    -  MPI code is *always* run as executable in standalone or batch mode
-   -  If a native code is not marked as 'MPI' (i.e. MPI compiler is not set)  during actor generation,
+   -  If the code is not marked as 'MPI' (i.e. MPI compiler is not set) during actor generation,
       mpi settings are ignored
    -  MPI commandline is built by concatenating:
 
@@ -596,7 +592,7 @@ Sandbox attributes:
 IDS storage settings
 =========================================================================================
 
-This attribute defines settings of temporary storage being used while passing IDSes between an actor and native code.
+This attribute defines settings of temporary storage being used while passing IDSes between the actor and the code.
 
 -  Storage parameters that can be set:
 
@@ -613,8 +609,8 @@ This attribute defines settings of temporary storage being used while passing ID
    -    persistent_backend
 
         -  Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running
-           actor in a standalone mode, when a native code is run as separate process, so it doesn't share
-           memory with other actors.
+           the actor in standalone mode, when the code is run in a separate process, so it doesn't share
+           memory with the workflow).
         -  Default value -  ``imas.imasdef.MDSPLUS_BACKEND``
 
 .. note::
@@ -622,7 +618,7 @@ This attribute defines settings of temporary storage being used while passing ID
 
 User defined commandline command
 =========================================================================================
-Workflow developer may take full control on the way an actor is run defining ``commandline_cmd``
+The workflow developer may take full control on the way an actor is run by defining the ``commandline_cmd``
 attribute of ``runtime_settings``. If not set, the automatically generated commandline will be used
 (typical for the most of the usage scenarios)
 

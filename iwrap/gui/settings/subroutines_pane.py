@@ -11,12 +11,12 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
     """Subroutines pane contains main, init and finalize values.
 
     Attributes:
-        init (tk.StringVar()): A name of subroutine that could be used to initialise the native code
+        init (tk.StringVar()): A name of subroutine that could be used to initialise the code
         main (tk.StringVar()): A name of the main subroutine that will be called from actor
-        finalize (tk.StringVar()): A name of subroutine that could be used to finalise the native code
-        get_state (tk.StringVar()): A name of a subroutine returning information about the internal model state.
-        set_state (tk.StringVar()): A name of a subroutine restoring the internal model state.
-        get_timestamp (tk.StringVar()): A name of a subroutine providing time of the computed step of simulation.
+        finalize (tk.StringVar()): A name of subroutine that could be used to finalise the code
+        get_state (tk.StringVar()): A name of a subroutine returning information about the internal state of the code
+        set_state (tk.StringVar()): A name of a subroutine restoring the internal state of the code
+        get_timestamp (tk.StringVar()): A name of a subroutine providing time of the computed step of simulation
     """
 
     # Class logger

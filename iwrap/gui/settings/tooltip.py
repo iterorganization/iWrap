@@ -74,41 +74,41 @@ tooltip_dict ={
                 'examples:\n'
                    'C++: ‘/path/to/code/include/code.h’\n'
                    'Fortran: ‘/path/to/code/include/code.mod',
-    'init':'Name of user method / subroutine to be called. It is used, usually, to set up the native code, however subroutine may contain any arbitrary actions.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'init':'Name of the method/subroutine in the API of the code. This method is usually used to set up the initial state of the code, however it may contain any arbitrary actions.\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_init_method',
-    'main':'Name of user method / subroutine to be called. It is main method of your physics code.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'main':'Name of the method/subroutine in the API of the code. This method is the main compute part of the code (but can correspond to a single step or to the entire computation).\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_main_method',
-    'finalize':'Name of user method / subroutine to be called. It is used, usually, to clean up the native code, however subroutine may contain any arbitrary actions.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'finalize':'Name of the method/subroutine in the API of the code. This method is usually used to clean up the code, however it may contain any arbitrary actions.\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_finalize_method',
-    'get_status':'Name of user method / subroutine to be called. It is used, usually, to get current state of native code, however subroutine may contain any arbitrary actions.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'get_status':'Name of the method/subroutine in the API of the code. This method is used to get the current state of the code (e.g. for a checkpoint).\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_get_status_method',
-    'set_status':'Name of user method / subroutine to be called. It is used, usually, to set current state of native code, however subroutine may contain any arbitrary actions.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'set_status':'Name of the method/subroutine in the API of the code. This method is used to set a new current state of the code (e.g. for a restart).\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_set_status_method',
-    'get_timestamp': 'Name of user method / subroutine to be called. It is used, usually, to get timestamp of native code, however subroutine may contain any arbitrary actions.\n'
-           'IMPORTANT! method name must be the same as in native code.\n\n'
+    'get_timestamp': 'Name of the method/subroutine in the API of the code. This method is used to get the current timestamp (physics time) from the code.\n'
+           'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_get_timestamp_method',
-    'install_dir':'Path to the directory where actor will be installed.',
-    'documentation':'Human readable description of the physics code.',
-    'parameters_file':'Path to the code parameters (XML file) of the physics code.\n\n'
+    'install_dir':'Path to the directory where the actor will be installed.',
+    'documentation':'Human readable description of the actor.',
+    'parameters_file':'Path to the parameters (XML file) of the code.\n\n'
                       'example: ‘./code_parameters/parameters.xml’',
     'schema_file':'Path to the schema (XSD file) used to validate the XML code parameters.\n\n'
                   'example: ‘./code_parameters/parameters.xsd’',
-    'argument_window.Name':'User defined argument name. Will be used in the actor.\n\n'
+    'argument_window.Name':'User defined argument name. Will be used in the actor only.\n\n'
                            'example: ’equilibrium00’',
     'argument_window.Intent':'Determines if the given argument is an input or an output one.',
-    'argument_window.Type':'The type of the IDS structure associated with this argument.',
-    'compiler_cmd':'Name/vendor of the compiler command used to compile native codes.\n\n'
+    'argument_window.Type':'The type of the IDS structure (i.e. the IDS name) associated with this argument.',
+    'compiler_cmd':'Name/vendor of the compiler command used to compile the code and which will be used to compile the wrapper.\n\n'
                                'examples:\n'
                                '‘gfortran‘, ‘ifort‘, ‘g++‘',
-    'open_mp_switch':'A compiler switch/flag to be used if the physics code uses OpenMP.\n'
+    'open_mp_switch':'A compiler switch/flag to be used if the code uses OpenMP.\n'
                      'examples:\n'
                      ' ‘-fopenmp’, ‘-qopenmp’',
-    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the physics code.\n'
+    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the code and which will be used to compile the wrappper.\n'
                        'IMPORTANT! The existence (or absence) of this entry, determines if the physics code uses MPI (or not).\n\n'
                        'examples:\n'
                        '‘mpif90’, ‘mpiifort’'
