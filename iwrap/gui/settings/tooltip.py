@@ -102,13 +102,13 @@ tooltip_dict ={
                            'example: ’equilibrium00’',
     'argument_window.Intent':'Determines if the given argument is an input or an output one.',
     'argument_window.Type':'The type of the IDS structure (i.e. the IDS name) associated with this argument.',
-    'compiler_cmd':'Name/vendor of the compiler command used to compile the code and which will be used to compile the wrapper.\n\n'
+    'compiler_cmd':'The compiler command used to compile the code and which will be used to compile the wrapper.\n\n'
                                'examples:\n'
                                '‘gfortran‘, ‘ifort‘, ‘g++‘',
     'open_mp_switch':'A compiler switch/flag to be used if the code uses OpenMP.\n'
                      'examples:\n'
                      ' ‘-fopenmp’, ‘-qopenmp’',
-    'mpi_compiler_cmd':'The name/vendor of the MPI compiler command used to compile the code and which will be used to compile the wrappper.\n'
+    'mpi_compiler_cmd':'The MPI compiler command used to compile the code and which will be used to compile the wrappper.\n'
                        'IMPORTANT! The existence (or absence) of this entry, determines if the physics code uses MPI (or not).\n\n'
                        'examples:\n'
                        '‘mpif90’, ‘mpiifort’'
