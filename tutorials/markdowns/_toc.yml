@@ -1,0 +1,51 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: 01_Tutorial_Introduction_And_Environment_Set_Up/01_Overall_tutorial_introduction.md
+parts:
+  - caption: Tutorial Introduction
+    chapters:
+    - file: 01_Tutorial_Introduction_And_Environment_Set_Up/02_iWrap_introduction.md
+      title: iWrap introduction
+    - file: 01_Tutorial_Introduction_And_Environment_Set_Up/03_jupyter_introduction.md
+      title: Jupyter introduction
+    - file: 01_Tutorial_Introduction_And_Environment_Set_Up/04_enviroment_setup.md
+      title: Environment Setup
+
+
+  - caption: For beginners - chapter 1
+    chapters:
+    - file: 02_Basic/Chapter_1/01_intro_and_IMAS_adaptation.md
+      title: Intro to chapter 1 with Preamble to IMAS adaptation
+    - file: 02_Basic/Chapter_1/02_code_standarization.md
+      title: Code standarization
+    - file: 02_Basic/Chapter_1/03_code_description_and_actor_generation.md
+      title: Code description and Actor Generation using CLI and GUI
+    - file: 02_Basic/Chapter_1/04_workflow.md
+      title: Workflow
+
+      
+  - caption: For beginners - chapter 2
+    chapters:
+    - file: 02_Basic/Chapter_2/01_intro.md
+      title: Introduction to chapter 2
+    - file: 02_Basic/Chapter_2/02_code_standarization.md
+      title: Code standarization
+    - file: 02_Basic/Chapter_2/03_code_description_and_actor_generation.md
+      title: Code description and Actor Generation using CLI and GUI
+    - file: 02_Basic/Chapter_2/04_workflow.md
+      title: Workflow
+
+  - caption: For beginners - chapter 3
+    chapters:
+    - file: 02_Basic/Chapter_3/01_intro.md
+      title: Introduction to chapter 3
+    - file: 02_Basic/Chapter_3/02_code_standarization.md
+      title:  code standarization
+    - file: 02_Basic/Chapter_3/03_code_description_and_actor_generation.md
+      title: Code description and Actor Generation using CLI and GUI
+    - file: 02_Basic/Chapter_3/04_workflow.md
+      title: Workflow
+
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+
+    <!-- Greeting in chosen spoken language -->
+    <greeting> Hola! </greeting>
+
+    <!-- Farewell in chosen spoken language -->
+    <farewell> Adios! </farewell>
+
+</parameters>

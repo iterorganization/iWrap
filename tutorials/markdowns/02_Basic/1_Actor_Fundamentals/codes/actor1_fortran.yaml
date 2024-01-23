@@ -1,0 +1,18 @@
+code_description:
+    implementation:
+        subroutines:
+            main:     code1_step
+        code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
+        include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
+        programming_language: fortran
+        data_dictionary_compliant: 3.37.0
+        data_type: legacy
+    arguments:
+    -   name: core_profiles_in
+        type: core_profiles
+        intent: IN
+    -   name: distribution_sources_out
+        type: distribution_sources
+        intent: OUT
+    settings:
+        compiler_cmd: gfortran
