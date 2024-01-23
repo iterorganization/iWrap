@@ -21,7 +21,7 @@ class ProjectSettings( SettingsBaseClass ):
 
     Attributes:
 
-        code_description (:obj:`CodeDescription`): description of the native code used for wrapping the code within an actor.
+        code_description (:obj:`CodeDescription`): description of the code and its wrapper.
     """
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
@@ -141,7 +141,7 @@ class ProjectSettings( SettingsBaseClass ):
         else:
             # YAML file MUST contain at least code description document
             raise Exception(
-                "The YAML file being looaded doesn't seem to contain valid description of the native code" )
+                "The YAML file being loaded doesn't seem to contain a valid description of the code" )
 
         file_real_path = os.path.realpath( file.name )
         self.project_dir = os.path.dirname( file_real_path )

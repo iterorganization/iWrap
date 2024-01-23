@@ -5,6 +5,7 @@ from tkinter.constants import S
 
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class DocumentationPane(ttk.LabelFrame, IWrapPane):
@@ -86,6 +87,7 @@ class TextEditor:
         self.text_editor = tk.Text(master)
         # Pack text box
         self.text_editor.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
+        ToolTip(self.text_editor, 'documentation')
 
         # Configure scrollbar for text box scrolling
         scrollbar.config(command=self.text_editor.yview)

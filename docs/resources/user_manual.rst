@@ -24,11 +24,11 @@ Introduction
         Usually given actor consumes results provided by a previous actor in a scenario and produces data for
         a next actor in a scenario
         Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor
-        An actor, using its internal mechanisms ('wrappers') calls 'native code' method(s), usually written
+        An actor, using its internal mechanisms ('wrappers') calls the 'code' method(s), usually written
         in other language than actor
 
-    Native code
-     A physics model, of standardised signature, provided by software developer
+    Code
+      An implementation of a physics model, of standardized signature
 
 Motivations
 #######################################################################################################################
@@ -43,7 +43,7 @@ in the same programming language, defining the same API.
 
 Lots of scientific codes, algorithms, that perform computing intensive calculations, are written in C++ or Fortran.
 On the other hand, 'workflow orchestrators' are implemented in languages that provide elements
-of dynamic coding - e.g.: Java, Python. Hence the need for a 'wrapper' that intermediates between native code language
+of dynamic coding - e.g.: Java, Python. Hence the need for a 'wrapper' that intermediates between the code language
 and language of the orchestrator. Such wrappers can be developed manually. This, however, requires lots of the effort
 and practical knowledge of all the elements involved in the process - this is exactly where iWrap fits best,
 hiding this complexity by providing user with final solution - wrapped code.
@@ -68,8 +68,8 @@ iWrap creates a Python script (aka an actor) that:
 * Runs MPI code
 
 Wrap generates a Fortran/CPP wrapper, which intermediates between Python script (workflow) and user code in terms of:
-* Calling physical model methods – the native code provided by developer
-* Converting arguments passed between the native code and computing scenario from/to the workflow programming language to/from the physics model programming language
+* Calling physical model methods – the code provided by developer
+* Converting arguments passed between the code and computing scenario from/to the workflow programming language to/from the physics model programming language
 * Managing the temporary IDS  (Interface Data Structures) storage used to pass data between workflow and physic model subroutines run in separate process as standalone executable.
 
 
@@ -85,7 +85,7 @@ For user conveniency iWrap provides two kinds of interfaces:
 Preparation of the code and actor generation
 #######################################################################################################################
 
-.. :ref:`Preparation of the native code <yaml_project_description_anchor>`_
+.. :ref:`Preparation of the code <yaml_project_description_anchor>`_
 
 .. :doc:`Generation of defined actor <../resources/actor_generation>`
 .. :doc:`Usage of an actor <actor_usage>`
@@ -98,6 +98,6 @@ Preparation of the code and actor generation
    :numbered:
    :maxdepth: 10
 
-   /resources/native_code.rst
+   /resources/code_api.rst
    /resources/actor_generation.rst
    /resources/actor_usage.rst

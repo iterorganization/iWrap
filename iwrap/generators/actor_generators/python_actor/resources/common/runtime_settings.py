@@ -12,33 +12,33 @@ class DebugMode( Enum ):
     """Debug turned off"""
 
     STANDALONE = auto()
-    """An actor runs native code as executable in a separate system process, under debugger control. Debugged code 
-    can be run several times. To proceed with workflow execution is enough to close the debugger. 
-    This debugging mode is suitable for most of the purposes."""
+    """The actor runs the code as an executable in a separate process, under debugger control. Debugged code 
+    can be run several times. To continue the workflow execution it is enough to close the debugger. 
+    This debugging mode is suitable for most purposes."""
 
     ATTACH = auto()
-    """An actor runs a debugger as parallel process, attaching it to a running workflow and setting breakpoint 
-    on wrapped native code of the debugged actor. Because debugger attaches to a workflow (and not a particular actor) 
+    """The actor runs a debugger as a parallel process, attaching it to a running workflow and setting breakpoint 
+    on the wrapped code of the the debugged actor. Because debugger attaches to a workflow (and not a particular actor) 
     killing debugged process kills the whole workflow. 
-    This mode has to be chosen if the issue within code cannot be reproduced in STANDALONE mode and the issue results 
-    from actor interdependencies (e.g. one actor overwrites memory of the other one)."""
+    This mode has to be chosen if the issue within the wrapper or the code cannot be reproduced in STANDALONE mode or 
+    if the issue results from actor interdependencies (e.g. one actor overwrites memory of others)."""
 
 class RunMode( Enum ):
     """Provides enumerated values describing run mode
     """
 
     NORMAL = auto()
-    """Native code is loaded from system library and called directly from Python, 
-    within the same process (and environment) that workflow script. Usually system resources, shared with other Python 
+    """The code is loaded from a library and called directly from Python, 
+    within the same process (and environment). Usually system resources, shared with other Python 
     threads are limited, however this mode is suitable for most of the actors."""
 
     STANDALONE = auto()
-    """An actor runs native code as executable in a separate system process, having its own environment 
+    """The actor runs the code as an executable in a separate system process, having its own environment 
     and (usually) bigger system resources available. This mode is set automatically for MPI applications,
-    however it can be set also e.g. for memory demanding code."""
+    however it can be set also for memory demanding code."""
 
     BATCH = auto()
-    """An actor standalone executable is submitted to a batch queue."""
+    """The actor standalone executable is submitted to a batch queue. (WIP)"""
 
 
 class SandboxMode( Enum ):
@@ -49,33 +49,33 @@ class SandboxMode( Enum ):
     """iWrap generated actor manages the sandbox creation, clean up, etc"""
 
     MANUAL = auto()
-    """Full manual mode. It is developer responsibility to maintain sandbox (i.e. create it, clean it up, etc).
+    """Full manual mode. It is the user responsibility to maintain the sandbox (i.e. create it, clean it up, etc).
      Requires :obj:`SandboxSettings` path attribute to be set."""
 
 
 class SandboxLifeTime( Enum ):
-    """Provides enumerated values describing life time of the sandbox
+    """Provides enumerated values describing the life time of the sandbox
     """
 
     ACTOR_RUN = auto()
-    """Content of the sandbox directory is cleaned before and after every main actor method execution"""
+    """Content of the sandbox directory is cleaned before and after every call to the actor main method"""
 
     WORKFLOW_RUN = auto()
     """Content of the sandbox directory is cleaned, during initialising stage of an actor and after 
-    other finalisation actions of the actor (so, sandbox should be available during the whole workflow run)"""
+    other finalization actions of the actor (so, sandbox should be available during the whole workflow run)"""
 
     PERSISTENT = auto()
     """Content of the sandbox directory is preserved and never cleaned up"""
 
 class IdsStorageSettings:
-    """Settings of temporary storage being used while passing IDSes between an actor and native code.
+    """Settings of temporary storage being used while passing IDSes between the actor and the code.
 
     Attributes:
-        db_name (str, default='tmp'): name of the data base to be used
+        db_name (str, default='tmp'): name of the database to be used
         backend (str, default=imas.imasdef.MEMORY_BACKEND): backend to be used
         persistent_backend  (str, default=imas.imasdef.MDSPLUS_BACKEND): backend to be used when temporary data
             cannot be stored in memory (e.g. while running actor in a standalone mode,
-            when a native code is run as separate process, so it doesn’t share memory with other actors.
+            when the code is run as separate process, so it doesn’t share memory with other actors.
     """
 
     # Class logger
@@ -88,7 +88,7 @@ class IdsStorageSettings:
 
 
 class RuntimeSettings:
-    """The runtime settings determines how native code should be run.
+    """The runtime settings determines how the code should be run.
 
    Attributes:
         run_mode (:obj:`RunMode`): Defined by setting one of predefined :obj:`RunMode` enumeration class values
@@ -98,8 +98,8 @@ class RuntimeSettings:
         sandbox (:obj:`SandboxSettings`): sandbox settings
         batch (:obj:`BatchSettings`): batch job settings
         debugger (:obj:`DebuggerSettings`): debugger settings
-        commandline_cmd (`str`): user provided commandline string that replaces automatically generated one
-        exec_options(`str`): additional user options to be added to automatically generated commandline
+        commandline_cmd (`str`): user provided commandline string that replaces the automatically generated one
+        exec_options(`str`): additional user options to be appended to the automatically generated commandline
 
     """
 

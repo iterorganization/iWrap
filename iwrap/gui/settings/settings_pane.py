@@ -5,6 +5,7 @@ from tkinter import LabelFrame, ttk
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
 from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.tooltip import ToolTip
 
 
 class SettingsPane(ttk.Frame, IWrapPane):

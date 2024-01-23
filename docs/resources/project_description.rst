@@ -1,28 +1,28 @@
 .. _yaml_project_description_anchor:
 
 ############################################################
-Actor and native code YAML description
+Actor and code YAML descriptions
 ############################################################
 
 Introduction
 #######################################################################################################################
 
-iWrap, to properly wrap the code, needs detailed informations about both: the wrapped code and an actor to be
+iWrap, to properly wrap the code, needs detailed informations about both the code and the targeted actor to be
 generated. A formal description of the code provides information about the programming language used, arguments
-passed to/from the code, type of these arguments, etc, etc, while an actor description tells iWrap how to name generated
-actor, where to put it, etc. Such descriptions has to be provided in YAML format file, prepared manually, or
-automatically with help of iWrap GUI.
+passed to/from the code's routines, type of these arguments, etc... The actor description tells iWrap how to name
+the generated actor, where to install it, etc... Such descriptions have to be provided in a YAML file, prepared manually
+or automatically with the help of iWrap's GUI.
 
 .. note::
-      iWrap GUI allows to generate an actor without the need for manual preparation of actor/code description.
+      iWrap GUI will guide the user through the description of the actor and code, without the need for manually writing the YAML file.
 
 **YAML file syntax**
 
 The YAML file consists of two independent parts, with entry names corresponding to their roles:
-*actor_description* and *code_description*. Only *code description* part is mandatory, and  *actor description* data
-could be provided in a file or using iWrap commandline switches or interacting with GUI.
+*actor_description* and *code_description*. Only *code_description* part is mandatory, and  *actor_description* data
+could be provided in a file or using iWrap commandline switches or through the GUI.
 
-The structure of the file is following:
+The structure of the file is the following:
 
 .. code-block:: YAML
 
@@ -38,8 +38,8 @@ The structure of the file is following:
 
 .. warning::
       -  All YAML fields are *MANDATORY*, unless explicitly described as *OPTIONAL*
-      -  An actor description part must begin with entry "actor_description:"
-      -  A code description part must begin with entry "code_description:"
+      -  The actor description part must begin with entry "actor_description:"
+      -  The code description part must begin with entry "code_description:"
 
 .. _yaml_actor_description_anchor:
 
@@ -68,11 +68,11 @@ Actor description syntax
 
 .. _yaml_code_description_anchor:
 
-Native code description
+Code description
 #######################################################################################################################
 
-Description of the native code has to be provided as a YAML document. It consist of two parts. The first one contains
-generic information common for all languages, The latter one contains information specific for a given native code
+Description of the code has to be provided as a YAML document. It consist of two parts. The first one contains
+generic information common for all languages, The latter one contains information specific for a given code
 language (currently defined only for Fortran and C++).
 
 Generic part
@@ -84,13 +84,13 @@ Generic information common for all programming languages handled by iWrap:
 
     -   *programming_language:*
 
-        -   meaning:  language of physics code
+        -   meaning:  language used to implement the code's API
         -   value: one of predefined values: 'Fortran', 'CPP'
         -   example: 'Fortran'
 
     -   *data_dictionary_compliant:*
 
-        -   meaning:  oldest known version of Data Directory compatible with actor
+        -   meaning: oldest known version of the Data Directory which is compatible with the code
         -   value: any string representing Data Directory version
         -   example: '3.37.0'
 
@@ -108,9 +108,9 @@ Generic information common for all programming languages handled by iWrap:
             - **optional** entry
             -   meaning:
 
-                -  name of user method / subroutine to be called,
+                -  name of the method / subroutine to be called,
                 -  must be **exactly the same** as name of called method / subroutine
-                -  it is used, usually, to set up the native code, however subroutine may contain any arbitrary actions
+                -  it is used, usually, to set up the code, however subroutine may contain any arbitrary actions
             -  value: string
             -  example: 'init_code'
 
@@ -118,9 +118,8 @@ Generic information common for all programming languages handled by iWrap:
 
             -   meaning:
 
-                -  name of user method / subroutine to be called,
-                -  must be \ **exactly the same** as name of called  method / subroutine
-                -  it is used also as an actor name and the name of directory where actor is installed
+                -  name of the method / subroutine to be called,
+                -  must be **exactly the same** as name of called  method / subroutine
 
             -  value: string
             -  example: 'my_subroutine'
@@ -130,30 +129,65 @@ Generic information common for all programming languages handled by iWrap:
              - **optional** entry
              -   meaning:
 
-                 -  name of user method / subroutine to be called
+                 -  name of the method / subroutine to be called
                  -  must be **exactly the same** as name of called  method / subroutine
-                 -  it is used, usually, to clean up the native code, however subroutine may contain any arbitrary actions
+                 -  it is used, usually, to clean up the code, however subroutine may contain any arbitrary actions
 
              -  value: string
              -  example: 'clean_up'
 
+        -    *get_state:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of the method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used to get the current state of the code
+
+             -  value: string
+             -  example: 'get_state'
+
+        -    *set_state:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of the method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used to set a new current state for the code
+
+             -  value: string
+             -  example: 'set_state'
+
+        -    *get_timestamp:*
+
+             - **optional** entry
+             -   meaning:
+
+                 -  name of the method / subroutine to be called
+                 -  must be **exactly the same** as name of called  method / subroutine
+                 -  it is used to get a timestamp of the simulation performed by the code
+
+             -  value: string
+             -  example: 'get_timestamp'
+
     -   *data_type:*
 
-        -   meaning: data type handled by the physics code
+        -   meaning: data type handled by the code's API
         -   value: 'legacy' (currently only 'Legacy IDS' type has been implemented)
         -   example: 'legacy'
 
     -  *code_path:*
 
-       -  meaning: path to system library (C, C++, Fortran) , script (Python), etc., containing the physics code, including
-          methods/subroutines to be run
+       -  meaning: path to system library (C, C++, Fortran) , script (Python), etc., containing the code, including
+          methods/subroutines to be called
        -  value: string, valid path to file
        -  example: '/path/to/code/lib/libcode.a'
 
     -  *include_path:*
 
-       -  meaning: path to a header file (C, C++), module (Fortran), etc., containing the declaration of physics code
-          methods/subroutines to be run
+       -  meaning: path to a header file (C, C++), module (Fortran), etc., containing the declaration of the code's API
        -  value: string, valid path to file
        -  example: '/path/to/code/include/code.h'
 
@@ -167,7 +201,7 @@ Generic information common for all programming languages handled by iWrap:
 
         -   *parameters:*
 
-            -  meaning: path to XML file containing user defined parameters of the physics model
+            -  meaning: path to XML file containing default parameters of the code
             -  value: string, valid path to file
             -  example: './code_parameters/parameters.xml'
 
@@ -201,9 +235,9 @@ Generic information common for all programming languages handled by iWrap:
 
 -   *documentation:*
     - **optional** entry
-    -  meaning: human readable description of native code
+    -  meaning: human readable description of the actor
     -  value: string
-    -  example: 'any text describing a physics model'
+    -  example: 'any text describing a the actor'
 
 -   *settings:*  mandatory entry gathering all information specific for given language (see chapter below)
 
@@ -215,20 +249,20 @@ Syntax
 ------------------------------------------------------------
 -   *compiler_cmd:*
 
-    -  meaning: the name/vendor of the compiler command used to compile native codes
+    -  meaning: the name of the compiler command used to compile the code and which will compile the wrapper
     -  value: string, compiler script name
     -  example: 'gfortran', 'ifort'
 
 -   *mpi_compiler_cmd:
 
-    -  meaning: the name/vendor of the *MPI* compiler command used to compile native codes.
+    -  meaning: the name of the *MPI* compiler command used to compile the code and which will compile the wrapper
     -  value: string, compiler script name
     -  example: 'mpif90', 'ifort'
-    -  Important! The existence (or absence) of this entry, determines if native codes use MPI or not
+    -  Important! The existence (or absence) of this entry, determines if the code uses MPI or not
 
 -   *open_mp_switch:*
 
-    -  meaning: a compiler switch to be used if native code use OpenMP.
+    -  meaning: a compiler switch/flag to be used if the code uses OpenMP.
     -  value: string
     -  example: '-fopenmp', '-qopenmp'
 
@@ -237,7 +271,7 @@ Syntax
     -  *pkg_config_defined:*
 
        -  meaning: a list of system libraries, managed using *pkg-config* mechanism, that has to be used
-          while native code linking
+          while linking with the code's library
 
        -  value: a list of system libraries names, as they are published by *pkg-config*
 
@@ -253,7 +287,7 @@ Syntax
     -   *path_defined:*
 
         -  meaning: a list of additional libraries, not managed by *pkg-config* mechanism but necessary
-           to link the provided physics code
+           to link with the code's library
 
         -  value:  a list of paths to libraries
 
@@ -266,7 +300,7 @@ Syntax
                    - ./lib/custom/libcustom2.a
 
 
-Example - description of an actor wrapping Fortran code x
+Example - description of an actor wrapping a Fortran code
 =========================================================================================
 
 .. code-block:: YAML

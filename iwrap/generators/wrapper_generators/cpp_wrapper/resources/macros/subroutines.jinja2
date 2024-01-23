@@ -58,7 +58,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     imas_code_params.schema = NULL;
     {% endif %}
 
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+        // - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
     {{sbrt_name}}(
 {% for argument in arguments %}
             {{ argument.name }},

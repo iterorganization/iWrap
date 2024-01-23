@@ -30,7 +30,7 @@ then
         echo ==========================================================================================
         cd $test_dir
 
-        echo - - - - - - - Building native code - - - - - - -
+        echo - - - - - - - Building code - - - - - - -
         make native > log.txt
         test_exit_code=$?
         test "${test_exit_code}" -eq "0" && echo -e ${PASSED} || echo -e ${FAILED} 

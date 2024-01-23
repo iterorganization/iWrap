@@ -15,7 +15,7 @@
 
 {% if code_description.implementation.subroutines.init %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                  NATIVE INIT SBRT CALL
+//                                  INIT SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
     code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
@@ -23,14 +23,14 @@
 
 {% if code_description.implementation.subroutines.finalize %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                   NATIVE FINALIZE SBRT CALL
+//                                   FINALIZE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
     None, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                   NATIVE MAIN SBRT CALL
+//                                   MAIN SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
@@ -39,7 +39,7 @@ code_description.implementation.code_parameters.parameters, code_description.set
 
 {% if code_description.implementation.subroutines.get_state %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                  NATIVE GET STATUS SBRT CALL
+//                                   GET_STATE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
                 char** out_state,
@@ -49,7 +49,7 @@ extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
     std::string state_str = "";
 
 
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    // - - - - - - - - - - - - - - CODE SBRT CALL - - - - - - - - - - - - - - - - - -
     {{code_description.implementation.subroutines.get_state}}(state_str, *out_status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -64,7 +64,7 @@ extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
 
 {% if code_description.implementation.subroutines.set_state %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                  NATIVE SET STATUS SBRT CALL
+//                                   SET_STATE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
                 char* state, int* state_str_size,
@@ -74,7 +74,7 @@ extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
     std::string state_str(state);
 
 
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    // - - - - - - - - - - - - - CODE SBRT CALL - - - - - - - - - - - - - - - - - -
     {{code_description.implementation.subroutines.set_state}}(state_str, *out_status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -88,7 +88,7 @@ extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
 
 {% if code_description.implementation.subroutines.get_timestamp %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-//                                  NATIVE GET STATUS SBRT CALL
+//                                  GET_TIMESTAMP SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
                 double* out_timestamp,
@@ -96,7 +96,7 @@ extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
 {
     std::string status_msg = "OK";
 
-        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+        // - - - - - - - - - - - - - CODE SBRT CALL - - - - - - - - - - - - - - - - - -
     {{code_description.implementation.subroutines.get_timestamp}}(*out_timestamp, *out_status_code, status_msg );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

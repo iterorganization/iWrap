@@ -1,18 +1,18 @@
-.. _native_code_api:
+.. _code_api:
 
 ############################################################
-Native code standardisation
+Code standardisation
 ############################################################
 
 Introduction
 ############
 
 .. warning::
-      A signature of user code must follow strict rules to
-      be wrapped by iWrap - without the detailed knowledge
-      of method signature iWrap cannot built an actor.
+      The signature of the code provided by the user must
+      follow strict rules - without the details on method's
+      signature iWrap cannot generate an actor.
 
-iWrap actor can call following methods of the native code:
+iWrap actors can call the following methods from the code:
 
 - Basic methods:
 
@@ -20,7 +20,7 @@ iWrap actor can call following methods of the native code:
   -  *MAIN* - Mandatory main ("step") method
   -  *FINALIZE* - Finalisation method
 
-- Code restarting methods
+- Checkpoint/restart methods
 
   - *GET_STATE* - Method for getting internal state of the code
   - *SET_STATE* - Method for setting internal state of the code
@@ -29,9 +29,9 @@ iWrap actor can call following methods of the native code:
 
   - *GET_TIMESTAMP* - Method for getting currently computed physical time
 
-Signatures of methods may differ, depending of features of
-programming language being used, however the main principia
-remains the same.
+The name and signatures of each method may differ, depending of
+features of programming language being used, however the main
+principia remains the same.
 
 
 Basic methods
@@ -43,8 +43,8 @@ Basic methods
 .. image:: /resources/attachments/70877452/77370373.png
 
 
-- An optional method used for set-up of native code
-- If provided - the method is called only, when an actor is initialised
+- An optional method used for the initialization/configuration of the code
+- If provided - the method is called only when an actor is initialized
 - The method must be run **before** a call of *main* and *finalisation* (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -70,8 +70,8 @@ Basic methods
 
 .. image:: /resources/attachments/70877452/70877459.png                                                          |
 
--  A **mandatory** method that native code **must** provide
--  The method can be run an arbitrary numer of times (e.g. in a loop)
+-  A **mandatory** method in the code where it performs the main computation
+-  Can correspond to the entire computation or to a step that can be run an arbitrary number of times (e.g. in a loop)
 -  It can be of arbitrary name (the name has to be specified in the code YAML description)
 -  The method must be run **after** a call of *initialisation* (if provided) and **before** a call of *finalisation* (if provided)
 -  Method arguments:
@@ -122,14 +122,10 @@ Basic methods
 
 Code restarting methods
 ################
-The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
-and the actor cannot force the wrapped ``MAIN`` method to save a checkpoint at an arbitrary time,
-while it is executed.
-
-``GET_STATE`` and  ``SET_STATE`` methods enable restart stateful, sometimes compute demanding,
-codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
-about its internal state using ``GET_STATE`` method. After restart, the code state can be restored
-using ``SET_STATE`` method.
+``GET_STATE`` and  ``SET_STATE`` methods enable to restart stateful, sometimes compute demanding,
+codes without losing results obtained before computations were stopped. The actor ask periodically
+the code about its internal state using the ``GET_STATE`` method. After a restart, the code state
+can be restored using the ``SET_STATE`` method.
 
 An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
 to the code developer concerning format and content of state description.
@@ -139,7 +135,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 *GET_STATE* method
 ======================
 
-- An optional method used for getting internal state of native code
+- An optional method used for getting the internal state of the code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -163,7 +159,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 *SET_STATE* method
 ======================
 
-- An optional method used for restoring internal state of native code
+- An optional method used for restoring the internal state of the code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -187,7 +183,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 
 .. warning::
        Important!
-          A native code wrapped by iWrap that will become a part of workflow should be compiled using the same
+          A code wrapped by iWrap that will become a part of workflow should be compiled using the same
           environment in which workflow will be run!
 
 
@@ -225,7 +221,7 @@ API implementation
 Fortran
 ======================
 
-Native code signature
+Code's API signature
 -----------------------
 
 .. code-block:: Fortran
@@ -323,18 +319,16 @@ Native code signature
 Module
 -----------------------
 
--  Native code should be put within a module
--  Module is used by compiler to check, if code signature
-   expected by wrapper is exactly the same as provided.
--  A name of the module could be arbitrary - chosen by code
-   developer
+-  Subroutines of the code shall be put within a module
+-  The module is used by compilers to check if the validity of the signatures
+   when compiling the wrappers
+-  The name of the module can be arbitrary chosen in the code
 
 Subroutines
 -----------------------
--  A user code should be provided as subroutines (and not a functions)
--  A name of subroutines could be arbitrary - chosen by code developer
--  A name of the module could be arbitrary - chosen by code developer
--  Arguments shall be provided in a strict order
+-  The code API shall be provided as subroutines (and not as functions)
+-  The name of the subroutines can be arbitrary chosen in the code 
+-  Arguments of each subroutine shall be provided in a strict order
 -  No INOUT arguments are allowed!
 
 Arguments
@@ -464,7 +458,7 @@ Arguments
 
 
 .. warning::
-   Only XML parameters are passed to native code, so only ``parameters_value`` field
+   Only XML parameters are passed to the code, so only ``parameters_value`` field
    of ``ids_parameters_input`` derived type is valid !
 
 Example
@@ -592,7 +586,7 @@ C++
 ======================
 
 
-Native code signature
+Code signature
 -----------------------
 
 .. code-block:: cpp
@@ -619,16 +613,17 @@ void get_timestamp_cpp(double& timestamp_out, int& status_code, std::string& sta
 Header
 -----------------------
 
-To generate an actor user has to provide a file containing
-C++ header of wrapped method. This file can be of arbitrary
-name but must contain method signature.
+To generate an actor user has to provide a header file containing
+the signature of each method of the code's API. This header file
+name and name of methods can be chosen arbitrary in the code.
+
 
 Method
 -----------------------
 
--  A user code should be provided as methods (and not a functions)
--  A name of methods could be arbitrary - chosen by code developer
--  Arguments shall be provided in a strict order
+-  The code API shall be provided as methods (and not as functions)
+-  The name of methods can be arbitrary chosen in the code  
+-  The arguments shall be provided in a strict order
 -  No INOUT arguments are allowed!
 
 Arguments
@@ -760,7 +755,7 @@ No INOUT arguments are allowed!
 
 
 .. warning::
-   Only XML parameters are passed to native code, so only ``parameters`` field
+   Only XML parameters are passed to the code, so only ``parameters`` field
    of ``IdsNs::codeparam_t`` structure type is valid !
 
 Example
@@ -857,9 +852,9 @@ Example
 
 MPI
 ################
-All native codes that use MPI should follow the rules described below:
+All codes that use MPI should follow the rules described below:
 
--  Please make initialisation and finalisation conditional checking if such action was already made.
+-  Do not call MPI_Init and MPI_Finalize in the code's API, or add such conditional checks before:
 
     .. code-block:: fortran
 
@@ -872,15 +867,14 @@ All native codes that use MPI should follow the rules described below:
         call MPI_finalized(was_mpi_finalized, ierr)
         if (.not. was_mpi_finalized)   call MPI_Finalize(ierr)
 
--  Please be aware of a special role of ranked 0 process: Wrapper that run native code, launched in parallel,
-   reads input data in every processes but writes it only in'rank 0' process. So native code should gather all
-   results that need to be stored by 'rank 0' process. It concerns also those coming from 'rank 0' process are
-   analysed by wrapper.
+-  Please be aware of a special role of the process 'rank 0': the wrapper that run the code, launched in parallel,
+   reads input data in every processes but writes it only in 'rank 0' process. So the code shall gather in 'rank 0'
+   process all results that need to be stored as output. 
 
 
 Code packaging
 ################
-A native code written in C++ or Fortran should be packed within static Linux library using e.g. ar tool for that purpose.
+A code written in C++ or Fortran should be packed in a static Linux library. E.g. using the 'ar' tool:
 
 .. code-block:: console
 
