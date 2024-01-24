@@ -16,36 +16,36 @@ parts:
 
   - caption: For beginners - chapter 1
     chapters:
-    - file: 02_Basic/Chapter_1/01_intro_and_IMAS_adaptation.md
+    - file: 02_Basic/1_Actor_Fundamentals/01_intro_and_IMAS_adaptation.md
       title: Intro to chapter 1 with Preamble to IMAS adaptation
-    - file: 02_Basic/Chapter_1/02_code_standarization.md
+    - file: 02_Basic/1_Actor_Fundamentals/02_code_standarization.md
       title: Code standarization
-    - file: 02_Basic/Chapter_1/03_code_description_and_actor_generation.md
+    - file: 02_Basic/1_Actor_Fundamentals/03_code_description_and_actor_generation.md
       title: Code description and Actor Generation using CLI and GUI
-    - file: 02_Basic/Chapter_1/04_workflow.md
+    - file: 02_Basic/1_Actor_Fundamentals/04_workflow.md
       title: Workflow
 
       
   - caption: For beginners - chapter 2
     chapters:
-    - file: 02_Basic/Chapter_2/01_intro.md
+    - file: 02_Basic/2_INIT_FINALIZE/01_intro.md
       title: Introduction to chapter 2
-    - file: 02_Basic/Chapter_2/02_code_standarization.md
+    - file: 02_Basic/2_INIT_FINALIZE/02_code_standarization.md
       title: Code standarization
-    - file: 02_Basic/Chapter_2/03_code_description_and_actor_generation.md
+    - file: 02_Basic/2_INIT_FINALIZE/03_code_description_and_actor_generation.md
       title: Code description and Actor Generation using CLI and GUI
-    - file: 02_Basic/Chapter_2/04_workflow.md
+    - file: 02_Basic/2_INIT_FINALIZE/04_workflow.md
       title: Workflow
 
   - caption: For beginners - chapter 3
     chapters:
-    - file: 02_Basic/Chapter_3/01_intro.md
+    - file: 02_Basic/3_Code_Parameters/01_intro.md
       title: Introduction to chapter 3
-    - file: 02_Basic/Chapter_3/02_code_standarization.md
+    - file: 02_Basic/3_Code_Parameters/02_code_standarization.md
       title:  code standarization
-    - file: 02_Basic/Chapter_3/03_code_description_and_actor_generation.md
+    - file: 02_Basic/3_Code_Parameters/03_code_description_and_actor_generation.md
       title: Code description and Actor Generation using CLI and GUI
-    - file: 02_Basic/Chapter_3/04_workflow.md
+    - file: 02_Basic/3_Code_Parameters/04_workflow.md
       title: Workflow
 
 
