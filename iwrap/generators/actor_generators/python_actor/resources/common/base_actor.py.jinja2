@@ -41,7 +41,6 @@ class ActorBaseClass(Actor):
             self.is_standalone = self.is_standalone_run()
             self.sandbox.initialize()
             self.__initialized = True
-            self.runner = Runner.get_runner(self)
             value = func(self,  *args, **kwargs )
 
             return value
@@ -72,8 +71,6 @@ class ActorBaseClass(Actor):
             # cleaning up sandbox
             if self.sandbox:
                 self.sandbox.remove()
-
-            self.runner.finalize()
 
             return value
 

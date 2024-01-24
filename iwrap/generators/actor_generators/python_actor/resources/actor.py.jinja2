@@ -39,8 +39,11 @@ class {{actor_description.actor_name}}(ActorBaseClass):
             runtime_settings (RuntimeSettings, optional): property tells the actor how execute the code 
             code_parameters (CodeParameters, optional): code specific parameters
         """
-    {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.init %}
+    {%  if code_description.implementation.programming_language %}
+        self.runner = Runner.get_runner(self)
+        {%  if code_description.implementation.subroutines.init %}
         self.runner.call_initialize()
+        {%  endif %}
     {%  endif %}
         ...
 
@@ -82,9 +85,12 @@ class {{actor_description.actor_name}}(ActorBaseClass):
         """
         The method is used to perform finalisation actions (clean up the environment etc).
         """
-    {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.finalize %}
+    {%  if code_description.implementation.programming_language %}
         self.check_is_initialized()
+        {%  if code_description.implementation.subroutines.finalize %}
         self.runner.call_finalize()
+        {%  endif %}
+        self.runner.finalize()
     {%  endif %}
         ...
 
