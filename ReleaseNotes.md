@@ -1,5 +1,12 @@
 # Release notes
 
+## Version 0.9.0
+* Add tutorial for the beginners
+* Add tooltips in GUI
+* Corrections of IDS storage handling
+
+## Version 0.8.1
+* Hotfix: Using UAL_VERSION if AL_VERSION is not set
 
 ## Version 0.8.0
 * Compatibility with Access-Layer 5.x 
