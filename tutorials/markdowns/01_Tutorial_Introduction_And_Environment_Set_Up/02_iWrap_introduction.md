@@ -82,6 +82,9 @@ Currently, it supports the creation of `Python` actors for straightforward Pytho
 
 ```
 
+```{admonition} But what this mysterious actor does under the hood?
+:class: tip
+
 When you use iWrap, it generates a Python class which acts as the **actor**. This actor does several essential tasks:
 
 1. Input/output operations using IDS
@@ -89,7 +92,7 @@ When you use iWrap, it generates a Python class which acts as the **actor**. Thi
 3. Supports debugging mode: If you encounter issues, you can run iWrap in "debug" mode to aid in troubleshooting.
 4. Incorporates error-handling mechanisms.
 5. Runs MPI code: iWrap supports running your code in parallel using MPI (Message Passing Interface) for efficient computations.
-
+```
 
 
 ## iWrap Interfaces
@@ -105,6 +108,8 @@ Ideal for beginners and non-experienced users, this graphical interface lets you
 More advanced users can take advantage of the command-line interface, which allows automation of the actor generation process using scripts.
 
 ```{code-cell}
+:tags: [output-scroll]
+
 iwrap -h
 ```
 

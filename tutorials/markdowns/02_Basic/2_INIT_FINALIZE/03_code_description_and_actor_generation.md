@@ -65,17 +65,17 @@ They will be used in the next lesson.
 Remember to add proper methods **[4], [5]** names into GUI!
 ```
 
-If you want to practice with the GUI, let's open it first:
-
-
-```bash
-:tags: [skip-execution]
-
-iwrap-gui
-```
 
 ### 1.1.1. Fortran Example
 
+If you want to practice with the GUI, let's open it first:
+
+
+```{code-cell}
+:tags: [skip-execution]
+
+iwrap-gui -f codes/actor1_fortran.yaml
+```
 
 
 ::::{tab-set}
@@ -115,6 +115,13 @@ code_description:
 
 
 ### 1.1.2. C++ Example
+
+```{code-cell}
+:tags: [skip-execution]
+
+iwrap-gui -f codes/actor2_cpp.yaml
+```
+
 ::::{tab-set}
 
 :::{tab-item} C++

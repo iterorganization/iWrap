@@ -363,7 +363,6 @@ void code_cplus(const IDS::distribution_sources ids_in,
 3. **Arguments**: When listing arguments in a method, ***follow the exact order provided in the documentation***.
 4. **You MUST NOT use INOUT arguments**: Steer clear of using arguments of type `INOUT`.
 5. **Header Consistency**: Your header file (ending in `*.h`) should match the structure, or "signature", of your methods in the `*.cpp` file. This includes using the same namespaces.
-6. **Linux Static Library**: Remember to include a Linux static library in your setup.
 ```
 
 +++
@@ -376,8 +375,8 @@ We are using several flags to compile our source code into a object file:
 :class: dropdown
 
 - `-g`:  Enables debugging information in the output.
-- `-fPIC`: Generate Position-Independent Code, usually needed for dynamic linking.  # TODO
-- `-J`:  Place the .mod files into the specified directory.
+- `-fPIC`: Generate Position-Independent Code, usually needed for dynamic linking. 
+- `-J`:  Place the `.mod` files into the specified directory.
 - `-pthread`: Enable support for multi-threading using the POSIX threads library. **Used only in `C++`**
 - `pkg-config`  Insert the correct compiler options on the command line rather than hard-coding values on where to desired package - **preferred option by ITER**
 ```

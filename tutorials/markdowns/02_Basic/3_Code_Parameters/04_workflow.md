@@ -101,6 +101,16 @@ It can take any object that can be converted to a `string`.
 Moreover, you can pass a list of objects, all convertible to `strings`.     
 Such a list will be transformed into a **space-separated** string value.
 
+
+```bash
+ code_parameters.set_parameter( 'parameters/multiplication_factor', [0.1, 0.2, 0.3] )
+
+ 
+ <multiplication_factor>0.1 0.2 0.3</multiplication_factor>
+
+```
+
+
 ### Overwriting the Default XML File 
 
 `````{admonition} Tip!

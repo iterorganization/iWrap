@@ -196,14 +196,16 @@ By the end of this guide, you'll have a foundational understanding of how actor 
 
 +++
 
-## Loop's Role in the Workflow
+```{code-cell}
+cat codes/workflow.py
+```
+
+### Loop's Role in the Workflow
 The loop serves **only in this example** as the core computational part of the workflow.    
 
 It takes the initial `ids1` object, processes it through `actor1_fortran` and `actor2_cpp`, and then updates `ids1` based on those transformations.  
 This cycle is repeated several times.  
 
-In the given Python workflow, the loop serves to iteratively transform the `ids1` object by applying the `actor1_fortran` and `actor2_cpp` transformations in sequence.    
-These transformations consist of appending specific comments and setting certain properties within the ids object.    
 
 After 5 iterations, `ids1` will have been transformed multiple times, and *this transformed object is then saved back into the IMAS database.*  
  
@@ -211,14 +213,14 @@ After 5 iterations, `ids1` will have been transformed multiple times, and *this 
 1. **Fortran Actor (actor1_fortran)**
 
 - Reads the `ids_properties.comment` field from `ids1`
-- Appends `CODE1: Hello!` to the comment field
+- Appends `Fortran: Hello!` to the comment field
 - Sets `ids_properties.homogeneous_time` to `IDS_TIME_MODE_HETEROGENEOUS`
 - Returns a new ids object, which is stored in `ids2`
 
 2. **C++ Actor (actor2_cpp)**
 
 - Reads the `ids_properties.comment` field from `ids2`
-- Appends `CODE2: Goodbye!` to the comment field
+- Appends `C++: Goodbye!` to the comment field
 - Sets `ids_properties.homogeneous_time` to `IDS_TIME_MODE_HETEROGENEOUS`
 - Returns a new ids object, which replaces the original `ids1`
 
@@ -229,7 +231,7 @@ Here's what happens within each iteration of the loop:
 
 1. The script prints the current iteration number.
    ```
-    print("* * * * * * * * * * * * * ITERATION: ", i, " * * * * * * * * * *")
+    print(" ITERATION: ", i)
     ```
 
 2. `actor1_fortran` processes `ids1` and returns `ids2`.
@@ -246,8 +248,8 @@ Here's what happens within each iteration of the loop:
 
 So, for example, let's say ids1.ids_properties.comment initially has the value "Initial Comment".   
 
-After the `1st` iteration, it will be **Initial Comment - CODE1: Hello! - CODE2: Goodbye!**  
-After the `2nd` iteration, it will be **Initial Comment - CODE1: Hello! - CODE2: Goodbye! - CODE1: Hello! - CODE2: Goodbye!**
+After the `1st` iteration, it will be **START: Fortran: Hello! | C++:  Goodbye! |**  
+After the `2nd` iteration, it will be **START: Fortran: Hello! | C++:  Goodbye! | Fortran: Hello! | C++:  Goodbye!**
 
 ...and so on for 5 iterations.
 

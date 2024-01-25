@@ -76,7 +76,7 @@ More information on how to adapt a physics code to IMAS is available [here](http
 
 
 
-```{admonition} Why do we need to adapt codes to IMAS step in an **iWrap** tutorial??
+```{admonition} Why do we need to adapt codes to IMAS in an **iWrap** tutorial??
 The reason is straightforward: **your code must be compatible with IMAS to be effectively used with the iWrap tool.**  
 `iWrap` relies on certain `IMAS` implementation standards in its operations. Therefore, it's crucial for you to understand the significance of codes IMASification.   
 Once you understand this, we will proceed to guide you through `iWrap` usage.
