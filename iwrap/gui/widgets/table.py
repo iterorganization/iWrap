@@ -101,7 +101,7 @@ class Table( ttk.Frame ):
 
         return table_data
 
-    def add_rows(self, data, tooltip_id=None):
+    def add_rows(self, data, tooltip_id_arr=[]):
         """Initialize the Row objects and adds them to table_row list.
 
         Args:
@@ -114,7 +114,7 @@ class Table( ttk.Frame ):
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, row_frame, self.columns)
             self.rows.append(table_row)
-            for row_cell, tooltip_id in zip_longest(table_row.row_cells,tooltip_id):
+            for row_cell, tooltip_id in zip_longest(table_row.row_cells,tooltip_id_arr):
                 if tooltip_id is not None:
                     ToolTip(row_cell.cell, tooltip_id)
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
