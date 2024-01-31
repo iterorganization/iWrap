@@ -218,10 +218,6 @@ class Implementation( SettingsBaseClass ):
             if not self.include_path:
                 raise ValueError( 'Path to the include/module file is not set!' )
 
-            __path = utils.resolve_path( self.include_path, project_root_dir)
-            if not Path(__path).exists():
-                raise ValueError( f'Path to the include/module file is not valid! {str( __path )}' )
-
         if not self.data_dictionary_compliant:
             raise ValueError('Data Dictionary compliant version is not set!')
 
