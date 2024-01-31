@@ -4,8 +4,6 @@ AL_MAJOR := $(firstword $(subst ., ,$(AL_VERSION)))
 FFLAGS= -g -fPIC # FPIC AND PREPROCESSING OPTIONS
 
 ifeq ($(AL_MAJOR),)
-    $(error Could not extract major AL version from AL_VERSION system variable. Is your IMAS module loaded?)
-ifeq ($(AL_MAJOR),)
     $(error Could not extract major AL version from UAL_VERSION/AL_VERSION system variable. Is your IMAS module loaded?)
 else ifeq ($(AL_MAJOR), 5)
 	INCLUDE=-I. `pkg-config al-fortran --cflags`
