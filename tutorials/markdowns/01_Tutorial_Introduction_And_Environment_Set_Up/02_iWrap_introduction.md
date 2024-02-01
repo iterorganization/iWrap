@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Welcome to the iWrap tutorial!
@@ -110,7 +110,7 @@ More advanced users can take advantage of the command-line interface, which allo
 ```{code-cell}
 :tags: [output-scroll]
 
-iwrap -h
+!iwrap -h
 ```
 
 

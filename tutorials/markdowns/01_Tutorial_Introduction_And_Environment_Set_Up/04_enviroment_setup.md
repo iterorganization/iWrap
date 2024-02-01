@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 
@@ -48,7 +48,7 @@ To check if we can use IMAS AL5 run:
 ```
 
 ```{code-cell}
-echo $AL_VERSION
+!echo $AL_VERSION
 ```
 
 
@@ -59,7 +59,7 @@ To check if we have properly created our IDS we can use `imasdbs -u <username>` 
 ```
 
 ```{code-cell}
-imasdbs -u iwrap_user
+!imasdbs -u iwrap_user
 ```
 
 ```{admonition} idsdump
@@ -74,7 +74,7 @@ Usage: `idsdump <USER> <TOKAMAK> <VERSION> <SHOT> <RUN> <IDS>`
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-idsdump iwrap_user tutorial_db 3 1 1 core_profiles
+!idsdump iwrap_user tutorial_db 3 1 1 core_profiles
 ```
 
 ```{admonition} Ready to go!

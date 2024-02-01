@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+   display_name: Python 3 (ipykernel)
+   language: python
+   name: python3
 ---
 
 # Workflow Introduction
@@ -197,7 +197,7 @@ By the end of this guide, you'll have a foundational understanding of how actor 
 +++
 
 ```{code-cell}
-cat codes/workflow.py
+!pygmentize codes/workflow.py
 ```
 
 ### Loop's Role in the Workflow
@@ -256,7 +256,7 @@ After the `2nd` iteration, it will be **START: Fortran: Hello! | C++:  Goodbye! 
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-python3 codes/workflow.py
+!python3 codes/workflow.py
 ```
 
 ```{admonition} Summary

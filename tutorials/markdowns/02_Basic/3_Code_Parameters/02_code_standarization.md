@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Explanation of iWrap  code implementation standards - part III  
@@ -291,12 +291,4 @@ void code2_cleanup( int& status_code, std::string& status_message)
 Voil'a! You now know how to use `code parameters` in your iWrapped code!
 
 In the next section You will learn how to expand YAML file with `code parameters` settings
-```
-
-```{code-cell}
-make -C codes/iWrapped_codes/code1_fortran
-```
-
-```{code-cell}
-make -C codes/iWrapped_codes/code2_cpp
 ```

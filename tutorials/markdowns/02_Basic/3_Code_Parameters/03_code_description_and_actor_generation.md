@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 # 1. Actor generation Part 3
 
@@ -124,7 +124,7 @@ There are multiple methods available for configuring code parameters:
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui
+!iwrap-gui
 ```
 
 
@@ -188,13 +188,13 @@ In this section we will set code parameters via command-line.
 ```{admonition} Caution!
 :class: caution
 
-    This approach ensures that the **GUI initializes with the configurations specified in the YAML file**.
+This approach ensures that the **GUI initializes with the configurations specified in the YAML file**.
 ```
 
 
 1. Review the iwrap-gui command options using `iwrap-gui -h`.
 ```{code-cell}
-iwrap-gui -h
+!iwrap-gui -h
 ```
 
 2. Notice the `-f` flag, which allows specifying a YAML file:
@@ -208,14 +208,14 @@ iwrap-gui -h
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui -f codes/actor1_fortran.yaml  
+!iwrap-gui -f codes/actor1_fortran.yaml  
 ```
 
 - **C++**
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui -f codes/actor2_cpp.yaml  
+!iwrap-gui -f codes/actor2_cpp.yaml  
 ```
 
 ```{admonition} Hint!
@@ -240,7 +240,7 @@ Let's load our YAML file from GUI
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui
+!iwrap-gui
 ```
 
 
@@ -273,21 +273,24 @@ If everything is set up properly - click `Generate` button.
 
 The internal Makefiles have been updated as follows:
 - The Makefile at `codes/iWrapped_codes/code1_fortran/Makefile` now includes `xmllib` in its `pkg-config` configuration.
+  
+```{code-cell}
+!head -n 4 codes/iWrapped_codes/code1_fortran/Makefile
+```
+
 - The Makefile at `codes/iWrapped_codes/code2_cpp/Makefile` now includes `libxml-2.0` in its `pkg-config` configuration.
 
-To inspect the Makefile changes:
-
 ```{code-cell}
-head -n 4 codes/iWrapped_codes/code1_fortran/Makefile
+!head -n 4 codes/iWrapped_codes/code2_cpp/Makefile
 ```
 
-```{code-cell}
-head -n 4 codes/iWrapped_codes/code2_cpp/Makefile
-```
+
 Before running the Makefile, clean the environment:
 
 ```{code-cell}
-make -C codes clean
+:tags: [output_scroll, hide-output]
+
+!make -C codes clean
 ```
 
 Then, execute the Makefile with default options:
@@ -295,7 +298,7 @@ Then, execute the Makefile with default options:
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-make -C codes
+!make -C codes
 ```
 
 ```{admonition} Summary

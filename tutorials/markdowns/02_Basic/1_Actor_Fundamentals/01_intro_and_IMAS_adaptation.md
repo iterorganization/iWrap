@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 # Introduction to Chapter 1
 
@@ -27,7 +27,7 @@ Welcome to this chapter, where we’ll cover the fundamentals of integrating  co
 ```{admonition} Chapter Outline
 :class: note
 
-1. **Quick IMASification** tutorial.
+1. **Quick IMAS codes adaptation** tutorial.
 
 2. **Basic  Code Standards:** We'll start by making the simplest  code that is compatible with iWrap, focusing on mandatory methods.
 
@@ -47,7 +47,7 @@ Below is the repo layout of codes used in this chapter:
 ```
 
 ```{code-cell}
-find . -type d -name 'codes' | xargs tree
+!find . -type d -name 'codes' | xargs tree
 ```
 
 
@@ -78,8 +78,7 @@ More information on how to adapt a physics code to IMAS is available [here](http
 
 ```{admonition} Why do we need to adapt codes to IMAS in an **iWrap** tutorial??
 The reason is straightforward: **your code must be compatible with IMAS to be effectively used with the iWrap tool.**  
-`iWrap` relies on certain `IMAS` implementation standards in its operations. Therefore, it's crucial for you to understand the significance of codes IMASification.   
-Once you understand this, we will proceed to guide you through `iWrap` usage.
+`iWrap` relies on certain `IMAS` implementation standards in its operations. Therefore, it's crucial for you to understand the significance of codes adaptation to IMAS.   
 ```
 
 In case you don't have access to the aforementioned page, here is a quick example of how to adapt the source code and how to compile this adapted code.
@@ -133,7 +132,7 @@ int main(int argc, char* argv[])
 ````
 `````
 
-```{admonition} So to make above plain  codes **IMAS AL5 compatible**  (IMASified)
+```{admonition} So to make above plain  codes **IMAS AL5 compatible**  
 :class: tip
 
  we need to take below steps:
@@ -152,7 +151,7 @@ int main(int argc, char* argv[])
 ```{admonition} 2. Change our codes to corresponding IMAS HLI:
 :class: hint
 
-Below is the very simple example of IMASified codes
+Below is the very simple example of IMAS adapted codes
 ```
 
 `````{tab-set}
@@ -221,7 +220,7 @@ std::unique_ptr<std::string> greeting()
 }
 
 /*
- * This is the process of IMASification in a nutshell.
+ * This is the process of IMAS adaptation in a nutshell.
  *
  */
 IdsNs::IDS::distribution_sources greetingIDS()
@@ -245,7 +244,7 @@ int main(int argc, char* argv[])
 ````
 `````
 
-```{admonition} 3. Compile and Run our **IMASified** codes
+```{admonition} 3. Compile and Run our **IMAS* adapted codes
 :class: hint
 
 
@@ -256,9 +255,11 @@ Compile codes using intructions provided in [IMAS AL5 HLI docs](https://sharepoi
 - **Fortran**
 
 ```{code-cell}
-export FORTRAN_PATH="codes/imasification/imasified/code_fortran"
-gfortran `pkg-config --libs --cflags al-fortran` $FORTRAN_PATH/imas_fortran_test.f90 -o $FORTRAN_PATH/imas_fortran_test.exe
-./$FORTRAN_PATH/imas_fortran_test.exe
+!export FORTRAN_PATH="codes/imas_adaptation/after/code_fortran" && gfortran `pkg-config --libs --cflags al-fortran` $FORTRAN_PATH/imas_fortran_test.f90 -o $FORTRAN_PATH/imas_fortran_test.exe
+```
+
+```{code-cell}
+!./codes/imas_adaptation/after/code_fortran/imas_fortran_test.exe
 ```
 
 
@@ -274,9 +275,12 @@ gfortran `pkg-config --libs --cflags al-fortran` $FORTRAN_PATH/imas_fortran_test
 ```
 
 ```{code-cell}
-export CPP_PATH="codes/imasification/imasified/code_cpp"
-make -C $CPP_PATH build executable
-./$CPP_PATH/imas_cpp_test.exe
+:tags: [output_scroll, hide-output]
+!make -C codes/imas_adaptation/after/code_cpp build executable
+```
+
+```{code-cell}
+!./codes/imas_adaptation/after/code_cpp/imas_cpp_test.exe
 ```
 
 

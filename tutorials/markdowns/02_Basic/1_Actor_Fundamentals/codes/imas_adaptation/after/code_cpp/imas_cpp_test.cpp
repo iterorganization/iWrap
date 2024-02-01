@@ -9,7 +9,7 @@ std::unique_ptr<std::string> greeting()
 }
 
 /*
- * This is the process of IMASification in a nutshell.
+ * This is the process of code adaptation to IMAS in a nutshell.
  *
  */
 IdsNs::IDS::distribution_sources greetingIDS()

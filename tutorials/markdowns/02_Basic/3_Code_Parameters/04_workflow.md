@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Managing Code Parameters in Worfklow
@@ -160,14 +160,52 @@ So in this lesson we have provided four Python workflows in `codes` folder that 
 
 4. The fourth workflow uses the above XML to change values in **two actors**.
 
-```{code-cell}
-cat codes/iWrapped_codes/code_parameters/input_with_awesomer_values.xml
-```
+``````{admonition} Look at the differences in **XML** files:
+:class: tip
 
-Look at the differences in workflow codes:
 `````{tab-set}
 
-````{tab-item} Workflow 1
+````{tab-item} Default Spanish XML version
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+
+    <!-- Greeting in chosen spoken language -->
+    <greeting> Hola! </greeting>
+
+    <!-- Farewell in chosen spoken language -->
+    <farewell> Adios! </farewell>
+
+</parameters>
+```
+````
+
+````{tab-item} New French XML version
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--File that uses French words instead-->
+<parameters>
+
+    <!-- Greeting in chosen spoken language -->
+    <greeting> Bonjour! </greeting>
+
+    <!-- Farewell in chosen spoken language -->
+    <farewell> Au revoir! </farewell>
+
+</parameters>
+
+```
+````
+`````
+``````
+
+``````{admonition} Look at the differences in workflow codes:
+:class: tip
+
+`````{tab-set}
+
+````{tab-item} WF 1 - Spanish
 
 ```python
 # Creation of actors
@@ -182,7 +220,7 @@ actor2_cpp.initialize()
 
 ````
 
-````{tab-item} Workflow 2
+````{tab-item} WF 2 - 1/2 Polish
 ```python
 # Creation of actors
 actor1_fortran = actor1_fortran()
@@ -193,9 +231,9 @@ actor2_cpp = actor2_cpp()
 code_parameters = actor1_fortran.get_code_parameters()
 
 #### METHOD USAGE
-code_parameters.set_parameter('parameters/greeting', "Hallo!" )
+code_parameters.set_parameter('parameters/greeting', "Witaj!" )
 
-### ADDED PARAMETER
+### Added Parameter in INITIALIZE method for ONE ACTOR 
 # Initialization of actors
 actor1_fortran.initialize(code_parameters=code_parameters)
 actor2_cpp.initialize()
@@ -203,28 +241,24 @@ actor2_cpp.initialize()
 ```
 ````
 
-````{tab-item} Workflow 3
+````{tab-item} WF 3 - 1/2 French
 
 ```python
 # Creation of actors
 actor1_fortran = actor1_fortran()
 actor2_cpp = actor2_cpp()
 
-### ADDED
 # Code parameters entire file for actor1_fortran editing
 code_parameters = actor1_fortran.get_code_parameters()
-
-#### METHOD USAGE
 code_parameters.parameters_path= 'codes/iWrapped_codes/code_parameters/input_with_awesomer_values.xml'
 
-### ADDED PARAMETER
-# Initialization of actors
+### Added Parameter in INITIALIZE method for ONE ACTOR 
 actor1_fortran.initialize(code_parameters=code_parameters)
 actor2_cpp.initialize()
 ```
 ````
 
-````{tab-item} Workflow 4
+````{tab-item} WF 4 - 2/2 French
 ```python
 # Creation of actors
 actor1_fortran = actor1_fortran()
@@ -238,27 +272,37 @@ code_parameters.parameters_path= 'codes/iWrapped_codes/code_parameters/input_wit
 code_parameters = actor2_cpp.get_code_parameters()
 code_parameters.parameters_path= 'codes/iWrapped_codes/code_parameters/input_with_awesomer_values.xml'
 
-# Initialization of actors
+### Added Parameter in INITIALIZE method for TWO ACTORS!! 
 actor1_fortran.initialize(code_parameters=code_parameters)
 actor2_cpp.initialize(code_parameters=code_parameters)
 ```
 ````
 `````
+``````
+
 
 So now let's run these workflows and see the **differences in results**:
 
 ```{code-cell}
-python3 codes/workflow-1-default.py
+:tags: [output_scroll, hide-output]
+
+!python3 codes/workflow-1-default.py
 ```
 
 ```{code-cell}
-python3 codes/workflow-2-single-node.py
+:tags: [output_scroll, hide-output]
+
+!python3 codes/workflow-2-single-node.py
 ```
 
 ```{code-cell}
-python3 codes/workflow-3-entire-file.py
+:tags: [output_scroll, hide-output]
+
+!python3 codes/workflow-3-entire-file.py
 ```
 
 ```{code-cell}
-python3 codes/workflow-4-entire-file-two-actors.py
+:tags: [output_scroll, hide-output]
+
+!python3 codes/workflow-4-entire-file-two-actors.py
 ```

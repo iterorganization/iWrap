@@ -14,7 +14,7 @@ parts:
       title: Environment Setup
 
 
-  - caption: For beginners - chapter 1
+  - caption: Basic - 01 - Actor Fundamentals
     chapters:
     - file: 02_Basic/1_Actor_Fundamentals/01_intro_and_IMAS_adaptation.md
       title: Intro to chapter 1 with Preamble to IMAS adaptation
@@ -26,7 +26,7 @@ parts:
       title: Workflow
 
       
-  - caption: For beginners - chapter 2
+  - caption: Basic - 02 - INIT & FINALIZE
     chapters:
     - file: 02_Basic/2_INIT_FINALIZE/01_intro.md
       title: Introduction to chapter 2
@@ -37,7 +37,7 @@ parts:
     - file: 02_Basic/2_INIT_FINALIZE/04_workflow.md
       title: Workflow
 
-  - caption: For beginners - chapter 3
+  - caption: Basic - 03 - Code Parameters
     chapters:
     - file: 02_Basic/3_Code_Parameters/01_intro.md
       title: Introduction to chapter 3

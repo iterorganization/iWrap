@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Notebooks Tutorial
@@ -39,9 +39,26 @@ You can find it on the **left sidebar**
 ![toc.png](../../sources/images/toc.png)
 
 
-## Running Code in Bash Kernel using `code cells`
+## Running Bash Code in Python Kernel using `code cells`
 
-A Bash kernel in Jupyter Notebook allows you to run Bash shell commands and scripts interactively within notebook cells. It serves as an execution environment specifically for Bash.   
+A Python kernel in Jupyter Notebook allows you to run Python and Bash shell commands and scripts interactively within notebook cells.   
+
+```{admonition} Important!!
+:class: attention
+
+To run Bash code in Python kernel, **you need to preface the code with `!` character.**
+```    
+
+Example 1: Does **not** work
+
+![bash-doesnt-work.png](../../sources/images/bash-doesnt-work.png)
+
+Example 2: Does work
+
+```{code-cell}
+!echo "Hello World!"
+```
+
 
 ## Using Code Cells
 To run a code cell in Jupyter Notebook, select the cell and press `Shift + Enter` or click the `Run` button in the toolbar.
@@ -68,7 +85,7 @@ And because This is `iWrap` tutorial, you can run iWrap GUI in here!
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui
+!iwrap-gui
 ```
 
 ```{admonition} C++  Fortran  Code
@@ -105,13 +122,11 @@ int main() {
 `````
 
 ```{code-cell}
-g++ codes/hello_c++.cpp -o codes/hello_c++.exe
-./codes/hello_c++.exe
+!g++ codes/hello_c++.cpp -o codes/hello_c++.exe && ./codes/hello_c++.exe
 ```
 
 ```{code-cell}
-gfortran codes/hello_fortran.f90 -o codes/hello_fortran.exe
-./codes/hello_fortran.exe
+!gfortran codes/hello_fortran.f90 -o codes/hello_fortran.exe && ./codes/hello_fortran.exe
 ```
 
 ```{admonition} Integrated Terminal

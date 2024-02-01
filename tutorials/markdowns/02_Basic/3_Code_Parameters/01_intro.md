@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Tutorial for beginners - Step 3 - Introduction
@@ -35,7 +35,7 @@ Below is the repo layout of codes used in this chapter:
 ```
 
 ```{code-cell}
-find . -type d -name 'codes' | xargs tree
+!find . -type d -name 'codes' | xargs tree
 ```
 
 ## Code parameters Introduction - `XML` & `XSD` quick reminder

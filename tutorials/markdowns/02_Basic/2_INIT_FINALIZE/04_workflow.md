@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 # Workflow
@@ -30,7 +30,9 @@ In both Chapter 1 and Chapter 2, the workflow remains the same, with the same pr
 To run workflow execute below command:
 
 ```{code-cell}
-make -C codes wf-run
+:tags: [output_scroll, hide-output]
+
+!make -C codes wf-run
 ```
 
 ```{admonition} Summary of chapter 2

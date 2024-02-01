@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+   display_name: Python 3 (ipykernel)
+   language: python
+   name: python3
 ---
 
 # Explanation of iWrap  code implementation standards - part II  
@@ -290,13 +290,13 @@ Essentially, it tells make to go to a specific directory and then execute there.
 - **Fortran**
 
 ```{code-cell}
-make -C codes/iWrapped_codes/code1_fortran
+!make -C codes/iWrapped_codes/code1_fortran
 ```
 
 - **C++**
 
 ```{code-cell}
-make -C codes/iWrapped_codes/code2_cpp
+!make -C codes/iWrapped_codes/code2_cpp
 ```
 
 ```{admonition} Summary

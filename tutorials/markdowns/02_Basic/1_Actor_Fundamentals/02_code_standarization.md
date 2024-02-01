@@ -6,9 +6,9 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.16.0
 kernelspec:
-  display_name: Bash
-  language: bash
-  name: bash
+   display_name: Python 3 (ipykernel)
+   language: python
+   name: python3
 ---
 
 # Explanation of iWrap  code implementation standards - part I
@@ -53,20 +53,15 @@ The "MAIN" method is a **mandatory** part of your original code. Here's what you
 
 ### What this method needs (its arguments):
 
+1. **Input and Output IDSes:**
 
 
-``````{admonition} IDS argument
-:class: tip
-
-
-`````{admonition} Note! This argument is listed first, because it **MUST** be listed first on method call!
-:class: note
+````{admonition} Caution! This argument is listed first, because it **MUST** be listed first on method call!
+:class: caution
     
-    1. **Input and Output IDSes:**
-    - Do you have to include this? **Yes, it's mandatory**
-    - How it works: These are **either** inputs (IN) or outputs (OUT) for the method.
-
- 
+ - Do you have to include this? **Yes, it's mandatory**
+ - How it works: These are **either** inputs (IN) or outputs (OUT) for the method.
+    
 ```{admonition} Explanation of **IN, OUT and INOUT** arguments.
 :class: dropdown
 
@@ -76,16 +71,17 @@ The "MAIN" method is a **mandatory** part of your original code. Here's what you
 - `OUT` is an uninitialized argument which must be initialized by a function.
 - `INOUT` - A combination of the two above. That is, an initialized argument which can be written to
 ```
+````   
+ 
 
-``````
 
 
-1. **Status Code**:
+2. **Status Code**:
    - Do you have to include this? **Yes, it's a mandatory**.
    - What kind of data? A number (an integer).
    - How it works: The method will give this number as an output to let you know how things went.
 
-2. **Status Message**:
+3. **Status Message**:
    - Do you have to include this? **Yes, it's a mandatory**.
    - What kind of data? A text string.
    - How it works: The method will provide this text message to give you more details about what happened.
@@ -394,8 +390,7 @@ change `--cflags al-fortran` into `--cflags imas-ifort` or `--cflags imas-gfortr
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-export FORTRAN_PATH="codes/iWrapped_codes/code1_fortran"
-gfortran -g -fPIC -J $FORTRAN_PATH $FORTRAN_PATH/code1.f90 `pkg-config --cflags al-fortran` -c -o $FORTRAN_PATH/code_fortran.o
+!export FORTRAN_PATH="codes/iWrapped_codes/code1_fortran" && gfortran -g -fPIC -J $FORTRAN_PATH $FORTRAN_PATH/code1.f90 `pkg-config --cflags al-fortran` -c -o $FORTRAN_PATH/code_fortran.o
 ```
 
 - **C++**
@@ -403,8 +398,7 @@ gfortran -g -fPIC -J $FORTRAN_PATH $FORTRAN_PATH/code1.f90 `pkg-config --cflags 
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-export CPP_PATH="codes/iWrapped_codes/code2_cpp"
-g++  -g -fPIC -pthread $CPP_PATH/code2.cpp `pkg-config --cflags al-cpp` -c -o $CPP_PATH/code_cpp.o
+!export CPP_PATH="codes/iWrapped_codes/code2_cpp" && g++  -g -fPIC -pthread $CPP_PATH/code2.cpp `pkg-config --cflags al-cpp` -c -o $CPP_PATH/code_cpp.o
 ```
 
 ## Code Packaging
@@ -431,27 +425,37 @@ So  to **package** our code into Linux Static Library -`.a` - we can use such co
 - **Fortran**
 
 ```{code-cell}
-ar -rcs  $FORTRAN_PATH/libcode_fortran.a  $FORTRAN_PATH/code_fortran.o
+#ar -rcs  codes/iWrapped_codes/code1_fortran/libcode_fortran.a  codes/iWrapped_codes/code1_fortran/code_fortran.o
 
+import os
 
-if [ $? -eq 0 ]; then
-    echo " Fortran Library created successfully."
-else
-    echo "Library creation failed."
-fi
+# Create the library
+creation_status = os.system(f"ar -rcs  codes/iWrapped_codes/code1_fortran/libcode_fortran.a  codes/iWrapped_codes/code1_fortran/code_fortran.o")
+
+# Check if the library was created successfully
+if creation_status == 0:
+    print("Fortran Library created successfully.")
+else:
+    print("Fortran Library creation failed.")
+
 ```
 
 - **C++**
 
 ```{code-cell}
-ar -rcs $CPP_PATH/libcode_cpp.a $CPP_PATH/code_cpp.o
+# ar -rcs codes/iWrapped_codes/code2_cpp/libcode_cpp.a codes/iWrapped_codes/code2_cpp/code_cpp.o
 
 
-if [ $? -eq 0 ]; then
-    echo "C++ Library created successfully."
-else
-    echo "Library creation failed."
-fi
+import os
+
+# Create the library
+creation_status = os.system(f"ar -rcs codes/iWrapped_codes/code2_cpp/libcode_cpp.a codes/iWrapped_codes/code2_cpp/code_cpp.o")
+
+# Check if the library was created successfully
+if creation_status == 0:
+    print("C++ Library created successfully.")
+else:
+    print("C++ Library creation failed.")
 ```
 
 ```{admonition} Final Summary

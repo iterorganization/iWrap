@@ -10,6 +10,12 @@ For user conveniency it provides two kinds of interfaces:
 * user friendly graphical interface that allows non-experienced users to define an actor in intuitive way 
 * command line interface foreseen for more advanced users that may want to e.g. automatise actor generation process using scripts.
 
+## Tutorials
+
+To get to know with iWrap please read `tutorials/README.md` for generating interactive and step-by-step tutorial in Jupyter Notebook. 
+
+We have also prepared HTML and Docker version, so you can choose the one that suits you best.
+
 # Configuration of working environment
 
 ## Downloading software

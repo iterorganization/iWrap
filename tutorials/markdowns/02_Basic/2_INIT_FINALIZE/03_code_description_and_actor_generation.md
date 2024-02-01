@@ -6,9 +6,9 @@ jupytext:
       format_version: 0.13
       jupytext_version: 1.16.0
 kernelspec:
-   display_name: bash
-   language: bash
-   name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 # 1. Actor generation Part 2
 
@@ -74,7 +74,7 @@ If you want to practice with the GUI, let's open it first:
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui -f codes/actor1_fortran.yaml
+!iwrap-gui -f codes/actor1_fortran.yaml
 ```
 
 
@@ -119,7 +119,7 @@ code_description:
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui -f codes/actor2_cpp.yaml
+!iwrap-gui -f codes/actor2_cpp.yaml
 ```
 
 ::::{tab-set}
@@ -178,7 +178,7 @@ And then, just click **Generate** and you have everything set!
 This Makefile orchestrates the building process of two actors from wrapped `Fortran` and `C++` codes.   
 
 ```{code-cell}
-cat codes/Makefile
+!pygmentize codes/Makefile
 ```
 
 Below is a step-by-step explanation of its contents:
@@ -253,7 +253,7 @@ Simply typing make with path to `codes`  will execute the default target, which 
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-make -C codes
+!make -C codes
 ```
 
 ```{admonition} Execute specific target
@@ -266,7 +266,7 @@ Please uncomment chosen commands
 ```{code-cell}
 :tags: [skip-execution]
 
-make -C codes actor_cplus
+!make -C codes actor_cplus
 ```
 
 ```{admonition} Run workflow
@@ -278,7 +278,7 @@ To run the workflow, you would use:
 ```{code-cell}
 :tags: [skip-execution]
 
-make -C codes wf-run
+!make -C codes wf-run
 ```
 
 ```{admonition} Clean up
@@ -290,7 +290,7 @@ If you want to clean up the build artifacts (like removing temporary files or cl
 ```{code-cell}
 :tags: [skip-execution]
 
-make -C codes clean
+!make -C codes clean
 ```
 
 

@@ -6,9 +6,9 @@ jupytext:
       format_version: 0.13
       jupytext_version: 1.16.0
 kernelspec:
-   display_name: bash
-   language: bash
-   name: bash
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 
@@ -111,13 +111,22 @@ actor_description:
 
 `````
 
+```{admonition} Tooltips in GUI!
+:class: hint
+
+If you hover on GUI **text boxes** you will get help message of what is expected in this field! ;)
+
+![actor_description_tooltip.png](../../../sources/images/tooltips.gif)
+```
+
+
 If you want to practice with the GUI, let's open it first:
 
 
 ```{code-cell}
 :tags: [skip-execution]
 
-iwrap-gui
+!iwrap-gui
 ```
 
 ## 1.5.  code description
@@ -508,9 +517,9 @@ code_description:
 
 
 ```{code-cell}
-:tags: [output_scroll, hide-output]
+:tags: ["output_scroll", hide-output]
 
-iwrap -h
+!iwrap -h
 ```
 
 
@@ -532,10 +541,9 @@ You should see this line at the end of logs:
 - **Fortran**
 
 ```{code-cell}
-:tags: [output_scroll, hide-output]
+:tags: ["output_scroll", hide-output]
 
-
-iwrap --actor-type python --actor-name actor1_fortran --file codes/actor1_fortran.yaml
+!iwrap --actor-type python --actor-name actor1_fortran --file codes/actor1_fortran.yaml
 ```
 
 - **C++**
@@ -543,7 +551,7 @@ iwrap --actor-type python --actor-name actor1_fortran --file codes/actor1_fortra
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-iwrap --actor-type python --actor-name actor2_cpp --file codes/actor2_cpp.yaml
+!iwrap --actor-type python --actor-name actor2_cpp --file codes/actor2_cpp.yaml
 ```
 
 
