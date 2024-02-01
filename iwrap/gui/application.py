@@ -15,6 +15,8 @@ from iwrap.gui.settings.main_pane import SettingsMainPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
 
+from iwrap.gui.utils import center_wnd
+
 
 class ButtonPane(ttk.Frame):
     # Class logger
@@ -93,7 +95,8 @@ class MainWindow(tk.Tk, IWrapPane):
         self.settings_pane = SettingsMainPane(main_pane)
         self.settings_pane.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
 
-        self.center()
+        self.update_idletasks()
+        center_wnd(self, self)
 
 
     def _load_image(self,
@@ -120,18 +123,6 @@ class MainWindow(tk.Tk, IWrapPane):
         self.button_pane.install_dir.set(ProjectSettings.get_settings().actor_description.get_install_dir())
         self.actor_description.reload()
         self.settings_pane.reload()
-
-    def center(self):
-        self.update_idletasks()
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-        size = tuple(int(_) for _ in self.geometry().split('+')[0].split('x'))
-        x = screen_width / 2 - size[0] / 2
-        y = screen_height / 2 - size[1] / 2
-
-        self.geometry("+%d+%d" % (x, y))
-
 
 def launch_gui():
     window = MainWindow()

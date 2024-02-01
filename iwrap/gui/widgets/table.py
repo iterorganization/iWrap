@@ -6,6 +6,7 @@ from itertools import zip_longest
 from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 from iwrap.gui.settings.tooltip import ToolTip
 
+from iwrap.gui.utils import center_wnd
 
 class Table( ttk.Frame ):
     """The Table class enables the creation of tables made of columns and rows. Rows can contain text cells and
@@ -297,7 +298,7 @@ class ArgumentWindow:
         """
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
-        self.window.geometry('500x200')
+        self.window.geometry('500x150')
         self.window.resizable(width=False, height=True)
         self.window.focus_force()
         self.window.grab_set()
@@ -316,6 +317,7 @@ class ArgumentWindow:
 
         tk.Button(self.footer, text='Cancel', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
         content_frame.update()
+        center_wnd(self.master, self.window)
 
     def _add_content(self):
         """Add content to the ArgumentWindow. In the first column, there are labels which are columns name.
