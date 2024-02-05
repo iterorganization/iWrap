@@ -105,9 +105,9 @@ tooltip_dict ={
     'compiler_cmd':'The compiler command used to compile the code and which will be used to compile the wrapper.\n\n'
                                'examples:\n'
                                '‘gfortran‘, ‘ifort‘, ‘g++‘',
-    'open_mp_switch':'A compiler switch/flag to be used if the code uses OpenMP.\n'
+    'compiler_flags':'Compiler flags (str) used during code compilation.\n\n'
                      'examples:\n'
-                     ' ‘-fopenmp’, ‘-qopenmp’',
+                     ' ‘-std=f2008’, ‘-qopenmp’, ‘-ansi’',
     'mpi_compiler_cmd':'The MPI compiler command used to compile the code and which will be used to compile the wrappper.\n'
                        'IMPORTANT! The existence (or absence) of this entry, determines if the physics code uses MPI (or not).\n\n'
                        'examples:\n'

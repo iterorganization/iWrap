@@ -80,8 +80,12 @@ class FortranPane( ttk.Frame, IWrapPane ):
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
-        self.openmp_switch_combobox = MpiCombo(frame, 0, 3, 10, "OpenMP switch:", self.settings.open_mp_switch)
-        ToolTip(self.openmp_switch_combobox.combobox, 'open_mp_switch')
+        self.compiler_flags = tk.StringVar()
+        ttk.Label(frame, text="Compiler flags:").grid(column=0, row=3, padx=10, sticky=(tk.N, tk.W), pady=5)
+        compiler_flags_entry = ttk.Entry(frame, textvariable=self.compiler_flags)
+        compiler_flags_entry.grid(column=1, row=3, padx=10, sticky=(tk.W, tk.E), pady=5)
+        ToolTip(compiler_flags_entry, 'compiler_flags')
+
         self.mpi_compiler_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
         ToolTip(self.mpi_compiler_combobox.combobox, 'mpi_compiler_cmd')
 
@@ -117,7 +121,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language or 'fortran')
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.mpi_compiler_combobox.set(self.settings.mpi_compiler_cmd or "")
-        self.openmp_switch_combobox.set(self.settings.open_mp_switch or "")
+        self.compiler_flags.set(self.settings.compiler_flags or "")
 
         self.library_path_pane.reload()
         self.pkg_config_pane.reload()
@@ -127,7 +131,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         and LibraryPathPane update_settings methods.
         """
         compiler_cmd = self.compiler_cmd.get()
-        open_mp_switch = self.openmp_switch_combobox.get()
+        compiler_flags = self.compiler_flags.get()
         mpi_compiler_cmd = self.mpi_compiler_combobox.get()
 
         extra_lib = ExtraLibraries()
@@ -137,14 +141,14 @@ class FortranPane( ttk.Frame, IWrapPane ):
         extra_lib.path_defined = library_paths
         ProjectSettings.get_settings().code_description.settings = {'compiler_cmd': compiler_cmd,
                                                                     'mpi_compiler_cmd': mpi_compiler_cmd,
-                                                                    'open_mp_switch': open_mp_switch,
+                                                                    'compiler_flags': compiler_flags,
                                                                     'extra_libraries': extra_lib.to_dict()}
 
     def save_pane_settings(self):
         """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
         """
         compiler_cmd = self.compiler_cmd.get()
-        open_mp_switch = self.openmp_switch_combobox.get()
+        compiler_flags = self.compiler_flags.get()
         mpi_compiler_cmd = self.mpi_compiler_combobox.get()
 
         extra_lib = ExtraLibraries()
@@ -155,7 +159,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         self.settings.from_dict({'compiler_cmd': compiler_cmd,
                                  'mpi_compiler_cmd': mpi_compiler_cmd,
-                                 'open_mp_switch': open_mp_switch,
+                                 'compiler_flags': compiler_flags,
                                  'extra_libraries': extra_lib.to_dict()})
 
 class MpiCombo:

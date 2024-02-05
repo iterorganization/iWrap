@@ -260,11 +260,11 @@ Syntax
     -  example: 'mpif90', 'ifort'
     -  Important! The existence (or absence) of this entry, determines if the code uses MPI or not
 
--   *open_mp_switch:*
+-   *compiler_flags:*
 
-    -  meaning: a compiler switch/flag to be used if the code uses OpenMP.
+    -  meaning: a set of compiler flags used during compilation
     -  value: string
-    -  example: '-fopenmp', '-qopenmp'
+    -  example: '-std=f2008', '-qopenmp', '-ansi'
 
 -   *extra_libraries:* -
 
@@ -339,7 +339,7 @@ Example - description of an actor wrapping a Fortran code
         settings:
             compiler_cmd: gfortran
             mpi_compiler_cmd: mpif90
-            open_mp_switch: -qopenmp
+            compiler_flags: -qopenmp
             extra_libraries:
                 pkg_config_defined:
                   - xmllib

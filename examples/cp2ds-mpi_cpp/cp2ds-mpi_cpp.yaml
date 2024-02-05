@@ -24,7 +24,7 @@ code_description:
     settings:
         compiler_cmd: $CXX
         mpi_compiler_cmd: $MPICXX
-        open_mp_switch: false
+        compiler_flags:
         extra_libraries:
             pkg_config_defined:
             path_defined:

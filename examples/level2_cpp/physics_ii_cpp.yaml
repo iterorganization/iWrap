@@ -36,6 +36,6 @@ code_description:
             - ./native_code/libxmlIMAS.a
             pkg_config_defined:
             - libxml-2.0
-        mpi_compiler_cmd: ''
-        open_mp_switch: ''
+        mpi_compiler_cmd:
+        compiler_flags:
 ...

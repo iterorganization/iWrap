@@ -68,7 +68,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     """ The fortran language specific settings.
     Attributes:
         compiler_cmd (str): the compiler command used to compile the code and which will be used to compile the wrapper.
-        _open_mp_switch (str): the OpenMP switch.
+        _compiler_flags (str): the compiler flags string used during code compilation.
         _mpi_compiler_cmd (str): the MPI compiler command
         extra_libraries (:obj:`ExtraLibraries`): extra libraries defined by paths or pkg configs.
     """
@@ -76,12 +76,12 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
-    def open_mp_switch(self):
-        return self._open_mp_switch
+    def compiler_flags(self):
+        return self._compiler_flags
 
-    @open_mp_switch.setter
-    def open_mp_switch(self, value):
-        self._open_mp_switch = value if value != "None" else None
+    @compiler_flags.setter
+    def compiler_flags(self, value):
+        self._compiler_flags = value if value != "None" else None
 
     @property
     def mpi_compiler_cmd(self):
@@ -93,7 +93,7 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
     def __init__(self):
         self.compiler_cmd = ''
-        self._open_mp_switch = False
+        self._compiler_flags = ''
         self._mpi_compiler_cmd = ''
         self.extra_libraries = ExtraLibraries()
 

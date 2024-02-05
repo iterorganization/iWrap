@@ -32,4 +32,4 @@ code_description:
       pkg_config_defined:
       - xmllib
     mpi_compiler_cmd:
-    open_mp_switch: false
+    compiler_flags:
