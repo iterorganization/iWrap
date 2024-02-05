@@ -53,8 +53,36 @@ description of the actor.
 Code description
 #################
 
-Arguments
+Implementation
 ===============
+|image6|
+
+-  **Programming language** - a user code language
+-  **Data** **type** - data type handled by the physics code
+-  **Data Dictionary compliant** - oldest known version of Data Directory compatible with actor
+-  **Rood dir** - the root directory
+-  **Code** **path** - path to system library (C, CPP),
+   script (Python), etc, containing the physics code and
+   method/subroutine to be run
+-  **Include path** -  a module's / header's file path
+
+Subroutines tab
+---------------
+
+A user code should be provided as a subroutine/method.
+
+|image8|
+
+*Init*, *Main* and *Finalize* - for that methods user can specify:
+- a name of a subroutine that could be used to initialize the native code (mandatory for *Main*)
+- flag determining if given method uses code parameters or not
+- a set of IDSes - input or output arguments
+
+The other subroutines that could be provided by a wrapped code (*Get state*, *Set state*, *Get timestamp*)
+have fixed API and only their `names` can be specified.
+
+**Arguments**
+
 |image3|
 
 In the table, there are columns like:
@@ -209,7 +237,7 @@ description.
 |image16|
 
 
-.. |image1| image:: attachments/70877876/77367779.png
+.. |image1| image:: attachments/image1.png
    :class: confluence-embedded-image
    :width: 450px
 .. |image2| image:: attachments/70877876/77367784.png
@@ -224,13 +252,13 @@ description.
 .. |image5| image:: attachments/70877876/77367790.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image6| image:: attachments/70877876/77367793.png
+.. |image6| image:: attachments/image6.png
    :class: confluence-embedded-image
    :width: 450px
 .. |image7| image:: attachments/70877876/77367794.png
    :class: confluence-embedded-image
    :width: 450px
-.. |image8| image:: attachments/70877876/77367796.png
+.. |image8| image:: attachments/image8.png
    :class: confluence-embedded-image
    :width: 450px
 .. |image9| image:: attachments/70877876/77367798.png

@@ -17,7 +17,7 @@ class ExampleWorkflowManager:
         print(self.actor_cp2ds.code_description['implementation']['subroutines'])
         print(self.actor_cp2ds.code_description['implementation']['include_path'])
         print(self.actor_cp2ds.code_description['implementation']['data_type'])
-        for arg in self.actor_cp2ds.code_description['arguments']:
+        for arg in self.actor_cp2ds.code_description['implementation']['subroutines']['main']['arguments']:
             print(arg)
         self.input_entry = None
         self.output_entry = None
@@ -37,7 +37,7 @@ class ExampleWorkflowManager:
         print('=> Open input datafile')
         self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
         self.input_entry.open()
-        
+
         # CREATE OUTPUT DATAFILE
         print('=> Create output datafile')
         self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)

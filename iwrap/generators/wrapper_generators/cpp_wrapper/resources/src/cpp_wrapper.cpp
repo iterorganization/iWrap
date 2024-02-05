@@ -13,19 +13,19 @@
 #include "iwrap_tools.h"
 #include  "{{code_description.implementation.include_path | basename }}"
 
-{% if code_description.implementation.subroutines.init %}
+{% if code_description.implementation.subroutines.init.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  INIT SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
+    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init,
     code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
-{% if code_description.implementation.subroutines.finalize %}
+{% if code_description.implementation.subroutines.finalize.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   FINALIZE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
+    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize,
     None, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
@@ -33,7 +33,7 @@
 //                                   MAIN SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
+{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main,
 code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
 
 

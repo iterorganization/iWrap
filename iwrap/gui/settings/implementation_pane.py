@@ -8,8 +8,6 @@ from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
-from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
-from iwrap.gui.settings.subroutines_pane import SubroutinesPane
 from iwrap.gui.menu import MenuBar
 from iwrap.gui.settings.tooltip import ToolTip
 
@@ -48,6 +46,8 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         self.root_dir = tk.StringVar()
         self.data_type = None
         self.data_dictionary_compliant = tk.StringVar()
+
+
 
         # LABEL FRAME
         labelframe = ttk.LabelFrame(self, text="Implementation", borderwidth=2, relief="groove")
@@ -101,37 +101,16 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         browse_button.grid(column=2, row=6, padx=10, pady=5, sticky=(tk.W, tk.E))
         ToolTip(browse_text, 'include_path')
 
-        # TABS FRAME
-        tab_frame = ttk.Frame(self)
-        tab_frame.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW)
-
-        # NOTEBOOK WITH TABS
-        tab_control = ttk.Notebook(tab_frame)
-        subroutines_tab = ttk.Frame(tab_control)
-        code_param_tab = ttk.Frame(tab_control)
-        tab_control.add(subroutines_tab, text="Subroutines:")
-        tab_control.add(code_param_tab, text="Code parameters:")
-        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.SW, pady=5)
-
-        self.subroutines_pane = SubroutinesPane(subroutines_tab)
-        self.subroutines_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
-        self.code_parameters_pane = CodeParametersPane(code_param_tab)
-        self.code_parameters_pane.pack(fill=tk.BOTH, anchor=tk.SW)
-
     def update_settings(self, *args):
         """Update settings in the ProjectSettings.
         """
         code_description = ProjectSettings.get_settings().code_description
-        programming_language = self.programming_language_combobox.get()
-        programming_language = None if programming_language.lower() == 'none' else programming_language
-        code_description.implementation.programming_language = programming_language
+        code_description.implementation.programming_language = self.programming_language_combobox.get()
         code_description.implementation.code_path = self.code_path.get()
         code_description.implementation.data_type = self.data_type_combobox.get()
         code_description.implementation.root_dir = self.root_dir.get()
         code_description.implementation.data_dictionary_compliant = self.data_dictionary_compliant.get()
         code_description.implementation.include_path = self.include_path.get()
-        self.subroutines_pane.update_settings()
-        self.code_parameters_pane.update_settings()
 
     def reload(self):
         """Reload entries and combobox values when the project settings are changed. If programming language from new
@@ -170,8 +149,6 @@ class ImplementationPane(ttk.Frame, IWrapPane):
 
         self.root_dir_entry.delete(0, tk.END)
         self.root_dir.set(code_description.implementation.root_dir or '')
-        self.subroutines_pane.reload()
-        self.code_parameters_pane.reload()
 
     def on_click_file(self, path):
         """Open the filedialog when the browse button is clicked and insert selected path to the entry.

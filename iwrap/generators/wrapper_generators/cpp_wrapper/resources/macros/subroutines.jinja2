@@ -1,34 +1,34 @@
-{% macro sbrt_declaration( sbrt_role, actor_name, sbrt_name, arguments, code_parameters) -%}
+{% macro sbrt_declaration( sbrt_role, actor_name, sbrt_data, code_parameters) -%}
 extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
                 char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message);
 {%- endmacro -%}
 
 
-{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters, mpi_compiler_cmd) -%}
 
 extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
                 char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message)
 {
     std:string status_msg = "OK";
 
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
     {{ ids_macro.declare(argument.type, argument.name ) }}
 {% endfor %}
 
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
 	//----  Code parameters ----
     IdsNs::codeparam_t imas_code_params;
 {% endif %}
@@ -46,24 +46,24 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% endif %}
 
 
-    {% for argument in arguments if argument.intent == 'IN' %}
+    {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
     //--------- Get IDS : {{ argument.name }} ------------------------
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
-        {% if code_parameters  %}
+        {% if code_parameters and sbrt_data.need_code_parameters  %}
     // ------------------ code parameters ----------------------------
     imas_code_params.parameters = (char**)&(code_params_str);
     imas_code_params.default_param = NULL;
     imas_code_params.schema = NULL;
     {% endif %}
 
-        // - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
-    {{sbrt_name}}(
-{% for argument in arguments %}
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    {{sbrt_data.name}}(
+{% for argument in sbrt_data.arguments %}
             {{ argument.name }},
 {% endfor %}
-{% if code_parameters  %}
+{% if code_parameters  and sbrt_data.need_code_parameters%}
             imas_code_params,
 {% endif %}
             *out_status_code, status_msg );
@@ -85,7 +85,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     {{ ids_macro.provenance( argument.name , sbrt_name, code_parameters) }}
 {% endfor %}
 
-{% for argument in arguments if argument.intent == 'OUT' %}
+{% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
     //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.put( argument.name) }}
 {% endfor %}
@@ -93,8 +93,8 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     } //The end of section called only for RANK 0 process
 {% endif %}
 
-{% for argument in arguments %}
-    //--------- CLEAN UP IDS : {{ argument.name }} ------------------------
+{% for argument in sbrt_data.arguments %}
+    //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.deallocate( argument.name) }}
 {% endfor %}
 
@@ -111,7 +111,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {%- endmacro -%}
 
 
-{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters, mpi_compiler_cmd) -%}
 
 //======================================================================================================
 //                        STANDALONE {{ sbrt_role | upper }}
@@ -124,7 +124,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 
 int main(int argc, char **argv)
 {
-   const int IDS_ARGS_NO = {{arguments | length}};
+   const int IDS_ARGS_NO = {{sbrt_data.arguments | length}};
    ids_description_t db_entry_desc_array[IDS_ARGS_NO];
    IdsNs::IDS* *db_entry_array ;
 
@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 
     read_input("{{ sbrt_role }}.in", db_entry_desc_array, IDS_ARGS_NO);
 
-    {% if code_parameters %}
+    {% if code_parameters and sbrt_data.need_code_parameters %}
     //----  Code parameters  ----
     char *xml_string;
     read_code_parameters( &xml_string);
@@ -155,10 +155,10 @@ int main(int argc, char **argv)
 
     //!!!!!!!!! Cpp wrapper !!!!!!!!!!!!!!!
     {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
                 xml_string,
 {% endif %}
                 &status_code, &status_message);
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 {% endif %}
     close_db_entries(db_entry_array, IDS_ARGS_NO);
 
-    {% if code_parameters %}
+    {% if code_parameters and sbrt_data.need_code_parameters %}
     // ------Deallocating code parameters ----------------------------
     free(xml_string);
     {% endif %}

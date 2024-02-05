@@ -63,13 +63,13 @@ FC=$(MPIFC)
 
 
 all:
-    {%- if code_description.implementation.subroutines.init %}
+    {%- if code_description.implementation.subroutines.init.name %}
       ../bin/$(ACTOR_NAME)_init.exe  \
     {% endif %}
-    {%- if code_description.implementation.subroutines.main %}
+    {%- if code_description.implementation.subroutines.main.name %}
       ../bin/$(ACTOR_NAME)_main.exe  \
     {% endif %}
-    {%- if code_description.implementation.subroutines.finalize %}
+    {%- if code_description.implementation.subroutines.finalize.name %}
       ../bin/$(ACTOR_NAME)_finalize.exe  \
     {% endif %}
       ../lib/lib$(ACTOR_NAME).so

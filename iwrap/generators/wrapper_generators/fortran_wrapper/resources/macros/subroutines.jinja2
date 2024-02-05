@@ -1,10 +1,10 @@
-{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters, mpi_compiler_cmd) -%}
 
 SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
                 code_params_cstr,  &
 {% endif %}
                 status_code, out_status_msg) BIND(C)
@@ -16,12 +16,12 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
     implicit none
     character(132):: ids_full_name
 
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
     ! {{ argument.name }}
     {{ ids_macro.declare(argument.type,  argument.name) }}
 {% endfor %}
 
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
     character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
@@ -49,12 +49,12 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 	 nullify(status_msg)
 	 status_code = 0
 
-    {% for argument in arguments if argument.intent == 'IN' %}
+    {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
-    {% if code_parameters %}
+    {% if code_parameters and sbrt_data.need_code_parameters %}
     ! ------------------ code parameters ----------------------------
     imas_code_params = convert_codeparams(code_params_cstr)
     {% endif %}
@@ -62,12 +62,12 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 
 	! ------------- Input data conversion [ISO_C_BINDING] --------------
 
-    ! - - - - - - - - - - - - - CODE SBRT CALL - - - - - -- - - - - - - - - - - -
-    call  {{sbrt_name}}( &
-{% for argument in arguments %}
+    ! - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    call  {{sbrt_data.name}}( &
+{% for argument in sbrt_data.arguments %}
             {{ argument.name }}, &
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
             imas_code_params,  &
 {% endif %}
             status_code, status_msg)
@@ -85,12 +85,12 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 	 if(status_code < 0 ) RETURN
 
    ! ------------ Provenance information --------------
- {% for argument in arguments if argument.intent == 'OUT' %}
+ {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
 
-    {{ ids_macro.provenance( argument.name , sbrt_name, code_parameters) }}
+    {{ ids_macro.provenance( argument.name , sbrt_data, code_parameters) }}
     {% endfor %}
 
-     {% for argument in arguments if argument.intent == 'OUT' %}
+     {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
     !--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.put( argument.name) }}
     {% endfor %}
@@ -100,11 +100,11 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
     !--------- Dealloacting IDSes ------------------------
-    {% for argument in arguments %}
+    {% for argument in sbrt_data.arguments %}
      {{ ids_macro.deallocate( argument.name) }}
     {% endfor %}
 
-    {% if code_parameters %}
+    {% if code_parameters and sbrt_data.need_code_parameters %}
     ! ------Deallocating code parameters ----------------------------
     deallocate(imas_code_params%parameters_value)
     {% endif %}
@@ -120,7 +120,7 @@ END SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}
 {%- endmacro -%}
 
 
-{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters, mpi_compiler_cmd) -%}
 
 !======================================================================================================
 !                        STANDALONE {{ sbrt_role | upper }}
@@ -137,7 +137,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
     implicit none
 
     !---------------------------------------------------------
-    integer, parameter :: IDS_ARGS_NO = {{arguments | length}}
+    integer, parameter :: IDS_ARGS_NO = {{sbrt_data.arguments | length}}
     type(ids_description_t), dimension(IDS_ARGS_NO) :: db_entry_desc_array
     integer :: status
 
@@ -158,7 +158,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% endif %}
 
 
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
      status = read_code_parameters(xml_string)
         if (status /= 0) STOP -1
     code_params_cstr => convert(xml_string)
@@ -174,10 +174,10 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
     CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
                 code_params_cstr,  &
 {% endif %}
                 status_code, status_msg)
@@ -206,7 +206,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
     if (.not. was_mpi_finalized)   call MPI_Finalize(status)
 {% endif %}
 
-{% if code_parameters %}
+{% if code_parameters and sbrt_data.need_code_parameters %}
     !----------- Cleaning code parameters ---------------------
     deallocate(code_params_cstr)
 {% endif %}

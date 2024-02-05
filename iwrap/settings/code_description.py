@@ -104,15 +104,15 @@ class Subroutines( SettingsBaseClass ):
     def __init__(self):
         # A name of subroutine that could be used to initialise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.init: str = ''
+        self.init = Subroutine('init')
 
         # A name of the main subroutine that will be called from actor (mandatory)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.main: str = ''
+        self.main = Subroutine('main')
 
         # A name of subroutine that could be used to finalise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.finalize: str = ''
+        self.finalize = Subroutine('finalize')
 
         self.get_state = ''
 
@@ -120,18 +120,20 @@ class Subroutines( SettingsBaseClass ):
 
         self.get_timestamp = ''
 
-    def validate(self, engine: Engine, project_root_dir: str) -> None:
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         # validate correctness of XML
 
-        if not self.main:
-            raise ValueError( 'A name of the main subroutine must provided!' )
+        self.init.validate(engine, project_root_dir, **kwargs)
+        self.main.validate(engine, project_root_dir, **kwargs)
+        self.finalize.validate(engine, project_root_dir, **kwargs)
+
 
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.init = ''
-        self.main = ''
-        self.finalize = ''
+        self.init = Subroutine('init')
+        self.main = Subroutine('main')
+        self.finalize = Subroutine('finalize')
         self.get_state = ''
         self.set_state = ''
         self.get_timestamp = ''
@@ -173,6 +175,7 @@ class Implementation( SettingsBaseClass ):
 
     @programming_language.setter
     def programming_language(self, value: str):
+        value = None if str( value ).lower() == 'none' or value == '' else value
         self._programming_language =  value.lower() if value else value
         self._master.change_language_specific()
 
@@ -220,6 +223,9 @@ class Implementation( SettingsBaseClass ):
 
         if not self.data_dictionary_compliant:
             raise ValueError('Data Dictionary compliant version is not set!')
+
+        # subroutines
+        self.subroutines.validate( engine, project_root_dir, **kwargs, data_type = self.data_type )
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -376,19 +382,6 @@ class CodeDescription( SettingsBaseClass ):
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     @property
-    def arguments(self):
-        return self._arguments
-
-    @arguments.setter
-    def arguments(self, values: List[Argument]):
-        self._arguments = []
-
-        for value in values or []:
-            if not isinstance( value, Argument ):
-                value = Argument( value )
-            self._arguments.append( value )
-
-    @property
     def settings(self):
         return self._settings
 
@@ -399,7 +392,6 @@ class CodeDescription( SettingsBaseClass ):
         self._settings = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
 
     def __init__(self):
-        self._arguments: List[Argument] = []
         self.implementation: Implementation = Implementation(self)
         self.documentation: str = None
         self._settings: dict = {}
@@ -412,10 +404,6 @@ class CodeDescription( SettingsBaseClass ):
                                                                                           self._settings)
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
-        # arguments
-        for argument in self.arguments or []:
-            argument.validate( engine, project_root_dir, **{'data_type': self.implementation.data_type} )
-
         # implementation
         self.implementation.validate(engine, project_root_dir)
 
@@ -438,7 +426,6 @@ class CodeDescription( SettingsBaseClass ):
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
-        self.arguments = []
         self.documentation = None
         self.implementation.clear()
         self.settings = {}
@@ -487,3 +474,45 @@ class CodeDescription( SettingsBaseClass ):
             self.implementation.root_dir = os.path.dirname( file_real_path )
 
 
+class Subroutine(SettingsBaseClass):
+    """Data type for Subroutines class.
+
+    Attributes:
+        name (str): Name of a subroutine init, main, or finalize.
+        need_code_parameters (bool): A boolean for making code
+            parameters optional.
+        arguments (list [:obj:`Arguments`]): List of native code in/out arguments.
+    """
+
+    @property
+    def arguments(self):
+        return self._arguments
+
+    @arguments.setter
+    def arguments(self, values):
+        self._arguments = []
+        for value in values or []:
+            if not isinstance(value, Argument):
+                value = Argument(value)
+            self._arguments.append(value)
+
+    def __init__(self, mandatory: bool = False):
+        self.name = None
+        self.need_code_parameters = False
+        self._arguments = []
+        self.__mandatory = mandatory
+
+
+    def clear(self):
+        """
+        Clears class content, setting default values of class attributes.
+        """
+        self.name = None
+        self.need_code_parameters = False
+        self.arguments = []
+        self.__mandatory = False
+
+    def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+
+        for argument in self.arguments or []:
+            argument.validate(engine, project_root_dir, **kwargs)

@@ -6,29 +6,29 @@
 {{ ids_macro.imports(build_info.al_version) }}
 #include "defs.h"
 
-{% if code_description.implementation.subroutines.init %}
+{% if code_description.implementation.subroutines.init.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  NATIVE INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("init", actor_description.actor_name,
-                                    code_description.implementation.subroutines.init, [],
+                                    code_description.implementation.subroutines.init,
                                     code_description.implementation.code_parameters.parameters ) }}
 {% endif %}
 
-{% if code_description.implementation.subroutines.finalize %}
+{% if code_description.implementation.subroutines.finalize.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE FINISH SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("finalize", actor_description.actor_name,
-                                    code_description.implementation.subroutines.finalize, [],
-                                    None ) }}
+                                    code_description.implementation.subroutines.finalize,
+                                     code_description.implementation.code_parameters.parameters ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   NATIVE MAIN SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("main", actor_description.actor_name,
-                                    code_description.implementation.subroutines.main, code_description.arguments,
+                                    code_description.implementation.subroutines.main,
                                     code_description.implementation.code_parameters.parameters ) }}
 
 {% if code_description.implementation.subroutines.get_state %}

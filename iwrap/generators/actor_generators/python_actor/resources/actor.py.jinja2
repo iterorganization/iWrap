@@ -31,18 +31,34 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     @ActorBaseClass.init_actor
     @ActorBaseClass.use_sandbox
     def initialize(self,
+                {%- for argument in code_description.implementation.subroutines.init.arguments if argument.intent == 'IN' -%}
+                      {{ argument.name }},
+                  {%- endfor -%}
                 runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None) -> None:
         """
         The method performs initialisation actions
 
         Args:
-            runtime_settings (RuntimeSettings, optional): property tells the actor how execute the code 
+            runtime_settings (RuntimeSettings, optional): property tells the actor how execute the code
             code_parameters (CodeParameters, optional): code specific parameters
+        {% for argument in code_description.implementation.subroutines.init.arguments if argument.intent == 'IN' %}
+            {{ argument.name }} - input IDS of type '{{ argument.type }}'
+        {% endfor %}
+
+        Returns:
+        {% for argument in code_description.implementation.subroutines.init.arguments if argument.intent == 'OUT' %}
+            {{ argument.name }} - output IDS of type '{{ argument.type }}'
+        {% endfor %}
+            runtime_settings (RuntimeSettings, optional): property tells the actor how native code should
+            code_parameters (CodeParameters, optional): physics model parameters
         """
     {%  if code_description.implementation.programming_language %}
         self.runner = Runner.get_runner(self)
-        {%  if code_description.implementation.subroutines.init %}
-        self.runner.call_initialize()
+        {%  if code_description.implementation.subroutines.init.name %}
+        out = self.runner.call_initialize({%- for argument in code_description.implementation.subroutines.init.arguments if argument.intent == 'IN' -%}
+                                                    {{ argument.name }},
+                                                    {%- endfor -%})
+        return out
         {%  endif %}
     {%  endif %}
         ...
@@ -51,25 +67,25 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ " RUN ".center(80) }}
     # {{ "".center(80, '-') }}
     @ActorBaseClass.use_sandbox
-    def run(self, {%- for argument in code_description.arguments if argument.intent == 'IN' -%}
+    def run(self, {%- for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' -%}
                       {{ argument.name }},
                   {%- endfor -%}):
         """
         The main (aka 'step', 'run') method. Could be called in a loop.
 
         Args:
-        {% for argument in code_description.arguments if argument.intent == 'IN' %}
+        {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
             {{ argument.name }} - input IDS of type '{{ argument.type }}'
         {% endfor %}
 
         Returns:
-        {% for argument in code_description.arguments if argument.intent == 'OUT' %}
+        {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
             {{ argument.name }} - output IDS of type '{{ argument.type }}'
         {% endfor %}
         """
-        {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.main %}
+        {%  if code_description.implementation.programming_language and code_description.implementation.subroutines.main.name %}
         self.check_is_initialized()
-        out = self.runner.call_main({%- for argument in code_description.arguments if argument.intent == 'IN' -%}
+        out = self.runner.call_main({%- for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'IN' -%}
                                                     {{ argument.name }},
                                                     {%- endfor -%})
         return out
@@ -81,14 +97,30 @@ class {{actor_description.actor_name}}(ActorBaseClass):
     # {{ "".center(80, '-') }}
     @ActorBaseClass.finalize_actor
     @ActorBaseClass.use_sandbox
-    def finalize(self) -> None:
+    def finalize(self, {%- for argument in code_description.implementation.subroutines.finalize.arguments if argument.intent == 'IN' -%}
+                      {{ argument.name }},
+                  {%- endfor -%}):
         """
         The method is used to perform finalisation actions (clean up the environment etc).
+
+        Args:
+        {% for argument in code_description.implementation.subroutines.finalize.arguments if argument.intent == 'IN' %}
+            {{ argument.name }} - input IDS of type '{{ argument.type }}'
+        {% endfor %}
+
+        Returns:
+        {% for argument in code_description.implementation.subroutines.finalize.arguments if argument.intent == 'OUT' %}
+            {{ argument.name }} - output IDS of type '{{ argument.type }}'
+        {% endfor %}
+
         """
     {%  if code_description.implementation.programming_language %}
         self.check_is_initialized()
-        {%  if code_description.implementation.subroutines.finalize %}
-        self.runner.call_finalize()
+        {%  if code_description.implementation.subroutines.finalize.name %}
+        out = self.runner.call_finalize({%- for argument in code_description.implementation.subroutines.finalize.arguments if argument.intent == 'IN' -%}
+                                                    {{ argument.name }},
+                                                    {%- endfor -%})
+        return out
         {%  endif %}
         self.runner.finalize()
     {%  endif %}

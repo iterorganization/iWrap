@@ -3,7 +3,9 @@ import tkinter as tk
 from tkinter import ttk
 
 from iwrap.gui.generics import IWrapPane
-from iwrap.settings.project import ProjectSettings
+from iwrap.gui.settings.subroutine_pane import SubroutinePane
+from iwrap.gui.settings.other_pane import OtherPane
+
 from iwrap.gui.settings.tooltip import ToolTip
 
 
@@ -29,72 +31,43 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
             master: Parent widget from Tkinter class. Default to None.
         """
         super().__init__(master)
-        self.main = tk.StringVar()
-        self.init = tk.StringVar()
-        self.finalize = tk.StringVar()
-        self.get_state = tk.StringVar()
-        self.set_state = tk.StringVar()
-        self.get_timestamp = tk.StringVar()
 
-        # SUBROUTINES LABEL FRAME
-        labelframe_sub = ttk.Frame(self, height=100)
-        labelframe_sub.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW, pady=10)
-        labelframe_sub.grid_columnconfigure(1, weight=1)
+        # TABS FRAME
+        tab_frame = ttk.Frame(self)
+        tab_frame.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW)
 
-        # INIT
-        ttk.Label(labelframe_sub, text="Init:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.init)
-        text.grid(column=1, row=1, padx=10, pady=5)
-        ToolTip(text, 'init')
-
-        # MAIN
-        ttk.Label(labelframe_sub, text="*Main:").grid(column=0, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.main)
-        text.grid(column=1, row=2, padx=10, pady=5)
-        ToolTip(text, 'main')
-
-        # Finalize
-        ttk.Label(labelframe_sub, text="Finalize:").grid(column=0, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.finalize)
-        text.grid(column=1, row=3, padx=10, pady=5)
-        ToolTip(text, 'finalize')
-
-        # get_state
-        ttk.Label(labelframe_sub, text="Get status:").grid(column=2, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.get_state)
-        text.grid(column=3, row=1, padx=10, pady=5)
-        ToolTip(text, 'get_status')
-
-        # set_state
-        ttk.Label(labelframe_sub, text="Set status:").grid(column=2, row=2, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.set_state)
-        text.grid(column=3, row=2, padx=10, pady=5)
-        ToolTip(text, 'set_status')
-
-        # get_timestamp
-        ttk.Label(labelframe_sub, text="Get timestamp:").grid(column=2, row=3, padx=10, pady=5, sticky=(tk.W, tk.N))
-        text = ttk.Entry(labelframe_sub, textvariable=self.get_timestamp)
-        text.grid(column=3, row=3, padx=10, pady=5)
-        ToolTip(text, 'get_timestamp')
+        # NOTEBOOK WITH TABS
+        tab_control = ttk.Notebook(tab_frame)
+        init_tab = ttk.Frame(tab_control)
+        main_tab = ttk.Frame(tab_control)
+        finalize_tab = ttk.Frame(tab_control)
+        other_tab = ttk.Frame(tab_control)
+        tab_control.add(init_tab, text="Init:")
+        tab_control.add(main_tab, text="Main:")
+        tab_control.add(finalize_tab, text="Finalize:")
+        tab_control.add(other_tab, text="Other:")
+        tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.SW, pady=5)
+        self.init_pane = SubroutinePane('init', init_tab)
+        self.init_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
+        self.main_pane = SubroutinePane('main', main_tab)
+        self.main_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
+        self.finalize_pane = SubroutinePane('finalize', finalize_tab)
+        self.finalize_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
+        self.other_pane = OtherPane(other_tab)
+        self.other_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
 
     def update_settings(self, *args):
         """Update settings in the ProjectSettings.
         """
-        code_description = ProjectSettings.get_settings().code_description
-        code_description.implementation.subroutines.main = self.main.get()
-        code_description.implementation.subroutines.finalize = self.finalize.get()
-        code_description.implementation.subroutines.init = self.init.get()
-        code_description.implementation.subroutines.get_state = self.get_state.get()
-        code_description.implementation.subroutines.set_state = self.set_state.get()
-        code_description.implementation.subroutines.get_timestamp = self.get_timestamp.get()
+        self.init_pane.update_settings()
+        self.main_pane.update_settings()
+        self.finalize_pane.update_settings()
+        self.other_pane.update_settings()
 
     def reload(self):
         """Reload init, main, and finalize values then the project settings are changed".
         """
-        code_description = ProjectSettings.get_settings().code_description
-        self.main.set(code_description.implementation.subroutines.main or '')
-        self.finalize.set(code_description.implementation.subroutines.finalize or '')
-        self.init.set(code_description.implementation.subroutines.init or '')
-        self.get_state.set(code_description.implementation.subroutines.get_state or '')
-        self.set_state.set(code_description.implementation.subroutines.set_state or '')
-        self.get_timestamp.set(code_description.implementation.subroutines.get_timestamp or '')
+        self.init_pane.reload()
+        self.main_pane.reload()
+        self.finalize_pane.reload()
+        self.other_pane.reload()

@@ -45,7 +45,7 @@ class Runner(ABC):
         return code_parameters.parameters
 
     @abstractmethod
-    def call_initialize(self):
+    def call_initialize(self, *ids_list):
         ...
 
     @abstractmethod
@@ -53,7 +53,7 @@ class Runner(ABC):
         ...
 
     @abstractmethod
-    def call_finalize(self):
+    def call_finalize(self, *ids_list):
         ...
 
     @abstractmethod
@@ -74,29 +74,28 @@ class StandaloneRunner( Runner ):
     def __init__(self, actor):
         super().__init__( actor)
 
-    def call_initialize(self):
+    def call_initialize(self,  *ids_list):
         code_parameters = self.get_code_parameters()
-        output = self.__run_standalone(method_name="init", arg_metadata_list = [],
+        output = self.__run_standalone(*ids_list, method_name="init",
                                        code_parameters=code_parameters)
         return output
 
     def call_main(self, *ids_list):
         code_parameters = self.get_code_parameters()
-        arg_metadata_list = self._actor.code_description.get('arguments')
-        output = self.__run_standalone(*ids_list, method_name="main", arg_metadata_list = arg_metadata_list,
+        output = self.__run_standalone(*ids_list, method_name="main",
                                        code_parameters=code_parameters)
         return output
 
-    def call_finalize(self):
-        output = self.__run_standalone(method_name="finalize", arg_metadata_list=[],
+    def call_finalize(self,  *ids_list):
+        output = self.__run_standalone(*ids_list, method_name="finalize",
                                        code_parameters=None)
         return output
 
-    def __run_standalone(self, *ids_list, method_name,  arg_metadata_list, code_parameters = None):
+    def __run_standalone(self, *ids_list, method_name, code_parameters = None):
 
         self.__logger.debug( "RUNNING STDL" )
 
-
+        arg_metadata_list = self._actor.code_description['implementation']['subroutines'][method_name].get('arguments')
         runtime_settings = self._runtime_settings
 
         if runtime_settings.commandline_cmd:
@@ -174,10 +173,10 @@ class LibraryRunner( Runner ):
         t.start()
         input()  # just to wait until debugger starts
 
-    def call_initialize(self):
+    def call_initialize(self, *ids_list):
 
         code_parameters = self.get_code_parameters()
-        output = self._binder.call_init(code_parameters=code_parameters)
+        output = self._binder.call_init(*ids_list, code_parameters=code_parameters)
         return output
 
     def call_main(self, *ids_list):
@@ -187,9 +186,11 @@ class LibraryRunner( Runner ):
         results = self._binder.call_main(*ids_list, code_parameters=code_parameters)
         return results
 
-    def call_finalize(self):
-        self._binder.call_finish()
-
+    def call_finalize(self, *ids_list):
+        code_parameters = self.get_code_parameters()
+        output = self._binder.call_finish(*ids_list,  code_parameters=code_parameters)
+        self._binder.finalize()
+        return output
 
     def call_get_state(self) -> str:
         state = self._binder.call_get_state()

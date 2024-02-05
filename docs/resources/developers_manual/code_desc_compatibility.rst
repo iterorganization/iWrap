@@ -174,13 +174,13 @@ Examples
      'target':'code_description/implementation/subroutines/main/arguments',
      'condition':'$TYPE_OF("code_description/arguments") is not None'},
 
-    #add code_description/implementaton/subroutines/<subroutine>/needs_code_parameters
+    #add code_description/implementaton/subroutines/<subroutine>/need_code_parameters
     {'command':'add',
-     'target':'code_description/implementation/subroutines/main/needs_code_parameters',
+     'target':'code_description/implementation/subroutines/main/need_code_parameters',
      'value':True,
      'condition':'$VALUE_OF("code_description/implementation/code_parameters/parameters") is not None'},
     {'command': 'add',
-     'target': 'code_description/implementation/subroutines/init/needs_code_parameters',
+     'target': 'code_description/implementation/subroutines/init/need_code_parameters',
      'value': True,
      'condition': '$VALUE_OF("code_description/implementation/code_parameters/parameters") is not None '
                   'and bool($VALUE_OF("code_description/implementation/subroutines/init"))'}

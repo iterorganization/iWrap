@@ -140,27 +140,34 @@ class LanguageBinder(Binder):
         else:
             return tuple( results )
 
-    def call_init(self, code_parameters: str):
+    def call_init(self, *input_idses, code_parameters: str):
 
-        self.call_basic_method( "init", [], None,
-                                         code_parameters=code_parameters )
+        output = self.call_basic_method(*input_idses,
+                                        method_role="init",
+                                        basic_method=self.wrapper_init_func,
+                                        code_parameters=code_parameters )
+        return output
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def call_main(self, *input_idses, code_parameters:str):
         """
         """
-        arg_metadata_list = self.actor.code_description.get('arguments')
-        output = self.call_basic_method( "main", arg_metadata_list, *input_idses,
-                                         code_parameters=code_parameters)
+        output = self.call_basic_method(*input_idses,
+                                        method_role="main",
+                                        basic_method=self.wrapper_main_func,
+                                        code_parameters=code_parameters)
         return output
 
-    def call_finish(self):
+    def call_finish(self, *input_idses, code_parameters:str):
 
-        self.call_basic_method("finalize", [], None,
-                                        code_parameters=None)
+        output = self.call_basic_method( *input_idses,
+                                         method_role="finalize",
+                                         basic_method=self.wrapper_finish_func,
+                                         code_parameters=code_parameters)
 
-    def call_basic_method(self, method_name, arg_metadata_list,
-                          *input_idses, code_parameters = None):
+        return output
+
+    def call_basic_method(self, *input_idses, method_role, basic_method, code_parameters = None):
         """
         """
 
@@ -169,12 +176,19 @@ class LanguageBinder(Binder):
         if not method_implementation:
             return
 
+        method_description = self.actor.code_description['implementation']['subroutines'][method_role]
+        arg_metadata_list = method_description.get('arguments')
+        need_code_parameters = method_description.get('need_code_parameters')
+
         c_arglist = []
         self.__logger.debug( 'RUN MODE: ' + str( self.runtime_settings.run_mode ) )
 
         ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
 
         if arg_metadata_list:
+            ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
+
+        if input_idses:
             # check if a number of provided arguments is correct
             self.__check_inputs( input_idses, arg_metadata_list )
 
@@ -188,7 +202,7 @@ class LanguageBinder(Binder):
                 c_arglist.append( c_ids )
 
         # Code Parameterss
-        if code_parameters:
+        if code_parameters and need_code_parameters:
             param_ctype = ParametersCType( code_parameters )
             c_param = param_ctype.convert_to_native_type()
             c_arglist.append( c_param )
