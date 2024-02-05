@@ -126,10 +126,7 @@ class ProjectSettings( SettingsBaseClass ):
         if not dict_read:
             raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
 
-        # dict_updated = Converter.convert(dict_read)
-        # will be uncommented if actor description will change and will need convertion to newest format
-        # until that - just copy dicts
-        dict_updated = dict_read
+        dict_updated = Converter.convert(dict_read)
 
         actor_description_dict = dict_updated.get('actor_description')
         if actor_description_dict:
