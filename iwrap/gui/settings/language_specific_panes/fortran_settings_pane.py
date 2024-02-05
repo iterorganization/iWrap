@@ -25,7 +25,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         language (string): The language related to the class.
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         compiler_cmd (tk.StringVar()): The compiler cmd.
-        openmp_switch_combobox (ttk.Combobox): The combobox enables switch openmp.
+        compiler_flags (tk.StringVar()): Compiler flgs.
         mpi_compiler_combobox (ttk.Combobox): The combobox contains mpi values.
         pkg_config_pane (PkgConfigPane): The PkgConfigPane class object.
         library_path_pane (LibraryPathPane): The LibraryPathPane class object.
