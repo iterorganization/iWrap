@@ -83,7 +83,6 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
 
         # TABLE
         self.table = Table([], self.columns, table_frame, buttons)
-        ToolTip(self.table, 'argument_window.Type')
 
         # BIND BUTTONS WITH TABLE METHODS
         add_button['command'] = lambda: self.table.add_row("argument")
