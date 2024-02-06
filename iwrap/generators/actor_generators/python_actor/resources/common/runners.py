@@ -137,6 +137,11 @@ class LibraryRunner( Runner ):
     def __init__(self, actor):
         super().__init__( actor)
 
+    def initialize(self):
+        super().initialize()
+        if self._runtime_settings.debug_mode != DebugMode.NONE:
+            self.__attach_debugger()
+
     def __attach_debugger(self):
         actor_name = self._actor.name
 
@@ -150,12 +155,12 @@ class LibraryRunner( Runner ):
         process_id = os.getpid()
 
         debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
-                                                                                 init_sbrt_name=f'init_{actor_name}_wrapper',
-                                                                                 main_sbrt_name=f'{actor_name}_wrapper',
-                                                                                 finish_sbrt_name=f'finish_{actor_name}_wrapper',
-                                                                                 set_state_sbrt_name = f'set_state_{actor_name}_wrapper',
-                                                                                 get_state_sbrt_name=f'get_state_{actor_name}_wrapper',
-                                                                                 get_timestamp_sbrt_name=f'get_timestamp_{actor_name}_wrapper'
+                                                                                 init_sbrt_name=f'{actor_name}_wrapper_init',
+                                                                                 main_sbrt_name=f'{actor_name}_wrapper_main',
+                                                                                 finish_sbrt_name=f'{actor_name}_wrapper_finish',
+                                                                                 set_state_sbrt_name = f'{actor_name}_wrapper_set_state',
+                                                                                 get_state_sbrt_name=f'{actor_name}_wrapper_get_state',
+                                                                                 get_timestamp_sbrt_name=f'{actor_name}_wrapper_get_timestamp'
 
         )
 
@@ -169,9 +174,6 @@ class LibraryRunner( Runner ):
         input()  # just to wait until debugger starts
 
     def call_initialize(self):
-
-        if self._runtime_settings.debug_mode != DebugMode.NONE:
-            self.__attach_debugger()
 
         code_parameters = self.get_code_parameters()
         output = self._binder.call_init(code_parameters=code_parameters)
