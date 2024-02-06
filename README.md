@@ -84,6 +84,15 @@ For more information, visit <https://confluence.iter.org/display/IMP/IMAS+compon
 
 ... will launch iWrap GUI filled in with information coming from code description 
 
+# Tutorials
+
+iWrap provides its tutorials in two formats::
+  - interactive Jupyter Notebooks `.ipynb`
+  - static nested HTML pages in a book format `.html`
+
+Start your tutorial journey by heading to the `tutorials` directory and opening the `README.md` file found there (it will explain how to set up and run tutorials in both formats and under different environments).
+
+
 # Manuals
 To launch a browser with documentation, simply run:
 
