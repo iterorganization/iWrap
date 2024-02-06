@@ -5,6 +5,7 @@ function display_help {
   echo "Usage: $0 [options]"
   echo "Options:"
   echo "  -i <IMAGE_NAME>        Set the Docker image name; default is 'iwrap_tutorial'"
+  echo "  -v <IMAGE_VERSION>     Set which Docker image version will be used; default is 'AL5'"
   echo "  -c <CONTAINER_NAME>    Set the container name; if not specified, it will be the same as image name"
   echo "  -p <HOST_PORT>         Set the host port to map to container's 8888; if not specified, defaults to 8888"
   echo "  -h                     Display this help message and exit"
@@ -13,14 +14,19 @@ function display_help {
 
 # Set default image name and port
 IMAGE_NAME="iwrap_tutorial"
+IMAGE_VERSION="AL5"
+IMAGE_TAG=""
 CONTAINER_NAME=""
 HOST_PORT=8888
 
 # Parse options with getopts
-while getopts "i:c:p:h" opt; do
+while getopts "i:v:c:p:h" opt; do
   case $opt in
     i)
       IMAGE_NAME="$OPTARG"
+      ;;
+    v)
+      IMAGE_VERSION="$OPTARG"
       ;;
     c)
       CONTAINER_NAME="$OPTARG"
@@ -47,6 +53,18 @@ if [ -z "$CONTAINER_NAME" ]; then
   CONTAINER_NAME=$IMAGE_NAME
 fi
 
+IMAGE_VERSION=$(echo "$IMAGE_VERSION" | tr '[a-z]' '[A-Z]')
+if [[ ${IMAGE_VERSION} == "AL5" ]];
+then
+  IMAGE_TAG=$(docker images --format "{{.Tag}}" --filter "reference=${IMAGE_NAME}" | grep -Ei al-5)
+elif [[ ${IMAGE_VERSION} == "AL4" ]];
+then
+  IMAGE_TAG=$(docker images --format "{{.Tag}}" --filter "reference=${IMAGE_NAME}" | grep -Ei al-4)
+else
+  echo "Unsupported AL version. Supported AL5/AL4"
+  exit 1
+fi
+
 xhost +local:
 if [[ $(docker container ls -a | grep "$CONTAINER_NAME") ]];
 then
@@ -65,7 +83,7 @@ else
            -e DISPLAY=$DISPLAY \
            -p ${HOST_PORT}:8888 \
            -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-           -it $IMAGE_NAME
+           -it "$IMAGE_NAME:$IMAGE_TAG"
 fi
 
 

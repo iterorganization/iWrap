@@ -299,10 +299,10 @@ We're using `docker tags` to distinguish them.
 After succesful login you can type following commands to pull desired images from `Container Registry`:
 ```bash
 # AL 5
-docker pull gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-5.0.0
+docker pull gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-5.0.0_IWRAP-0.9.1
 
 # AL 4
-docker pull gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-4.11.7
+docker pull gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-4.11.7_IWRAP-0.9.1
 ```
 
 
@@ -310,7 +310,7 @@ docker pull gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-4
 After that you can create docker tag for that image, so it'll be easier for you to use it.
 ```bash
 # AL 5
-docker tag gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-5.0.0 iwrap_tutorial_al5
+docker tag gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-5.0.0_IWRAP-0.9.1 iwrap_tutorial_al5
 
 # AL 4
 #docker tag gitlab.eufus.psnc.pl:5050/g2awisz/iwrap_tutorial/iwrap_tutorial:AL-4.11.7 iwrap_tutorial_al4
@@ -409,10 +409,16 @@ After succesfull built of your tutorial image **with default options** you can r
 Usage: ./start-tutorial-in-docker.sh [options]
 Options:
   -i <IMAGE_NAME>        Set the Docker image name; default is 'iwrap_tutorial'
+  -v <IMAGE_VERSION>     Set which Docker image version will be used; default is 'AL5'
   -c <CONTAINER_NAME>    Set the container name; if not specified, it will be the same as image name
   -p <HOST_PORT>         Set the host port to map to container's 8888; if not specified, defaults to 8888
   -h                     Display this help message and exit
 ```
+The `-v` option enables users to select the version of the Docker image they wish to use.   
+This is facilitated by employing a custom tagging format, `AL-X.Y.Z_IWRAP-X.Y.Z`, allowing the storage of multiple Docker images on the user's machine.   
+Users can specify the Docker tag they intend to use, with the current options being `AL5` or `AL4`.   
+If this option is not specified, the script defaults to using `AL5` for container initialization.
+
 
 This script enables running python GUI apps inside docker.  
 After starting the container `tutorial_db` test database will be created.

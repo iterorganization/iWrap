@@ -13,7 +13,7 @@ function display_help {
 }
 
 # Initialize variables with updated default values
-BASE_IMAGE="gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.38.1_AL-5.0.0_IWRAP-0.8.0"
+BASE_IMAGE="gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.39.0_AL-5.0.0_IWRAP-0.9.1"
 CONTEXT="."
 DOCKER_TARGET="tutorial"
 TARGET=""
@@ -49,16 +49,19 @@ done
 # Configure BASE_IMAGE based on AL_VERSION
 case ${AL_VERSION} in
     "al5")
-        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.38.1_AL-5.0.0_IWRAP-0.8.0'
+        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.39.0_AL-5.0.0_IWRAP-0.9.1'
         ;;
     "al4")
-        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.38.1_AL-4.11.7_IWRAP-0.8.0'
+        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.38.1_AL-4.11.7_IWRAP-0.9.1'
         ;;
     *)
         echo "Invalid AL_VERSION: ${AL_VERSION}"
         exit 1
         ;;
 esac
+
+# Get Tutorial image tag, based on imas-installer image
+IMAGE_TAG=$(echo "$BASE_IMAGE" | sed -n 's/.*\(AL-.*\)/\1/p')
 
 # Configure TARGET and JUPYTER_VER based on DOCKER_TARGET
 case ${DOCKER_TARGET} in
@@ -78,4 +81,4 @@ esac
 docker build \
     --build-arg BASE=${BASE_IMAGE} \
     --target ${TARGET} \
-    -t ${IMAGE_NAME} ${CONTEXT}
+    -t ${IMAGE_NAME}:${IMAGE_TAG} ${CONTEXT}
