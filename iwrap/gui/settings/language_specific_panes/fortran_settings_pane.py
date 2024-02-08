@@ -26,7 +26,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         compiler_cmd (tk.StringVar()): The compiler cmd.
         compiler_flags (tk.StringVar()): Compiler flgs.
-        mpi_compiler_combobox (ttk.Combobox): The combobox contains mpi values.
+        mpi_compiler_cmd (tk.StringVar()): The mpi compiler cmd.
         pkg_config_pane (PkgConfigPane): The PkgConfigPane class object.
         library_path_pane (LibraryPathPane): The LibraryPathPane class object.
     """
@@ -86,8 +86,12 @@ class FortranPane( ttk.Frame, IWrapPane ):
         compiler_flags_entry.grid(column=1, row=3, padx=10, sticky=(tk.W, tk.E), pady=5)
         ToolTip(compiler_flags_entry, 'compiler_flags')
 
-        self.mpi_compiler_combobox = MpiCombo(frame, 0, 4, 10, "Mpi compiler cmd:", self.settings.mpi_compiler_cmd)
-        ToolTip(self.mpi_compiler_combobox.combobox, 'mpi_compiler_cmd')
+        # MPI COMPILER CMD
+        self.mpi_compiler_cmd = tk.StringVar()
+        ttk.Label(frame, text="Mpi compiler cmd:").grid(column=0, row=4, padx=10, sticky=(tk.N, tk.W), pady=5)
+        mpi_compiler_text = ttk.Entry(frame, textvariable=self.mpi_compiler_cmd)
+        mpi_compiler_text.grid(column=1, row=4, padx=10, sticky=(tk.W, tk.E), pady=5)
+        ToolTip(mpi_compiler_text, 'mpi_compiler_cmd')
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
@@ -120,7 +124,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         FortranPane.language = ProjectSettings.get_settings().code_description.implementation.programming_language
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language or 'fortran')
         self.compiler_cmd.set(self.settings.compiler_cmd)
-        self.mpi_compiler_combobox.set(self.settings.mpi_compiler_cmd or "")
+        self.mpi_compiler_cmd.set(self.settings.mpi_compiler_cmd or "")
         self.compiler_flags.set(self.settings.compiler_flags or "")
 
         self.library_path_pane.reload()
@@ -132,7 +136,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         compiler_cmd = self.compiler_cmd.get()
         compiler_flags = self.compiler_flags.get()
-        mpi_compiler_cmd = self.mpi_compiler_combobox.get()
+        mpi_compiler_cmd = self.mpi_compiler_cmd.get()
 
         extra_lib = ExtraLibraries()
         pkg_configs = self.pkg_config_pane.get_data_from_table()
@@ -149,7 +153,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         """
         compiler_cmd = self.compiler_cmd.get()
         compiler_flags = self.compiler_flags.get()
-        mpi_compiler_cmd = self.mpi_compiler_combobox.get()
+        mpi_compiler_cmd = self.mpi_compiler_cmd.get()
 
         extra_lib = ExtraLibraries()
         pkg_configs = self.pkg_config_pane.get_data_from_table()

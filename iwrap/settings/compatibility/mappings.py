@@ -36,11 +36,9 @@ mappings = [
      'condition': '$VALUE_OF("code_description/implementation/code_parameters/parameters") is not None '
                   'and bool($VALUE_OF("code_description/implementation/subroutines/init"))'},
 
-
-    #delete deprecated code_description/settings/open_mp_switch to code_description/settings/compiler_flags
-    {'command':'move',
-     'source':'code_description/settings/open_mp_switch',
-     'target':'code_description/settings/compiler_flags'},
+    #delete deprecated code_description/settings/open_mp_switch
+    {'command': 'delete',
+     'target': 'code_description/settings/open_mp_switch'},
 
     #set code_description/settings/compiler_flags to None if contains boolean value
     {'command':'set',
