@@ -29,7 +29,6 @@ code_description:
         needs_code_parameters: true
   settings:
     compiler_cmd: gfortran
-    compiler_flags:
     extra_libraries:
       path_defined:
       pkg_config_defined:
