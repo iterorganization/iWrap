@@ -116,7 +116,7 @@ class RuntimeSettings:
         self.debugger = self.DebuggerSettings()
         # not implemented yet
 
-        self.open_mp = None
+        self.compiler_flags = ''
 
         self.TBD = None  # any other info needed?
 

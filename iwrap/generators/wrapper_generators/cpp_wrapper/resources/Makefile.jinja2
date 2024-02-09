@@ -12,14 +12,14 @@ CXX={{ code_description.settings.compiler_cmd }}
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-OPENMPFLAG={{ code_description.settings.open_mp_switch or '' }}
+COMPILER_FLAGS={{ code_description.settings.compiler_flags or '' }}
 
 {% if build_info.al_version.startswith('4.')   %}
 AL_MAJOR=4
 {% else %}
 AL_MAJOR=5
 {% endif %}
-CXXFLAGS= -g -fpic -pthread $(OPENMPFLAG) -DAL_MAJOR=${AL_MAJOR}
+CXXFLAGS= -g -fpic -pthread $(COMPILER_FLAGS) -DAL_MAJOR=${AL_MAJOR}
 
 CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)

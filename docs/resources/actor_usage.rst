@@ -701,7 +701,7 @@ For list of available code description information see: :ref:`yaml_code_descript
           'pkg_config_defined': ['xmllib']
          },
          'mpi_compiler_cmd': None,
-         'open_mp_switch': False
+         'compiler_flags': None
        }
     }
 

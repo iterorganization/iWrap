@@ -7,7 +7,7 @@ MPIFC={{ code_description.settings.mpi_compiler_cmd or ''}}
 
 WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-OPENMPFLAG={{ code_description.settings.open_mp_switch or '' }}
+COMPILER_FLAGS={{ code_description.settings.compiler_flags or '' }}
 
 MOD_DIR=./build/
 
@@ -21,7 +21,7 @@ else
  FFLAGS+=-J$(MOD_DIR)
 endif
 
-FFLAGS+=$(OPENMPFLAG)
+FFLAGS+=$(COMPILER_FLAGS)
 CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 

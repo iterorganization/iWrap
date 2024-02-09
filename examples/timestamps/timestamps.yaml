@@ -32,7 +32,7 @@ code_description:
     settings:
         compiler_cmd: $FC
         mpi_compiler_cmd:
-        open_mp_switch:
+        compiler_flags:
         extra_libraries:
             pkg_config_defined:
             path_defined:
