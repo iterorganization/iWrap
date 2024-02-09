@@ -1,7 +1,6 @@
 import logging
 import tkinter as tk
 from tkinter import ttk
-from itertools import zip_longest
 
 from iwrap.gui.widgets.scrollable_frame import ScrollableFrame
 from iwrap.gui.settings.tooltip import ToolTip
@@ -102,7 +101,7 @@ class Table( ttk.Frame ):
 
         return table_data
 
-    def add_rows(self, data, tooltip_id_arr=[]):
+    def add_rows(self, data):
         """Initialize the Row objects and adds them to table_row list.
 
         Args:
@@ -115,9 +114,7 @@ class Table( ttk.Frame ):
             row_number = len(self.rows) + 1
             table_row = Row(row_number, row, row_frame, self.columns)
             self.rows.append(table_row)
-            for row_cell, tooltip_id in zip_longest(table_row.row_cells,tooltip_id_arr):
-                if tooltip_id is not None:
-                    ToolTip(row_cell.cell, tooltip_id)
+            for row_cell in table_row.row_cells:
                 row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
                 row_cell.cell.bind("<Double-Button-1>", lambda event, parent_row=table_row: self.show_info())
 
@@ -382,7 +379,7 @@ class ArgumentWindow:
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
             new_row_data.append(cell.get())
-        self.master.add_rows([new_row_data],['argument_window.Name','argument_window.Intent','argument_window.Intent','argument_window.Type'])
+        self.master.add_rows([new_row_data])
         self._close_add_window()
 
     def edit_row(self):
