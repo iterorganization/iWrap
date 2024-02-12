@@ -5,6 +5,7 @@ code_description:
             name: clean_up
           init:
             name: init_code
+            need_code_parameters: true
           main:
             arguments:
             - intent: IN
@@ -14,6 +15,7 @@ code_description:
               name: equilibrium_out
               type: equilibrium
             name: code_lifecycle
+            need_code_parameters: true
         programming_language: Fortran
         data_dictionary_compliant: 3.37.0
         data_type: legacy
