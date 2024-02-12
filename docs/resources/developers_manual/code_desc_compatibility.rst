@@ -37,6 +37,7 @@ Keys
     - `source` - path to node to be used as source for ``move`` command,
     - `target` - path to node to be affected by ``move``, ``delete``, ``set`` and ``set`` commands,
     - `condition` - python code containing condition to be evaluated. See **Conditions** section for more details.
+    - `actions` - set of mappings ([mapping]) to be executed in sequence under the same condition. Can be used only standalone, or with ``condition`` keyword. See **Mappings grouping** section for more details.
 
 Commands meaning
 ==========================================================================================
@@ -104,12 +105,29 @@ Conditions are written in python code, but in addition they can use functions: `
 
             .. code-block:: python
 
-                {'key':'add', 'target':'some/new/node', 'condition':'$VALUE_OF("code_description/iWrap_version") < 1'}
+                {'command':'add', 'target':'some/new/node', 'condition':'$VALUE_OF("code_description/iWrap_version") < 1'}
 
                 #one may also use any other python expression
-                #{'key':'add', 'target':'some/new/node', 'condition':'$TYPE_OF("code_description/iWrap_version") is None'}
-                #{'key':'add', 'target':'some/new/node', 'condition':'$VALUE_OF("code_description/iWrap_version") < 1 and $VALUE_OF("code_description/iWrap_version") > 0.5'}
-                #{'key':'add', 'target':'some/new/node', 'condition':'$SYS_VAR("IMAS_VERSION") == "3.39.0"'}
+                #{'command':'add', 'target':'some/new/node', 'condition':'$TYPE_OF("code_description/iWrap_version") is None'}
+                #{'command':'add', 'target':'some/new/node', 'condition':'$VALUE_OF("code_description/iWrap_version") < 1 and $VALUE_OF("code_description/iWrap_version") > 0.5'}
+                #{'command':'add', 'target':'some/new/node', 'condition':'$SYS_VAR("IMAS_VERSION") == "3.39.0"'}
+
+Mappings grouping
+==========================================================================================
+
+Mappings may be grouped under single condition to execute them in sequence.
+Group keywords are ``condition`` and ``actions``.
+
+.. code-block:: python
+
+    {
+        'condition':'$VALUE_OF("code_description/implementation/data_dictionary_compliant") > 3.37.0'
+        'actions':[
+            {'command':'add', 'target':'new/node'},
+            {'command':'add', 'target':'new/another_node'},
+            {'command':'add', 'target':'new/third_node'}
+        ]
+    }
 
 Examples
 ==========================================================================================
@@ -122,11 +140,11 @@ Examples
     {'command':'add', 'target':'new/node'}
 
     #new node with value 'new_value'
-    {'command':'add', 'target':'new/node', 'value':'value'}
+    {'command':'add', 'target':'new/node', 'value':'new_value'}
 
 
     #set new value of pre-existing node
-    {'command':'set', 'target':'new/node', 'value':'value'}
+    {'command':'set', 'target':'new/node', 'value':'new_value'}
 
 
     #move node

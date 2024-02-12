@@ -1,5 +1,7 @@
 import yaml
 import argparse
+
+from iwrap.common.misc import CustomDumper
 from .mappings import mappings
 from os import rename
 from os.path import splitext
@@ -165,6 +167,7 @@ class Converter:
            splitted_path (list): List of the following nodes (path to node).
            value: Value to be set. Could be literal, list or dict.
            condition (str): Code used as condition to be fullfilled in order to execute command.
+           current_node (dict): Current node of the dictionary.
            create_node: Flag to create new node if does not exists.
         """
 
@@ -206,6 +209,104 @@ class Converter:
                 current_node[splitted_path[0]] = dict()
             return self.__set(splitted_path[1:], value, condition, current_node=current_node[splitted_path[0]])
 
+    def __exists(self, splitted_path, current_node=None):
+        """
+          Returns True if node pointed by splitted path exists, False otherwise.
+          Args:
+           splitted_path (list): List of the following nodes (path to node).
+           current_node (dict): Current node of the dictionary.
+        """
+        if current_node is None:
+            current_node=self._yaml_dict
+
+        if len(splitted_path) == 1:
+            return splitted_path[0] in current_node.keys()
+
+        else:
+            try:
+                return self.__exists(splitted_path=splitted_path[1:], current_node=current_node[splitted_path[0]])
+            except KeyError:
+                return False
+
+    def process_single_mapping(self, mapping):
+        """
+          Method used to process single mapping. Changes are applied to self._yaml_dict
+
+          Args:
+           mapping (dict): Mapping to be processed.
+
+          Return value:
+           transform_counter (int) - number of applied mapping rules
+        """
+
+        command = mapping["command"].lower()
+
+        try:
+            condition = mapping["condition"]
+            condition = condition.replace("$VALUE_OF", "self.value_of")
+            condition = condition.replace("$TYPE_OF", "self.type_of")
+            condition = condition.replace("$SYS_VAR", "self.sys_var")
+        except KeyError:
+            condition = None
+
+        transform_counter = 0
+
+        if command == 'add':
+            target = mapping["target"]
+            try:
+                value = mapping["value"]
+            except KeyError:
+                value = None
+
+            if self.__exists(target.split('/')):
+                # Node exists, no need for adding a new one
+                return transform_counter
+
+            if self.__set(target.split('/'), value, condition):
+                transform_counter += 1
+
+        elif command == 'set':
+            target = mapping["target"]
+            value = mapping["value"]
+
+            if self.__set(target.split('/'), value, condition, create_node=False):
+                transform_counter += 1
+
+        elif command == 'delete':
+            target = mapping["target"]
+            try:
+                if self.__delete(target.split('/'), condition):
+                    transform_counter += 1
+            except KeyError:
+                return transform_counter
+
+        elif command == 'move':
+            source = mapping["source"]
+            target = mapping["target"]
+
+            try:
+                source_value = self.__get(source.split('/'), condition)
+            except KeyError:
+                return transform_counter
+
+            if source_value is None:
+                return transform_counter
+
+            # __delete function uses $TARGET keyword instead of $SOURCE, so it must be changed
+            delete_condition = None
+            if condition is not None:
+                delete_condition = condition.replace('$SOURCE', '$TARGET')
+
+            if self.__delete(source.split('/'), delete_condition):
+                transform_counter += 1
+
+            if self.__set(target.split('/'), source_value, None):
+                transform_counter += 1
+        else:
+            message = f'MAPPING: {mapping} COULD NOT BE PROCESSED. COMMAND {command} UNRECOGNISED.'
+            raise RuntimeError(message)
+
+        return transform_counter
 
     @staticmethod
     def convert(yaml_dict, command_line=False):
@@ -223,96 +324,36 @@ class Converter:
         transform_counter = 0
         for mapping in mappings:
             logging.info(f'Processing mapping: {mapping}')
-            command = mapping["command"].lower()
 
             try:
                 condition = mapping["condition"]
-                condition = condition.replace("$VALUE_OF", "self.value_of")
-                condition = condition.replace("$TYPE_OF", "self.type_of")
-                condition = condition.replace("$SYS_VAR", "self.sys_var")
+                condition = condition.replace("$VALUE_OF", "converter.value_of")
+                condition = condition.replace("$TYPE_OF", "converter.type_of")
+                condition = condition.replace("$SYS_VAR", "converter.sys_var")
             except KeyError:
                 condition = None
 
-            if command == 'add':
-                target = mapping["target"]
-                try:
-                    value = mapping["value"]
-                except KeyError:
-                    value = None
+            if isinstance(condition, str) and not eval(condition):
+                continue
 
-                if converter.__set(target.split('/'), value, condition):
-                    transform_counter+=1
+            if 'command' in mapping.keys() and 'actions' in mapping.keys():
+                converter.__logger.error('[ERROR]: "command" and "actions" keywords cannot be used in the same mapping.')
 
-            elif command == 'set':
-                target = mapping["target"]
-                value = mapping["value"]
+            # single mapping
+            if 'command' in mapping.keys():
+                transform_counter += converter.process_single_mapping(mapping)
 
-                if converter.__set(target.split('/'), value, condition, create_node=False):
-                    transform_counter+=1
-
-            elif command == 'delete':
-                target = mapping["target"]
-                try:
-                    if converter.__delete(target.split('/'), condition):
-                        transform_counter += 1
-                except KeyError:
-                    continue
-
-            elif command == 'move':
-                source = mapping["source"]
-                target = mapping["target"]
-
-                try:
-                    source_value = converter.__get(source.split('/'), condition)
-                except KeyError:
-                    continue
-
-                if source_value is None:
-                    continue
-
-                #__delete function uses $TARGET keyword instead of $SOURCE, so it must be changed
-                delete_condition = None
-                if condition is not None:
-                    delete_condition = condition.replace('$SOURCE','$TARGET')
-
-                if converter.__delete(source.split('/'), delete_condition):
-                    transform_counter += 1
-
-                if converter.__set(target.split('/'), source_value, None):
-                    transform_counter += 1
-
-
-            else:
-                message = f'MAPPING: {mapping} COULD NOT BE PROCESSED. COMMAND {command} UNRECOGNISED.'
-                raise RuntimeError(message)
+            #group of mappings
+            elif 'actions' in mapping.keys():
+                actions = mapping["actions"]
+                for mapping in actions:
+                    transform_counter += converter.process_single_mapping(mapping)
 
         if not command_line and transform_counter>0:
             converter.__logger.warning('[WARNING]: You are using outdated code description.'
                                        ' Consider using iwrap-yaml-update script to keep your description up to date.')
         return yaml_dict
 
-
-class NoAliasDumper(yaml.SafeDumper):
-    def ignore_aliases(self, data):
-        return True
-
-    #dump empty sequence as: ' ' (nothing)
-    def represent_sequence(self, tag, sequence, flow_style=None):
-        if not sequence:  # Check if the sequence is empty
-            return self.represent_scalar(u'tag:yaml.org,2002:null', u'')
-        return super().represent_sequence(tag, sequence, flow_style)
-
-    # dump empty dict as: ' ' (nothing)
-    def represent_mapping(self, tag, mapping, flow_style=None):
-        if not mapping:  # Check if the sequence is empty
-            return self.represent_scalar(u'tag:yaml.org,2002:null', u'')
-        return super().represent_mapping(tag, mapping, flow_style)
-
-#make None values being saves as: ' ' (nothing)
-NoAliasDumper.add_representer(
-    type(None),
-    lambda dumper, value: dumper.represent_scalar(u'tag:yaml.org,2002:null', '')
-  )
 
 def main():
     class IllegalArgumentError(ValueError):
@@ -359,7 +400,7 @@ def main():
 
     # ------- SAVE OUTPUT -------
     file = open(output_filename, "w")
-    yaml.dump(yaml_dict, file, Dumper=NoAliasDumper)
+    yaml.dump(yaml_dict, file, Dumper=CustomDumper)
     file.close()
     exit(0)
 
