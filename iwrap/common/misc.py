@@ -3,6 +3,8 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict
 
+import yaml
+
 
 class Dictionarizable( ABC ):
     # Class logger
@@ -34,7 +36,7 @@ class Dictionarizable( ABC ):
                 if value:
                     attr.from_dict( value )
             else:
-                if str(value).lower() == 'none' or value == '':
+                if str(value).lower() == 'none' or value == '' or str(value).lower() == 'null':
                     value = None
                 setattr( self, name, value )
 
@@ -43,7 +45,7 @@ class Dictionarizable( ABC ):
 
         Args:
             resolve_path (bool): Determines if paths with system variables should be 'expanded' or left as they are
-            project_root (str): The root of all relative paths
+            project_root_dir (str): The root of all relative paths
 
         Returns
             Dict[str, Any]: Dictionary containing object data
@@ -59,3 +61,29 @@ class Dictionarizable( ABC ):
                 dict_[key] = value
 
         return dict_
+
+
+class CustomDumper(yaml.SafeDumper):
+    def ignore_aliases(self, data):
+        return True
+
+    #dump empty sequence as: ' ' (nothing)
+    def represent_sequence(self, tag, sequence, flow_style=None):
+        if not sequence:  # Check if the sequence is empty
+            return super().represent_scalar(u'tag:yaml.org,2002:null', u'')
+        return super().represent_sequence(tag, sequence, flow_style)
+
+    # dump empty dict as: ' ' (nothing)
+    def represent_mapping(self, tag, mapping, flow_style=None):
+        if not mapping:  # Check if the sequence is empty
+            return super().represent_scalar(u'tag:yaml.org,2002:null', u'')
+        return super().represent_mapping(tag, mapping, flow_style)
+
+    def represent_none(self, data):
+        return super().represent_scalar('tag:yaml.org,2002:null', u'')
+
+    # dump empty dict as: ' ' (nothing)
+    def represent_scalar(self, tag, value, style=None):
+        if not value or value.lower() == 'null':  # Check if value is None or 'null'
+            return super().represent_scalar(u'tag:yaml.org,2002:null', u'')
+        return super().represent_scalar(tag, value, style)

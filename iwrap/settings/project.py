@@ -7,14 +7,11 @@ from typing import Any, Dict
 import yaml
 from iwrap.settings.compatibility.converter import Converter
 
-from iwrap.common.misc import Dictionarizable
+from iwrap.common.misc import Dictionarizable, CustomDumper
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.actor_description import ActorDescription
 from iwrap.settings.code_description import CodeDescription
 from iwrap import __version__
-
-#from iwrap.generation_engine.engine import Engine
-
 
 class ProjectSettings( SettingsBaseClass ):
     """Data class describing iWrap project settings.
@@ -109,7 +106,7 @@ class ProjectSettings( SettingsBaseClass ):
         dumped = {'actor_description': actor_description_dict, 'code_description': code_description_dict}
 
         file.write(f'# Saved with iWrap {__version__}\n')
-        yaml.dump( dumped, stream=file,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True)
+        yaml.dump( dumped, stream=file,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True, Dumper=CustomDumper)
 
         file_real_path = os.path.realpath( file.name )
         self.project_dir = os.path.dirname( file_real_path )
