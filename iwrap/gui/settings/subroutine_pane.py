@@ -17,17 +17,12 @@ class SubroutinePane(tkinter.ttk.Frame, IWrapPane):
                 main / finalize, for the reflection mechanism.
             master: Parent widget from Tkinter class. Defaults to None.
         Attributes:
-            method_name (tk.StringVar()): A name of a subroutine that
+            method_type (tk.StringVar()): A name of a subroutine that
                 could be used to initialise or finalise the native code
                 or the main subroutine that will be called from an actor.
-            subroutine (:obj:`Subroutine`): init / main / finalize
-                subroutine.
-            pass_code_parameters(tkinter.BooleanVar): A boolean for making code
-                parameters optional.
-            arguments_settings ([:obj:`Argument`]): arguments of the
-                native code.
         '''
         super().__init__(master)
+        self.method_type = method_type
         self.method_name = tkinter.StringVar()
         self.subroutine = getattr(ProjectSettings.get_settings().code_description.implementation.subroutines, method_type)
         self.need_code_parameters = tkinter.BooleanVar()
@@ -41,7 +36,7 @@ class SubroutinePane(tkinter.ttk.Frame, IWrapPane):
         text = tkinter.ttk.Entry(labelframe, textvariable=self.method_name)
         text.grid(column=1, row=1, padx=10, pady=5, sticky=(tkinter.W, tkinter.E))
         # PASS CODE PARAMETERS
-        tkinter.ttk.Label(labelframe, text='Use code parameters:').grid(column=0, row=2, padx=10, pady=5, sticky=(tkinter.W, tkinter.N))
+        tkinter.ttk.Label(labelframe, text='Need code parameters:').grid(column=0, row=2, padx=10, pady=5, sticky=(tkinter.W, tkinter.N))
         self.code_params_check = tkinter.Checkbutton(labelframe, variable=self.need_code_parameters)
         self.code_params_check.grid(column=1, row=2, padx=10, pady=5, sticky=(tkinter.W, tkinter.N))
         ### ARGUMENTS ###
@@ -96,12 +91,15 @@ class SubroutinePane(tkinter.ttk.Frame, IWrapPane):
         '''
         self.subroutine.need_code_parameters = self.need_code_parameters.get()
         self.subroutine.arguments = self.get_data_from_table()
+        self.subroutine.name = self.method_name.get()
 
     def reload(self):
         '''
         Reload init / main / finalize value when the project settings are changed.
         '''
-        self.method_name.set(self.subroutine.name)
+        self.subroutine = getattr(ProjectSettings.get_settings().code_description.implementation.subroutines,
+                                  self.method_type)
+        self.method_name.set(self.subroutine.name or '')
         self.need_code_parameters.set(self.subroutine.need_code_parameters or False)
         self.arguments_settings = self.subroutine.arguments
         self.set_data_to_table()

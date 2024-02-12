@@ -85,4 +85,4 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
 
         self.actor_name.delete( 0, tk.END )
         actor_name = ProjectSettings.get_settings().actor_description.actor_name
-        self.actor_name.insert( 0, actor_name )
+        self.actor_name.insert( 0, actor_name or '' )

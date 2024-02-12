@@ -13,6 +13,7 @@ from iwrap.gui.settings.implementation_pane import ImplementationPane
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
+from iwrap.gui.utils import center_wnd
 
 
 class FortranPane( ttk.Frame, IWrapPane ):
@@ -433,10 +434,13 @@ class AddPkgConfigWindow:
         info_button.pack(side=tk.LEFT, padx=10, pady=10)
 
         # TABLE
+        self.table = Table([], master.columns, content_frame, [info_button])
+        # center window after creating table, but before adding data to table, so it will be centered right after window is opened.
+        center_wnd(self.master.master, self.window)
+
         data = []
         for key, value in self.pkg_config.system_lib_dict.items():
             data.append([key, value['info'], value['description']])
-        self.table = Table([], master.columns, content_frame, [info_button])
         self.table.add_rows(data)
         info_button['command'] = lambda: SystemLibraryInfoWindow(self, self.master.master)
 
@@ -446,6 +450,7 @@ class AddPkgConfigWindow:
         remove_button = ttk.Button(footer, text="Cancel", command=self.window.destroy, width=10)
         remove_button.pack(side=tk.RIGHT, padx=10, pady=10)
         filter_button['command'] = lambda: self.table.filter_table(filter_value.get(), data)
+
 
     def add_selected_data_to_table(self):
         """Add selected system library to the master frame table.

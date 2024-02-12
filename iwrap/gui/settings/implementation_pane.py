@@ -57,7 +57,8 @@ class ImplementationPane(ttk.Frame, IWrapPane):
         # LANGUAGE COMBOBOX
         ttk.Label(labelframe, text="*Programming language:").grid(column=0, row=1, padx=10, pady=5, sticky=(tk.W, tk.N))
         self.programming_language_combobox = ttk.Combobox(labelframe, state='readonly')
-        self.programming_language_combobox['values'] = list(Engine().active_generator.code_languages)
+        available_code_languages = ['None'] + list( Engine().active_generator.code_languages )
+        self.programming_language_combobox['values'] = available_code_languages
         self.programming_language_combobox.current(0)
         self.programming_language_combobox.grid(column=1, row=1, padx=10, pady=5, sticky=(tk.W, tk.E))
         ToolTip(self.programming_language_combobox, 'programming_language')

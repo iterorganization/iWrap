@@ -57,12 +57,12 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
             event: Combobox change value event object. Default to None.
         """
         selected_language = self.implementation_pane.programming_language_combobox.get()
-        if selected_language != ProjectSettings.get_settings().code_description.implementation.programming_language:
-            ProjectSettings.get_settings().code_description.implementation.programming_language = selected_language
-            self.implementation_pane.selected_programming_language.set(selected_language)
+        ProjectSettings.get_settings().code_description.implementation.programming_language = selected_language
+        self.implementation_pane.selected_programming_language.set(selected_language)
+        if self.language_settings_pane:
             self.language_settings_pane.save_pane_settings()
             self.notebook.forget(self.language_settings_pane)
-            self.add_language_pane()
+        self.add_language_pane()
 
     def add_language_pane(self):
         """Add specific language pane for selected programming language.
