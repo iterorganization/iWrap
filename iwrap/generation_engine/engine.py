@@ -36,7 +36,6 @@ class Engine:
             value = ActorGeneratorRegistry.get_generator(value)
 
         Engine._active_generator = value
-        Engine._active_generator.initialize()
 
     @property # TODO set as a class property (available since Python 3.9)
     def registered_generators(self) -> List[ActorGenerator]:
