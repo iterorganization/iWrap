@@ -108,7 +108,7 @@ class Subroutines( SettingsBaseClass ):
 
         # A name of the main subroutine that will be called from actor (mandatory)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.main = Subroutine('main')
+        self.main = Subroutine('main', True)
 
         # A name of subroutine that could be used to finalise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
@@ -121,7 +121,6 @@ class Subroutines( SettingsBaseClass ):
         self.get_timestamp = ''
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
-        # validate correctness of XML
 
         self.init.validate(engine, project_root_dir, **kwargs)
         self.main.validate(engine, project_root_dir, **kwargs)
@@ -132,7 +131,7 @@ class Subroutines( SettingsBaseClass ):
         """Clears class content, setting default values of class attributes
         """
         self.init = Subroutine('init')
-        self.main = Subroutine('main')
+        self.main = Subroutine('main', True)
         self.finalize = Subroutine('finalize')
         self.get_state = ''
         self.set_state = ''
@@ -496,11 +495,12 @@ class Subroutine(SettingsBaseClass):
                 value = Argument(value)
             self._arguments.append(value)
 
-    def __init__(self, mandatory: bool = False):
+    def __init__(self, method_type, mandatory: bool = False):
         self.name = None
         self.need_code_parameters = False
         self._arguments = []
-        self.__mandatory = mandatory
+        self.__method_type: str = method_type
+        self.__mandatory: bool = mandatory
 
 
     def clear(self):
@@ -510,9 +510,12 @@ class Subroutine(SettingsBaseClass):
         self.name = None
         self.need_code_parameters = False
         self.arguments = []
-        self.__mandatory = False
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
+
+        # validate correctness of XML
+        if not self.name and self.__mandatory:
+            raise ValueError( 'Mandatory method name for "' + self.__method_type.upper() + '" is not set!' )
 
         for argument in self.arguments or []:
             argument.validate(engine, project_root_dir, **kwargs)
