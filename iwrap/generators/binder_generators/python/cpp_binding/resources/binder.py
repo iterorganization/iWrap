@@ -189,17 +189,17 @@ class LanguageBinder(Binder):
             ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
 
         if input_idses:
-            # check if a number of provided arguments is correct
+        # check if a number of provided arguments is correct
             self.__check_inputs( input_idses, arg_metadata_list )
 
-            tmp_ids_list = list( input_idses )
-            for ids_ctype in ids_ctypes_list:
-                ids_object = None
-                if ids_ctype.intent == Argument.IN:
-                    ids_object = tmp_ids_list.pop( 0 )
+        tmp_ids_list = list( input_idses )
+        for ids_ctype in ids_ctypes_list:
+            ids_object = None
+            if ids_ctype.intent == Argument.IN:
+                ids_object = tmp_ids_list.pop( 0 )
 
-                c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
-                c_arglist.append( c_ids )
+            c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
+            c_arglist.append( c_ids )
 
         # Code Parameterss
         if code_parameters and need_code_parameters:
