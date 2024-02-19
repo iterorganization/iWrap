@@ -65,5 +65,31 @@ parts:
             - file: tutorial/02_Basic/3_Code_Parameters/03_code_description_and_actor_generation.md
             - file: tutorial/02_Basic/3_Code_Parameters/04_workflow.md
 
+  - caption: Welcome to Advanced Tutorial
+    chapters:
+    - title: Advanced Tutorial Introduction
+      file: tutorial/03_Advanced/1_Introduction/01_Goals.md
+      sections:
+        - file: tutorial/03_Advanced/1_Introduction/02_Requirements.md
+        - file: tutorial/03_Advanced/1_Introduction/03_Learning_environments.md
 
+    - title: Advanced Code Functionality
+      file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/01_Restart_methods.md
+      sections:
+        - file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/02_MPI_introduction.md
+        - file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/03_Example_MPI_code.md
 
+    - title: Python Actors
+      file: tutorial/03_Advanced/3_Python_Actors/01_Python_actor_generation.md
+      sections:
+        - file: tutorial/03_Advanced/3_Python_Actors/02_MPI_runtime_settings.md
+        - file: tutorial/03_Advanced/3_Python_Actors/03_Run_modes.md
+        - file: tutorial/03_Advanced/3_Python_Actors/04_Sandbox_runtime_settings.md
+        - file: tutorial/03_Advanced/3_Python_Actors/05_IDS_storage_settings.md
+
+    - title: Muscle3 Actors
+      file: tutorial/03_Advanced/4_Muscle3_Actors/01_iWrap_actor_types.md
+      sections:
+        - file: tutorial/03_Advanced/4_Muscle3_Actors/02_muscle3_quick_overview.md
+        - file: tutorial/03_Advanced/4_Muscle3_Actors/03_muscle3_actor_generation.md
+        - file: tutorial/03_Advanced/4_Muscle3_Actors/04_muscle3_MPI.md
