@@ -33,17 +33,13 @@ This file is in **YAML** format.
 
 It can be generated in two ways:
 - **manually** by hand
-- using **iWrap GU**I by filling proper information to boxes
+- using **iWrap GUI** by filling proper information to boxes
 
 ```{admonition} Important! Fields are named the same in both ways!
 :class: attention
 
 So you can use the same configuration in `CLI` or `GUI`
 ```
-
-
-
-
 
 
 ## 1.2. What does iWrap need to know from configuration file
@@ -63,7 +59,6 @@ Your configuration is split into two parts:
 
 The following section details all the parameters and explains how to configure them in **either the GUI or directly in YAML file**.   
 The examples provided below illustrate the *same settings being applied through these two different methods* for two codes, one in Fortran and one in C++.
-
 
 
 ```
@@ -116,7 +111,7 @@ actor_description:
 
 If you hover on GUI **text boxes** you will get help message of what is expected in this field! ;)
 
-![actor_description_tooltip.png](../../../sources/images/tooltips.gif)
+![actor_description_tooltip.png](../../../sources/images/tooltips.png)
 ```
 
 
@@ -129,33 +124,86 @@ If you want to practice with the GUI, let's open it first:
 !iwrap-gui
 ```
 
-## 1.5.  code description
+## 1.5.  Code description
 This section tells iWrap about the program you've written.
 
 ````{admonition} Attention
 :class: attention
 
 Code description is devided into three main parts:
-1. Arguments
-2. implementation
-3. settings 
+1. Implementation
+2. Settings
+3. Documentation
 
 ```yaml
 code_description:
-    arguments:
-        # some key-value pairs
         
     implementation:
         # some key-value pairs
         
     settings:
         # some key-value pairs
+          
+    documentation:
+        # documentation of the actor (string)
 ```
+````
+````{admonition} GUI - Code description pane
+:class: hint
+
+This pane consists of sections (tabs):
+- **Implementation** 
+- **Settings** 
+- **Subroutines** 
+- **Code parameters** 
+- **Documentation** 
+
+![code_description.png](../../../sources/images/code_description.png)   
 ````
 
 
+### 1.5.1. Implementation part
 
-### 1.5.1. Arguments part:
+These are parameters used in **implementation** part:
+
+- `implementation`:
+    - `programming_language`: The language of your code, one of `Fortran` or `CPP`.
+    - `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
+    - `subroutines`: The list of procedures your actor can perform.
+        - `main`: The main task.
+          - `name`: The subroutine actual name.  **The name here is also used as the actor's name and installation directory.**
+          - `arguments`: List of methods arguments that your code needs or produces.
+
+    - `code_path`: Where the main code file is located, e.g., `./iWrapped_codes/code1_fortran/libcode1.a`.
+    - `include_path`: Where the header or module file is, like `./iWrapped_codes/code1_fortran/mod_code1.mod`.
+    
+
+         ```{admonition} Note
+         :class: note
+         
+         Fortran doesn't care about uppercase or lowercase, **but the compiler does.**   
+         Check the module name in the YAML matches the compiled one!
+             
+         ```
+
+
+#### 1.5.1.1 Subroutines
+
+To define *MAIN* subroutine, one has to provide:
+
+- the subroutine name (mandatory)
+- the list of IDSe passed as IN/OUT arguments (mandatory)
+- indication if code parameters have to be passed to subroutine (optional, default=false)
+
+```{admonition} *INIT* and *FINALIZE* subroutines
+:class: hint 
+
+The same information must be provided to define *INIT* and *FINALIZE* subroutines,
+but the purpose and usage of these methods will be explained in the next part of the tutorial
+
+```
+
+***Arguments list:***
 
 These are parameters used in this part:
 
@@ -171,7 +219,7 @@ These are parameters used in this part:
 ```{admonition} Arguments tab
 :class: hint 
 
-The table contains the following columns **[3]**:
+The table contains the following columns:
 
 - `Name`: A user-specified identifier for an argument.
 - `Input/Output`: Classifies the argument as either input or output. {`IN`/`OUT`
@@ -181,7 +229,7 @@ The table contains the following columns **[3]**:
 ````{admonition} Arguments control pane
 :class: hint
 
-Adjacent to the table on the right, there's a control panel featuring buttons **[4]**:
+Adjacent to the table on the right, there's a control panel featuring buttons:
 
 - `Add`: Introduces a new argument to the table.
 - `Edit`: Modifies the attributes of an existing argument.
@@ -225,28 +273,31 @@ To change `Edit, Up/Down,` and `Remove`` buttons state to **active** - at least 
 
 `````
 
-
-
-#### 1.5.1.1. Fortran example
+***Fortran example***
 
 `````{tab-set}
 
 ````{tab-item} YAML 
 ```yaml
 code_description:
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
+    implementation:
+        subroutines:
+            main:
+                name:     code1_step
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+
 ```
 
 ````
 
 ````{tab-item} GUI 
-![code_description.png](../../../sources/images/code_description.png)     
+![code_description.png](../../../sources/images/subroutines.png)     
 
 
 
@@ -256,7 +307,7 @@ code_description:
 
 
 
-#### 1.5.1.2. C++ example
+***C++ example***
 
 
 ``````{tab-set}
@@ -264,58 +315,40 @@ code_description:
 ````{tab-item} YAML 
 ```yaml
 code_description:
-    arguments:
-    -   name: distribution_sources_in
-        type: distribution_sources
-        intent: IN
-    -   name: core_profiles_out
-        type: core_profiles
-        intent: OUT
+    implementation:
+        subroutines:
+            main:
+                name: code2_step
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
 ```
 ````
 
 ````{tab-item} GUI 
-![actor_description.png](../../../sources/images/code_description_cpp.png)
+![actor_description.png](../../../sources/images/subroutines_cpp.png)
 
 ````
 
 
 ``````
 
+####1.5.1.2. Other information 
 
-### 1.5.2. Implementation part
+The other information that has to be provided to describe the code include (mentioned already above))
 
-These are parameters used in **implementation** part:
+- `programming_language`: The language of your code, one of `Fortran` or `CPP`.
+- `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
+- `subroutines`: The list of procedures your actor can perform.
+- `code_path`: Where the main code file is located, e.g., `./iWrapped_codes/code1_fortran/libcode1.a`.
+- `include_path`: Where the header or module file is, like `./iWrapped_codes/code1_fortran/mod_code1.mod`.
+    
 
-- `implementation`:
-    - `programming_language`: The language of your code, one of `Fortran` or `CPP`.
-    - `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
-    - `subroutines`: These are procedures your actor can perform.
-        - `main`: The main task. **The name here is also used as the actor's name and installation directory.**
-    - `code_path`: Where the main code file is located, e.g., `./iWrapped_codes/code1_fortran/libcode1.a`.
-    - `include_path`: Where the header or module file is, like `./iWrapped_codes/code1_fortran/mod_code1.mod`.
-      note
-
-         ```{admonition} Note
-         :class: note
-         
-         Fortran doesn't care about uppercase or lowercase, **but the compiler does.**   
-         Check the module name in the YAML matches the compiled one!
-             
-         ```
-
-
-````{admonition} GUI - Implementation tab
-:class: hint
-
-This tab consists of three sections:
-- **Implemenetation** [2]
-- **Subroutines** [3]- Methods names in your  code
-- **Code parameters** [4]
-
-````
-
-#### 1.5.2.1. Fortran Example
+***Fortran Example***
 
 `````{tab-set}
 
@@ -323,8 +356,6 @@ This tab consists of three sections:
 ```yaml
 code_description:
     implementation:
-        subroutines:
-            main:     code1_step
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
@@ -337,12 +368,9 @@ code_description:
 ![implementation_tab.png](../../../sources/images/implementation_tab.png)
 ````
 
-
-
-
 `````
 
-#### 1.5.2.2. C++ Example
+***C++ Example***
 
 
 ```````{tab-set}
@@ -352,12 +380,10 @@ code_description:
 ```yaml
 code_description:
     implementation:
-        subroutines:
-            main:     code2_step
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 3.39.0
         data_type: legacy
 ```
 ````
@@ -367,9 +393,6 @@ code_description:
 ``````
 
 ```````
-
-
-
 
 
 ## 1.6. Language-Specific Settings
@@ -463,19 +486,20 @@ actor_description:
 code_description:
     implementation:
         subroutines:
-            main:     code1_step
+            main:
+                name:     code1_step
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 3.39.0
         data_type: legacy
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
     settings:
         compiler_cmd: gfortran
 ```
@@ -492,19 +516,20 @@ actor_description:
 code_description:
     implementation:
         subroutines:
-            main:     code2_step
+            main:
+                name: code2_step
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 3.39.0
         data_type: legacy
-    arguments:
-    -   name: distribution_sources_in
-        type: distribution_sources
-        intent: IN
-    -   name: core_profiles_out
-        type: core_profiles
-        intent: OUT
     settings:
         compiler_cmd: g++
 ```

@@ -5,9 +5,19 @@ actor_description:
 code_description:
     implementation:
         subroutines:
-            init:       code2_setup    
-            main:       code2_step
-            finalize:   code2_cleanup    
+            init:       # ADDED !
+                name:   code2_setup
+            main:
+                name:   code2_step
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
+            finalize:   # ADDED !
+                name:   code2_cleanup
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
@@ -16,13 +26,6 @@ code_description:
         code_parameters:
             parameters: ./iWrapped_codes/code_parameters/input.xml   # ADDED
             schema:     ./iWrapped_codes/code_parameters/input.xsd   # ADDED
-    arguments:
-    -   name: distribution_sources_in
-        type: distribution_sources
-        intent: IN
-    -   name: core_profiles_out
-        type: core_profiles
-        intent: OUT
     settings:
         compiler_cmd: c++
         extra_libraries:

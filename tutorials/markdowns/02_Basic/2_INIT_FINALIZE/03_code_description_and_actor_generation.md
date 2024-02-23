@@ -62,7 +62,7 @@ They will be used in the next lesson.
 ```{admonition} Update GUI textboxes!
 :class: hint
 
-Remember to add proper methods **[4], [5]** names into GUI!
+Remember to add proper methods names into GUI!
 ```
 
 
@@ -88,19 +88,20 @@ code_description:
         subroutines:
             init:       code1_setup    # ADDED !
             main:       code1_step
+                arguments:
+                -   name: core_profiles_in
+                    type: core_profiles
+                    intent: IN
+                -   name: distribution_sources_out
+                    type: distribution_sources
+                    intent: OUT
             finalize:   code1_cleanup    # ADDED !
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
         data_dictionary_compliant: 3.37.0
         data_type: legacy
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
+
     settings:
         compiler_cmd: gfortran
 
@@ -133,19 +134,19 @@ code_description:
         subroutines:
             init:        code2_setup    # ADDED !
             main:        code2_step
+                arguments:
+                -   name: distribution_sources_out
+                    type: distribution_sources
+                    intent: IN
+                -   name: core_profiles_in
+                    type: core_profiles
+                    intent: OUT
             finalize:    code2_cleanup    # ADDED !
         code_path:       ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:    ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
         data_dictionary_compliant: 3.37.0
         data_type: legacy
-    arguments:
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: IN
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: OUT
     settings:
         compiler_cmd: c++
 ```
@@ -168,7 +169,7 @@ code_description:
 
 And then, just click **Generate** and you have everything set!
 
-![loaded-yaml-1.png](../../../sources/images/actor_generation_gui.png)
+![actor_generation_gui.png](../../../sources/images/actor_generation_gui.png)
 ```
 
 

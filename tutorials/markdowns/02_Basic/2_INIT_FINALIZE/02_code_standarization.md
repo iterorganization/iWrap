@@ -68,7 +68,7 @@ Here's an extra method you can include to help set up your original code:
 
 The "FINALIZE" method is like the cleaning crew for your code - it tidies things up.
 
-- **When to Use**:  you don't always have to include it — it's optional.
+- **When to Use**:  you don't always have to include it — it's *optional*.
 - **How Often Can It Run?**: As many times as you want.
 - **What Can You Name It?**: Whatever you like! Just remember to mention its name in the code's YAML description.
 
@@ -86,7 +86,18 @@ The "FINALIZE" method is like the cleaning crew for your code - it tidies things
 
 +++
 
-## How to put this methods in a code
+```{admonition} How to construct methods
+:class: hint
+
+In fact *INIT*, *MAIN* and *FINALIZE* methods share the same API, 
+so they could accept IDSes and code parameters among their arguments.
+It will be explained more in details in tutorial for advanced users.
+
+```
+
++++
+
+## How to put these methods in a code
 
 +++
 

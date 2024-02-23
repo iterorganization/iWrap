@@ -44,6 +44,13 @@ code_description:
         subroutines:
             init:       code1_setup    
             main:       code1_step
+                arguments:
+                -   name: core_profiles_in
+                    type: core_profiles
+                    intent: IN
+                -   name: distribution_sources_out
+                    type: distribution_sources
+                    intent: OUT
             finalize:   code1_cleanup   
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
@@ -53,13 +60,7 @@ code_description:
         code_parameters:
             parameters: ./code_parameters/input.xml   # ADDED
             schema:     ./code_parameters/input.xsd   # ADDED
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
+
     settings:
         compiler_cmd: gfortran
         extra_libraries:
@@ -78,6 +79,13 @@ code_description:
         subroutines:
             init:       code2_setup    
             main:       code2_step
+                arguments:
+                -   name: distribution_sources_out
+                    type: distribution_sources
+                    intent: IN
+                -   name: core_profiles_in
+                    type: core_profiles
+                    intent: OUT
             finalize:   code2_cleanup    
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
@@ -87,13 +95,6 @@ code_description:
         code_parameters:
             parameters: ./code_parameters/input.xml   # ADDED
             schema:     ./code_parameters/input.xsd   # ADDED
-    arguments:
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: IN
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: OUT
     settings:
         compiler_cmd: c++
         extra_libraries:
@@ -163,7 +164,7 @@ There are multiple methods available for configuring code parameters:
 `````
 
 
-After these steps, the text boxes should display the selected file paths.  **[ 1 ]**  
+After these steps, the text boxes should display the selected file paths.   
 
 ![code_params_gui.png](../../../sources/images/code_params_4.png)
 

@@ -1,20 +1,23 @@
 code_description:
     implementation:
         subroutines:
-            init:        code1_setup    # ADDED !
-            main:        code1_step
-            finalize:    code1_cleanup    # ADDED !
+            init:       # ADDED !
+                name:   code1_setup
+            main:
+                name:   code1_step
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+            finalize:   # ADDED !
+                name:   code1_cleanup
         code_path:       ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:    ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
         data_dictionary_compliant: 3.37.0
         data_type: legacy
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
     settings:
         compiler_cmd: gfortran

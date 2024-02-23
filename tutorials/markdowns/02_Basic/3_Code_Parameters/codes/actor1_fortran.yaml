@@ -5,9 +5,19 @@ actor_description:
 code_description:
     implementation:
         subroutines:
-            init:       code1_setup    
-            main:       code1_step
-            finalize:   code1_cleanup   
+            init:
+                name:   code1_setup
+            main:
+                name:   code1_step
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+            finalize:
+                name:   code1_cleanup
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
@@ -16,13 +26,6 @@ code_description:
         code_parameters:
             parameters: ./iWrapped_codes/code_parameters/input.xml   # ADDED
             schema:     ./iWrapped_codes/code_parameters/input.xsd   # ADDED
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
     settings:
         compiler_cmd: gfortran
         extra_libraries:
