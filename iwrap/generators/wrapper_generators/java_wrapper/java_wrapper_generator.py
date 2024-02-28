@@ -77,31 +77,12 @@ class JavaWrapperGenerator(WrapperGenerator):
         self.install_dir: str = str(Path(install_dir, ProjectSettings.get_settings().actor_description.actor_name, 'wrapper'))
 
     def generate(self, project_settings: dict):
-        self.temp_dir = tempfile.TemporaryDirectory().name
-        install_dir = ProjectSettings.get_settings().actor_description._install_dir
-        code_description = ProjectSettings.get_settings().code_description
-        generation_env = {'temp_dir': self.install_dir}
-
-        native_language = code_description.implementation.programming_language.lower()
-
-        # TO BE CHECKED!!!!
-
-
-        #if os.path.isdir(self.install_dir):
-        #    shutil.rmtree(self.install_dir)
-
-        def filter_func(x: str) -> bool:
-            if "_wrapper" in x:
-                return native_language + '_wrapper' in x
-            return  True
 
         process_template_dir('iwrap.generators.wrapper_generators.java_wrapper', 'resources', self.install_dir, project_settings, filter_func=None, output_stream= self.__info_output_stream, )
 
         self.__copy_native_lib(project_settings)
 
     def build(self, project_settings: dict):
-
-        #self.cleanup(project_settings)
 
         proc = subprocess.Popen( [], executable = "make", cwd=self.install_dir,
                                  encoding='utf-8', text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
