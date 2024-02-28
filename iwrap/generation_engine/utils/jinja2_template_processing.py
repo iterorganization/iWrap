@@ -14,6 +14,9 @@ def dirname(path):
 def stemname(path):
     return Path(path).stem
 
+def suffix(path):
+    return Path(path).suffix[1:]
+
 def process_template_dir(
         template_pkg: str,
         template_dir: str,
@@ -47,6 +50,7 @@ def process_template_dir(
     jinja_env.filters['basename'] = basename
     jinja_env.filters['dirname'] = dirname
     jinja_env.filters['stemname'] = stemname
+    jinja_env.filters['suffix'] = suffix
 
     templates = jinja_env.list_templates(filter_func= filter_func)
 

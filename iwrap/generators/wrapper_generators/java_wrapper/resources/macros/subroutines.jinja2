@@ -1,0 +1,109 @@
+{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+
+    public void {{  sbrt_role | lower }} (
+    {%- for argument in arguments -%}
+                    IDSDescription {{ argument.name }}_desc {%- if not loop.last or code_parameters %}, {% endif%}
+    {% endfor %}
+    {% if code_parameters %}
+                    String codeParameters
+    {% endif-%} ) throws Exception
+    {
+
+{% for argument in arguments %}
+    // IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.declare(argument) }}
+{% endfor %}
+
+
+    {% for argument in arguments if argument.intent == 'IN' %}
+    //--------- Get IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.get( argument.name) }}
+    {% endfor %}
+
+
+        // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
+    this.wrapped_code.{{sbrt_name}}(
+    {%- for argument in arguments -%}
+                    {{ argument.name }} {%- if not loop.last or code_parameters %}, {% endif%}
+    {% endfor %}
+{% if code_parameters  %}
+            codeParameters
+{%-endif-%}
+);
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+   // ------------ Provenance information --------------
+{% for argument in arguments if argument.intent == 'OUT' %}
+    {{ ids_macro.provenance( argument.name , sbrt_name) }}
+{% endfor %}
+
+{% for argument in arguments if argument.intent == 'OUT' %}
+    //--------- PUT IDS : {{ argument.name }} ------------------------
+    {{ ids_macro.put( argument.name) }}
+{% endfor %}
+
+}
+
+{%- endmacro -%}
+
+
+{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+
+//======================================================================================================
+//                        STANDALONE {{ sbrt_role | upper }}
+//======================================================================================================
+class Standalone4{{ actor_name }}_{{ sbrt_role }} {
+    public static void main(String[] args)
+    {
+      Wrapper4{{actor_name}} wrapper = new  Wrapper4{{actor_name}}();
+       final int IDS_ARGS_NO = {{ arguments | length }};
+       IDSDescription idsDescriptions[] = new IDSDescription[0];
+
+        //----  Status info  ----
+        int status_code = 0;
+        String status_message = null;
+
+        try{
+            idsDescriptions = iWrapTools.read_input("{{ sbrt_role }}.in", IDS_ARGS_NO);
+
+            {% if code_parameters %}
+            //----  Code parameters  ----
+            String xml_string = iWrapTools.read_code_parameters();
+            {% endif %}
+
+            iWrapTools.open_db_entries(idsDescriptions);
+
+            //!!!!!!!!! Java wrapper !!!!!!!!!!!!!!!
+            wrapper.{{  sbrt_role | lower }}(
+        {% for argument in arguments %}
+                        idsDescriptions[{{loop.index - 1 }}],
+        {% endfor %}
+        {% if code_parameters %}
+                        xml_string
+        {% endif %});
+           //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        } catch (Exception exc)
+        {
+            status_code = -1;
+            status_message =  exc.getMessage();
+            exc.printStackTrace();
+        }
+
+        iWrapTools.handle_status_info(status_code, status_message, "{{actor_name}}");
+
+        iWrapTools.closeDBEntries(idsDescriptions);
+
+        //-----------Writing output data to file ---------------------
+        try{
+            iWrapTools.write_output("{{ sbrt_role }}.out", status_code, status_message);
+        }
+        catch (Exception exc)
+        {
+            // No to much to do if an error code/msg cannot be passed to an actor :(
+            exc.printStackTrace();
+            System.exit(-1);
+        }
+    }
+}
+{%- endmacro -%}

@@ -41,7 +41,7 @@ code_description.implementation.code_parameters.parameters, code_description.set
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   GET_STATE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_get_state(
                 char** out_state,
                 int* out_status_code, char** out_status_message)
 {
@@ -66,7 +66,7 @@ extern "C" void get_state_{{actor_description.actor_name | lower}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   SET_STATE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_set_state(
                 char* state, int* state_str_size,
                 int* out_status_code, char** out_status_message)
 {
@@ -90,7 +90,7 @@ extern "C" void set_state_{{actor_description.actor_name | lower}}_wrapper(
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  GET_TIMESTAMP SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-extern "C" void get_timestamp_{{actor_description.actor_name | lower}}_wrapper(
+extern "C" void {{actor_description.actor_name | lower}}_wrapper_get_timestamp(
                 double* out_timestamp,
                 int* out_status_code, char** out_status_message)
 {

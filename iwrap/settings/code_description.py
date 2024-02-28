@@ -218,10 +218,6 @@ class Implementation( SettingsBaseClass ):
             if not self.include_path:
                 raise ValueError( 'Path to the include/module file is not set!' )
 
-            __path = utils.resolve_path( self.include_path, project_root_dir)
-            if not Path(__path).exists():
-                raise ValueError( f'Path to the include/module file is not valid! {str( __path )}' )
-
         if not self.data_dictionary_compliant:
             raise ValueError('Data Dictionary compliant version is not set!')
 
@@ -374,7 +370,7 @@ class CodeDescription( SettingsBaseClass ):
         arguments (list [:obj:`Arguments`]): list of the in/out arguments of the code
         documentation (str): human readable description of the code
         settings (dict): code settings
-        implementation(:obj:`Implementation`): details on the implementation of the code 
+        implementation(:obj:`Implementation`): details on the implementation of the code
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )

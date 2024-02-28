@@ -15,6 +15,10 @@ test_dirs+=("cp2ds-mpi_cpp")
 test_dirs+=("code_lifecycle")
 test_dirs+=("code_lifecycle_cpp")
 test_dirs+=("loop")
+test_dirs+=("basic_methods_java")
+test_dirs+=("code_restart")
+test_dirs+=("code_restart_cpp")
+test_dirs+=("code_restart_java")
 
 PASSED='\033[1;32m- Passed.\033[0m'
 FAILED='\033[1;31m- Failed.\033[1;33m See log.txt.\033[0m Continuing...'

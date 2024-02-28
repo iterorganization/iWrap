@@ -67,13 +67,15 @@ tooltip_dict ={
     'root_dir':'The root directory for ALL relative paths placed in code description. A relative path leading from YAML file location to actor project root dir.\n\n'
                'Default: ‘.‘',
     'data_type':'Data type handled by the physics code.\nvalue: ‘legacy’ (currently only ‘Legacy IDS’ type has been implemented).',
-    'code_path':'Path to system library (C, C++, Fortran) , script (Python), etc., containing the physics code, including methods/subroutines to be run. Relative paths start at "Root dir" directory.\n\n'
+    'code_path':'Path to system library (C, C++, Fortran) , script (Python), JAR file (Java) etc., containing the physics code, including methods/subroutines to be run. Relative paths start at "Root dir" directory.\n\n'
                 'examples:\n'
-                'C++/Fortran: ‘/path/to/code/lib/libcode.a’',
-    'include_path':'Path to a header file (C, C++), module (Fortran), etc., containing the declaration of physics code methods/subroutines to be run.\n\n'
+                'C++/Fortran: ‘/path/to/code/lib/libcode.a’\n'
+                'Java: ‘./relative/path/to/java_code.jar‘',
+    'include_path':'Path to a header file (C, C++), module (Fortran), or the fully qualified name of the class (Java) etc., containing the declaration of physics code methods/subroutines to be run.\n\n'
                 'examples:\n'
                    'C++: ‘/path/to/code/include/code.h’\n'
-                   'Fortran: ‘/path/to/code/include/code.mod',
+                   'Fortran: ‘/path/to/code/include/code.mod‘\n'
+                   'Java: ‘iwrap.test_codes.basic.BasicTest‘',
     'init':'Name of the method/subroutine in the API of the code. This method is usually used to set up the initial state of the code, however it may contain any arbitrary actions.\n'
            'IMPORTANT! Must correspond to the name of the method in the code.\n\n'
            'example: my_init_method',

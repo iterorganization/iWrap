@@ -25,9 +25,9 @@ class Runner(ABC):
         return runner
 
     def __init__(self, actor):
-        from ..binding.binder import CBinder
+        from ..binding.binder import LanguageBinder
         self._actor = actor
-        self._binder = CBinder()
+        self._binder = LanguageBinder()
         self._output_stream = actor.output_stream
         self._runtime_settings = actor.get_runtime_settings()
 
@@ -100,14 +100,15 @@ class StandaloneRunner( Runner ):
         runtime_settings = self._runtime_settings
 
         if runtime_settings.commandline_cmd:
-            exec_command:str = runtime_settings.commandline_cmd
-            cmdln_utlis.validate_command(exec_command)
+            full_command:str = runtime_settings.commandline_cmd
+            cmdln_utlis.validate_command(full_command)
         else:
-            exec_command = cmdln_utlis.create_cmd(runtime_settings)
+            full_command = cmdln_utlis.create_cmd(runtime_settings)
 
-        exec_command = cmdln_utlis.resolve_cmd_tags( self._actor,  method_name, exec_command, runtime_settings )
+        exec_cmd = self._binder.standalone_cmd(method_name)
+        full_command = cmdln_utlis.resolve_cmd_tags(full_command, exec_cmd, runtime_settings )
 
-        print( f'COMMAND: {exec_command}' )
+        print( f'COMMAND: {full_command}' )
         # debug_mode:            exec_command.append( 'totalview' )
 
         sandbox_dir = self._actor.sandbox.path
@@ -115,7 +116,7 @@ class StandaloneRunner( Runner ):
                                                method_name=method_name,
                                                arg_metadata_list=arg_metadata_list,
                                                code_parameters=code_parameters,
-                                               exec_command = exec_command,
+                                               exec_command = full_command,
                                                sandbox_dir = sandbox_dir,
                                                output_stream=self._output_stream )
         return results

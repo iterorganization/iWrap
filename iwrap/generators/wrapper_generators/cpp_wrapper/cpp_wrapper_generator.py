@@ -63,6 +63,15 @@ class CppWrapperGenerator(WrapperGenerator):
     def configure(self, info_output_stream=sys.stdout):
         self.__info_output_stream = info_output_stream
 
+    def validate(self, project_settings: dict):
+        include_path = project_settings["code_description"].get( "implementation", {} ).get( "include_path" )
+
+        if not include_path:
+            return  # actor skeleton is generated?
+
+        if not Path(include_path).exists():
+            raise ValueError( f'Path to header file is not valid! {str( include_path )}' )
+
     def initialize(self, project_settings: dict):
         install_dir = None
 

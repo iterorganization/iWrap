@@ -1,18 +1,15 @@
 import logging
-import ctypes
 from typing import Set
 
-import imas
+from . import IDSConverter
+from .legacy_storage import LegacyIDSStorage
 
-from .data_c_binding import IDSCType
-from .data_storages import IDSConverter
-from .data_storages.generic_storage import LegacyIDSStorage
-
-from ..common.definitions import Argument
-from ..common.runtime_settings import IdsStorageSettings
+from ...common.definitions import Argument
+from ...common.runtime_settings import IdsStorageSettings
+from .data_descriptions import IDSDescription
 
 
-class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
+class LegacyIDSConverter(IDSConverter):
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
@@ -36,7 +33,7 @@ class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
 
     @classmethod
     def code_languages(cls) -> Set[str]:
-        return {'cpp', 'fortran'}
+        return {'cpp', 'fortran', 'java'}
 
 
     @staticmethod
@@ -46,24 +43,24 @@ class LegacyIDSConverter( IDSConverter, ctypes.Structure ):
             raise RuntimeError("ERROR! Argument passed doesn't match arguments list: ", ids_name, ' vs ',
                                ids_object.__name__)
 
-    def prepare_native_type(self, ids_name):
-        ids_description: IDSCType = self.__data_storage.prepare_data(ids_name)
+    def prepare_native_type(self, ids_description_class, ids_name):
+        ids_description: IDSDescription = self.__data_storage.prepare_data(ids_name)
 
-        return ids_description
+        return ids_description_class(ids_description)
 
-    def convert_to_native_type(self, ids_description: IDSCType, ids_intent, ids_object):
+    def convert_to_native_type(self, ids_description: IDSDescription, ids_intent, ids_object):
 
         # store input data
         if ids_intent == Argument.IN:
-            self.__check(ids_description.ids_name, ids_object)
+            self.__check(ids_description.ids_type, ids_object)
             self.__data_storage.save_data(ids_description, ids_object)
 
-        return ctypes.byref( ids_description )
+        return ids_description.convert_to_native_type()
 
-    def convert_to_actor_type(self, ids_description: IDSCType):
+    def convert_to_actor_type(self, ids_description: IDSDescription):
         ids = self.__data_storage.read_data( ids_description )
         return ids
 
-    def release(self, ids_description: IDSCType):
-        self.__data_storage.release_data(ids_description.ids_name)
+    def release(self, ids_description: IDSDescription):
+        self.__data_storage.release_data(ids_description.ids_type)
 

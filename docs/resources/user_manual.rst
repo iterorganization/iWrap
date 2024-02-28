@@ -98,6 +98,6 @@ Preparation of the code and actor generation
    :numbered:
    :maxdepth: 10
 
-   /resources/code_api.rst
-   /resources/actor_generation.rst
-   /resources/actor_usage.rst
+    /resources/code_api.rst
+    /resources/actor_generation.rst
+    /resources/actor_usage.rst
