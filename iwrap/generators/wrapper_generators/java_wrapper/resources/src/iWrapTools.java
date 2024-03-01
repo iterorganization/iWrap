@@ -87,26 +87,18 @@ public class iWrapTools{
 
     static public void handle_status_info(int status_code, String status_message, String actor_name)
     {
-  /*
-    const char* NO_MSG = "<No diagnostic message>";
-    if(status_message == null)
-    {
-        int msg_size = strlen(NO_MSG) + 1;
-        status_message = (char*) malloc(msg_size);
-        strcpy(status_message, NO_MSG);
+        String NO_MSG = "<No diagnostic message>";
+        if(status_message == null)
+            status_message = NO_MSG;
+
+        if(status_code !=0) {
+          System.out.println("---Diagnostic information returned from *** " + actor_name + " ***:---\n");
+          System.out.println("-------Status code    : " + status_code + "\n");
+          System.out.println("-------Status message : " + status_message + "\n" );
+          System.out.println("---------------------------------------------------------\n");
+        }
+
     }
-
-    if(status_code !=0) {
-      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
-      printf("-------Status code    : %d\n", status_code);
-      printf("-------Status message : %s\n", status_message);
-      printf("---------------------------------------------------------\n");
-      }
-      */
-    }
-
-
-
 
     static public void open_db_entries(IDSDescription idsDescriptions[]) throws Exception {
         // List<IDSDescription> list = Arrays.stream(idsDescriptions).distinct().collect(Collectors.toList());
