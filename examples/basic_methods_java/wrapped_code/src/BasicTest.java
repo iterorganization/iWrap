@@ -20,6 +20,19 @@ public class BasicTest {
 
     public void init_code (String code_parameters)
     {
+        this.init_code(null, null, code_parameters);
+    }
+
+        public void init_code (imas.core_profiles  core_profiles_in,
+                          imas.distribution_sources  distribution_sources_out)
+    {
+        this.init_code(core_profiles_in, distribution_sources_out, null);
+    }
+
+    public void init_code (imas.core_profiles  core_profiles_in,
+                          imas.distribution_sources  distribution_sources_out,
+                          String code_parameters)
+    {
         System.out.println("=======================================================");
         System.out.println("Java code: INITIALISATION called");
         System.out.println("=======================================================");
@@ -28,26 +41,16 @@ public class BasicTest {
 
 
     // =======================================
-    //             FINALISATION
-    //=======================================
-    public void clean_up( )
-    {
-        System.out.println("=======================================================");
-        System.out.println("Java code: FINALISATION called");
-        System.out.println("=======================================================");
-    }
-
-    // =======================================
     //             MAIN
     //=======================================
-    public void code_step(imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out)
+    public void code_step(imas.distribution_sources  distribution_sources_in,
+                          imas.core_profiles  core_profiles_out)
     {
-         this.code_step(core_profiles_in, distribution_sources_out, null);
+         this.code_step(distribution_sources_in, core_profiles_out, null);
     }
 
-    public void code_step(imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out,
+    public void code_step(imas.distribution_sources  distribution_sources_in,
+                          imas.core_profiles  core_profiles_out,
                           String codeParameters)
     {
         int inIdsSize = -1;
@@ -72,25 +75,25 @@ public class BasicTest {
 
         System.out.println( "Counting to : " + code_state);
 
-        distribution_sources_out.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+        core_profiles_out.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
 
-        inIdsSize = core_profiles_in.time.getDim();
+        inIdsSize = distribution_sources_in.time.getDim();
         System.out.println( "Input IDS size : " + inIdsSize);
 
         if (inIdsSize > 0) {
 
-            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+            core_profiles_out.time = new Vect1DDouble(inIdsSize);
 
             // Time : copy from input IDS
             for (int i = 0; i < inIdsSize; i++) {
-                double newValue = 1000 * code_state + core_profiles_in.time.getElementAt(i);
-                distribution_sources_out.time.setElementAt(i, newValue);
+                double newValue = 1000 * code_state + distribution_sources_in.time.getElementAt(i);
+                core_profiles_out.time.setElementAt(i, newValue);
             }
         }
         else {
-            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+            core_profiles_out.time = new Vect1DDouble(inIdsSize);
             double newValue = 1000 * code_state ;
-            distribution_sources_out.time.setElementAt(0, newValue);
+            core_profiles_out.time.setElementAt(0, newValue);
         }
 
 
@@ -101,11 +104,41 @@ public class BasicTest {
     }
 
     // =======================================
+    //             FINALISATION
+    //=======================================
+    public void clean_up()
+    {
+        this.clean_up(null);
+    }
+
+    public void clean_up (String code_parameters)
+    {
+        this.clean_up(null, null, code_parameters);
+    }
+
+    public void clean_up (imas.core_profiles  core_profiles_in,
+                          imas.distribution_sources  distribution_sources_out)
+    {
+        this.clean_up(core_profiles_in, distribution_sources_out, null);
+    }
+
+    public void clean_up (imas.core_profiles  core_profiles_in,
+                          imas.distribution_sources  distribution_sources_out,
+                          String code_parameters)
+    {
+        System.out.println("=======================================================");
+        System.out.println("Java code: FINALISATION called");
+        System.out.println("=======================================================");
+    }
+
+
+
+    // =======================================
     //             GET STATE
     //=======================================
     public String get_code_state() throws Exception
     {
-        String state_out = String.valueOf(code_state);
+        String state_out = String.valueOf(this.code_state);
 
         System.out.println("=======================================================");
         System.out.println("Java code: GET STATE called");

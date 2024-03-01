@@ -1,9 +1,34 @@
 code_description:
     implementation:
         subroutines:
-            init: init_code
-            main:   code_step
-            finalize: clean_up
+            init:
+                name: init_code
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+            main:
+                name: code_step
+                need_code_parameters: true
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
+            finalize:
+                name: clean_up
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
         programming_language: java
         data_dictionary_compliant: 3.37.0
         data_type: legacy
@@ -12,13 +37,7 @@ code_description:
         code_parameters:
             parameters: ./input/input_physics.xml
             schema: ./input/input_physics.xsd
-    arguments:
-    -   name: core_profiles_in
-        type: core_profiles
-        intent: IN
-    -   name: distribution_sources_out
-        type: distribution_sources
-        intent: OUT
+
     documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo

@@ -14,6 +14,8 @@ class ExampleWorkflowManager:
         self.actor_basic_methods_java = basic_methods_java()
         self.input_entry = None
         self.output_entry = None
+        self.distribution_sources = None
+        self.core_profiles = None
 
     def init_workflow(self):
         # INPUT/OUTPUT CONFIGURATION
@@ -40,37 +42,32 @@ class ExampleWorkflowManager:
         actor_run_mode = os.getenv( 'ACTOR_RUN_MODE', 'NORMAL')
         if actor_run_mode == 'STANDALONE':
             print('Running STANDALONE version.')
-            runtime_settings = self.actor_basic_methods_java.get_runtime_settings()
-            runtime_settings.run_mode = RunMode.STANDALONE
+        runtime_settings = self.actor_basic_methods_java.get_runtime_settings()
+        runtime_settings.run_mode = RunMode.STANDALONE
 
         code_parameters = self.actor_basic_methods_java.get_code_parameters()
-        self.actor_basic_methods_java.initialize(runtime_settings=runtime_settings, code_parameters=code_parameters)
+
+        core_profiles_in = self.input_entry.get( 'core_profiles' )
+        self.distribution_sources = self.actor_basic_methods_java.initialize(core_profiles_in, runtime_settings=runtime_settings, code_parameters=code_parameters)
     
     def execute_workflow(self):
-        # READ INPUT IDSS FROM LOCAL DATABASE
-        print('=> Read input IDSs')
-        core_profiles_in = self.input_entry.get('core_profiles')
 
         # EXECUTE PHYSICS CODE
         print('=> Execute physics code')
 
-        distribution_sources_out = self.actor_basic_methods_java(core_profiles_in)
+        self.core_profiles = self.actor_basic_methods_java(self.distribution_sources)
         
-        # SAVE IDSS INTO OUTPUT FILE
-        print('=> Export output IDSs to local database')
-        self.output_entry.put(distribution_sources_out)
-        print('Done exporting.')
+
 
 
     def end_workflow(self):
         
         # Finalize ALL actors 
-        self.actor_basic_methods_java.finalize()
+        distribution_sources = self.actor_basic_methods_java.finalize(self.core_profiles)
 
-        output_ids = self.output_entry.get('distribution_sources')
 
         with open( 'wf_output.txt', 'w' ) as file:
-            file.write( str(output_ids.time) )
+            file.write( str(distribution_sources.time) )
         
         #other finalizastion actions
         self.input_entry.close()
