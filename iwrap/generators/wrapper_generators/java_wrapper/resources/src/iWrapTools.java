@@ -69,7 +69,7 @@ public class iWrapTools{
         if ( statusMessage != null )
         {
             int str_len =  statusMessage.length();
-            writer.write(str_len);
+            writer.write("" + str_len);
             writer.newLine();
             writer.write(statusMessage);
             writer.newLine();

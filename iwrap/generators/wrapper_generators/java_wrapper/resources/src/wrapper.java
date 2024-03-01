@@ -11,27 +11,27 @@ class Wrapper4{{actor_description.actor_name}} {
 
     public Wrapper4{{actor_description.actor_name}} () {};
 
-{% if code_description.implementation.subroutines.init %}
+{% if code_description.implementation.subroutines.init.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                  WRAPPED INIT SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init, [],
+    {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init,
     code_description.implementation.code_parameters.parameters) }}
 {% endif %}
 
-{% if code_description.implementation.subroutines.finalize %}
+{% if code_description.implementation.subroutines.finalize.name %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   WRAPPED FINALIZE SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize, [],
-    None) }}
+    {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize,
+    code_description.implementation.code_parameters.parameters) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 //                                   WRAPPED MAIN SBRT CALL
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main, code_description.arguments,
+{{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main,
 code_description.implementation.code_parameters.parameters) }}
 
 

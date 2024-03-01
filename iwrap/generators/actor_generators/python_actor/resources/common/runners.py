@@ -139,39 +139,6 @@ class LibraryRunner( Runner ):
 
     def initialize(self):
         super().initialize()
-        if self._runtime_settings.debug_mode != DebugMode.NONE:
-            self.__attach_debugger()
-
-    def __attach_debugger(self):
-        actor_name = self._actor.name
-
-        debugger = self._runtime_settings.debugger
-        debugger_attach_cmd = None
-        if debugger.debugger_attach_cmd:
-            debugger_attach_cmd =  debugger.debugger_attach_cmd
-        else:
-            debugger_attach_cmd = debugger.debugger_default_attach_cmd
-
-        process_id = os.getpid()
-
-        debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
-                                                                                 init_sbrt_name=f'{actor_name}_wrapper_init',
-                                                                                 main_sbrt_name=f'{actor_name}_wrapper_main',
-                                                                                 finish_sbrt_name=f'{actor_name}_wrapper_finish',
-                                                                                 set_state_sbrt_name = f'{actor_name}_wrapper_set_state',
-                                                                                 get_state_sbrt_name=f'{actor_name}_wrapper_get_state',
-                                                                                 get_timestamp_sbrt_name=f'{actor_name}_wrapper_get_timestamp'
-
-        )
-
-        def start_debugger(debugger_attach_cmd):
-            self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
-            exec_system_cmd( debugger_attach_cmd, output_stream=self._actor.output_stream )
-
-        t = Thread( target=start_debugger, args=(debugger_attach_cmd,) )
-        t.daemon = True  # thread dies with the program
-        t.start()
-        input()  # just to wait until debugger starts
 
     def call_initialize(self, *ids_list):
 

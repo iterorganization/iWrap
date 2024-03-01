@@ -1,43 +1,43 @@
-{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters) -%}
 
     public void {{  sbrt_role | lower }} (
-    {%- for argument in arguments -%}
-                    IDSDescription {{ argument.name }}_desc {%- if not loop.last or code_parameters %}, {% endif%}
+    {%- for argument in sbrt_data.arguments -%}
+                    IDSDescription {{ argument.name }}_desc {%- if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
     {% endfor %}
-    {% if code_parameters %}
+    {% if code_parameters and sbrt_data.need_code_parameters %}
                     String codeParameters
     {% endif-%} ) throws Exception
     {
 
-{% for argument in arguments %}
+{% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
     {{ ids_macro.declare(argument) }}
 {% endfor %}
 
 
-    {% for argument in arguments if argument.intent == 'IN' %}
+    {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
     //--------- Get IDS : {{ argument.name }} ------------------------
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    this.wrapped_code.{{sbrt_name}}(
-    {%- for argument in arguments -%}
-                    {{ argument.name }} {%- if not loop.last or code_parameters %}, {% endif%}
+    this.wrapped_code.{{sbrt_data.name}}(
+    {%- for argument in sbrt_data.arguments -%}
+                    {{ argument.name }} {%- if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
     {% endfor %}
-{% if code_parameters  %}
+{% if code_parameters and sbrt_data.need_code_parameters%}
             codeParameters
 {%-endif-%}
 );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
    // ------------ Provenance information --------------
-{% for argument in arguments if argument.intent == 'OUT' %}
+{% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
     {{ ids_macro.provenance( argument.name , sbrt_name) }}
 {% endfor %}
 
-{% for argument in arguments if argument.intent == 'OUT' %}
+{% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
     //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.put( argument.name) }}
 {% endfor %}
@@ -47,7 +47,7 @@
 {%- endmacro -%}
 
 
-{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_name, arguments, code_parameters, mpi_compiler_cmd) -%}
+{% macro standalone_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters) -%}
 
 //======================================================================================================
 //                        STANDALONE {{ sbrt_role | upper }}
@@ -56,7 +56,7 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
     public static void main(String[] args)
     {
       Wrapper4{{actor_name}} wrapper = new  Wrapper4{{actor_name}}();
-       final int IDS_ARGS_NO = {{ arguments | length }};
+       final int IDS_ARGS_NO = {{ sbrt_data.arguments | length }};
        IDSDescription idsDescriptions[] = new IDSDescription[0];
 
         //----  Status info  ----
@@ -66,7 +66,7 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
         try{
             idsDescriptions = iWrapTools.read_input("{{ sbrt_role }}.in", IDS_ARGS_NO);
 
-            {% if code_parameters %}
+            {% if code_parameters and sbrt_data.need_code_parameters %}
             //----  Code parameters  ----
             String xml_string = iWrapTools.read_code_parameters();
             {% endif %}
@@ -75,10 +75,10 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
 
             //!!!!!!!!! Java wrapper !!!!!!!!!!!!!!!
             wrapper.{{  sbrt_role | lower }}(
-        {% for argument in arguments %}
-                        idsDescriptions[{{loop.index - 1 }}],
+        {% for argument in sbrt_data.arguments %}
+                        idsDescriptions[{{loop.index - 1 }}]{% if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
         {% endfor %}
-        {% if code_parameters %}
+        {% if code_parameters and sbrt_data.need_code_parameters%}
                         xml_string
         {% endif %});
            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

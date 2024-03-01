@@ -184,7 +184,7 @@ class ActorBaseClass(Actor):
 
     # # #  Actor lifecycle methods # # #
 
-    def initialize(self, runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None):
+    def initialize(self, *args , runtime_settings: RuntimeSettings = None, code_parameters: CodeParameters = None):
         """
         Attributes:
             runtime_settings (RuntimeSettings): Path to a XML file with code parameters
@@ -203,7 +203,7 @@ class ActorBaseClass(Actor):
     def run(self, *args):
         ...
 
-    def finalize(self):
+    def finalize(self, *args):
         ...
 
     def get_state(self) -> str:

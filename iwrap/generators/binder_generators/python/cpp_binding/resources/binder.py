@@ -1,6 +1,8 @@
 import ctypes
 import os
 import logging
+import string
+from threading import Thread
 
 from .data_storages import IDSConvertersRegistry
 
@@ -42,8 +44,43 @@ class LanguageBinder(Binder):
         sandbox_dir = self.actor.sandbox.path
         self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
 
+        if self.runtime_settings.debug_mode != DebugMode.NONE:
+            self.__attach_debugger()
+
+
     def finalize(self):
         self.ids_converter.finalize()
+
+    def __attach_debugger(self):
+        actor_name = self.actor.name
+
+        debugger = self.runtime_settings.debugger
+        debugger_attach_cmd = None
+        if debugger.debugger_attach_cmd:
+            debugger_attach_cmd = debugger.debugger_attach_cmd
+        else:
+            debugger_attach_cmd = debugger.debugger_default_attach_cmd
+
+        process_id = os.getpid()
+
+        debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
+                                                                                 init_sbrt_name=f'{actor_name}_wrapper_init',
+                                                                                 main_sbrt_name=f'{actor_name}_wrapper_main',
+                                                                                 finish_sbrt_name=f'{actor_name}_wrapper_finish',
+                                                                                 set_state_sbrt_name=f'{actor_name}_wrapper_set_state',
+                                                                                 get_state_sbrt_name=f'{actor_name}_wrapper_get_state',
+                                                                                 get_timestamp_sbrt_name=f'{actor_name}_wrapper_get_timestamp'
+
+                                                                                 )
+
+        def start_debugger(debugger_attach_cmd):
+            self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
+            exec_system_cmd( debugger_attach_cmd, output_stream=self._actor.output_stream )
+
+        t = Thread( target=start_debugger, args=(debugger_attach_cmd,) )
+        t.daemon = True  # thread dies with the program
+        t.start()
+        input()  # just to wait until debugger starts
 
     def __check_inputs(self, ids_arguments_list, arg_metadata_list):
         import functools
@@ -55,7 +92,7 @@ class LanguageBinder(Binder):
         if inputs_number != len(ids_arguments_list):
             raise RuntimeError(f'Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})')
 
-    def __get_wrapper_function(self, function_name: str):
+    def __get_wrapper_function(self, method_role: str):
 
         actor_name = self.actor.name
         lib_path = self.actor_dir + '/lib/lib' + actor_name + '.so'
@@ -64,10 +101,10 @@ class LanguageBinder(Binder):
 
         subroutines = self.actor.code_description['implementation']['subroutines']
 
-        if not subroutines.get(function_name):
+        if not subroutines.get(method_role):
             return None
 
-        sbrt_name = actor_name + "_wrapper_" + function_name
+        sbrt_name = actor_name + "_wrapper_" + method_role
 
         wrapper_fun = getattr( wrapper_lib, sbrt_name )
         return wrapper_fun
@@ -144,7 +181,6 @@ class LanguageBinder(Binder):
 
         output = self.call_basic_method(*input_idses,
                                         method_role="init",
-                                        basic_method=self.wrapper_init_func,
                                         code_parameters=code_parameters )
         return output
 
@@ -154,7 +190,6 @@ class LanguageBinder(Binder):
         """
         output = self.call_basic_method(*input_idses,
                                         method_role="main",
-                                        basic_method=self.wrapper_main_func,
                                         code_parameters=code_parameters)
         return output
 
@@ -162,16 +197,15 @@ class LanguageBinder(Binder):
 
         output = self.call_basic_method( *input_idses,
                                          method_role="finalize",
-                                         basic_method=self.wrapper_finish_func,
                                          code_parameters=code_parameters)
 
         return output
 
-    def call_basic_method(self, *input_idses, method_role, basic_method, code_parameters = None):
+    def call_basic_method(self, *input_idses, method_role, code_parameters = None):
         """
         """
 
-        method_implementation = self.__get_wrapper_function(method_name)
+        method_implementation = self.__get_wrapper_function(method_role)
 
         if not method_implementation:
             return
@@ -181,25 +215,24 @@ class LanguageBinder(Binder):
         need_code_parameters = method_description.get('need_code_parameters')
 
         c_arglist = []
+        ids_ctypes_list = []
         self.__logger.debug( 'RUN MODE: ' + str( self.runtime_settings.run_mode ) )
-
-        ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
 
         if arg_metadata_list:
             ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
 
-        if input_idses:
-        # check if a number of provided arguments is correct
-            self.__check_inputs( input_idses, arg_metadata_list )
+            if input_idses:
+            # check if a number of provided arguments is correct
+                self.__check_inputs( input_idses, arg_metadata_list )
 
-        tmp_ids_list = list( input_idses )
-        for ids_ctype in ids_ctypes_list:
-            ids_object = None
-            if ids_ctype.intent == Argument.IN:
-                ids_object = tmp_ids_list.pop( 0 )
+            tmp_ids_list = list( input_idses )
+            for ids_ctype in ids_ctypes_list:
+                ids_object = None
+                if ids_ctype.intent == Argument.IN:
+                    ids_object = tmp_ids_list.pop( 0 )
 
-            c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
-            c_arglist.append( c_ids )
+                c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
+                c_arglist.append( c_ids )
 
         # Code Parameterss
         if code_parameters and need_code_parameters:

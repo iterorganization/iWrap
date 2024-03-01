@@ -35,14 +35,7 @@ class LanguageBinder(Binder):
         self.runtime_settings: RuntimeSettings = None
         self.arg_metadata_list = None
 
-        self.wrapper_init_func = None
-        self.wrapper_main_func = None
-        self.wrapper_finish_func = None
-
-        self.wrapper_set_state_func = None
-        self.wrapper_get_state_func = None
-
-        self.wrapper_get_timestamp_func = None
+        self.java_wrapper_class = None
 
     def initialize(self, actor):
         self.actor = actor
@@ -56,29 +49,13 @@ class LanguageBinder(Binder):
         self.actor_dir = actor.actor_dir
 
         sandbox_dir = self.actor.sandbox.path
+
+        if not jpype.isJVMStarted():
+            jpype.startJVM()
+
+        self.java_wrapper_class = self.__get_wrapper_library()
+
         self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
-        actor_name = self.actor.name.lower()
-        subroutines = self.actor.code_description['implementation']['subroutines']
-
-        self.__wrapper_library = self.__get_wrapper_library()
-
-        if subroutines.get('init'):
-            self.wrapper_init_func = self.__get_wrapper_function('init')
-
-        self.wrapper_main_func = self.__get_wrapper_function('main')
-
-        if subroutines.get('finalize'):
-            self.wrapper_finish_func = self.__get_wrapper_function('finalize')
-
-        if subroutines.get( 'get_state' ):
-            self.wrapper_get_state_func = self.__get_wrapper_function( 'get_state' )
-
-        if subroutines.get( 'set_state' ):
-            self.wrapper_set_state_func = self.__get_wrapper_function( 'set_state' )
-
-        if subroutines.get( 'get_timestamp' ):
-            self.wrapper_get_timestamp_func = self.__get_wrapper_function( 'get_timestamp' )
-
 
     def finalize(self):
         self.ids_converter.finalize()
@@ -109,7 +86,6 @@ class LanguageBinder(Binder):
                 str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
 
     def __get_wrapper_library(self):
-        import jpype
 
         if not jpype.isJVMStarted():
             jpype.startJVM()
@@ -129,21 +105,28 @@ class LanguageBinder(Binder):
         java_class = JClass(java_fqcn)
         return java_class()
 
-    def __get_wrapper_function(self, function_name: str):
-        wrapper_fun = getattr( self.__wrapper_library , function_name )
+    def __get_wrapper_function(self, method_role: str):
+
+        subroutines = self.actor.code_description['implementation']['subroutines']
+
+        if not subroutines.get( method_role ):
+            return None
+
+        wrapper_fun = getattr( self.java_wrapper_class, method_role )
         return wrapper_fun
 
-    def __get_ids_ctypes(self, arg_metadata_list):
 
-        ids_ctype_list = []
+    def __get_ids_native(self, arg_metadata_list):
+
+        ids_list = []
 
         # LOOP over ids
         for arg_meta_data in arg_metadata_list:
-            ids_ctype = self.ids_converter.prepare_native_type( JavaIDSDescription, arg_meta_data['type'] )
-            ids_ctype.intent = arg_meta_data['intent']
-            ids_ctype_list.append( ids_ctype )
+            ids_java = self.ids_converter.prepare_native_type( JavaIDSDescription, arg_meta_data['type'] )
+            ids_java.intent = arg_meta_data['intent']
+            ids_list.append( ids_java )
 
-        return ids_ctype_list
+        return ids_list
 
     def run_standalone(self, *input_idses, method_name, arg_metadata_list, code_parameters, exec_command, sandbox_dir:str, output_stream):
 
@@ -152,7 +135,7 @@ class LanguageBinder(Binder):
         # check if a number of provided arguments is correct
         self.__check_inputs(input_idses, arg_metadata_list)
 
-        ids_ctypes_list = self.__get_ids_ctypes(arg_metadata_list)
+        ids_ctypes_list = self.__get_ids_native( arg_metadata_list )
 
         tmp_ids_list = list(input_idses)
         for ids_ctype in ids_ctypes_list:
@@ -188,46 +171,58 @@ class LanguageBinder(Binder):
         else:
             return tuple( results )
 
-    def call_init(self, code_parameters: str):
+    def call_init(self, *input_idses, code_parameters:str):
 
-        self.call_basic_method( self.wrapper_init_func, [], None,
-                                         code_parameters=code_parameters )
+        output = self.call_basic_method(*input_idses,
+                                        method_role="init",
+                                        code_parameters=code_parameters)
 
+        return output
 
     # only input arguments, outputs are returned (as a list if more than 1)
     def call_main(self, *input_idses, code_parameters:str):
         """
         """
-        arg_metadata_list = self.actor.code_description.get('arguments')
-        output = self.call_basic_method( self.wrapper_main_func, arg_metadata_list, *input_idses,
-                                         code_parameters=code_parameters)
+        output = self.call_basic_method(*input_idses,
+                                        method_role="main",
+                                        code_parameters=code_parameters)
         return output
 
-    def call_finish(self):
+    def call_finish(self, *input_idses, code_parameters:str):
 
-        self.call_basic_method(self.wrapper_finish_func, [], None,
-                                        code_parameters=None)
+        output = self.call_basic_method(*input_idses,
+                                        method_role="finalize",
+                                        code_parameters=code_parameters)
+
+        return output
 
 
-    def call_basic_method(self, basic_method, arg_metadata_list,
-                          *input_idses, code_parameters = None):
+    def call_basic_method(self, *input_idses, method_role, code_parameters = None):
         """
         """
 
-        if not basic_method:
+        method_implementation = self.__get_wrapper_function(method_role)
+
+        if not method_implementation:
             return
 
+        method_description = self.actor.code_description['implementation']['subroutines'][method_role]
+        arg_metadata_list = method_description.get('arguments')
+        need_code_parameters = method_description.get('need_code_parameters')
+
         c_arglist = []
+        ids_native_list = []
         self.__logger.debug( 'RUN MODE: ' + str( self.runtime_settings.run_mode ) )
 
-        ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
-
         if arg_metadata_list:
+            ids_native_list = self.__get_ids_native( arg_metadata_list )
+
+            if input_idses:
             # check if a number of provided arguments is correct
-            self.__check_inputs( input_idses, arg_metadata_list )
+                self.__check_inputs( input_idses, arg_metadata_list )
 
             tmp_ids_list = list( input_idses )
-            for ids_ctype in ids_ctypes_list:
+            for ids_ctype in ids_native_list:
                 ids_object = None
                 if ids_ctype.intent == Argument.IN:
                     ids_object = tmp_ids_list.pop( 0 )
@@ -236,17 +231,17 @@ class LanguageBinder(Binder):
                 c_arglist.append( c_ids )
 
         # Code Parameterss
-        if code_parameters:
+        if code_parameters and need_code_parameters:
             param_ctype = JavaCodeParameters( code_parameters )
             c_param = param_ctype.convert_to_native_type()
             c_arglist.append( c_param )
 
         # call native MAIN method of wrapper
-        basic_method( *c_arglist )
+        method_implementation( *c_arglist )
 
         # get output data
         results = []
-        for ids_ctype in ids_ctypes_list:
+        for ids_ctype in ids_native_list:
             if ids_ctype.intent == Argument.OUT:
                 results.append( self.ids_converter.convert_to_actor_type( ids_ctype ) )
             self.ids_converter.release( ids_ctype )
@@ -260,73 +255,35 @@ class LanguageBinder(Binder):
             return tuple( results )
 
     def call_set_state(self, state:str):
-        if not self.wrapper_set_state_func:
+        method_implementation = self.__get_wrapper_function("set_state")
+
+        if not method_implementation:
             return
 
         if not state:
             return
 
-        encoded_state = state.encode('utf-8')
+        method_implementation(state)
 
-        cref_state = ctypes.c_char_p(encoded_state)
-        state_size = len(encoded_state)
-        cref_state_size = ctypes.byref(ctypes.c_int(state_size))
 
-        # Add status info to argument list
-        status_info_ctype = StatusCType()
-        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
-
-        # call FINISH
-        self.wrapper_set_state_func(cref_state, cref_state_size,  cref_code, cref_msg)
-
-        # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_ctype )
 
     def call_get_state(self) -> str:
-        if not self.wrapper_get_state_func:
-            return None
+        method_implementation = self.__get_wrapper_function("get_state")
 
-        state = None
+        if not method_implementation:
+            return
 
-        c_ptr_state = ctypes.c_char_p()
-        cref_state = ctypes.pointer( c_ptr_state )
-
-        # Add status info to argument list
-        status_info_ctype = StatusCType()
-        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
-
-        # call native MAIN method of wrapper
-        self.wrapper_get_state_func( cref_state, cref_code, cref_msg )
-
-        # Checking returned DIAGNOSTIC INFO
-        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype )
-
-        state_raw = cref_state.contents.value
-        if state_raw:
-            state = state_raw.decode('utf-8','replace')
+        state = method_implementation()
 
         return state
 
     def call_get_timestamp(self) -> float:
-        if not self.wrapper_get_timestamp_func:
-            return None
+        method_implementation = self.__get_wrapper_function("get_timestamp")
 
-        c_double_timestamp = ctypes.c_double( 0.0 )
-        cref_timestamp = ctypes.pointer( c_double_timestamp )
+        if not method_implementation:
+            return
 
-        # Add status info to argument list
-        status_info_ctype = StatusCType()
-        cref_code, cref_msg = status_info_ctype.convert_to_native_type()
-
-        # call native MAIN method of wrapper
-        self.wrapper_get_timestamp_func( cref_timestamp, cref_code, cref_msg )
-
-        # Checking returned DIAGNOSTIC INFO
-        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype )
-
-        timestamp = cref_timestamp.contents.value
+        timestamp = method_implementation()
 
         return timestamp
 
