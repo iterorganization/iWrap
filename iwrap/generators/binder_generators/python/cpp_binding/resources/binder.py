@@ -252,7 +252,7 @@ class LanguageBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( c_arglist[-2], c_arglist[-1] )
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, method_role )
 
         # get output data
         results = []
@@ -292,7 +292,7 @@ class LanguageBinder(Binder):
         method_implementation(cref_state, cref_state_size,  cref_code, cref_msg)
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, "set_state" )
 
     def call_get_state(self) -> str:
         method_implementation = self.__get_wrapper_function("get_state")
@@ -314,7 +314,7 @@ class LanguageBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, "get_state" )
 
         state_raw = cref_state.contents.value
         if state_raw:
@@ -340,7 +340,7 @@ class LanguageBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, "get_timestamp")
 
         timestamp = cref_timestamp.contents.value
 
