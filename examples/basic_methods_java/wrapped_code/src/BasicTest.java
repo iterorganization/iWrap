@@ -33,8 +33,32 @@ public class BasicTest {
                           imas.distribution_sources  distribution_sources_out,
                           String code_parameters)
     {
+        int inIdsSize = -1;
+
         System.out.println("=======================================================");
         System.out.println("Java code: INITIALISATION called");
+
+        distribution_sources_out.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+
+        inIdsSize = core_profiles_in.time.getDim();
+        System.out.println( "Input IDS size : " + inIdsSize);
+
+        if (inIdsSize > 0) {
+
+            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+
+            // Time : copy from input IDS
+            for (int i = 0; i < inIdsSize; i++) {
+                double newValue = 1000 * code_state + core_profiles_in.time.getElementAt(i);
+                distribution_sources_out.time.setElementAt(i, newValue);
+            }
+        }
+        else {
+            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+            double newValue = 1000 * code_state ;
+            distribution_sources_out.time.setElementAt(0, newValue);
+        }
+
         System.out.println("=======================================================");
     }
 
@@ -106,28 +130,51 @@ public class BasicTest {
     // =======================================
     //             FINALISATION
     //=======================================
-    public void clean_up()
+    public void clean_up() throws Exception
     {
         this.clean_up(null);
     }
 
-    public void clean_up (String code_parameters)
+    public void clean_up (String code_parameters) throws Exception
     {
         this.clean_up(null, null, code_parameters);
     }
 
     public void clean_up (imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out)
+                          imas.distribution_sources  distribution_sources_out) throws Exception
     {
         this.clean_up(core_profiles_in, distribution_sources_out, null);
     }
 
     public void clean_up (imas.core_profiles  core_profiles_in,
                           imas.distribution_sources  distribution_sources_out,
-                          String code_parameters)
+                          String code_parameters) throws Exception
     {
+        int inIdsSize = -1;
+
         System.out.println("=======================================================");
         System.out.println("Java code: FINALISATION called");
+
+        distribution_sources_out.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+
+        inIdsSize = core_profiles_in.time.getDim();
+        System.out.println( "Input IDS size : " + inIdsSize);
+
+        if (inIdsSize > 0) {
+
+            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+
+            // Time : copy from input IDS
+            for (int i = 0; i < inIdsSize; i++) {
+                double newValue = 1000 * code_state + core_profiles_in.time.getElementAt(i);
+                distribution_sources_out.time.setElementAt(i, newValue);
+            }
+        }
+        else {
+            distribution_sources_out.time = new Vect1DDouble(inIdsSize);
+            double newValue = 1000 * code_state ;
+            distribution_sources_out.time.setElementAt(0, newValue);
+        }
         System.out.println("=======================================================");
     }
 
