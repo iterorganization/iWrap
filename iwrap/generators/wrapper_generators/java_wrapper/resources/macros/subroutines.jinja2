@@ -90,7 +90,7 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
             exc.printStackTrace();
         }
 
-        iWrapTools.handle_status_info(status_code, status_message, "{{actor_name}}");
+        iWrapTools.handle_status_info(status_code, status_message, "{{actor_name}}", "{{ sbrt_role | upper }}");
 
         iWrapTools.closeDBEntries(idsDescriptions);
 

@@ -70,19 +70,19 @@ class LanguageBinder(Binder):
         if inputs_number != len(ids_arguments_list):
             raise RuntimeError(f'Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})')
 
-
-
-    def __status_check(self, status_info: JavaCodeStatus):
+    def __status_check(self, status_info: JavaCodeStatus, method_name: str):
 
         actor_name = self.actor.name
         if status_info.code < 0:
             raise Exception(
-                "Actor *** '" + actor_name + "' *** returned an error (" + str( status_info.code ) + "): '"
+                "Actor *** '" + actor_name + " / " + method_name.upper()
+                + "' *** returned an error (" + str( status_info.code ) + "): '"
                 + status_info.message + "'" )
 
         if status_info.code > 0:
             self.__logger.warning(
-                "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      " +
+                "Actor * '" + actor_name + " / " + method_name.upper() +
+                "' * returned diagnostic info: \n     Output flag:      " +
                 str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
 
     def __get_wrapper_library(self):
@@ -92,11 +92,9 @@ class LanguageBinder(Binder):
 
         code_file = self.actor.code_description['implementation']['code_path'].split('/')[-1]
         code_path = self.actor_dir + '/wrapper/lib/' + code_file
-        print('JAR PATH IS: ', code_path)
         jpype.addClassPath(code_path)
 
         wrapper_path = self.actor_dir + '/jar/' + self.actor.name + '.jar'
-        print('JAR PATH IS: ', wrapper_path)
         jpype.addClassPath(wrapper_path)
 
         java_fqcn = 'Wrapper4' + self.actor.name
@@ -154,7 +152,7 @@ class LanguageBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         Binder.read_output(method_name, status_info_ctype, sandbox_dir)
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, method_name )
 
         # get output data
         results = []

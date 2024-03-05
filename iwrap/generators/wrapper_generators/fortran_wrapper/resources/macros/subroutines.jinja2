@@ -189,7 +189,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% endif %}
 
     !-----------Check status info ---------------------
-    call handle_status_info(status_code, status_msg, "{{actor_name}}")
+    call handle_status_info(status_code, status_msg, "{{actor_name}}", "{{ sbrt_role | upper }}")
 
     !-----------Writing output data to file ---------------------
     call write_output("{{ sbrt_role }}.out", status_code, status_msg)

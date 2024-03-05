@@ -109,18 +109,20 @@ class LanguageBinder(Binder):
         wrapper_fun = getattr( wrapper_lib, sbrt_name )
         return wrapper_fun
 
-    def __status_check(self, status_info: StatusCType):
+    def __status_check(self, status_info: StatusCType, method_name: str):
 
         actor_name = self.actor.name
         if status_info.code < 0:
             raise Exception(
-                "Actor *** '" + actor_name + "' *** returned an error (" + str( status_info.code ) + "): '"
+                "Actor *** '" + actor_name + " / " + method_name.upper()
+                + "' *** returned an error (" + str( status_info.code ) + "): '"
                 + status_info.message + "'" )
 
         if status_info.code > 0:
             self.__logger.warning(
-                "Actor * '" + actor_name + "' * returned diagnostic info: \n     Output flag:      " +
-                str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
+                "Actor * '" + actor_name + " / " + method_name.upper()
+                + "' * returned diagnostic info: \n     Output flag:      "
+                + str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
 
     def __get_ids_ctypes(self, arg_metadata_list):
 
@@ -160,7 +162,7 @@ class LanguageBinder(Binder):
 
         # Checking returned DIAGNOSTIC INFO
         Binder.read_output(method_name, status_info_ctype, sandbox_dir)
-        self.__status_check( status_info_ctype )
+        self.__status_check( status_info_ctype, method_name )
 
         # get output data
         results = []

@@ -58,11 +58,12 @@ FUNCTION create_ids_full_name(ids_description)  RESULT (ids_full_name)
 END FUNCTION create_ids_full_name
 
 
-    SUBROUTINE handle_status_info(status_code, status_message, actor_name)
+    SUBROUTINE handle_status_info(status_code, status_message, actor_name, sbrt_name)
             !----  Status info  ----
         integer :: status_code
         type(C_PTR) :: status_message
         character(*) :: actor_name
+        character(*) :: sbrt_name
         character(kind = C_CHAR), dimension(:), pointer :: status_info_array
         integer  :: status_info_size
 
@@ -74,7 +75,7 @@ END FUNCTION create_ids_full_name
             status_info_size = c_str_length(status_message)
             call c_f_pointer(status_message, status_info_array, [status_info_size])
         endif
-        print *, "---Diagnostic information returned from *** ", actor_name, " ***:---"
+        print *, "---Diagnostic information returned from *** ", actor_name, " / ", sbrt_name, " ***:---"
         print *, "-------Output flag    : ", status_code
         print *, "-------Status info: ", status_info_array
         print *, "---------------------------------------------------------"

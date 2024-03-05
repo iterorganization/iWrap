@@ -85,14 +85,14 @@ public class iWrapTools{
         writer.close();
     }
 
-    static public void handle_status_info(int status_code, String status_message, String actor_name)
+    static public void handle_status_info(int status_code, String status_message, String actor_name, String method_name)
     {
         String NO_MSG = "<No diagnostic message>";
         if(status_message == null)
             status_message = NO_MSG;
 
         if(status_code !=0) {
-          System.out.println("---Diagnostic information returned from *** " + actor_name + " ***:---\n");
+          System.out.println("---Diagnostic information returned from *** " + actor_name + " / " + method_name + "***:---\n");
           System.out.println("-------Status code    : " + status_code + "\n");
           System.out.println("-------Status message : " + status_message + "\n" );
           System.out.println("---------------------------------------------------------\n");

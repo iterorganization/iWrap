@@ -71,7 +71,7 @@ int write_output(const char* file_name, int status_code, char* status_message)
     return 0;
 }
 
-int handle_status_info(int status_code, char* status_message, const char* actor_name)
+int handle_status_info(int status_code, char* status_message, const char* actor_name, const char* method_name)
 {
     const char* NO_MSG = "<No diagnostic message>";
     if(status_message == NULL)
@@ -82,7 +82,7 @@ int handle_status_info(int status_code, char* status_message, const char* actor_
     }
 
     if(status_code !=0) {
-      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
+      printf("---Diagnostic information returned from *** %s/%s ***:---\n", actor_name, method_name);
       printf("-------Status code    : %d\n", status_code);
       printf("-------Status message : %s\n", status_message);
       printf("---------------------------------------------------------\n");
