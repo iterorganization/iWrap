@@ -15,7 +15,7 @@ int read_code_parameters(char** xml_string);
 
 int write_output(const char* file_name, int status_code, char* status_message);
 
-int handle_status_info(int status_code, char* status_message, const char* actor_name);
+int handle_status_info(int status_code, char* status_message, const char* actor_name, const char* method_name);
 
 void release_status_info(char* status_message);
 
