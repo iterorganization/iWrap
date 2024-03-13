@@ -110,7 +110,7 @@ class LanguageBinder(Binder):
         if not subroutines.get( method_role ):
             return None
 
-        wrapper_fun = getattr( self.java_wrapper_class, method_role )
+        wrapper_fun = getattr( self.java_wrapper_class, f'call_{method_role}' )
         return wrapper_fun
 
 

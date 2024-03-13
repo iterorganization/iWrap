@@ -1,6 +1,6 @@
 .PHONY: native actor actor-gui wf-run
 
-wf-run: actor
+wf-run:
 	@rm -rf wf_output.txt
 	python3 workflow.py
 	@cmp expected_output.txt wf_output.txt &> /dev/null || \

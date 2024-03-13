@@ -39,7 +39,7 @@ code_description.implementation.code_parameters.parameters) }}
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //                                  WRAPPED GET STATUS SBRT CALL
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    public String get_state() throws Exception
+    public String call_get_state() throws Exception
     {
         String state_str = "";
 
@@ -54,7 +54,7 @@ code_description.implementation.code_parameters.parameters) }}
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //                                  WRAPPED SET STATUS SBRT CALL
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    public void set_state(String state_str) throws Exception
+    public void call_set_state(String state_str) throws Exception
     {
         // - - - - - - - - - - - - - WRAPPED CODE CALL - - - - - -- - - - - - - - - - - -
         this.wrapped_code.{{code_description.implementation.subroutines.set_state}}(state_str);
@@ -66,7 +66,7 @@ code_description.implementation.code_parameters.parameters) }}
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     //                                  WRAPPED GET STATUS SBRT CALL
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    public double get_timestamp() throws Exception
+    public double call_get_timestamp() throws Exception
     {
         double timestamp = -1;
 

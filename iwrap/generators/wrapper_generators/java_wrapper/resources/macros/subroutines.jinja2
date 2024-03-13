@@ -1,6 +1,6 @@
 {% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters) -%}
 
-    public void {{  sbrt_role | lower }} (
+    public void call_{{  sbrt_role | lower }} (
     {%- for argument in sbrt_data.arguments -%}
                     IDSDescription {{ argument.name }}_desc {%- if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
     {% endfor %}
@@ -74,7 +74,7 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
             iWrapTools.open_db_entries(idsDescriptions);
 
             //!!!!!!!!! Java wrapper !!!!!!!!!!!!!!!
-            wrapper.{{  sbrt_role | lower }}(
+            wrapper.call_{{  sbrt_role | lower }}(
         {% for argument in sbrt_data.arguments %}
                         idsDescriptions[{{loop.index - 1 }}]{% if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
         {% endfor %}

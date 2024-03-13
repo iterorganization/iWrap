@@ -49,7 +49,7 @@ public class BasicTest {
 
             // Time : copy from input IDS
             for (int i = 0; i < inIdsSize; i++) {
-                double newValue = 1000 * code_state + core_profiles_in.time.getElementAt(i);
+                double newValue = 1000 + core_profiles_in.time.getElementAt(i);
                 distribution_sources_out.time.setElementAt(i, newValue);
             }
         }
@@ -166,13 +166,13 @@ public class BasicTest {
 
             // Time : copy from input IDS
             for (int i = 0; i < inIdsSize; i++) {
-                double newValue = 1000 * code_state + core_profiles_in.time.getElementAt(i);
+                double newValue = 1000 + core_profiles_in.time.getElementAt(i);
                 distribution_sources_out.time.setElementAt(i, newValue);
             }
         }
         else {
             distribution_sources_out.time = new Vect1DDouble(inIdsSize);
-            double newValue = 1000 * code_state ;
+            double newValue = 1;
             distribution_sources_out.time.setElementAt(0, newValue);
         }
         System.out.println("=======================================================");
