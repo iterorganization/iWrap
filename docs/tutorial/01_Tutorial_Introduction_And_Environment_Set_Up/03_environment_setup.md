@@ -59,7 +59,7 @@ To check if we have properly created our IDS we can use `imasdbs -u <username>` 
 ```
 
 ```{code-cell}
-!imasdbs -u afilipczak
+!imasdbs -u $USER
 ```
 
 ```{admonition} idsdump
@@ -74,7 +74,7 @@ Usage: `idsdump <USER> <TOKAMAK> <VERSION> <SHOT> <RUN> <IDS>`
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-!idsdump afilipczak tutorial_db 3 1 1 core_profiles
+!idsdump $USER tutorial_db 3 1 1 core_profiles
 ```
 
 ```{admonition} Ready to go!
