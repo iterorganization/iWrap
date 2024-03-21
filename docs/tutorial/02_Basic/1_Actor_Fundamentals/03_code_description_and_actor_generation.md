@@ -155,8 +155,7 @@ These are parameters used in **implementation** part:
     - `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
     - `subroutines`: The list of procedures your actor can perform.
         - `main`: The main task.
-            - `name`: The subroutine actual name.  **The name here is also used as the actor's name and installation
-              directory.**
+            - `name`: The subroutine actual name.  
             - `arguments`: List of methods arguments that your code needs or produces.
 
     - `code_path`: Where the main code file is located, e.g., `./iWrapped_codes/code1_fortran/libcode1.a`.
@@ -170,23 +169,7 @@ These are parameters used in **implementation** part:
              
          ```
 
-#### Subroutines
-
-To define *MAIN* subroutine, one has to provide:
-
-- the subroutine name (mandatory)
-- the list of IDSe passed as IN/OUT arguments (mandatory)
-- indication if code parameters have to be passed to subroutine (optional, default=false)
-
-```{admonition} *INIT* and *FINALIZE* subroutines
-:class: hint 
-
-The same information must be provided to define *INIT* and *FINALIZE* subroutines,
-but the purpose and usage of these methods will be explained in the next part of the tutorial
-
-```
-
-***Arguments list:***
+#### Arguments list
 
 These are parameters used in this part:
 
@@ -255,6 +238,22 @@ To change `Edit, Up/Down,` and `Remove`` buttons state to **active** - at least 
 ```
 
 `````
+#### Subroutines
+
+To define *MAIN* subroutine, one has to provide:
+
+- the subroutine name (mandatory)
+- the list of IDSe passed as IN/OUT arguments (mandatory)
+- indication if code parameters have to be passed to subroutine (optional, default=false)
+
+```{admonition} *INIT* and *FINALIZE* subroutines
+:class: hint 
+
+The same information must be provided to define *INIT* and *FINALIZE* subroutines,
+but the purpose and usage of these methods will be explained in the next part of the tutorial
+
+```
+
 
 ***Fortran example***
 
