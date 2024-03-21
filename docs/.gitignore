@@ -1,0 +1,6 @@
+.idea
+.vs_code
+docs_book_venv
+_build
+*.exe
+!*.yaml

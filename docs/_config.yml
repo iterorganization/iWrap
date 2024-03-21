@@ -1,0 +1,19 @@
+# _config.yml
+title: iWrap Documentation
+author: PSNC Poznan team - Bartek Palak, Jędrzej Wasik, Agata Filipczak, Aleksander Wisznowski, Bartłomiej Pogodziński
+logo: images/imas.png
+
+execute:
+  execute_notebooks: cache
+  timeout: 540
+
+exclude_patterns:
+  - "docs_book_venv/*"
+  - "README.md"
+#
+sphinx:
+  recursive_update: true
+  config:
+    html_theme_options:
+      show_navbar_depth: 3      #left sidebar
+      show_toc_level: 3         #rigth sidebar
