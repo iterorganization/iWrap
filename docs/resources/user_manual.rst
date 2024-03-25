@@ -91,13 +91,10 @@ Preparation of the code and actor generation
 .. :doc:`Usage of an actor <actor_usage>`
 
 
----
-
-
 .. toctree::
    :numbered:
    :maxdepth: 10
 
-    /resources/code_api.rst
-    /resources/actor_generation.rst
-    /resources/actor_usage.rst
+   /resources/code_api.rst
+   /resources/actor_generation.rst
+   /resources/actor_usage.rst
