@@ -13,7 +13,7 @@ function display_help {
 }
 
 # Initialize variables with updated default values
-BASE_IMAGE="gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.39.0_AL-5.0.0_IWRAP-0.9.1"
+BASE_IMAGE="gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al:DD-3.39.0_AL-5.0.0"
 CONTEXT="."
 DOCKER_TARGET="tutorial"
 TARGET=""
@@ -49,10 +49,10 @@ done
 # Configure BASE_IMAGE based on AL_VERSION
 case ${AL_VERSION} in
     "al5")
-        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.39.0_AL-5.0.0_IWRAP-0.9.1'
+        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al:DD-3.39.0_AL-5.0.0'
         ;;
     "al4")
-        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al-iwrap:DD-3.38.1_AL-4.11.7_IWRAP-0.9.1'
+        BASE_IMAGE='gitlab.eufus.psnc.pl:5050/containerization/imas/imas-installer/al:DD-3.38.1_AL-4.11.7'
         ;;
     *)
         echo "Invalid AL_VERSION: ${AL_VERSION}"

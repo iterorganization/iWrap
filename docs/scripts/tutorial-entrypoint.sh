@@ -3,7 +3,16 @@ set -e
 
 eval "$(/usr/bin/tclsh /usr/share/Modules/libexec/modulecmd.tcl bash load IMAS)"
 
-source set-dock.sh
+COPY_PATH="/opt/iwrap/docs"
+cp -r  "${COPY_PATH}/documentation"           /docs/documentation
+cp -r  "${COPY_PATH}/images/"                 /docs/images
+cp -r  "${COPY_PATH}/scripts/"                /docs/
+cp -r  "${COPY_PATH}//tutorial"               /docs/tutorial
+cp -r  "${COPY_PATH}/_config.yml"             /docs/
+cp -r  "${COPY_PATH}/_toc.yml"                /docs/
+cp -r  "${COPY_PATH}/iWrap_introduction.md"   /docs/
+
+source set-docker.sh
 
 jupyter-book build .
 echo -e  "\n JupyterBook is successfully  built!"

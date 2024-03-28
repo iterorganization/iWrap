@@ -80,10 +80,10 @@ else
   echo "Starting fresh container"
   # The rest of the script remains the same
   docker run --name $CONTAINER_NAME \
+           --volume "/home/awiszniowski/GitLab/iwrap/:/opt/iwrap/" \
            -e DISPLAY=$DISPLAY \
            -p ${HOST_PORT}:8888 \
            -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
            -it "$IMAGE_NAME:$IMAGE_TAG"
-#           -v /home/afilipczak/workspace/iWRAP/iwrap/docs/_build:/docs/_build \
 fi
 
