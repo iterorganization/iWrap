@@ -19,7 +19,7 @@ MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
 INSTALL_MOD ?= $(HOME)/IWRAP_MODULE_DIR/
 
 all: iwrap_build
-install: install_dir install_iwrap install_module
+install: install_dir install_iwrap install_module docs
 uninstall: uninstall_module uninstall_iwrap
 
 .PHONY: build/module/$(MODULEFILE) iwrap_build build_deps build_deps_clear help clean docs
