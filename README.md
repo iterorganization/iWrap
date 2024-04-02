@@ -12,9 +12,9 @@ For user conveniency it provides two kinds of interfaces:
 
 ## Tutorials
 
-To get to know with iWrap please read `tutorials/README.md` for generating interactive and step-by-step tutorial in Jupyter Notebook. 
+To learn about iWrap, please follow `tutorials/README.md` to generate an interactive and step-by-step tutorial in a Jupyter Notebook. 
 
-We have also prepared HTML and Docker version, so you can choose the one that suits you best.
+We have also prepared HTML and Docker versions, so you can choose the one that suits you best.
 
 # Configuration of working environment
 
