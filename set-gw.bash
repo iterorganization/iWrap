@@ -9,9 +9,14 @@ fi
 
 export PATH="$PWD/bin:$PATH"
 export PYTHONPATH=$PWD:$PYTHONPATH
+export IWRAP_HOME=$PWD
+
 
 # setting environment for running examples
 module load xmllib/3.3.1/gcc
+module load firefox/111.0.1
 imasdb iter
 imasdb tmp
 export PYTHONPATH=$ITMWORK/IWRAP_ACTORS:$PYTHONPATH
+
+./docs/scripts/create_db

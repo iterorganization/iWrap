@@ -93,10 +93,6 @@ clean: build_deps
 	$(PY_CMD) setup.py clean
 	@$(MAKE) build_deps_clear --no-print-directory
 	find . -type d -name '__pycache__' | xargs rm -r
-# 	make -C docs clean
-
-# docs:
-# 	make -C docs docs
 
 docs:
 	@$(SHELL_SCRIPT)
