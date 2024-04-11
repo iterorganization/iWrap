@@ -11,9 +11,11 @@
     - [1.3.3. iWrap tutorial](#133-iwrap-tutorial)
     - [1.3.4. Tutorial Structure](#134-tutorial-structure)
   - [1.4. `Python Virtual Environment` - building iWrap tutorial without Docker](#14-python-virtual-environment---building-iwrap-tutorial-without-docker)
-    - [1.4.1. Prerequisites](#141-prerequisites)
-    - [1.4.2. Creating Virtual Environment](#142-creating-virtual-environment)
-    - [1.4.3. Accessing `JupyterLab`](#143-accessing-jupyterlab)
+    - [1.4.1. `iWrap` tutorial - regular user](#141-iwrap-tutorial---regular-user)
+    - [1.4.2. `iWrap` tutorial - developer](#142-iwrap-tutorial---developer)
+    - [1.4.2.1. Prerequisites](#1421-prerequisites)
+    - [1.4.2.2. Creating tutorial](#1422-creating-tutorial)
+    - [1.4.2.3. Accessing `JupyterLab`](#1423-accessing-jupyterlab)
     <!-- - [1.4.4. Environment Cleanup Script](#144-environment-cleanup-script) -->
   - [1.5. Docker based approach](#15-docker-based-approach)
     - [1.5.1. Using images from `Container registry`](#151-using-images-from-container-registry)
@@ -198,83 +200,75 @@ Begin with the `01_Tutorial_Introduction_And_Environment_Set_Up` folder and proc
 If Docker is not an option or not preferred, you can still run iWrap tutorials using a **Python virtual environment**.  
    This guide will walk you through the process step-by-step.
 
-### 1.4.1. Prerequisites
+### 1.4.1 `iwrap` tutorial - regular user
+
+For regular user there is a method of accessing `iWrap` tutorials without having to have `iWrap` repository or building documentation yourself. Prebuilt documentation with tutorials will be available after loading `IMAS` and latest `iWrap` module. in order to load `iWrap` execute following command:
+
+```bash
+# For SDCC environment 
+module load iWrap/0.9.2-GCCcore-10.2.0
+
+# For GW environment
+module load iwrap/0.9.1
+```
+
+After loading `iWrap` module user will have access to `iwrap-tutorial` script, which is responsible for seting up tutorial environment for regular users. In order to execute it, user need to run following command:
+
+```bash
+source iwrap-tutorial
+```
+
+following script will do following things:
+1. Creates `Python Virtual Environment` named `docs_book_venv`
+2. Install all required packages 
+3. Creates symbolic links to interactive tutorials (`.ipynb`) and static documentation (`.html`) 
+4. Open static documentation and launch `Jupyter Lab` with tutorials
+
+### 1.4.2 `iwrap` tutorial - developer
+
+Following section is for users who'd like to build documentation from their copy of repository with changes on their local branch.
+
+#### 1.4.2.1. Prerequisites
 
 Before you start, make sure you have the correct version of Python installed. Here are the initial steps:
 
-1. Navigate to the `docs/` directory.
-2. Switch to `Bash` shell
-3. Add the `scripts` directory to your `PATH` variable.   
-
-   ```sh
-   cd tutorials
-   export PATH=$PATH:$PWD/scripts
-    ```
-4. Depending on your user type, execute the appropriate script:
+1. Switch to `Bash` shell
+2. Depending on your user type, execute inside `iWrap` directory the appropriate script:
     - For `SDCC` users
         ```sh
-        source set-sdcc.sh
+        source set-iter.sh
         ```
     - For `Gateway` users:
         ```sh
         source set-gw.sh
         ```
 
-These scripts load necessary modules, such as `IMAS` and `iWrap`, and trigger the `create_db` script.
+These scripts load necessary modules, such as `IMAS` and add neccessary paths for `iWrap` and trigger the `create_db` script.
 
+### 1.4.2. Creating tutorial
 
-### 1.4.2. Creating Virtual Environment
-
-Once you've completed the prerequisites, execute the virtual environment setup script:
-
-```shell
-> set-docs.sh -h
-
-Build the JupyterBook and start JupyterLab.
-
-Usage: ./scripts/set-docs.sh [OPTION]...
-
-Options:
-  -h, --help    display this help and exit
-  --no-cache    delete _build/ (cache) directory before generating JupyterBook
-
-```
-```sh
-source set-docs.sh
-```
-This script checks if a Python virtual environment directory exists.  
-If not, it creates one and installs the required Python packages in the `venv` directory.   
-Check for `--no-cache` argument and delete  `_build` directory if present.  
-  Then, it converts the ``.md`` files (containing iWrap tutorials) into ``.html`` and ``.ipynb`` files.   
-At the end, it runs `Jupyter Lab` with ready tutorials to learn from.
-
-
-### 1.4.3. Accessing `JupyterLab`
-
-Inside `Python virtual environment` we're installing `JupyterLab` which allows you to run tutorials interactively.   
-In order to access it you need to:   
-
-1. activate `Python virtual environment` from `docs` directory.
-```sh
-source docs_book_venv/bin/activate
-```
-
-
-2.  start `JupyterLab` instance.
-```sh
-jupyter lab --ip=0.0.0.0 --port=8888 --allow-root --IdentityProvider.token='' --ServerApp.allow_origin='*' --ServerApp.trust_xheaders='True' --browser=firefox
-```
-
-You can instead use script `scripts/start-tutorial-in-venv.sh` that includes above commands
+Once you've completed the prerequisites, execute following command to build documentation with `iWrap` tutorial
 
 ```sh
-source start-tutorial-in-venv.sh
+make docs
 ```
 
-To deactive virtual environment simply run
-```sh
-deactivate
+Following command uses `Makefile` to trigger execution of a script, which is responsible for building `iWrap` tutorial using your local repository.
+Tutorial with documentation will be saved inside `docs/_build/` directory.
+
+
+### 1.4.2.3. Accessing `JupyterLab`
+
+Recommended way of accessing build documentation with tutorial is by execution `iwrap-tutorial` script. In order to do that execute following command:
+```bash
+source iwrap-tutorial
 ```
+
+following script will do following things:
+1. Creates `Python Virtual Environment` named `docs_book_venv`
+2. Install all required packages 
+3. Creates symbolic links to interactive tutorials (`.ipynb`) and static documentation (`.html`) 
+4. Open static documentation and launch `Jupyter Lab` with tutorials
 
 <!-- ### 1.4.4. Environment Cleanup Script
 
