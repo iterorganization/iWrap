@@ -1,0 +1,36 @@
+import logging
+import socket
+from pathlib import Path
+
+import iwrap
+
+__logger = logging.getLogger( __name__ )
+
+known_hosts = {
+    "iter.org" : "ITER.HPC",
+    "io-ls-bamboowk." : "ITER.CI",
+    "marconi.cineca.it" : "EUROfusion.Marconi",
+    "galileo.cineca.it" : "EUROfusion.Marconi"
+}
+
+
+def get_config_file_for_domain():
+
+    domain_fqdn: str = socket.getfqdn()
+
+    for key, value in known_hosts.items():
+        if key in domain_fqdn:
+            config_file_name = f'config_{value}.yaml'
+            break
+    else:
+        config_file_name = "config_default.yaml"
+        __logger.warning( f'No specific config for "{domain_fqdn}". Default file is used.' )
+
+    config_file_dir = Path(iwrap.IWRAP_DIR, 'resources/config')
+    config_path = Path( config_file_dir, config_file_name )
+    return config_path
+
+
+if __name__ == "__main__":
+    file_path = get_config_file_for_domain()
+    print(file_path)
