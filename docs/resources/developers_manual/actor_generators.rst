@@ -31,6 +31,12 @@ Generator API
 
    class AbstractGenerator( ABC ):
 
+    COMPLIANT_API: str = 'a.b.c'
+
+    @classmethod
+    def check_api_compliance(cls,) -> None:
+        ...
+
     def configure(self, info_output_stream=sys.stdout):
         self.__info_output_stream = info_output_stream
 
@@ -228,6 +234,59 @@ a place where it is put.
    * It is put in a proper repository location (built-in generator)
    * It is put in a correctly named package (plugged-in generator)
    * The directory containing package with plugged-in generator is added to ``PYTHONPATH``
+
+Plugins <--> iWrap API compatibility
+#######################################################################################################################
+Plugins, thanks to their modularity, allow users to compose iWrap only from components that are necessary
+for a given purpose, omitting unused functionalities. However, as both iWrap and the plug-ins continue to evolve,
+ensuring cross-compatibility between a specific version of iWrap and the plug-ins is a challenge.
+To warn user about the potential incompatibilities, following mechanism has been proposed:
+
+
+* iWrap keeps the current version of the plugin API (`iwrap.generators.API_VERSION`)
+
+  .. note::
+       iWrap can be queried from the commandline to check the current version of the API used
+       to communicate between iWrap and plugins
+
+       .. code-block:: bash
+
+           bash> iwrap --plugins-api-version
+           iWrap <-> plugins API version:   2.0
+
+
+* Every plugin should declare the compliant API using class attribute `COMPLIANT_API`
+* The class method `check_api_compliance()` determines whether the plugin is definitely compatible with the current version
+  of the iWrap or if it could be not compatible.
+* The method checks the API version currently handled by iWrap (Mi.mi) against declared
+  compliant version handled by the plugin (Mp.mp)
+* The method detects INCOMPATIBILITY if:
+
+  + The plugin doesn't implement versioning API
+  + The major versions differs (Mp != Mi)
+  + The plugin API version is newer than iWrap one (Mp.mp > Mi.mi), i.e.: plugin may use changes
+    not yet available in the current
+
+* The COMPATIBILITY is assumed only if:
+   + The major versions are equal (Mp == Mi) and
+   + The plugin API version is older or equal than iWrap one (Mp.mp <= Mi.mi)
+
+* If the plugin is not compatible, the user is informed about the error and the plugin is not loaded.
+
+  This method can be overwritten in generator implementation classes to better address issues
+  related with compatibility of the particular plugin
+
+.. code-block:: python
+
+   class AbstractGenerator( ABC ):
+
+        COMPLIANT_API: str = 'a.b.c'
+
+        @classmethod
+        def check_api_compliance(cls) -> None:
+            ...
+
+
 
 
 .. Example-TBA

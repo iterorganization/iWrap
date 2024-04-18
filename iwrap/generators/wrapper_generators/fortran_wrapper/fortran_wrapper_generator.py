@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from typing import Set, List
 
-
+from iwrap import generators
 from iwrap.generation_engine.utils.jinja2_template_processing import process_template_dir
 from iwrap.generators.wrapper_generators import WrapperGenerator
 from iwrap.settings.project import ProjectSettings
@@ -17,11 +17,14 @@ import sys
 from iwrap.settings.platform.platform_settings import PlatformSettings
 
 
-
 class FortranWrapperGenerator(WrapperGenerator):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
+    COMPLIANT_API = generators.API_VERSION
+    """ The API version compatible with this plugin. 
+    It is a built-in plugin, so it should be always up to date
+    """
 
     @property
     def type(self) -> str:
