@@ -16,14 +16,6 @@ if [[ $1 == "-h" || $1 == "--help" ]]; then
     exit 0
 fi
 
-## Function to change user name in markdown files
-#function change_user_name() {
-#    find ./tutorial -type f -iname "*.md" -print0 | while IFS= read -r -d '' FILE
-#    do
-#        sed -i "s/$1/$2/g" "$FILE"
-#    done
-#}
-
 # Define the virtual environment directory
 VENV_DIR="docs_book_venv"
 # Function to activate virtual environment and build the JupyterBook
@@ -71,17 +63,9 @@ else
     echo "Virtual environment '${VENV_DIR}' exists."
 fi
 
-
-
-#change_user_name "iwrap_user" "$USER"
-#echo -e "\n Changed 'iwrap_user' into '$USER'"
-
 # Pass --no-cache argument to the activate_and_build function if present
 if [[ $1 == "--no-cache" ]]; then
     activate_and_build "--no-cache"
 else
     activate_and_build
 fi
-
-#change_user_name "$USER" "iwrap_user"
-echo -e "\n Changed back from '$USER' into 'iwrap_user'"
