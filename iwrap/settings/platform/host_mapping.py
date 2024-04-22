@@ -7,8 +7,6 @@ import iwrap
 __logger = logging.getLogger( __name__ )
 
 known_hosts = {
-    "iter.org" : "ITER.HPC",
-    "io-ls-bamboowk." : "ITER.CI",
     "marconi.cineca.it" : "EUROfusion.Marconi",
     "galileo.cineca.it" : "EUROfusion.Marconi"
 }
