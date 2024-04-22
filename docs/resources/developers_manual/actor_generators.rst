@@ -31,7 +31,7 @@ Generator API
 
    class AbstractGenerator( ABC ):
 
-    COMPLIANT_API: str = 'a.b.c'
+    COMPLIANT_API: str = 'Major.minor'
 
     @classmethod
     def check_api_compliance(cls,) -> None:
@@ -280,7 +280,7 @@ To warn user about the potential incompatibilities, following mechanism has been
 
    class AbstractGenerator( ABC ):
 
-        COMPLIANT_API: str = 'a.b.c'
+        COMPLIANT_API: str = 'Major.minor'
 
         @classmethod
         def check_api_compliance(cls) -> None:
