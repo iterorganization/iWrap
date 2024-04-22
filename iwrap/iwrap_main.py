@@ -39,6 +39,11 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
                                    help="actor installation directory" )
 
     information_group = parser.add_argument_group( 'Additional information' )
+
+    information_group.add_argument( '--plugins-api-version',
+                                    action='store_true',
+                                    help="prints version of iWrap <-> plugins API" )
+
     information_group.add_argument( '--list-actor-types',
                                     action='store_true',
                                     help="lists registered actor types that can be generated" )
@@ -67,6 +72,11 @@ def main(argv: List[str] = sys.argv[1:], is_commandline_mode=True) -> int:
     parser = get_parser( is_commandline_mode )
     args = parser.parse_args( argv )
     args.gui = not is_commandline_mode
+
+    if args.plugins_api_version:
+        import iwrap.generators
+        print('iWrap <-> plugins API version:', '\t', iwrap.generators.API_VERSION )
+        return 0
 
     Engine().startup()
 
