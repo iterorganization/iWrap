@@ -13,14 +13,8 @@ Code signature
 
     public class <class name> {
 
-        /* * * INIT method * * */
-        public void <method name> ([String code_parameters]) throws Exception { ... }
-
-        /* * * FINALIZE method * * */
-        public void <method name>( ) throws Exception { ... }
-
-        /* * * MAIN method * * */
-        public void <method name>(imas.<ids_type> ids1, ..., imas.<ids_type> idsN[, String codeParameters]) throws Exception { ... }
+        /* * * INIT / MAIN / FINALIZE method * * */
+        public Object[] <method name>(imas.<ids_type> ids)_in1, ..., imas.<ids_type> ids_inN[, String codeParameters]) throws Exception { ... }
 
         /* * * GET_STATE method * * */
         public String <method name>() throws Exception { ... }
@@ -44,22 +38,14 @@ Methods
 Arguments
 ########################
 
-*INIT subroutine:*
+*INIT* / *MAIN* / *FINALIZE* subroutines:
 
--  XML parameters:
-
-   -  **Optional**  argument
-   -  Input argument
-   -  Defined as   ``String``
-
-*MAIN subroutine:*
-
--  Input and output IDSes:
+-  Input IDSes:
 
    -  **Optional** arguments
-   -  Input or output argument
+   -  Input argument
    -  Defined as ``imas.<ids_type>``
-   -  Output arguments must be passed as a valid IDS objects
+
 
 -  XML parameters:
 
@@ -67,9 +53,12 @@ Arguments
    -  Input argument
    -  Defined as ``String``
 
-*FINALIZE subroutine:*
+-  Returns: output IDSes:
 
--  No INPUT/OUTPUT arguments:
+   -  Output arguments
+   -  Defined as an array ``Object[]``
+   -  Elements of the array should be of ``imas.<ids_name>`` type
+
 
 *GET_STATE subroutine:*
 
@@ -102,61 +91,69 @@ Example
 
 .. code-block:: java
 
-public class BasicTest {
+    public class BasicTest {
 
-    /* * * INIT method * * */
-    public void init_code (String code_parameters) throws Exception
-    {
-        System.out.println("Java code: INITIALISATION called");
-         ...
-         // method body
-         ...
+        /* * * INIT method * * */
+        public void init_code (String code_parameters) throws Exception
+        {
+            System.out.println("Java code: INITIALISATION called");
+             ...
+             // method body
+             ...
+        }
+
+        /* * * MAIN method * * */
+        public void code_step(imas.core_profiles  core_profiles_in,
+                              String codeParameters) throws Exception
+        {
+             imas.distribution_sources  ds1_out = new imas.distribution_sources();
+             imas.distribution_sources  ds2_out = new imas.distribution_sources();
+
+             Object retArray = new Object[2];
+
+             System.out.println("Java code: MAIN called");
+             ...
+             // method body
+             ...
+            retArray[0] = ds1_out;
+            retArray[1] = ds2_out;
+
+            return retArray;
+        }
+
+        /* * * FINALIZE method * * */
+        public void clean_up( ) throws Exception
+        {
+            System.out.println("Java code: FINALISATION called");
+        }
+
+        /* * * GET_STATE method * * */
+        public String get_code_state() throws Exception
+        {
+            String state_out = ....;
+
+            System.out.println("Java code: GET STATE called");
+            return state_out;
+        }
+
+        /* * * SET_STATE method * * */
+        public void restore_code_state( String state ) throws Exception
+        {
+            this.code_state = state;
+
+            System.out.println("Java code: SET STATE called");
+        }
+
+        /* * * GET_TIMESTAMP method * * */
+        public double  get_timestamp_cpp() throws Exception
+        {
+            double timestamp_out;
+
+            System.out.println("Java code: GET TIMESTAMP called");
+            timestamp_out = .....;
+            return timestamp_out;
+        }
     }
-
-    /* * * MAIN method * * */
-    public void code_step(imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out,
-                          String codeParameters) throws Exception
-    {
-         System.out.println("Java code: MAIN called");
-         ...
-         // method body
-         ...
-    }
-
-    /* * * FINALIZE method * * */
-    public void clean_up( ) throws Exception
-    {
-        System.out.println("Java code: FINALISATION called");
-    }
-
-    /* * * GET_STATE method * * */
-    public String get_code_state() throws Exception
-    {
-        String state_out = ....;
-
-        System.out.println("Java code: GET STATE called");
-        return state_out;
-    }
-
-    /* * * SET_STATE method * * */
-    public void restore_code_state( String state ) throws Exception
-    {
-        this.code_state = state;
-
-        System.out.println("Java code: SET STATE called");
-    }
-
-    /* * * GET_TIMESTAMP method * * */
-    public double  get_timestamp_cpp() throws Exception
-    {
-        double timestamp_out;
-
-        System.out.println("Java code: GET TIMESTAMP called");
-        timestamp_out = .....;
-        return timestamp_out;
-    }
-
 
 Code packaging
 ################

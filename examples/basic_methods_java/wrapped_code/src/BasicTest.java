@@ -13,26 +13,27 @@ public class BasicTest {
     //             INITIALISATION
     //=======================================
 
-    public void init_code()
+    public Object[] init_code()
     {
-        this.init_code(null);
+        return this.init_code(null, null);
     }
 
-    public void init_code (String code_parameters)
+    public Object[] init_code (String code_parameters)
     {
-        this.init_code(null, null, code_parameters);
+        return this.init_code(null, code_parameters);
     }
 
-        public void init_code (imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out)
+        public Object[] init_code (imas.core_profiles  core_profiles_in)
     {
-        this.init_code(core_profiles_in, distribution_sources_out, null);
+        return this.init_code(core_profiles_in, null);
     }
 
-    public void init_code (imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out,
+    public Object[] init_code (imas.core_profiles  core_profiles_in,
                           String code_parameters)
     {
+       imas.distribution_sources  distribution_sources_out = new imas.distribution_sources();
+       Object[] retArray = new Object[1];
+
         int inIdsSize = -1;
 
         System.out.println("=======================================================");
@@ -60,6 +61,9 @@ public class BasicTest {
         }
 
         System.out.println("=======================================================");
+
+        retArray[0] = distribution_sources_out;
+        return retArray;
     }
 
 
@@ -67,17 +71,20 @@ public class BasicTest {
     // =======================================
     //             MAIN
     //=======================================
-    public void code_step(imas.distribution_sources  distribution_sources_in,
-                          imas.core_profiles  core_profiles_out)
+    public Object[] code_step(imas.distribution_sources  distribution_sources_in)
     {
-         this.code_step(distribution_sources_in, core_profiles_out, null);
+         return this.code_step(distribution_sources_in, null);
     }
 
-    public void code_step(imas.distribution_sources  distribution_sources_in,
-                          imas.core_profiles  core_profiles_out,
+    public Object[] code_step(imas.distribution_sources  distribution_sources_in,
                           String codeParameters)
     {
+        imas.core_profiles  core_profiles_out;
+        Object[] retArray = new Object[1];
+
+
         int inIdsSize = -1;
+
 
         // INITIAL DISPLAY
         System.out.println( "=======================================");
@@ -99,6 +106,7 @@ public class BasicTest {
 
         System.out.println( "Counting to : " + code_state);
 
+        core_profiles_out = new imas.core_profiles();
         core_profiles_out.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
 
         inIdsSize = distribution_sources_in.time.getDim();
@@ -125,32 +133,35 @@ public class BasicTest {
         System.out.println( "END OF PHYSICS CODE");
         System.out.println( "=======================================");
         System.out.println( " ");
+
+        retArray[0] = core_profiles_out;
+        return retArray;
     }
 
     // =======================================
     //             FINALISATION
     //=======================================
-    public void clean_up() throws Exception
+    public Object[]  clean_up() throws Exception
     {
-        this.clean_up(null);
+        return this.clean_up(null, null);
     }
 
-    public void clean_up (String code_parameters) throws Exception
+    public Object[]  clean_up (String code_parameters) throws Exception
     {
-        this.clean_up(null, null, code_parameters);
+        return this.clean_up(null, code_parameters);
     }
 
-    public void clean_up (imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out) throws Exception
+    public Object[]  clean_up (imas.core_profiles  core_profiles_in) throws Exception
     {
-        this.clean_up(core_profiles_in, distribution_sources_out, null);
+        return this.clean_up(core_profiles_in, null);
     }
 
-    public void clean_up (imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out,
+    public Object[]  clean_up (imas.core_profiles  core_profiles_in,
                           String code_parameters) throws Exception
     {
         int inIdsSize = -1;
+        Object[] retArray = new Object[1];
+        imas.distribution_sources  distribution_sources_out = new imas.distribution_sources();
 
         System.out.println("=======================================================");
         System.out.println("Java code: FINALISATION called");
@@ -176,6 +187,9 @@ public class BasicTest {
             distribution_sources_out.time.setElementAt(0, newValue);
         }
         System.out.println("=======================================================");
+
+        retArray[0] = distribution_sources_out;
+        return retArray;
     }
 
 

@@ -8,7 +8,8 @@
                     String codeParameters
     {% endif-%} ) throws Exception
     {
-
+        final int IDS_ARGS_NO = {{ sbrt_data.arguments | selectattr("intent", "equalto", "IN") | list | length }};
+        Object[] retArray = null;
 {% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
     {{ ids_macro.declare(argument) }}
@@ -22,8 +23,8 @@
 
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
-    this.wrapped_code.{{sbrt_data.name}}(
-    {%- for argument in sbrt_data.arguments -%}
+    retArray = this.wrapped_code.{{sbrt_data.name}}(
+    {%- for argument in sbrt_data.arguments if argument.intent == 'IN' -%}
                     {{ argument.name }} {%- if not loop.last or (code_parameters and sbrt_data.need_code_parameters) %}, {% endif%}
     {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters%}
@@ -31,6 +32,21 @@
 {%-endif-%}
 );
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Check retArray size vs IDS_ARGS_NO
+    if (IDS_ARGS_NO > 0 && retArray == null)
+        throw new Exception("{{actor_name}}/{{ sbrt_data.name }}: Returned array is NULL!" );
+
+    int arraySize = retArray != null ? retArray.length : 0;
+
+    if ( IDS_ARGS_NO != arraySize)
+        throw new Exception("{{actor_name}}/{{ sbrt_data.name }}: Returned array size (" + arraySize + ") differs from the expected one (" + IDS_ARGS_NO + ")" );
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // Get output variables from an array
+
+{% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
+     {{ argument.name }} = (imas.{{ argument.type }}) retArray[{{loop.index - 1 }}];
+{% endfor %}
 
    // ------------ Provenance information --------------
 {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
