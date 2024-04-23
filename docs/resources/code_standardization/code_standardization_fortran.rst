@@ -12,22 +12,7 @@ Code signature
      module <module name>
 
      !
-     !    INITIALISATION SUBROUTINE
-     !
-     subroutine <init subroutine name> ([xml_parameters,] status_code, status_message)
-       use ids_schemas
-
-       ! XML code parameters
-       type(ids_parameters_input) :: xml_parameters
-
-       ! status info
-       integer, intent(OUT) :: status_code
-       character(len=:), pointer, intent(OUT) :: status_message
-
-     end subroutine <init subroutine name>
-
-     !
-     !    MAIN SUBROUTINE
+     !    INIT/MAIN/FINALIZE SUBROUTINE
      !
      subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml_parameters], status_code, status_message)
        use ids_schemas
@@ -45,18 +30,6 @@ Code signature
        character(len=:), pointer, intent(OUT) :: status_message
 
      end subroutine <subroutine name>
-
-     !
-     !    FINALISATION SUBROUTINE
-     !
-     subroutine <finish subroutine name> (status_code, status_message)
-       use ids_schemas
-
-       ! status info
-       integer, intent(OUT) :: status_code
-       character(len=:), pointer, intent(OUT) :: status_message
-
-     end subroutine <finish subroutine name>
 
     !
     !    GET_STATE SUBROUTINE
@@ -98,7 +71,6 @@ Code signature
 
     end module <module name>
 
-
 Module
 ########################
 
@@ -119,27 +91,7 @@ Subroutines
 Arguments
 ########################
 
-*INIT subroutine:*
-
--  XML parameters:
-
-   -  **Optional**  argument
-   -  Intent: IN
-   -  Defined as ``type(ids_parameters_input), intent(IN)``
-
--  Status code:
-
-   -  **Mandatory**  argument
-   -  Intent: OUT
-   -  Defined as  ``integer, intent(OUT)``
-
--  Status message
-
-   -  **Mandatory**\  argument
-   -  Intent: OUT
-   -  Defined as: ``character(len=:), pointer, intent(OUT)``
-
-*MAIN subroutine:*
+*INIT* / *MAIN* / *FINALIZE* subroutines:
 
 -  Input and output IDSes:
 
@@ -164,21 +116,6 @@ Arguments
    -  **Mandatory**  argument
    -  Intent: OUT
    -  Defined as: ``character(len=:), pointer, intent(OUT)``
-
-*FINALIZE subroutine:*
-
--  Status code:
-
-   -  **Mandatory**  argument
-   -  Intent: OUT
-   -  Defined as  ``integer, intent(OUT)``
-
--  Status message
-
-   -  **Mandatory**\  argument
-   -  Intent: OUT
-   -  Defined as: ``character(len=:), pointer, intent(OUT)``
-
 
 *GET_STATE subroutine:*
 
@@ -243,7 +180,7 @@ Arguments
 
 
 .. warning::
-   Only XML parameters are passed to native code, so only ``parameters_value`` field
+   Only XML parameters are passed to the code, so only ``parameters_value`` field
    of ``ids_parameters_input`` derived type is valid !
 
 Example
