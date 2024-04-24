@@ -8,7 +8,7 @@
                     String codeParameters
     {% endif-%} ) throws Exception
     {
-        final int IDS_ARGS_NO = {{ sbrt_data.arguments | selectattr("intent", "equalto", "IN") | list | length }};
+        final int IDS_ARGS_NO = {{ sbrt_data.arguments | selectattr("intent", "equalto", "OUT") | list | length }};
         Object[] retArray = null;
 {% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
