@@ -94,16 +94,23 @@ Example
     public class BasicTest {
 
         /* * * INIT method * * */
-        public void init_code (String code_parameters) throws Exception
+        public  Object[] init_code (String code_parameters) throws Exception
         {
+            Object retArray = new Object[1];
+            imas.distribution_sources  ds_out = new imas.distribution_sources();
+
             System.out.println("Java code: INITIALISATION called");
              ...
              // method body
              ...
+
+            retArray[0] = ds_out;
+
+            return retArray;
         }
 
         /* * * MAIN method * * */
-        public void code_step(imas.core_profiles  core_profiles_in,
+        public  Object[] code_step(imas.core_profiles  core_profiles_in,
                               String codeParameters) throws Exception
         {
              imas.distribution_sources  ds1_out = new imas.distribution_sources();
@@ -122,9 +129,11 @@ Example
         }
 
         /* * * FINALIZE method * * */
-        public void clean_up( ) throws Exception
+        public Object[]  clean_up( ) throws Exception
         {
             System.out.println("Java code: FINALISATION called");
+
+            return null;
         }
 
         /* * * GET_STATE method * * */
