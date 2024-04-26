@@ -22,11 +22,15 @@ def get_config_file_for_domain():
             break
     else:
         config_file_name = "config_default.yaml"
-        __logger.warning( f'No specific config for "{domain_fqdn}". Default file is used.' )
+        __logger.warning( f'No specific config for "{domain_fqdn}". Default config file is used.' )
 
-    config_file_dir = Path(iwrap.IWRAP_DIR, 'resources/config')
-    config_path = Path( config_file_dir, config_file_name )
-    return config_path
+    config_file_path = Path(iwrap.IWRAP_DIR, 'resources/config', config_file_name)
+
+    if not config_file_path.exists():
+        __logger.warning( f'File "{config_file_name}" not found. Default config file is used.' )
+        config_file_path = Path( iwrap.IWRAP_DIR, 'resources/config', "config_default.yaml" )
+
+    return config_file_path
 
 
 if __name__ == "__main__":
