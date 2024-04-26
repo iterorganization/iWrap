@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
+from iwrap.settings.platform.host_mapping import get_config_file_for_domain
+
 import iwrap
 import yaml
 from iwrap.common import utils
@@ -72,14 +74,9 @@ class PlatformSettings(Dictionarizable):
         self.__was_inited = True
 
     def __read_config_file(self):
-        env = {'IMAS_CONFIG_PREFIX': 'config_', 'IMAS_CONFIG_SUFFIX': '.yaml', 'IMAS_CONFIG_DIR':'config'}
-        config_file_dir = Path(iwrap.IWRAP_DIR, 'resources')
-        file_name = utils.exec_system_cmd('imas-config',
-                                          working_directory=config_file_dir,
-                                          environment=env,
-                                          return_output=True)
-        file_path = Path(config_file_dir, file_name)
-        self.__logger.debug(f'Configuration read from: {file_path}')
+
+        file_path = get_config_file_for_domain()
+        self.__logger.info( f'Configuration read from: {file_path}' )
         self.load(file_path)
         pass
 
