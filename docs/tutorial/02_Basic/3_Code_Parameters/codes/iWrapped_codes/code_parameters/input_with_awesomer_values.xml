@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--File that uses French words instead-->
+<parameters>
+
+    <!-- Greeting in chosen spoken language -->
+    <greeting> Bonjour! </greeting>
+
+    <!-- Farewell in chosen spoken language -->
+    <farewell> Au revoir! </farewell>
+
+</parameters>
