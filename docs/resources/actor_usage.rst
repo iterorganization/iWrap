@@ -613,6 +613,24 @@ This attribute defines settings of temporary storage being used while passing ID
            memory with the workflow).
         -  Default value -  ``imas.imasdef.MDSPLUS_BACKEND``
 
+   -   Example of the usage:
+
+       .. code-block:: Python
+
+           import imas
+           from <actor name>.common.runtime_settings import SandboxMode
+
+           ...
+           # gets runtime settings
+           runtime_settings = actor_object.get_runtime_settings()
+
+           #configures runtime settings
+           runtime_settings.ids_storage.backend = imas.imasdef.MDSPLUS_BACKEND
+           runtime_settings.ids_storage.persistent_backend = imas.imasdef.HDF5_BACKEND
+
+           # updates runtime_settings
+           actor_object.initialize(runtime_settings=runtime_settings)
+
 .. note::
    Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
 

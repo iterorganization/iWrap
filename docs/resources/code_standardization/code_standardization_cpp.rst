@@ -10,14 +10,8 @@ Code signature
 
      #include "UALClasses.h"
 
-     /* * * INIT method * * */
-     void <method name>([IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
-
-     /* * * MAIN method * * */
-     void <method name>([IdsNs::IDS::<ids_name>& ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message)
-
-     /* * * FINALIZE method * * */
-     void <method name>(int& status_code, std::string& status_message)
+     /* * * INIT/MAIN/FINALIZE method * * */
+     void <method name>([IdsNs::IDS::<ids_name>& ids1, ..., IdsNs::IDS::<ids_name>& idsN,] [IdsNs::codeparam_t codeparam,] int& status_code, std::string& status_message);
 
      /* * * GET_STATE method * * */
     void <method name>( std::string& state_out, int& status_code, std::string& status_message);
@@ -46,27 +40,7 @@ Method
 Arguments
 ########################
 
-*INIT subroutine:*
-
--  XML parameters:
-
-   -  **Optional**  argument
-   -  Input argument
-   -  Defined as   ``IdsNs::codeparam_t``
-
--  Status code:
-
-   -  **Mandatory**  argument
-   -  Output argument
-   -  Defined as: ``int&``
-
--  Status message
-
-   -  **Mandatory**\  argument
-   -  Output argument
-   -  Defined as: ``std::string&``
-
-*MAIN subroutine:*
+*INIT* / *MAIN* / *FINALIZE* subroutines:
 
 -  Input and output IDSes:
 
@@ -91,21 +65,6 @@ Arguments
    -  **Mandatory**  argument
    -  Output argument
    -  Defined as: ``std::string&``
-
-*FINALIZE subroutine:*
-
--  Status code:
-
-   -  **Mandatory**  argument
-   -  Output argument
-   -  Defined as: ``int&``
-
--  Status message
-
-   -  **Mandatory**  argument
-   -  Output argument
-   -  Defined as: ``std::string&``
-
 
 *GET_STATE subroutine:*
 
@@ -170,10 +129,10 @@ Arguments
 
 No INOUT arguments are allowed!
 
-
 .. warning::
-   Only XML parameters are passed to native code, so only ``parameters`` field
+   Only XML parameters are passed to the code, so only ``parameters`` field
    of ``IdsNs::codeparam_t`` structure type is valid !
+
 
 Example
 ########################

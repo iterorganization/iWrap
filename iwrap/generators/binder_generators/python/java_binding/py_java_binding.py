@@ -6,6 +6,7 @@ from typing import Set
 
 import jinja2
 
+from iwrap import generators
 from iwrap.generation_engine.utils.jinja2_template_processing import process_template_dir
 from iwrap.generators.binder_generators import BinderGenerator
 from iwrap.settings.platform.platform_settings import PlatformSettings
@@ -16,6 +17,10 @@ class JavaBinderGenerator( BinderGenerator ):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
+    COMPLIANT_API = generators.API_VERSION
+    """ The API version compatible with this plugin. 
+    It is a built-in plugin, so it should be always up to date
+    """
 
     @property
     def type(self) -> str:
