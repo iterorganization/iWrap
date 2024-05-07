@@ -14,20 +14,20 @@ RUN yum install -y \
         epel-release \
         chromium && \
     pip3 install --upgrade --force-reinstall \
-        jupyterlab==4.0.9 \
-        jupyter_book==0.15.1 \
+        jupyterlab==4.2.0 \
+        jupyter_book==1.0.0 \
         bash_kernel==0.9.3 \
-        docutils==0.18.1 \
-        jupyterlab_myst==2.1.0 \
-        lxml==4.9.3 \
-        markdown_it_py==2.2.0 \
-        mdit_py_plugins==0.3.5 \
-        myst-nb==0.17.2 \
-        myst-parser==0.18.1 \
-        sphinx==5.0.2 \
+        docutils==0.20.1 \
+        jupyterlab_myst==2.4.2 \
+        lxml==5.2.1 \
+        markdown_it_py==3.0.0 \
+        mdit_py_plugins==0.4.0 \
+        myst-nb==1.1.0 \
+        myst-parser==2.0.0 \
+        sphinx==7.3.7 \
         sphinx_inline_tabs==2023.4.21 \
         tomli==2.0.1 \
-        typing-extensions==3.10.0.2 && \
+        typing-extensions==4.11.0 && \
     ln -s /usr/bin/python3 /usr/bin/python
 
 # Common stage for setting up the user, copying documentation, and setting common configurations

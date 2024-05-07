@@ -80,7 +80,7 @@ else
   echo "Starting fresh container"
   # The rest of the script remains the same
   docker run --name $CONTAINER_NAME \
-           --volume "$(pwd)/iwrap/:/opt/iwrap/" \
+           --volume "$(pwd)/../../iwrap/:/opt/iwrap/" \
            -e DISPLAY=$DISPLAY \
            -p ${HOST_PORT}:8888 \
            -v /tmp/.X11-unix:/tmp/.X11-unix:rw \

@@ -58,7 +58,7 @@ if [[ ! -d $VENV_DIR ]]; then
     # Upgrade pip and install requirements
     echo "Upgrading pip and installing requirements..."
     pip install --upgrade pip
-    pip install --ignore-installed -r requirements.txt
+    pip install --force-reinstall -r requirements.txt
 else
     echo "Virtual environment '${VENV_DIR}' exists."
 fi

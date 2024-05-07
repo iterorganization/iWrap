@@ -27,7 +27,7 @@ build_docs() {
     source "${VENV_DIR}/bin/activate"
 
     pip install --upgrade pip
-    pip install --ignore-installed -r ./docs/requirements.txt
+    pip install --force-reinstall -r ./docs/requirements.txt
 
     # Always build the JupyterBook
     jupyter-book build ./docs
