@@ -42,16 +42,21 @@ We have expanded the YAML file in the following sections:
 code_description:
     implementation:
         subroutines:
-            init:       code1_setup    
-            main:       code1_step
+            init:
+                name: code1_setup
+                need_code_parameters: true
+            main:
+                name: code1_step
+                need_code_parameters: true  # ADDED
                 arguments:
-                -   name: core_profiles_in
-                    type: core_profiles
-                    intent: IN
-                -   name: distribution_sources_out
-                    type: distribution_sources
-                    intent: OUT
-            finalize:   code1_cleanup   
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+            finalize:
+                name: code1_cleanup
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
@@ -77,16 +82,21 @@ code_description:
 code_description:
     implementation:
         subroutines:
-            init:       code2_setup    
-            main:       code2_step
+            init:
+                name: code2_setup
+                need_code_parameters: true # ADDED
+            main:
+                name: code2_step
+                need_code_parameters: true  # ADDED
                 arguments:
-                -   name: distribution_sources_out
-                    type: distribution_sources
-                    intent: IN
-                -   name: core_profiles_in
-                    type: core_profiles
-                    intent: OUT
-            finalize:   code2_cleanup    
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
+            finalize:
+                name: code2_cleanup  
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp

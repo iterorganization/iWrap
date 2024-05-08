@@ -7,8 +7,10 @@ code_description:
         subroutines:
             init:
                 name: code1_setup
+                need_code_parameters: true
             main:
                 name: code1_step
+                need_code_parameters: true  # ADDED
                 arguments:
                     - name: core_profiles_in
                       type: core_profiles
