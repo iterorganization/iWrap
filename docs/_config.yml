@@ -10,6 +10,8 @@ execute:
 exclude_patterns:
   - "docs_book_venv/*"
   - "README.md"
+  - "documentation/template.rst"
+
 #
 sphinx:
   recursive_update: true

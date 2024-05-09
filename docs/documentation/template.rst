@@ -38,5 +38,5 @@ List:
 - B
 
 
-
-.. image:: relative/path.jpg
+Paste below relative path to image
+.. image:: ../docs/images/ITER.png
