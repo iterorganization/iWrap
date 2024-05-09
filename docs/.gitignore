@@ -1,3 +1,4 @@
+*.exe
 .idea
 .vs_code
 docs_book_venv
