@@ -4,7 +4,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters %}
-                char* code_params_str,
+                int* code_params_len, char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message);
 {%- endmacro -%}
@@ -17,7 +17,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters %}
-                char* code_params_str,
+                int* code_params_len, char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message)
 {
@@ -148,6 +148,7 @@ int main(int argc, char **argv)
     {% if code_parameters and sbrt_data.need_code_parameters %}
     //----  Code parameters  ----
     char *xml_string;
+    int code_parameters_len = -1;
     read_code_parameters( &xml_string);
     {% endif %}
 
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters %}
-                xml_string,
+                &code_parameters_len, xml_string,
 {% endif %}
                 &status_code, &status_message);
    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

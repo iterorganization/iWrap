@@ -75,7 +75,7 @@ class LanguageBinder(Binder):
 
         def start_debugger(debugger_attach_cmd):
             self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
-            exec_system_cmd( debugger_attach_cmd, output_stream=self._actor.output_stream )
+            exec_system_cmd( debugger_attach_cmd, output_stream=self.actor.output_stream )
 
         t = Thread( target=start_debugger, args=(debugger_attach_cmd,) )
         t.daemon = True  # thread dies with the program
@@ -236,11 +236,12 @@ class LanguageBinder(Binder):
                 c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
                 c_arglist.append( c_ids )
 
-        # Code Parameterss
+        # Code Parameters
         if code_parameters and need_code_parameters:
             param_ctype = ParametersCType( code_parameters )
-            c_param = param_ctype.convert_to_native_type()
-            c_arglist.append( c_param )
+            c_params = param_ctype.convert_to_native_type()
+            c_arglist += c_params
+
 
         # Add status info to argument list
         status_info_ctype = StatusCType()

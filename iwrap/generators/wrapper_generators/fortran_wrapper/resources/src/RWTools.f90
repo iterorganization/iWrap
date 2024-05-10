@@ -44,13 +44,13 @@ module rwtool
         implicit none
         character(kind=c_char),dimension(:),intent(inout) :: var
         integer                 :: i
-        character(STRING_SIZE)  :: line
+        character(AL_STRING_SIZE)  :: line
         
         var(:) = char(0)
         read(10,"(a)")  line
         
         ! -- convert string -> array
-        do i = 1, STRING_SIZE
+        do i = 1, AL_STRING_SIZE
             var(i) = line(i : i)
         enddo
 
@@ -60,7 +60,7 @@ module rwtool
         implicit none
 
         character(len=*),intent(in) :: filename
-        character(len=:),allocatable, intent(out) :: str
+        character(len=:), pointer, intent(out) :: str
 
         !local variables:
         integer :: iunit,istat,filesize, status
