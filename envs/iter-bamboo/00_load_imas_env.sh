@@ -28,4 +28,3 @@ echo "----- 00_load_imas_env.sh ----"
 module list
 echo "----- 00_load_imas_env.sh ----"
 echo WHICH PYTHON `which python`
-
