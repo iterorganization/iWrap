@@ -1,0 +1,35 @@
+actor_description:
+    actor_name: actor2_cpp
+    actor_type: python
+    data_type: legacy
+code_description:
+    implementation:
+        subroutines:
+            init:
+                name: code2_setup
+                need_code_parameters: true # ADDED
+            main:
+                name: code2_step
+                need_code_parameters: true  # ADDED
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
+            finalize:
+                name: code2_cleanup
+        code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
+        include_path:   ./iWrapped_codes/code2_cpp/code2.h
+        programming_language: cpp
+        data_dictionary_compliant: 3.37.0
+        data_type: legacy
+        code_parameters:
+            parameters: ./iWrapped_codes/code_parameters/input.xml   # ADDED
+            schema:     ./iWrapped_codes/code_parameters/input.xsd   # ADDED
+    settings:
+        compiler_cmd: c++
+        extra_libraries:
+            pkg_config_defined:
+                - libxml-2.0    # ADDED

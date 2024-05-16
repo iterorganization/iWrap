@@ -1,16 +1,12 @@
 #!/bin/sh
 echo "IWRAP-DOC"
-
-THIS_SCRIPT_DIR=$(dirname "$0")
-IWRAP_HOME=$(realpath $THIS_SCRIPT_DIR/../)
-
 echo "LAUNCHED IWRAP DOCUMENTATION"
 
 if command -v firefox &> /dev/null
 then
 	echo "USING FIREFOX BROWSER"
-	firefox $IWRAP_HOME/docs/html/index.html
+	firefox $IWRAP_HOME/docs/_build/html/index.html
 else
 	echo "USING DEAFULT BROWSER"
-	xdg-open $IWRAP_HOME/docs/html/index.html
+	xdg-open $IWRAP_HOME/docs/_build/html/index.html
 fi

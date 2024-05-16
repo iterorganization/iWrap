@@ -1,0 +1,67 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: iWrap_introduction.md
+
+parts:
+  - caption: Welcome to Documentation
+    chapters:
+    - file: documentation/iWrap_intro.rst
+      title: Users Manual
+      sections:
+        - file: documentation/code_standardization.rst
+          sections:
+            - file: documentation/code_standardization/code_standardization_fortran.rst
+            - file: documentation/code_standardization/code_standardization_cpp.rst
+            - file: documentation/code_standardization/code_standardization_java.rst
+        - file: documentation/project_description.rst
+          title: Actor definition and generation
+          sections:
+            - file: documentation/actor_generation_cmdln.rst
+            - file: documentation/iwrap_gui.rst
+        - file: documentation/actor_usage.rst
+
+    - file: documentation/developers_manual.rst
+      title: Developers Manual
+      sections:
+        - file:  documentation/developers_manual/actor_architecture.rst
+        - file:  documentation/developers_manual/actor_generators.rst
+        - file:  documentation/developers_manual/code_desc_compatibility.rst
+
+    - file: documentation/installation_guide/iwrap_installation.rst
+      title: Installation Guide
+      sections:
+        - file: documentation/installation_guide/iwrap_configuration.rst
+
+  - caption: Welcome to Tutorial
+    chapters:
+    - file: tutorial/01_Tutorial_Introduction_And_Environment_Set_Up/01_Overall_tutorial_introduction.md
+      title: Tutorial Introduction
+      sections:
+        - file: tutorial/01_Tutorial_Introduction_And_Environment_Set_Up/02_jupyter_introduction.md
+        - file: tutorial/01_Tutorial_Introduction_And_Environment_Set_Up/03_environment_setup.md
+
+    - file: tutorial/02_Basic/02_Basic_intro.md
+      title: Tutorial for beginners
+      sections:
+        - file: tutorial/02_Basic/1_Actor_Fundamentals/01_intro_and_IMAS_adaptation.md
+          sections:
+            - file: tutorial/02_Basic/1_Actor_Fundamentals/02_code_standardization.md
+            - file: tutorial/02_Basic/1_Actor_Fundamentals/03_code_description_and_actor_generation.md
+            - file: tutorial/02_Basic/1_Actor_Fundamentals/04_workflow.md
+
+        - file: tutorial/02_Basic/2_INIT_FINALIZE/01_intro.md
+          sections:
+            - file: tutorial/02_Basic/2_INIT_FINALIZE/02_code_standardization.md
+            - file: tutorial/02_Basic/2_INIT_FINALIZE/03_code_description_and_actor_generation.md
+            - file: tutorial/02_Basic/2_INIT_FINALIZE/04_workflow.md
+        
+        - file: tutorial/02_Basic/3_Code_Parameters/01_intro.md
+          sections:
+            - file: tutorial/02_Basic/3_Code_Parameters/02_code_standardization.md
+            - file: tutorial/02_Basic/3_Code_Parameters/03_code_description_and_actor_generation.md
+            - file: tutorial/02_Basic/3_Code_Parameters/04_workflow.md
+
+
+

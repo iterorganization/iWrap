@@ -4,6 +4,7 @@ module purge
 
 export PATH=${PWD}/bin:${PATH}
 export PYTHONPATH=$PWD:$PYTHONPATH
+export IWRAP_HOME=$PWD
 
 # setting environment for running examples
 
@@ -19,4 +20,6 @@ mkdir -p $HOME/public/imasdb/tmp/3/0
 mkdir -p $HOME/public/imasdb/iter/3/0
 
 export PYTHONPATH=$HOME/IWRAP_ACTORS:$PYTHONPATH
+
+./docs/scripts/create_db
 

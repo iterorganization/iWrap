@@ -11,7 +11,7 @@ IMAS_HOME ?= $(HOME)/imas
 PYTHON_CMD ?= python
 PY_CMD := $(if $(PYTHON_CMD),$(shell command -v $(PYTHON_CMD) 2>/dev/null))
 PY_VER := $(if $(PY_CMD),$(shell $(PY_CMD) -c 'print(".".join(str(i) for i in __import__("sys").version_info[:2]))' 2>/dev/null))
-
+SHELL_SCRIPT := ./build_docs.sh
 # Default installation paths
 INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
@@ -19,7 +19,7 @@ MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
 INSTALL_MOD ?= $(HOME)/IWRAP_MODULE_DIR/
 
 all: iwrap_build
-install: install_dir install_iwrap install_module
+install: install_dir install_iwrap install_module docs
 uninstall: uninstall_module uninstall_iwrap
 
 .PHONY: build/module/$(MODULEFILE) iwrap_build build_deps build_deps_clear help clean docs
@@ -93,10 +93,9 @@ clean: build_deps
 	$(PY_CMD) setup.py clean
 	@$(MAKE) build_deps_clear --no-print-directory
 	find . -type d -name '__pycache__' | xargs rm -r
-	make -C docs clean
 
 docs:
-	make -C docs docs
+	@$(SHELL_SCRIPT)
 
 code-check:
 	pylint -E ./iwrap
