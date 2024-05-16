@@ -1,0 +1,19 @@
+code_description:
+    implementation:
+        subroutines:
+          main:
+            name: code2_step
+            arguments:
+              - name: distribution_sources_in
+                type: distribution_sources
+                intent: IN
+              - name: core_profiles_out
+                type: core_profiles
+                intent: OUT
+        code_path: ./iWrapped_codes/code2_cpp/libcode_cpp.a
+        include_path: ./iWrapped_codes/code2_cpp/code2.h
+        programming_language: cpp
+        data_dictionary_compliant: 3.39.0
+        data_type: legacy
+    settings:
+        compiler_cmd: g++

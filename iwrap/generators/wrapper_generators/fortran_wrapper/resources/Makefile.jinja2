@@ -74,7 +74,7 @@ all:
     {% endif %}
       ../lib/lib$(ACTOR_NAME).so
 
-../bin/$(ACTOR_NAME)_%.exe: src/standalone_%.f90 build/defs.o build/RWTools.o  build/fortrantools.o build/fortran_wrapper.o
+../bin/$(ACTOR_NAME)_%.exe: src/standalone_%.f90 build/defs.o build/iwrap_converters.o build/RWTools.o  build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../bin
 	$(FC) $(FFLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
@@ -82,9 +82,9 @@ all:
 build/%.o: src/%.f90
 	@echo "  * $< -> $@"
 	@mkdir -p ./build
-	$(FC) $(FFLAGS) -c -w $^ -o $@  $(INCLUDES)
+	$(FC) $(FFLAGS) -O0 -c -w $^ -o $@  $(INCLUDES)
 
-../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/fortrantools.o build/fortran_wrapper.o
+../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/iwrap_converters.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
 	$(FC) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/

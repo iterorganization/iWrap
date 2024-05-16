@@ -5,7 +5,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
                 {{ argument.name }}_desc,  &
 {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters %}
-                code_params_cstr,  &
+                code_params_len, code_params_cstr,  &
 {% endif %}
                 status_code, out_status_msg) BIND(C)
 
@@ -24,7 +24,8 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 {% if code_parameters and sbrt_data.need_code_parameters %}
 	!----  Code parameters ----
     type(ids_parameters_input) :: imas_code_params
-    character(kind=c_char), dimension(*), intent(IN) :: code_params_cstr
+    integer, intent(IN) :: code_params_len
+    character(kind=c_char), dimension(code_params_len), intent(IN) :: code_params_cstr
     integer :: ssize, i
 
 {% endif %}
@@ -56,7 +57,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 
     {% if code_parameters and sbrt_data.need_code_parameters %}
     ! ------------------ code parameters ----------------------------
-    imas_code_params = convert_codeparams(code_params_cstr)
+    imas_code_params = convert_array2codeparams(code_params_cstr)
     {% endif %}
 
 
@@ -146,7 +147,8 @@ PROGRAM standalone_{{ sbrt_role | upper }}
     type(C_PTR) :: status_msg = C_NULL_PTR
 
     !----  Code parameters  ----
-    character(len=:), allocatable :: xml_string
+    character(len=:), pointer :: xml_string
+    integer :: code_params_len
     character(kind=c_char), dimension(:), pointer :: code_params_cstr
 
 {% if mpi_compiler_cmd %}
@@ -161,7 +163,9 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% if code_parameters and sbrt_data.need_code_parameters %}
      status = read_code_parameters(xml_string)
         if (status /= 0) STOP -1
-    code_params_cstr => convert(xml_string)
+
+    code_params_len = LEN(xml_string)
+    code_params_cstr => convert_string2array(xml_string)
     deallocate(xml_string)
 {% endif %}
 
@@ -178,7 +182,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
 {% if code_parameters and sbrt_data.need_code_parameters %}
-                code_params_cstr,  &
+                code_params_len, code_params_cstr,  &
 {% endif %}
                 status_code, status_msg)
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

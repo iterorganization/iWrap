@@ -1,3 +1,4 @@
 lxml
 jinja2
 packaging
+pyyaml

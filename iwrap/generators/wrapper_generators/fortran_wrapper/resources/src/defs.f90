@@ -1,18 +1,20 @@
 module iwrap_defs
     use iso_c_binding
+    use ids_types, only: ids_string_length
+    implicit none
 
 !--------------------------------------------------
-    integer, parameter :: STRING_SIZE = 132
+    integer, parameter :: AL_STRING_SIZE = ids_string_length
 
     type, BIND(C) :: ids_description_t
-        character(kind=c_char)::ids_name(STRING_SIZE)
+        character(kind=c_char)::ids_name(AL_STRING_SIZE)
         integer::shot
         integer::run
         integer::occurrence
         integer::idx
-        character(kind=c_char)::machine(STRING_SIZE)
-        character(kind=c_char)::user(STRING_SIZE)
-        character(kind=c_char)::version(STRING_SIZE)
+        character(kind=c_char)::machine(AL_STRING_SIZE)
+        character(kind=c_char)::user(AL_STRING_SIZE)
+        character(kind=c_char)::version(AL_STRING_SIZE)
     end type ids_description_t
 !--------------------------------------------------
 end module

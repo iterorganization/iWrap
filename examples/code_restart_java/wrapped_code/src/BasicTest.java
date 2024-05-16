@@ -37,17 +37,18 @@ public class BasicTest {
     // =======================================
     //             MAIN
     //=======================================
-    public void code_step(imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out) throws Exception
+    public Object[] code_step(imas.core_profiles  core_profiles_in) throws Exception
     {
-         this.code_step(core_profiles_in, distribution_sources_out, null);
+         return this.code_step(core_profiles_in, null);
     }
 
-    public void code_step(imas.core_profiles  core_profiles_in,
-                          imas.distribution_sources  distribution_sources_out,
+    public Object[] code_step(imas.core_profiles  core_profiles_in,
                           String codeParameters) throws Exception
     {
+
+        imas.distribution_sources  distribution_sources_out = new imas.distribution_sources();
         int inIdsSize = -1;
+        Object[] retArray = new Object[1];
 
         // INITIAL DISPLAY
         System.out.println( "=======================================");
@@ -95,6 +96,9 @@ public class BasicTest {
         System.out.println( "END OF PHYSICS CODE");
         System.out.println( "=======================================");
         System.out.println( " ");
+
+        retArray[0] = distribution_sources_out;
+        return retArray;
     }
 
     // =======================================

@@ -155,14 +155,17 @@ class ParametersCType(  ):
     def convert_to_native_type(self):
 
         encoded_params = None
+        encoded_params_len = 0
 
         if self.params_:
             encoded_params = self.params_.encode('utf-8')
+            encoded_params_len = len(encoded_params)
 
         c_ptr_params = ctypes.c_char_p(encoded_params)
-        cref_params = ctypes.byref(c_ptr_params)
 
-        return c_ptr_params
+        cref_params_len = ctypes.byref(ctypes.c_int(encoded_params_len))
+
+        return cref_params_len, c_ptr_params
 
     def __init__(self, code_parameters: str):
         self.params = code_parameters

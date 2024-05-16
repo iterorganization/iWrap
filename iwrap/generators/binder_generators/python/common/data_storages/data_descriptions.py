@@ -15,7 +15,10 @@ class IDSDescription:
         self.user = db_entry.user_name
         self.database = db_entry.db_name
         self.version = db_entry.data_version
-        self.shot = db_entry.shot
+        try:
+            self.shot = db_entry.pulse
+        except AttributeError:
+            self.shot = db_entry.shot
         self.run = db_entry.run
         self.idx = db_entry.db_ctx
         self.ids_type = ids_name

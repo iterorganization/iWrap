@@ -29,7 +29,7 @@
             deallocate({{ ids_var_name }}%code%parameters)
         endif
 
-       {{ ids_var_name }}%code%parameters => convert_char_arr_to_al_str(code_params_cstr)
+       {{ ids_var_name }}%code%parameters => convert_array2al_str(code_params_cstr)
    {% endif %}
 
 {%- endmacro -%}
