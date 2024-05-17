@@ -1,12 +1,13 @@
 mappings = [
     #add data_dictionary_compliant
-    {'command':'add',
+    { # since 0.7.0
+     'command':'add',
      'target':'code_description/implementation/data_dictionary_compliant',
      'value':'$SYS_VAR("IMAS_VERSION")',
      'condition':'$VALUE_OF("code_description/implementation/data_dictionary_compliant") is None' },
 
     #move function names into code_description/implementaton/subroutines/<subroutine>/name = <name>
-    {
+    { # since 0.10.0
      'condition':'$TYPE_OF("code_description/implementation/subroutines/init") == str',
      'actions':[
         {'command':'move',
@@ -20,7 +21,7 @@ mappings = [
          },
      ]
     },
-    {
+    { # since 0.10.0
      'condition':'$TYPE_OF("code_description/implementation/subroutines/main") == str',
      'actions':[
         {'command':'move',
@@ -40,7 +41,7 @@ mappings = [
          },
      ]
     },
-    {
+    { # since 0.10.0
      'condition':'$TYPE_OF("code_description/implementation/subroutines/finalize") == str',
      'actions':[
         {'command':'move',
@@ -51,12 +52,14 @@ mappings = [
     },
 
     #move deprecated code_description/settings/open_mp_switch
-    {'command': 'move',
+    { # since 0.10.0
+     'command': 'move',
      'source': 'code_description/settings/open_mp_switch',
      'target': 'code_description/settings/compiler_flags'},
 
     #set code_description/settings/compiler_flags to None if contains boolean value (due to probable usage of open_mp_switch as Boolean flag in past)
-    {'command':'set',
+    { # since 0.10.0
+     'command':'set',
      'target':'code_description/settings/compiler_flags',
      'value':None,
      'condition':'$TYPE_OF("code_description/settings/compiler_flags") is bool'}

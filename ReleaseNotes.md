@@ -1,5 +1,34 @@
 # Release notes
 
+## Version 0.10.0
+### New Features
+* Wrapping Java code into a Python actor
+* Unification of INIT/MAIN/FINALIZE parameters
+* Introducing iWrap <--> plugins compatibility check mechanism
+* New method of discovering of platform config file, without usage of `imas-config`
+* Fortran wrapper: Optimisation of string conversion Fortran <--> Py
+* Tutorial for the beginners: refactoring, single access point to tutorial and manual
+* Minor improvements and corrections
+
+### YAML changes
+* `code_description/settings/open_mp_switch` (`boolean`) renamed to `compiler_flags` (`string`)
+* Unification of methods INIT/MAIN/FINALIZE (`code_description/implementation/subroutines/<method>`) parameters
+  * Method name `..../subroutines/<method>` (`string`) moved to `.../subroutines/<method>/name` (`string`)
+  * Every method has its own set of arguments: `.../subroutines/<method>/arguments` (`list of Arguments`)
+  * Arguments that were common for INIT and MAIN (`code_description/arguments`) removed
+  * Flag determining if the method uses code parameters `subroutines/<method>/need_code_parameters` (`boolean`) added
+
+## Version 0.9.3
+* Hotfix:  Strings in actor provenance info are no longer put into columns of length 80 characters
+
+## Version 0.9.2
+* Fix of an actor debug mechanism:
+  * Corrections of Debug.ATTACH mode
+  * Debug.STANDALONE: Preventing from cleaning up source files
+
+## Version 0.9.1
+* Hotfix: GUI crashes due to incorrect handling of tooltips
+
 ## Version 0.9.0
 * Add tutorial for the beginners
 * Add tooltips in GUI
