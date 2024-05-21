@@ -4,14 +4,14 @@ class IDSDescription:
 
     @property
     def uri(self):
-        uri = f'imas:{self.backend}' \
+        uri = f'imas:{self.backend_id}' \
               f'?user={self.user};database={self.database};version={self.version};'\
               f'shot={self.shot};run={self.run};idx={self.idx}' \
               f'#{self.ids_type}:{self.occurrence}'
         return uri
 
     def __init__(self, db_entry, ids_name, occurrence):
-        self.backend = db_entry.backend_id
+        self.backend_id = db_entry.backend_id
         self.user = db_entry.user_name
         self.database = db_entry.db_name
         self.version = db_entry.data_version
@@ -34,6 +34,8 @@ class IDSDescription:
         stream.write( str( self.run ) )
         stream.write( "\n" )
         stream.write( str( self.occurrence ) )
+        stream.write( "\n" )
+        stream.write( str( self.backend_id ) )
         stream.write( "\n" )
         stream.write( str( self.idx ) )
         stream.write( "\n" )

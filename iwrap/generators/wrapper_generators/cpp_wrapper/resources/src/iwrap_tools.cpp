@@ -124,6 +124,7 @@ IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_s
            (db_entry_desc_array[j].run == db_entry_desc_array[i].run) &&
            (db_entry_desc_array[j].user == db_entry_desc_array[i].user) &&
            (db_entry_desc_array[j].machine == db_entry_desc_array[i].machine) &&
+           (db_entry_desc_array[j].backend_id == db_entry_desc_array[i].backend_id) &&
            (db_entry_desc_array[j].version == db_entry_desc_array[i].version))
          break;
         else
@@ -133,6 +134,7 @@ IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_s
         if (j==i)
         {
            IdsNs::IDS *ids =  new IdsNs::IDS(db_entry_desc_array[i].shot,db_entry_desc_array[i].run,0,0);
+           ids->setBackend(static_cast<BACKEND>(db_entry_desc_array[i].backend_id));
            ids->openEnv(db_entry_desc_array[i].user,db_entry_desc_array[i].machine,db_entry_desc_array[i].version);
 
            db_entry_array[j]  =    ids ;

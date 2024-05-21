@@ -171,10 +171,15 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 
     !-----------Reading input ---------------------
     status = read_input("{{ sbrt_role }}.in", db_entry_desc_array)
-    if (status /= 0) STOP -1
+
+    if (status /= 0) then
+        call write_output("{{ sbrt_role }}.out", status, "ERROR: Cannot open DB entry.")
+        STOP -1
+    end if
 
     !-----------Open DB entries---------------------
-    call open_db_entries(db_entry_desc_array)
+    call open_db_entries(db_entry_desc_array, status)
+    if (status /= 0) STOP -1
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
     CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&

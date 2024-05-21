@@ -120,19 +120,63 @@ module iwrap_tools
 
     END SUBROUTINE write_output
 
+
+{% if build_info.al_version.startswith('4.')   %}
+
+
+    SUBROUTINE open_db(backend_id, shot, run, user_name, db_name, data_version, idx, status)
+        use ual_low_level_wrap
+
+        integer, intent(IN)   :: backend_id
+        integer, intent(IN)   :: shot
+        integer, intent(IN)   :: run
+        character(len=*), intent(IN)   :: user_name
+        character(len=*), intent(IN)   :: db_name
+        character(len=*), intent(IN)   :: data_version
+        INTEGER, INTENT(OUT)  :: idx
+        INTEGER, INTENT(OUT)  :: status
+
+        CALL ual_begin_pulse_action(backend_id, shot, run, user_name, db_name, data_version, idx, status)
+        if (status .eq. 0)   CALL ual_open_pulse(idx, OPEN_PULSE, '', status)
+
+    END SUBROUTINE open_db
+{% else %}
+
+
+    SUBROUTINE open_db(backend_id, pulse, run, user_name, db_name, data_version, idx, status)
+        use ids_routines
+        integer, intent(IN)   :: backend_id
+        integer, intent(IN)   :: pulse
+        integer, intent(IN)   :: run
+        character(len=*), intent(IN)   :: user_name
+        character(len=*), intent(IN)   :: db_name
+        character(len=*), intent(IN)   :: data_version
+        INTEGER, INTENT(OUT)  :: idx
+        INTEGER, INTENT(OUT)  :: status
+        character (STRMAXLEN) :: uri
+
+        call al_build_uri_from_legacy_parameters(backend_id, pulse, run, user_name, db_name, data_version, "", uri, status)
+
+        if (status .eq. 0)  call imas_open( uri, OPEN_PULSE, idx, status)
+
+    END SUBROUTINE open_db
+{% endif %}
     SUBROUTINE open_db_entries(db_entry_desc_array)
 
         use ids_routines
 
         type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
+        INTEGER, INTENT(OUT)  :: status
         integer :: i, j
 
+        status = 0
         db_entry_desc_array(:)%idx = -1
    do i=1, SIZE(db_entry_desc_array)
       j=1
       do while (j.lt.i)
          if ( db_entry_desc_array(j)%shot .eq. db_entry_desc_array(i)%shot .and.       &
               db_entry_desc_array(j)%run .eq. db_entry_desc_array(i)%run .and.         &
+              db_entry_desc_array(j)%backend_id .eq. db_entry_desc_array(i)%backend_id .and.         &
               convert_array2string(db_entry_desc_array(j)%user) .eq. convert_array2string(db_entry_desc_array(i)%user) .and.       &
               convert_array2string(db_entry_desc_array(j)%machine) .eq. convert_array2string(db_entry_desc_array(i)%machine).and. &
               convert_array2string(db_entry_desc_array(j)%version) .eq. convert_array2string(db_entry_desc_array(i)%version) ) then
@@ -142,12 +186,23 @@ module iwrap_tools
          end if
       end do
       if (j.eq.i) then
-         call imas_open_env("", db_entry_desc_array(i)%shot, &
-                                db_entry_desc_array(i)%run, &
-                                db_entry_desc_array(i)%idx, &
-                        convert_array2string(db_entry_desc_array(i)%user), &
-                        convert_array2string(db_entry_desc_array(i)%machine), &
-                        convert_array2string(db_entry_desc_array(i)%version) )
+            call open_db(db_entry_desc_array(i)%backend_id, &
+                         db_entry_desc_array(i)%shot, &
+                         db_entry_desc_array(i)%run, &
+                         convert_array2string(db_entry_desc_array(i)%user), &
+                         convert_array2string(db_entry_desc_array(i)%machine), &
+                         convert_array2string(db_entry_desc_array(i)%version), &
+                         db_entry_desc_array(i)%idx, &
+                         status)
+            if (status /= 0) then
+                write (*,*) "ERROR: Cannot open DB entry!", &
+                            " BE: ", db_entry_desc_array(i)%backend_id, &
+                            " USER: ",   convert_array2string(db_entry_desc_array(i)%user), &
+                            " DB: ", convert_array2string(db_entry_desc_array(i)%machine), &
+                            " PULSE/RUN: ",  db_entry_desc_array(i)%shot,  "/", db_entry_desc_array(i)%run
+                            exit
+
+            end if
       else
          db_entry_desc_array(i)%idx = db_entry_desc_array(j)%idx
       end if

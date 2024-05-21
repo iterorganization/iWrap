@@ -9,6 +9,7 @@ typedef struct
   int shot;
   int run;
   int occurrence;
+  int backend_id;
   int idx;
   char machine[132];
   char user[132];
