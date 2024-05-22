@@ -1,6 +1,6 @@
 {% import './macros/subroutines.jinja2' as sbrt_macro %}
 
-{% if code_description.implementation.subroutines.init.name %}
+{% if code_description.implementation.subroutines.finalize.name %}
     {{ sbrt_macro.standalone_definition("finalize", ids_macro, actor_description.actor_name,
     code_description.implementation.subroutines.finalize,
     code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
