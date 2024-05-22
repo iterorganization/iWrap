@@ -97,7 +97,7 @@ module iwrap_tools
         use rwtool
         character(*), intent(IN) :: file_name
         integer, intent(IN) :: status_code
-        type(C_PTR) :: status_message
+        character(*), intent(IN) :: status_message
         integer :: str_len, istat
 
         !-----------Writing output data to file ---------------------
@@ -108,10 +108,10 @@ module iwrap_tools
         end if
         call writefile(status_code)
 
-        if ( C_ASSOCIATED(status_message)) then
-            str_len = c_str_length(status_message) + 1
-            call writefile(str_len)
-            call writefile(convert_cptr2string(status_message))
+        str_len = LEN(status_message)
+        if ( str_len > 0 ) then
+            call writefile(str_len + 1)
+            call writefile(status_message)
         else
             call writefile(0)
             call writefile("")
@@ -161,7 +161,7 @@ module iwrap_tools
 
     END SUBROUTINE open_db
 {% endif %}
-    SUBROUTINE open_db_entries(db_entry_desc_array)
+    SUBROUTINE open_db_entries(db_entry_desc_array, status)
 
         use ids_routines
 
