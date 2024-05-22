@@ -4,7 +4,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 {% for argument in sbrt_data.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
                 code_params_len, code_params_cstr,  &
 {% endif %}
                 status_code, out_status_msg) BIND(C)
@@ -21,10 +21,14 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
     {{ ids_macro.declare(argument.type,  argument.name) }}
 {% endfor %}
 
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
 	!----  Code parameters ----
+    {% if 'legacy' in code_parameters.format %}
     type(ids_parameters_input) :: imas_code_params
-    integer, intent(IN) :: code_params_len
+    {% else %}
+    character(:), allocatable :: imas_code_params
+    {% endif %}
+    integer, intent(IN)  :: code_params_len
     character(kind=c_char), dimension(code_params_len), intent(IN) :: code_params_cstr
     integer :: ssize, i
 
@@ -55,9 +59,13 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
-    {% if code_parameters and sbrt_data.need_code_parameters %}
+    {% if code_parameters.parameters and sbrt_data.need_code_parameters %}
     ! ------------------ code parameters ----------------------------
+        {% if 'legacy' in code_parameters.format %}
     imas_code_params = convert_array2codeparams(code_params_cstr)
+        {% else %}
+    imas_code_params = convert_array2string(code_params_cstr)
+        {% endif %}
     {% endif %}
 
 
@@ -68,7 +76,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 {% for argument in sbrt_data.arguments %}
             {{ argument.name }}, &
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
             imas_code_params,  &
 {% endif %}
             status_code, status_msg)
@@ -105,7 +113,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
      {{ ids_macro.deallocate( argument.name) }}
     {% endfor %}
 
-    {% if code_parameters and sbrt_data.need_code_parameters %}
+    {% if code_parameters.parameters and sbrt_data.need_code_parameters and ('legacy' in code_parameters.format)%}
     ! ------Deallocating code parameters ----------------------------
     deallocate(imas_code_params%parameters_value)
     {% endif %}
@@ -160,7 +168,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% endif %}
 
 
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
      status = read_code_parameters(xml_string)
         if (status /= 0) STOP -1
 
@@ -189,8 +197,8 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% for argument in sbrt_data.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
-                code_params_len, code_params_cstr,  &
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
+               code_params_len, code_params_cstr,  &
 {% endif %}
                 status_code, status_msg)
   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

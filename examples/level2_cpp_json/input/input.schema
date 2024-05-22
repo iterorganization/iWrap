@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "shot": {
+          "type": "integer"
+        },
+        "run_in": {
+          "type": "integer"
+        },
+        "run_out": {
+          "type": "integer"
+        },
+        "ntimes": {
+          "type": "integer"
+        },
+        "multiplication_factor": {
+          "type": "number"
+        },
+        "input_db": {
+          "type": "string"
+        },
+        "input_machine": {
+          "type": "string"
+        },
+        "local_db": {
+          "type": "string"
+        },
+        "local_machine": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "shot",
+        "run_in",
+        "run_out",
+        "ntimes",
+        "multiplication_factor",
+        "input_db",
+        "input_machine",
+        "local_db",
+        "local_machine"
+      ]
+    }
+  },
+  "required": [
+    "parameters"
+  ]
+}

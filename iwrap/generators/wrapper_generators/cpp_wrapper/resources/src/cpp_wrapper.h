@@ -12,7 +12,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("init", actor_description.actor_name,
                                     code_description.implementation.subroutines.init,
-                                    code_description.implementation.code_parameters.parameters ) }}
+                                    code_description.implementation.code_parameters ) }}
 {% endif %}
 
 {% if code_description.implementation.subroutines.finalize.name %}
@@ -21,7 +21,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("finalize", actor_description.actor_name,
                                     code_description.implementation.subroutines.finalize,
-                                     code_description.implementation.code_parameters.parameters ) }}
+                                     code_description.implementation.code_parameters ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -29,7 +29,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_declaration("main", actor_description.actor_name,
                                     code_description.implementation.subroutines.main,
-                                    code_description.implementation.code_parameters.parameters ) }}
+                                    code_description.implementation.code_parameters ) }}
 
 {% if code_description.implementation.subroutines.get_state %}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

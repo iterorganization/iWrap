@@ -37,7 +37,7 @@ def process_template_dir(
     if template_pkg:
         package_loader = jinja2.PackageLoader(template_pkg, template_dir)
     else:
-        package_loader = jinja2.FileSystemLoader( template_dir )
+        package_loader = jinja2.FileSystemLoader( template_dir, followlinks=True )
 
     jinja_env = jinja2.Environment(
         loader=package_loader,

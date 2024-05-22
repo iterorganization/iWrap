@@ -2,5 +2,5 @@
 
 {% if code_description.implementation.subroutines.init.name %}
     {{ sbrt_macro.standalone_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init,
-    code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
+    code_description.implementation.code_parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}

@@ -117,7 +117,10 @@ class ActorBaseClass(Actor):
         # Static code parameters
         default_parameters_file = '{{code_description.implementation.code_parameters.parameters | basename}}'
         schema_file = '{{code_description.implementation.code_parameters.schema | basename}}'
-        self.__code_parameters = CodeParameters( default_parameters_file, schema_file )
+
+        parameters_format = '{{code_description.implementation.code_parameters.format | basename}}'
+
+        self.__code_parameters = CodeParameters( default_parameters_file, schema_file, parameters_format)
         {% endif %}
 
         self.sandbox_default_dir = '{{ platform_settings.directories.sandbox_dir }}'

@@ -18,7 +18,7 @@
 //                                  INIT SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_definition("init", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.init,
-    code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
+    code_description.implementation.code_parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 {% if code_description.implementation.subroutines.finalize.name %}
@@ -26,7 +26,7 @@
 //                                   FINALIZE SBRT WRAPPER
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     {{ sbrt_macro.sbrt_definition("finalize", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.finalize,
-    None, code_description.settings.mpi_compiler_cmd ) }}
+    code_description.implementation.code_parameters, code_description.settings.mpi_compiler_cmd ) }}
 {% endif %}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -34,7 +34,7 @@
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {{ sbrt_macro.sbrt_definition("main", ids_macro, actor_description.actor_name, code_description.implementation.subroutines.main,
-code_description.implementation.code_parameters.parameters, code_description.settings.mpi_compiler_cmd ) }}
+code_description.implementation.code_parameters, code_description.settings.mpi_compiler_cmd ) }}
 
 
 {% if code_description.implementation.subroutines.get_state %}

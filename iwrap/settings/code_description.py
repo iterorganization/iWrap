@@ -1,7 +1,6 @@
 import logging
 import os
 from typing import List, Dict, Any
-from lxml import etree
 import yaml
 
 from pathlib import Path
@@ -11,7 +10,8 @@ from iwrap.common import utils
 from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
-
+from iwrap.settings.code_parameters_handlers.handler_factory import HandlerFactory
+from iwrap.settings.code_parameters_handlers.parameters_handler_interface import ParametersHandlerInterface
 
 class Intent( Enum ):
     # Class logger
@@ -270,44 +270,50 @@ class CodeParameters( SettingsBaseClass ):
     """The data class containing information about files defining code parameters.
 
     Attributes:
-        parameters (str): Path to a XML file with code parameters
-        schema (str): Path to a XSD file with schema definition for code parameters file
+        parameters (str): Path to a file with code parameters
+        schema (str): Path to a file with schema definition for code parameters file
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
     def __init__(self):
-        #: A path to XML file containing the code specific parameters
+        #: A path to file containing the code specific parameters
         self.parameters: str = ''
 
-        #: A path to XSD file containing schema that allows to validate code parameters XML description
+        #: A path to file containing schema that allows to validate code parameters XML description
         self.schema: str = ''
+
+        #: A format of code parameters (legacy-xml, json, fortran_namelist, xml , ...)
+        self.format: str = 'legacy-xml'
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         if self.parameters and not self.schema:
-            raise ValueError( 'XSD schema must be set if XML parameters file is specified!' )
+            raise ValueError( 'Parameters schema must be set if parameters file is specified!' )
 
         # parameters
         if self.parameters:
             __path = utils.resolve_path( self.parameters, project_root_dir )
             if not Path(__path).exists():
-                raise ValueError( f'Path to XML parameters file is invalid! {str( __path )}' )
+                raise ValueError( f'Path to parameters file is invalid! {str( __path )}' )
 
         # schema
         if self.schema:
             __path = utils.resolve_path( self.schema, project_root_dir )
             if not Path(__path).exists():
-                raise ValueError( f'Path to XSD schema file is invalid! {str( __path )}' )
+                raise ValueError( f'Path to parameters schema file is invalid! {str( __path )}' )
 
-        # validate correctness of XML
-        if self.parameters and self.schema:
-            self.validate_xml( self.parameters, self.schema, project_root_dir )
+        if self.parameters:
+            parameters_handler : ParametersHandlerInterface = HandlerFactory.get_handler(self.format)
+            parameters_handler.initialize(utils.resolve_path(self.parameters, project_root_dir), utils.resolve_path(self.schema, project_root_dir))
+            parameters_handler.validate()
+
 
     def clear(self):
         """Clears class content, setting default values of class attributes
         """
         self.parameters = ''
         self.schema = ''
+        self.format = 'legacy-xml'
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
@@ -336,36 +342,11 @@ class CodeParameters( SettingsBaseClass ):
                 __path = utils.resolve_path( self.schema, project_root_dir )
                 ret_dict.update( {'schema': __path} )
 
+            # format
+            if self.format:
+                ret_dict.update( {'format': self.format} )
+
         return ret_dict
-
-    def validate_xml(self, parameters_xml_path: str, schema_xsd_path:str, root_dir:str) -> None:
-        """Self validation of XML file against given schema file (XSD).
-
-        Args:
-            parameters_xml_path (str): The absolute path string to the XML file with parameters data
-            schema_xsd_path (str): The absolute path string to the XSD file with schema of the XML file
-
-        Correct file paths for the validation process will cause the method to run without errors.
-        If the verification process fails or an error occurs, an exception is thrown,
-        and possibly there is a mismatch between the file and its schema
-        or stored files or file paths are damaged.
-        """
-        # In case where no parameters have been provided use class attributes.
-        if parameters_xml_path is None or schema_xsd_path is None:
-            parameters = self.parameters
-            schema = self.schema
-
-        # Parse XSD file:
-        schema_xsd_path = utils.resolve_path(schema_xsd_path, root_dir)
-        xmlschema_file = etree.parse( schema_xsd_path )
-        xmlschema = etree.XMLSchema( xmlschema_file )
-
-        # Parse XML file:
-        parameters_xml_path = utils.resolve_path(parameters_xml_path, root_dir)
-        xml_file = etree.parse( parameters_xml_path )
-
-        # Perform validation:
-        xmlschema.assertValid( xml_file )
 
 
 class CodeDescription( SettingsBaseClass ):

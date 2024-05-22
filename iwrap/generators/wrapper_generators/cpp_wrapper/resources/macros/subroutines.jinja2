@@ -3,7 +3,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% for argument in sbrt_data.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
                 int* code_params_len, char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message);
@@ -16,8 +16,8 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% for argument in sbrt_data.arguments %}
                 ids_description_t* {{ argument.name }}_desc,
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
-                int* code_params_len, char* code_params_str,
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
+               int* code_params_len, char* code_params_str,
 {% endif %}
                 int* out_status_code, char** out_status_message)
 {
@@ -28,9 +28,13 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     {{ ids_macro.declare(argument.type, argument.name ) }}
 {% endfor %}
 
-{% if code_parameters and sbrt_data.need_code_parameters %}
-	//----  Code parameters ----
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
+    //----  Code parameters ----
+    {% if 'legacy' in code_parameters.format %}
     IdsNs::codeparam_t imas_code_params;
+    {% else %}
+    std::string imas_code_params;
+    {% endif %}
 {% endif %}
 
 
@@ -51,11 +55,16 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     {{ ids_macro.get( argument.name) }}
     {% endfor %}
 
-        {% if code_parameters and sbrt_data.need_code_parameters  %}
+    {% if code_parameters.parameters and sbrt_data.need_code_parameters  %}
+
+        {% if 'legacy' in code_parameters.format %}
     // ------------------ code parameters ----------------------------
     imas_code_params.parameters = (char**)&(code_params_str);
     imas_code_params.default_param = NULL;
     imas_code_params.schema = NULL;
+        {% else %}
+    imas_code_params = code_params_str;
+        {% endif %}
     {% endif %}
 
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
@@ -63,7 +72,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% for argument in sbrt_data.arguments %}
             {{ argument.name }},
 {% endfor %}
-{% if code_parameters  and sbrt_data.need_code_parameters%}
+{% if code_parameters.parameters  and sbrt_data.need_code_parameters%}
             imas_code_params,
 {% endif %}
             *out_status_code, status_msg );
@@ -145,7 +154,7 @@ int main(int argc, char **argv)
 
     read_input("{{ sbrt_role }}.in", db_entry_desc_array, IDS_ARGS_NO);
 
-    {% if code_parameters and sbrt_data.need_code_parameters %}
+    {% if code_parameters.parameters and sbrt_data.need_code_parameters %}
     //----  Code parameters  ----
     char *xml_string;
     int code_parameters_len = -1;
@@ -159,7 +168,7 @@ int main(int argc, char **argv)
 {% for argument in sbrt_data.arguments %}
                 &db_entry_desc_array[{{loop.index - 1 }}],
 {% endfor %}
-{% if code_parameters and sbrt_data.need_code_parameters %}
+{% if code_parameters.parameters and sbrt_data.need_code_parameters %}
                 &code_parameters_len, xml_string,
 {% endif %}
                 &status_code, &status_message);
@@ -183,7 +192,7 @@ int main(int argc, char **argv)
 {% endif %}
     close_db_entries(db_entry_array, IDS_ARGS_NO);
 
-    {% if code_parameters and sbrt_data.need_code_parameters %}
+    {% if code_parameters.parameters and sbrt_data.need_code_parameters %}
     // ------Deallocating code parameters ----------------------------
     free(xml_string);
     {% endif %}

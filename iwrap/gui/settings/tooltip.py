@@ -96,10 +96,11 @@ tooltip_dict ={
            'example: my_get_timestamp_method',
     'install_dir':'Path to the directory where the actor will be installed.',
     'documentation':'Human readable description of the actor.',
-    'parameters_file':'Path to the parameters (XML file) of the code.\n\n'
+    'parameters_file':'Path to the parameters of the code.\n\n'
                       'example: ‘./code_parameters/parameters.xml’',
-    'schema_file':'Path to the schema (XSD file) used to validate the XML code parameters.\n\n'
+    'schema_file':'Path to the schema used to validate the XML code parameters.\n\n'
                   'example: ‘./code_parameters/parameters.xsd’',
+    'parameters_format':'Format of parameters file. XML, json or namelist.',
     'argument_window.Name':'User defined argument name. Will be used in the actor only.\n\n'
                            'example: ’equilibrium00’',
     'argument_window.Intent':'Determines if the given argument is an input or an output one.',

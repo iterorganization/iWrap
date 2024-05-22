@@ -212,6 +212,12 @@ Generic information common for all programming languages handled by iWrap:
             -  value: string, valid path to file
             -  example: './code_parameters/parameters.xsd'
 
+        -   *format:*
+
+            -   meaning: format of the code parameters
+            -   value: string, one of the supported formats (legacy-xml, xml, json, yaml, namelist)
+            -   example: 'xml'
+
 
 
 -   *arguments:* list of arguments. Argument definition:

@@ -84,9 +84,13 @@ class PythonActorGenerator(ActorGenerator):
         def filter_func(x: str) -> bool:
             if "__pycache__" in x:
                 return False
+
             return  True
 
-        process_template_dir('iwrap.generators.actor_generators.python_actor', 'resources', self.install_dir, project_settings, filter_func=filter_func, output_stream= self.__info_output_stream, )
+        current_path = os.path.dirname( os.path.realpath( __file__ ) )
+        process_template_dir( None, current_path + '/resources', self.install_dir, project_settings,
+                              filter_func=filter_func,
+                              output_stream=self.__info_output_stream, )
 
         self.__copy_code_params_files(project_settings)
 
