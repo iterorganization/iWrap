@@ -14,6 +14,7 @@ class JavaIDSDescription(IDSDescription):
         self.shot = ids_description.shot
         self.run = ids_description.run
         self.occurrence = ids_description.occurrence
+        self.backend_id = ids_description.backend_id
         self.idx = ids_description.idx
         self.database = ids_description.database
         self.user = ids_description.user
@@ -26,6 +27,7 @@ class JavaIDSDescription(IDSDescription):
         java_ids_description.shot = self.shot
         java_ids_description.run = self.run
         java_ids_description.occurrence = self.occurrence
+        java_ids_description.backend_id = self.backend_id
         java_ids_description.idx= self.idx
         java_ids_description.database = self.database
         java_ids_description.user = self.user

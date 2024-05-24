@@ -171,10 +171,18 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 
     !-----------Reading input ---------------------
     status = read_input("{{ sbrt_role }}.in", db_entry_desc_array)
-    if (status /= 0) STOP -1
+
+    if (status /= 0) then
+        call write_output("{{ sbrt_role }}.out", status, "ERROR: Cannot read correctly '<<{{ sbrt_role }}.in'.")
+        STOP -1
+    end if
 
     !-----------Open DB entries---------------------
-    call open_db_entries(db_entry_desc_array)
+    call open_db_entries(db_entry_desc_array, status)
+    if (status /= 0) then
+        call write_output("{{ sbrt_role }}.out", status, "ERROR: Cannot open DB entry.")
+        STOP -1
+    end if
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
     CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&
@@ -196,7 +204,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
     call handle_status_info(status_code, status_msg, "{{actor_name}}", "{{ sbrt_role | upper }}")
 
     !-----------Writing output data to file ---------------------
-    call write_output("{{ sbrt_role }}.out", status_code, status_msg)
+    call write_output("{{ sbrt_role }}.out", status_code, convert_cptr2string(status_msg))
 
 {% if mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process

@@ -27,6 +27,7 @@ module rwtool
         read(10,*) ids_description%shot
         read(10,*) ids_description%run
         read(10,*) ids_description%occurrence
+        read(10,*) ids_description%backend_id
         read(10,*) ids_description%idx
         call read_chars( ids_description%machine)
         call read_chars( ids_description%user)
@@ -156,6 +157,7 @@ module rwtool
     write(10,*) ids_description%shot
     write(10,*) ids_description%run
     write(10,*) ids_description%occurrence
+    write(10,*) ids_description%backend_id
     write(10,*) ids_description%idx
     write(10,*) ids_description%machine
     write(10,*) ids_description%user
