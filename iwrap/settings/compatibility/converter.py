@@ -289,9 +289,6 @@ class Converter:
             except KeyError:
                 return transform_counter
 
-            if source_value is None:
-                return transform_counter
-
             # __delete function uses $TARGET keyword instead of $SOURCE, so it must be changed
             delete_condition = None
             if condition is not None:

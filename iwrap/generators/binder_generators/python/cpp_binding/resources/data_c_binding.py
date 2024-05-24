@@ -11,6 +11,7 @@ class IDSCType( ctypes.Structure, IDSDescription ):
                 ("shot", ctypes.c_int),
                 ("run", ctypes.c_int),
                 ("occurrence", ctypes.c_int),
+                ("backend_id", ctypes.c_int),
                 ("idx", ctypes.c_int),
                 ("machine_", ctypes.c_byte * 132),
                 ("user_", ctypes.c_byte * 132),
@@ -58,6 +59,7 @@ class IDSCType( ctypes.Structure, IDSDescription ):
         self.shot = ids_description.shot
         self.run = ids_description.run
         self.occurrence = ids_description.occurrence
+        self.backend_id = ids_description.backend_id
         self.idx = ids_description.idx
         self.database = ids_description.database
         self.user = ids_description.user

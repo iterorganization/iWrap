@@ -27,11 +27,13 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
         Path(sandbox_dir, 'tmp', '3', '0').mkdir(parents=True, exist_ok=True)
 
-        db_entry = imas.DBEntry( backend_id=backend_id,   # pylint: disable=no-member
-                                 user_name=sandbox_dir,   # AL hack to use sandbox dir
-                                 db_name=db_name,
-                                 shot=shot,
-                                 run=run )
+        db_entry = imas.DBEntry( # pylint: disable=no-member
+                                 backend_id,  # backend_id
+                                 db_name,     # db_name
+                                 shot,        # shot / pulse
+                                 run,         # run
+                                user_name=sandbox_dir,  # AL hack to use sandbox dir
+         )
 
         status, _not_used = db_entry.create()
         if status != 0:

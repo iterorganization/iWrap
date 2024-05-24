@@ -10,6 +10,7 @@ public class IDSDescription {
     public int shot;
     public int run;
     public int occurrence;
+    public int backend_id;
     public int idx;
     public String database;
     public String user;
@@ -19,7 +20,15 @@ public class IDSDescription {
     }
 
     public String toString() {
-        return "IDSDescription{ids_type='" + this.ids_type + '\'' + ", shot=" + this.shot + ", run=" + this.run + ", occurrence=" + this.occurrence + ", idx=" + this.idx + ", database='" + this.database + '\'' + ", user='" + this.user + '\'' + ", version='" + this.version + '\'' + '}';
+        return "IDSDescription{ids_type='" + this.ids_type + '\''
+                            + ", shot=" + this.shot
+                            + ", run=" + this.run
+                            + ", occurrence=" + this.occurrence
+                            + ", backend_id=" + this.backend_id
+                            + ", idx=" + this.idx
+                            + ", database='" + this.database + '\''
+                            + ", user='" + this.user + '\''
+                            + ", version='" + this.version + '\'' + '}';
     }
 
     public boolean db_equals(Object o) {
@@ -27,7 +36,7 @@ public class IDSDescription {
         if (o == null || getClass() != o.getClass()) return false;
         IDSDescription that = (IDSDescription) o;
         return shot == that.shot
-            && run == that.run && idx == that.idx
+            && run == that.run && idx == that.idx && backend_id == that.backend_id
             && database.equals(that.database) && user.equals(that.user) && version.equals(that.version);
     }
 
@@ -60,6 +69,9 @@ public class IDSDescription {
 
         line = br.readLine(); //occurrence
         this.occurrence = Integer.parseInt(line);
+
+        line = br.readLine(); //backend
+        this.backend_id = Integer.parseInt(line);
 
         line = br.readLine(); //idx
         this.idx = Integer.parseInt(line);
