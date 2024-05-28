@@ -86,7 +86,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
             try:
                 # for jsonschema.exceptions.ValidationError
                 message = error.message
-            except:
+            except AttributeError:
                 # for other parameters formats errors
                 message = str(error)
             messagebox.showerror("Validation Error", f"The process encountered an error. Verify the input files!\n\n"

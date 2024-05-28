@@ -1,7 +1,6 @@
 from .generic_handler import GenericHandler
 from xml.etree import ElementTree as et
 from lxml import etree
-from lxml.etree import DocumentInvalid
 from pathlib import Path
 from typing import Set
 
@@ -76,7 +75,7 @@ class XMLHandler(GenericHandler):
             return
 
         if not self._parameters_str  or self._new_path_set:
-            self.initialize()
+            self.initialize(self._default_parameters_path, self._schema_path)
 
         tree = et.ElementTree(et.fromstring(self._parameters_str))
         root = tree.getroot()
@@ -96,7 +95,7 @@ class XMLHandler(GenericHandler):
         if not self._default_parameters_path:
             return
         if not self._parameters_str or self._new_path_set:
-            self.initialize()
+            self.initialize(self._default_parameters_path, self._schema_path)
 
         #replace arrays with XML lists e.g. [1,2,3] -> "1 2 3"
         cleared_value = value
@@ -129,11 +128,11 @@ class XMLHandler(GenericHandler):
         try:
             # Perform validation:
             xml_schema_validator.assertValid(xml_tree)
-        except DocumentInvalid:
+        except etree.DocumentInvalid:
             message = "\n\nXML validation error(s):\n"
 
             if self.parameters_path:
                 message = message + f'File: {self.parameters_path}\n'
             for error in xml_schema_validator.error_log:
                 message = message + f'  Line {error.line}: {error.message} \n'
-            raise DocumentInvalid(message) from None
+            raise etree.DocumentInvalid(message) from None
