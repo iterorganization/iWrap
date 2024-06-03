@@ -1,7 +1,7 @@
 *.exe
 .idea
 .vs_code
-docs_book_venv
+tutorial_venv
 _build
 !*.yaml
 !*.xml

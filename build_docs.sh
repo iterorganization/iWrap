@@ -1,8 +1,8 @@
 #!/bin/bash
 
 copy_codes() {
-build_subpath="./docs/_build/jupyter_execute/tutorial/"
-markdowns_directory="./docs/tutorial"
+build_subpath="${IWRAP_HOME}/docs/_build/jupyter_execute/tutorial/"
+markdowns_directory="${IWRAP_HOME}/docs/tutorial"
 
 find "$markdowns_directory/" -not -path "${build_subpath}/*" -type d -iname "codes" | while read source_directory; do
   destination_directory="${source_directory/$markdowns_directory\//$build_subpath}"
@@ -17,26 +17,29 @@ find "$markdowns_directory/" -not -path "${build_subpath}/*" -type d -iname "cod
 done
 }
 
-VENV_DIR="docs_book_venv"
+VENV_DIR="tutorial_venv"
 build_docs() {
 
+    if [[ -d ${IWRAP_HOME}/${VENV_DIR} ]]; then
+      rm -rf ${IWRAP_HOME}/${VENV_DIR}
+    fi
+
     echo -e "\nMaking venv named: $VENV_DIR"
-    python3 -m venv $VENV_DIR
+    python3 -m venv ${IWRAP_HOME}/${VENV_DIR}
 
     echo -e "\nActivating virtual environment '${VENV_DIR}'..."
-    source "${VENV_DIR}/bin/activate"
+    source "${IWRAP_HOME}/${VENV_DIR}/bin/activate"
 
     pip install --upgrade pip
-    pip install --force-reinstall -r ./docs/requirements.txt
+    pip install --force-reinstall -r ${IWRAP_HOME}/docs/requirements.txt
 
     # Always build the JupyterBook
-    jupyter-book build ./docs
+    jupyter-book build ${IWRAP_HOME}/docs
 
     copy_codes
-    cp -r ./docs/images ./docs/_build/jupyter_execute/tutorial/
+    cp -r ${IWRAP_HOME}/docs/images ${IWRAP_HOME}/docs/_build/jupyter_execute/tutorial/
 
     deactivate
-    rm -rf $VENV_DIR
 }
 
 build_docs

@@ -26,4 +26,4 @@ docstring_files/
 /docs/doctrees
 *.tmp
 *.jar
-docs_book_venv
+tutorial_venv
