@@ -41,10 +41,16 @@ ifdef INSTALL_DIR
 	$(eval INSTALL_PY = $(INSTALL_PREFIX)/lib/python$(PY_VER))
 endif
 
-iwrap_build: | venv
-	$(VENV)/python setup.py bdist_wheel --dist-dir=./dist/$(VERSION)
+iwrap_build:
+	( \
+		$(PY_CMD) -m venv .venv; \
+		. .venv/bin/activate; \
+		pip install -r requirements_build.txt; \
+		python setup.py bdist_wheel --dist-dir=./dist/$(VERSION); \
+		deactivate; \
+	)
+	rm -rf .venv
 	@echo -e "\n\tIWRAP_BUILD FINISHED\n"
-	@$(MAKE) clean-venv --no-print-directory
 
 install_iwrap: check_already_installed install_dir iwrap_build
 	install -d $(dir $(INSTALL_PREFIX))
@@ -109,5 +115,3 @@ code-check:
 clean:
 	rm -rf dist
 	rm -rf build
-
-include Makefile.venv
