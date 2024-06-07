@@ -17,7 +17,6 @@ INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
 INSTALL_MOD ?= $(HOME)/IWRAP_MODULE_DIR/
-REQUIREMENTS_TXT ?= requirements_build.txt
 
 IWRAP_ALREADY_INSTALLED := $(shell which iwrap 2>/dev/null)
 
@@ -54,7 +53,7 @@ iwrap_build:
 
 install_iwrap: check_already_installed install_dir iwrap_build
 	install -d $(dir $(INSTALL_PREFIX))
-	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --prefix $(INSTALL_PREFIX)
+	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --target $(INSTALL_PREFIX)
 	@echo -e "\n\tIWRAP_INSTALL FINISHED\n"
 	@echo -e "\t iWrap installed in:\n\t$(INSTALL_PREFIX)\n"
 
