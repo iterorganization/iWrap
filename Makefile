@@ -1,5 +1,5 @@
 # Check the version from the git tag
-VERSION := $(shell git describe --abbrev=4 --dirty)
+VERSION ?= $(shell git describe --abbrev=4 --dirty)
 
 # Site configuration
 IWRAP_NAME ?= iwrap
@@ -17,12 +17,23 @@ INSTALL_PREFIX ?= $(HOME)/IWRAP_INSTALL_DIR/$(VERSION)
 INSTALL_PY ?= $(INSTALL_PREFIX)/lib/python$(PY_VER)
 MODULEFILE ?= $(IWRAP_NAME)/$(VERSION)
 INSTALL_MOD ?= $(HOME)/IWRAP_MODULE_DIR/
+REQUIREMENTS_TXT ?= requirements_build.txt
+
+IWRAP_ALREADY_INSTALLED := $(shell which iwrap 2>/dev/null)
 
 all: iwrap_build
 install: install_dir install_iwrap install_module docs
 uninstall: uninstall_module uninstall_iwrap
 
-.PHONY: build/module/$(MODULEFILE) iwrap_build build_deps build_deps_clear help clean docs
+.PHONY: build/module/$(MODULEFILE) install_iwrap update_iwrap iwrap_build build_deps build_deps_clear help clean docs
+
+
+check_already_installed:
+ifndef IWRAP_ALREADY_INSTALLED
+	$(info "No existing iWrap installation found")
+else
+	$(error "iWrap is already installed. If you want to update iWrap, use 'make update_iwrap'")
+endif
 
 install_dir:
 ifdef INSTALL_DIR
@@ -30,15 +41,21 @@ ifdef INSTALL_DIR
 	$(eval INSTALL_PY = $(INSTALL_PREFIX)/lib/python$(PY_VER))
 endif
 
-iwrap_build: build_deps
-	$(PY_CMD) setup.py bdist_wheel --dist-dir=./dist/$(VERSION)
-	@$(MAKE) build_deps_clear --no-print-directory
+iwrap_build: | venv
+	$(VENV)/python setup.py bdist_wheel --dist-dir=./dist/$(VERSION)
 	@echo -e "\n\tIWRAP_BUILD FINISHED\n"
+	@$(MAKE) clean-venv --no-print-directory
 
-install_iwrap: install_dir iwrap_build
+install_iwrap: check_already_installed install_dir iwrap_build
 	install -d $(dir $(INSTALL_PREFIX))
 	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --prefix $(INSTALL_PREFIX)
 	@echo -e "\n\tIWRAP_INSTALL FINISHED\n"
+	@echo -e "\t iWrap installed in:\n\t$(INSTALL_PREFIX)\n"
+
+update_iwrap: install_dir iwrap_build
+	install -d $(dir $(INSTALL_PREFIX))
+	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --force-reinstall --prefix $(INSTALL_PREFIX)
+	@echo -e "\n\tIWRAP_UPDATE FINISHED\n"
 	@echo -e "\t iWrap installed in:\n\t$(INSTALL_PREFIX)\n"
 
 install_module: build/module/$(MODULEFILE)
@@ -55,12 +72,6 @@ build/module/$(MODULEFILE): iwrap/resources/module/iWrap.in
 		-e "s;__INSTALL_PY__;$(INSTALL_PY);" \
   		-e "s;__IWRAP_NAME__;$(IWRAP_NAME);" \
 		$< > $@
-
-build_deps:
-	@$(PY_CMD) -m pip install -r requirements_build.txt --user
-
-build_deps_clear:
-	@$(PY_CMD) -m pip uninstall -r requirements_build.txt -y
 
 uninstall_iwrap: install_dir
 	rm -rf $(INSTALL_PREFIX)
@@ -89,14 +100,14 @@ help: install_dir
 	@echo -e "Version of the package - iWrap version:"
 	@echo -e "\tVERSION: [$(VERSION)]"
 
-clean: build_deps
-	$(PY_CMD) setup.py clean
-	@$(MAKE) build_deps_clear --no-print-directory
-	find . -type d -name '__pycache__' | xargs rm -r
-
 docs:
 	@$(SHELL_SCRIPT)
 
 code-check:
 	pylint -E ./iwrap
 
+clean:
+	rm -rf dist
+	rm -rf build
+
+include Makefile.venv
