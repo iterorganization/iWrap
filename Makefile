@@ -53,7 +53,7 @@ iwrap_build:
 
 install_iwrap: check_already_installed install_dir iwrap_build
 	install -d $(dir $(INSTALL_PREFIX))
-	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --target $(INSTALL_PREFIX)
+	$(PY_CMD) -m pip install $(wildcard ./dist/$(VERSION)/*.whl) --compile --prefix $(INSTALL_PREFIX)
 	@echo -e "\n\tIWRAP_INSTALL FINISHED\n"
 	@echo -e "\t iWrap installed in:\n\t$(INSTALL_PREFIX)\n"
 
