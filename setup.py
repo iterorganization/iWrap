@@ -49,6 +49,7 @@ def list_docs_data_files(path_to_docs: str):
 
     return docs_files
 
+
 # Workaround for https://github.com/pypa/pip/issues/7953
 # Cannot install into user site directory with editable source
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
@@ -89,11 +90,11 @@ if __name__ == "__main__":
     # https://packaging.python.org/specifications/core-metadata/ for allow version strings
 
     cmdclassdict = versioneer.get_cmdclass()
-    cmdclassdict['clean']=CleanCommand
+    cmdclassdict['clean'] = CleanCommand
     
     setup(
         version=versioneer.get_version(),
-        packages=find_packages(exclude=('tests*', 'testing*')),
+        packages=find_packages(exclude=('tests*', 'testing*', 'test_suite*')),
         setup_requires=pyproject_data["build-system"]["requires"],
         include_package_data=True,
         install_requires=install_requires,
@@ -105,6 +106,6 @@ if __name__ == "__main__":
                 'iwrap = bin.run:cmd_line',
             ]
         },
-	scripts=['bin/iwrap-doc','bin/iwrap-yaml-update'],
+        scripts=['bin/iwrap-doc','bin/iwrap-yaml-update'],
         data_files=list_docs_data_files(path_to_docs="./docs/html/")
     )
