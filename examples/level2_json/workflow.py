@@ -2,8 +2,8 @@ import sys
 
 import imas,os
 
-from physics_ii.actor import physics_ii
-from physics_ii.common.runtime_settings import RunMode, DebugMode
+from physics_ii_fortran_json.actor import physics_ii_fortran_json
+from physics_ii_fortran_json.common.runtime_settings import RunMode, DebugMode
 
 
 
@@ -11,7 +11,7 @@ class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.actor_physics_ii = physics_ii()
+        self.actor_physics_ii = physics_ii_fortran_json()
         self.input_entry = None
         self.output_entry = None
 

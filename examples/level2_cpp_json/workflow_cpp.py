@@ -2,16 +2,16 @@ import sys
 
 import imas,os
 
-from level2_cpp_json.actor import level2_cpp_json
+from physics_ii_cpp_json.actor import physics_ii_cpp_json
 
-from level2_cpp_json.common.runtime_settings import RunMode, DebugMode
+from physics_ii_cpp_json.common.runtime_settings import RunMode, DebugMode
 
 
 class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.level2_cpp_json = level2_cpp_json()
+        self.level2_cpp_json = physics_ii_cpp_json()
         self.input_entry = None
         self.output_entry = None
 

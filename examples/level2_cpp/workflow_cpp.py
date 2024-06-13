@@ -2,16 +2,16 @@ import sys
 
 import imas,os
 
-from physics_ii_cpp.actor import physics_ii_cpp
+from physics_ii_cpp_xml.actor import physics_ii_cpp_xml
 
-from physics_ii_cpp.common.runtime_settings import RunMode, DebugMode
+from physics_ii_cpp_xml.common.runtime_settings import RunMode, DebugMode
 
 
 class ExampleWorkflowManager:
 
     def __init__(self):
 
-        self.actor_physics_ii = physics_ii_cpp()
+        self.actor_physics_ii = physics_ii_cpp_xml()
         self.input_entry = None
         self.output_entry = None
 

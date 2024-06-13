@@ -1,32 +1,36 @@
+actor_description:
+  actor_name: physics_ii_fortran_xml
+  actor_type: python
+  data_type: legacy
 code_description:
-    implementation:
-        subroutines:
-            main:  physics_ii
-        data_type: legacy
-        programming_language: Fortran
-        data_dictionary_compliant: 3.37.0
-        code_path: ./native_code/libphysics_ii.a
-        include_path: ./native_code/mod_physics_ii.mod
-        code_parameters:
-            parameters: ./input/input_physics.xml
-            schema: ./input/input_physics.xsd
-    arguments:
-    -   name: equilibrium_in
-        type: equilibrium
-        intent: IN
-    -   name: equilibrium_out
-        type: equilibrium
-        intent: OUT
-    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. '
-    settings:
-        compiler_cmd: $FC
-        mpi_compiler_cmd:
-        compiler_flags:
-        extra_libraries:
-            pkg_config_defined:
-                - xmllib
-            path_defined:
-
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+      parameters: ./input/input_physics.xml
+      schema: ./input/input_physics.xsd
+    code_path: ./native_code/libphysics_ii.a
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path: ./native_code/mod_physics_ii.mod
+    programming_language: Fortran
+    subroutines:
+      main:
+        arguments:
+        - intent: IN
+          name: equilibrium_in
+          type: equilibrium
+        - intent: OUT
+          name: equilibrium_out
+          type: equilibrium
+        name: physics_ii
+        need_code_parameters: true
+  settings:
+    compiler_cmd: $FC
+    compiler_flags:
+    extra_libraries:
+      path_defined:
+      pkg_config_defined:
+      - xmllib
+    mpi_compiler_cmd:

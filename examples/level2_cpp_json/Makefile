@@ -7,10 +7,10 @@ wf-run:  workflow_cpp.py
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a level2_cpp_json -f ./level2_cpp_json.yaml
+	iwrap -a physics_ii_cpp_json -f ./level2_cpp_json.yaml
 
 actor-gui: native
-	iwrap-gui -a level2_cpp_json -f ./level2_cpp_json.yaml
+	iwrap-gui -a physics_ii_cpp_json -f ./level2_cpp_json.yaml
 
 native:
 	make -C ./native_code clean

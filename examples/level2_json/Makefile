@@ -7,10 +7,10 @@ wf-run:
 	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
 
 actor:
-	iwrap -a physics_ii -f ./physics_ii.yaml
+	iwrap -a physics_ii_fortran_json -f ./physics_ii.yaml
 
 actor-gui: native
-	iwrap-gui -a physics_ii -f ./physics_ii.yaml
+	iwrap-gui -a physics_ii_fortran_json -f ./physics_ii.yaml
 
 native:
 	make -C ./native_code clean

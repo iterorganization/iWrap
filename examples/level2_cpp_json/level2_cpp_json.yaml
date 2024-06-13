@@ -1,38 +1,35 @@
----
 actor_description:
-    actor_name: physics_ii_cpp
-    actor_type: python
-    data_type: legacy
+  actor_name: physics_ii_cpp_json
+  actor_type: python
+  data_type: legacy
 code_description:
-    arguments:
-    -   intent: IN
-        name: equilibrium_in
-        type: equilibrium
-    -   intent: OUT
-        name: equilibrium_out
-        type: equilibrium
-    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. '
-    implementation:
-        code_parameters:
-            parameters: ./input/input.json
-            schema: ./input/input.schema
-            format: json
-        code_path: ./native_code/liblevel2_cpp_json.a
-        data_type: legacy
-        include_path: ./native_code/level2_cpp_json.h
-        programming_language: cpp
-        data_dictionary_compliant: 3.37.0
-        root_dir: .
-        subroutines:
-            finalize: ''
-            init: ''
-            main: physics_ii_cpp
-    settings:
-        compiler_cmd: $CXX
-        extra_libraries:
-        mpi_compiler_cmd:
-        compiler_flags:
-...
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+      format: json
+      parameters: ./input/input.json
+      schema: ./input/schema.json
+    code_path: ./native_code/liblevel2_cpp_json.a
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path: ./native_code/level2_cpp_json.h
+    programming_language: cpp
+    root_dir: .
+    subroutines:
+      main:
+        arguments:
+        - intent: IN
+          name: equilibrium_in
+          type: equilibrium
+        - intent: OUT
+          name: equilibrium_out
+          type: equilibrium
+        name: physics_ii_cpp
+        need_code_parameters: true
+  settings:
+    compiler_cmd: $CXX
+    compiler_flags:
+    extra_libraries:
+    mpi_compiler_cmd:
