@@ -14,14 +14,8 @@ Developers manual
     a reference, that *can* but not *has to* be followed, while adding new actor generations plug-ins
 
 
-
-.. toctree::
-   :numbered:
-   :maxdepth: 10
-   :caption: Developers manual
-
-   /resources/developers_manual/actor_architecture.rst
-   /resources/developers_manual/actor_generators.rst
-   /resources/developers_manual/code_parameters_handling.rst
-   /resources/developers_manual/code_desc_compatibility.rst
+   /documentation/developers_manual/actor_architecture.rst
+   /documentation/developers_manual/actor_generators.rst
+   /documentation/developers_manual/code_parameters_handling.rst
+   /documentation/developers_manual/code_desc_compatibility.rst
 

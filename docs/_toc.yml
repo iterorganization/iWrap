@@ -27,6 +27,7 @@ parts:
       sections:
         - file:  documentation/developers_manual/actor_architecture.rst
         - file:  documentation/developers_manual/actor_generators.rst
+        - file:  documentation/developers_manual/code_parameters_handling.rst
         - file:  documentation/developers_manual/code_desc_compatibility.rst
 
     - file: documentation/installation_guide/iwrap_installation.rst

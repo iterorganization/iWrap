@@ -2,10 +2,6 @@
 Code parameters handling
 #######################################################################################################################
 
-############
-
-.. toctree::
-
 Introduction
 ############
 
@@ -13,14 +9,14 @@ iWrap takes advantage of ``parameters handlers`` in order to access and modify c
 These objects implements a pack of functions allowing iWrap to load, access and validate parameters files.
 
 Parameters handler interface
-############
+#######################################################################################################################
 
 Every code parameters handler must implement ``ParametersHandlerInterface`` in order to be usable by iWrap.
 ``ParametersHandlerInterface`` is located in ``iwrap.settings.code_parameters_handlers`` package.
 
 
 Parameters handler development guide
-############
+#######################################################################################################################
 
 Additional code parameters handler abstract classes provide convenient way to create custom handlers with minimal effort.
 
@@ -81,7 +77,7 @@ If helper abstract classes don't fulfill custom handler needs, developer has to 
 * ``validate(self):`` - method validating parameters against schema. In case of failure it should raise an Exception
 
 Handler installation
-############
+#######################################################################################################################
 
 When custom handler class is finished, it can be introduced into iWrap putting custom handler module into ``iwrap.settings.code_parameters_handlers`` package.
 Modification of ``HandlerFactory``'s ``_handlers`` static variable is also necessary:
