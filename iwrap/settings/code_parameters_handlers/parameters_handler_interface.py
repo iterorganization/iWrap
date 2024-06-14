@@ -48,3 +48,7 @@ class ParametersHandlerInterface(ABC):
         Method used to validate parameters
         '''
         ...
+
+    @abstractmethod
+    def restore_default_parameters_path(self):
+        ...

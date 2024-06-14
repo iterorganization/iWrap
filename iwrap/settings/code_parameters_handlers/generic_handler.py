@@ -115,3 +115,9 @@ class GenericHandler(ParametersHandlerInterface, ABC):
                 parameters_path = Path( self._default_params_dir, Path(self._parameters_path))
                 self._parameters_str = self._read_file(parameters_path)
                 self._new_path_set = False
+
+    def restore_default_parameters_path(self):
+        self._parameters_path = self._default_parameters_path
+        self._new_path_set = True
+
+        self.initialize(self._default_parameters_path, self._schema_path)

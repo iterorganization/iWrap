@@ -75,6 +75,7 @@ If helper abstract classes don't fulfill custom handler needs, developer has to 
 * ``get_parameter(self, path_to_node: str):`` - method returning value of parameter described by ``path_to_node``
 * ``set_parameter(self, path_to_node: str, value):`` - method setting value of parameter described by ``path_to_node``
 * ``validate(self):`` - method validating parameters against schema. In case of failure it should raise an Exception
+* ``restore_default_parameters_path(self):`` - method resetting parameters path to default value set during actor build process
 
 Handler installation
 #######################################################################################################################

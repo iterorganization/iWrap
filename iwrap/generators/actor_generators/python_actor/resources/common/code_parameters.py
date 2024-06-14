@@ -43,5 +43,8 @@ class CodeParameters:
         self.__handler = HandlerFactory.get_handler(parameters_format)
         self.__handler.initialize(default_parameters_path, schema_path)
 
+    def restore_default_parameters_path(self):
+        self.__handler.restore_default_parameters_path()
+
     def validate(self):
         self.__handler.validate()
