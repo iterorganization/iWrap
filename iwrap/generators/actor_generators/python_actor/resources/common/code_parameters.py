@@ -16,12 +16,11 @@ class CodeParameters:
 
     @property
     def parameters_path(self):
-        return self.__handler.paramters_path
+        return self.__handler.parameters_path
 
     @parameters_path.setter
     def parameters_path(self, path: str) -> None:
-        self._default_parameters_path = path
-        self.__handler.paramters_path = path
+        self.__handler.parameters_path = path
 
     @property
     def format(self):

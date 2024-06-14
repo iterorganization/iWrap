@@ -79,7 +79,7 @@ class CodeParametersPane(ttk.Frame, IWrapPane):
         # The validation process itself.
         try:
             parameters_handler : ParametersHandlerInterface = HandlerFactory.get_handler(self.parameters_format.get())
-            parameters_handler.initialize(default_parameters_path=utils.resolve_path(self.parameters_path.get(), ProjectSettings.get_settings().root_dir_path),
+            parameters_handler.initialize(parameters_path=utils.resolve_path(self.parameters_path.get(), ProjectSettings.get_settings().root_dir_path),
                                           schema_path=utils.resolve_path(self.schema_path.get(), ProjectSettings.get_settings().root_dir_path))
             parameters_handler.validate()
         except Exception as error:

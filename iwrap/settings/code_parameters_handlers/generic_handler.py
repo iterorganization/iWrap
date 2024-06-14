@@ -13,6 +13,7 @@ class GenericHandler(ParametersHandlerInterface, ABC):
         self._default_params_dir = Path(Path(__file__).parent, '../../input/')
         self._new_path_set: bool = True
         self._parameters_path: str = None
+        self._default_parameters_path: str = None
 
         self._schema_str = None
         self._parameters_str = None
@@ -97,25 +98,20 @@ class GenericHandler(ParametersHandlerInterface, ABC):
     def validate(self):
         ...
 
-    def initialize(self, default_parameters_path: str, schema_path: str):
-        self._default_parameters_path = default_parameters_path
-        self._schema_path = schema_path
-
-        # actor with parameters MUST have default parameters
+    def initialize(self, parameters_path: str, schema_path: str):
         if not self._default_parameters_path:
-            return
+            self._default_parameters_path = parameters_path
+
+        self._parameters_path = parameters_path
+        self._schema_path = schema_path
 
         # Read XSD (if not yet loaded)
         if not self._schema_str:
             schema_path = Path( self._default_params_dir, Path(self._schema_path))
             self._schema_str = self._read_file( schema_path )
 
-
         if self._new_path_set:
-            if self.parameters_path:
-                self._parameters_str = self._read_file( self.parameters_path )
-            else:
-                default_parameters_path = Path( self._default_params_dir, Path( self._default_parameters_path ) )
-                self._parameters_str = self._read_file( default_parameters_path )
-
-            self._new_path_set = False
+            if self._parameters_path:
+                parameters_path = Path( self._default_params_dir, Path(self._parameters_path))
+                self._parameters_str = self._read_file(parameters_path)
+                self._new_path_set = False
