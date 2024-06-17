@@ -45,8 +45,26 @@ void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::e
         return;
     }
 
+    const auto rawJsonLength = static_cast<int>(codeparam.length());
+    JSONCPP_STRING err;
+    Json::Value root;
+
+    Json::CharReaderBuilder builder;
+    const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+    if (!reader->parse(codeparam.c_str(), codeparam.c_str() + rawJsonLength, &root, &err))
+    {
+      std::cout << "error reading JSON file" << std::endl;
+      return;
+    }
+
+    const int ntimes = root["parameters"]["ntimes"].asInt();
+    const float multiplication_factor = root["parameters"]["multiplication_factor"].asFloat();
+
+
     printf( "------------------------------------\n");
-    printf( "Parameters read from file:\n\%s", codeparam.c_str());
+    printf( "Parameters read from input JSON file:\n");
+    printf(" ntimes                = %d\n",  ntimes);
+    printf(" multiplication_factor = %f\n",  multiplication_factor);
 
     printf( "------------------------------------\n");
     

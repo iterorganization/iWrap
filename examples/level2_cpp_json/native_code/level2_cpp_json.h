@@ -9,6 +9,8 @@
     #warning Could not find AL_MAJOR variable. Assuming AL version = 5.x.x.
     #include "ALClasses.h"
 #endif
+#include <memory>
+#include "json/json.h"
 
 void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium, IdsNs::IDS::equilibrium& out_equilibrium,
                     std::string codeparam,

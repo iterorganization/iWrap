@@ -32,4 +32,6 @@ code_description:
     compiler_cmd: $CXX
     compiler_flags:
     extra_libraries:
+      pkg_config_defined:
+        - jsoncpp
     mpi_compiler_cmd:
