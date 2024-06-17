@@ -8,12 +8,12 @@ from .data_storages.data_descriptions import IDSDescription
 class IDSCType( ctypes.Structure, IDSDescription ):
 
     _fields_ = (("ids_type_", ctypes.c_byte * 132),
-                ("shot", ctypes.c_int),
+                ("pulse", ctypes.c_int),
                 ("run", ctypes.c_int),
                 ("occurrence", ctypes.c_int),
                 ("backend_id", ctypes.c_int),
                 ("idx", ctypes.c_int),
-                ("machine_", ctypes.c_byte * 132),
+                ("database_", ctypes.c_byte * 132),
                 ("user_", ctypes.c_byte * 132),
                 ("version_", ctypes.c_byte * 132),
                 )
@@ -28,13 +28,13 @@ class IDSCType( ctypes.Structure, IDSDescription ):
         self.ids_type_[:len( ids_type_ )] = [ord( x ) for x in ids_type_]
 
     @property
-    def machine(self):
-        return ''.join( (chr( x ) for x in self.machine_[:]) ).strip()
+    def database(self):
+        return ''.join( (chr( x ) for x in self.database_[:]) ).strip()
 
-    @machine.setter
-    def machine(self, machine_):
-        self.machine_[:] = len( self.machine_ ) * [ord( ' ' )]
-        self.machine_[:len( machine_ )] = [ord( x ) for x in machine_]
+    @database.setter
+    def database(self, database_):
+        self.database_[:] = len( self.database_ ) * [ord( ' ' )]
+        self.database_[:len( database_ )] = [ord( x ) for x in database_]
 
     @property
     def user(self):
@@ -56,7 +56,7 @@ class IDSCType( ctypes.Structure, IDSDescription ):
 
     def __init__(self, ids_description:IDSDescription):
         self.ids_type = ids_description.ids_type
-        self.shot = ids_description.shot
+        self.pulse = ids_description.pulse
         self.run = ids_description.run
         self.occurrence = ids_description.occurrence
         self.backend_id = ids_description.backend_id

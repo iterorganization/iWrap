@@ -8,8 +8,10 @@ import imasjava.*;
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
-	{{ ids_var_name }}.setPulseCtx({{ ids_var_name }}_desc.idx);
+	iWrapTools.open_db({{ ids_var_name }}_desc);
+    {{ ids_var_name }}.setPulseCtx({{ ids_var_name }}_desc.idx);
     {{ ids_var_name }}.get({{ ids_var_name }}_desc.occurrence);
+    iWrapTools.close_db({{ ids_var_name }}_desc);
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_name) -%}
@@ -18,6 +20,8 @@ import imasjava.*;
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
+	iWrapTools.open_db({{ ids_var_name }}_desc);
     {{ ids_var_name }}.setPulseCtx({{ ids_var_name }}_desc.idx);
     {{ ids_var_name }}.put({{ ids_var_name }}_desc.occurrence);
+    iWrapTools.close_db({{ ids_var_name }}_desc);
 {%- endmacro -%}

@@ -16,9 +16,9 @@ class IDSDescription:
         self.database = db_entry.db_name
         self.version = db_entry.data_version
         try:
-            self.shot = db_entry.pulse
+            self.pulse = db_entry.pulse
         except AttributeError:
-            self.shot = db_entry.shot
+            self.pulse = db_entry.shot
         self.run = db_entry.run
         self.idx = db_entry.db_ctx
         self.ids_type = ids_name
@@ -29,7 +29,7 @@ class IDSDescription:
         stream.write( "------- IDS -------\n" )
         stream.write( self.ids_type )
         stream.write( "\n" )
-        stream.write( str( self.shot ) )
+        stream.write( str( self.pulse ) )
         stream.write( "\n" )
         stream.write( str( self.run ) )
         stream.write( "\n" )

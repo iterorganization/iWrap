@@ -9,6 +9,8 @@
     #include "ALClasses.h"
 {% endif %}
 
+char* iwrap_trim(char* text, int text_size);
+
 int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size);
 
 void read_code_parameters( char** xml_string);
@@ -23,8 +25,10 @@ void release_status_info(char* status_message);
 void convert_status_info(std::string in_status_msg, char** out_status_msg);
 
 
-IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size);
+IdsNs::IDS* init_db(ids_description_t* db_entry_desc);
 
-void close_db_entries(IdsNs::IDS** db_entry_array, int array_size);
+int open_db(IdsNs::IDS* db_entry, ids_description_t* db_entry_desc);
+
+void close_db(IdsNs::IDS* db_entry);
 
 #endif // _IWRAP_TOOLS

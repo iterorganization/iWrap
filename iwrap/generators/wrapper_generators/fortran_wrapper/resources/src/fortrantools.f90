@@ -124,114 +124,94 @@ module iwrap_tools
 {% if build_info.al_version.startswith('4.')   %}
 
 
-    SUBROUTINE open_db(backend_id, shot, run, user_name, db_name, data_version, idx, status)
+    SUBROUTINE open_db(db_entry_desc, idx, status)
         use ual_low_level_wrap
 
-        integer, intent(IN)   :: backend_id
-        integer, intent(IN)   :: shot
-        integer, intent(IN)   :: run
-        character(len=*), intent(IN)   :: user_name
-        character(len=*), intent(IN)   :: db_name
-        character(len=*), intent(IN)   :: data_version
+        type(ids_description_t), intent(IN) :: db_entry_desc
         INTEGER, INTENT(OUT)  :: idx
         INTEGER, INTENT(OUT)  :: status
 
-        CALL ual_begin_pulse_action(backend_id, shot, run, user_name, db_name, data_version, idx, status)
+        if (db_entry_desc%backend_id == MEMORY_BACKEND) then
+            idx = db_entry_desc%idx
+            status = 0
+            return
+        end if
+
+
+        CALL ual_begin_pulse_action(db_entry_desc%backend_id, &
+                                    db_entry_desc%pulse, &
+                                    db_entry_desc%run, &
+                                    convert_array2string(db_entry_desc%user), &
+                                    convert_array2string(db_entry_desc%db_name), &
+                                    convert_array2string(db_entry_desc%version), &
+                                    idx, &
+                                    status)
         if (status .eq. 0)   CALL ual_open_pulse(idx, OPEN_PULSE, '', status)
+
+       if (status /= 0) then
+            write (*,*) "ERROR: Cannot open DB entry!", &
+                        " BE: ", db_entry_desc%backend_id, &
+                        " USER: ",   convert_array2string(db_entry_desc%user), &
+                        " DB: ", convert_array2string(db_entry_desc%db_name), &
+                        " PULSE/RUN: ",  db_entry_desc%pulse,  "/", db_entry_desc%run
+                        return
+
+       end if
 
     END SUBROUTINE open_db
 {% else %}
 
 
-    SUBROUTINE open_db(backend_id, pulse, run, user_name, db_name, data_version, idx, status)
+    SUBROUTINE open_db(db_entry_desc, idx, status)
         use ids_routines
-        integer, intent(IN)   :: backend_id
-        integer, intent(IN)   :: pulse
-        integer, intent(IN)   :: run
-        character(len=*), intent(IN)   :: user_name
-        character(len=*), intent(IN)   :: db_name
-        character(len=*), intent(IN)   :: data_version
+
+        type(ids_description_t), intent(IN) :: db_entry_desc
         INTEGER, INTENT(OUT)  :: idx
         INTEGER, INTENT(OUT)  :: status
         character (STRMAXLEN) :: uri
 
-        call al_build_uri_from_legacy_parameters(backend_id, pulse, run, user_name, db_name, data_version, "", uri, status)
+
+        if (db_entry_desc%backend_id == MEMORY_BACKEND) then
+            idx = db_entry_desc%idx
+            status = 0
+            return
+        end if
+
+        call al_build_uri_from_legacy_parameters(db_entry_desc%backend_id, &
+                                                 db_entry_desc%pulse, &
+                                                 db_entry_desc%run, &
+                                                 convert_array2string(db_entry_desc%user), &
+                                                 convert_array2string(db_entry_desc%db_name), &
+                                                 convert_array2string(db_entry_desc%version), &
+                                                "", uri, status)
 
         if (status .eq. 0)  call imas_open( uri, OPEN_PULSE, idx, status)
 
+        if (status /= 0) then
+            write (*,*) "ERROR: Cannot open DB entry!", &
+                        " BE: ", db_entry_desc_array(i)%backend_id, &
+                        " USER: ",   convert_array2string(db_entry_desc_array(i)%user), &
+                        " DB: ", convert_array2string(db_entry_desc_array(i)%db_name), &
+                        " PULSE/RUN: ",  db_entry_desc_array(i)%pulse,  "/", db_entry_desc_array(i)%run
+                        exit
+
+        end if
+
     END SUBROUTINE open_db
 {% endif %}
-    SUBROUTINE open_db_entries(db_entry_desc_array, status)
 
+    SUBROUTINE close_db(db_entry_desc, idx)
         use ids_routines
 
-        type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
-        INTEGER, INTENT(OUT)  :: status
-        integer :: i, j
+        type(ids_description_t), intent(IN) :: db_entry_desc
+        INTEGER, INTENT(OUT)  :: idx
 
-        status = 0
-        db_entry_desc_array(:)%idx = -1
-   do i=1, SIZE(db_entry_desc_array)
-      j=1
-      do while (j.lt.i)
-         if ( db_entry_desc_array(j)%shot .eq. db_entry_desc_array(i)%shot .and.       &
-              db_entry_desc_array(j)%run .eq. db_entry_desc_array(i)%run .and.         &
-              db_entry_desc_array(j)%backend_id .eq. db_entry_desc_array(i)%backend_id .and.         &
-              convert_array2string(db_entry_desc_array(j)%user) .eq. convert_array2string(db_entry_desc_array(i)%user) .and.       &
-              convert_array2string(db_entry_desc_array(j)%machine) .eq. convert_array2string(db_entry_desc_array(i)%machine).and. &
-              convert_array2string(db_entry_desc_array(j)%version) .eq. convert_array2string(db_entry_desc_array(i)%version) ) then
-            EXIT
-         else
-            j=j+1
-         end if
-      end do
-      if (j.eq.i) then
-            call open_db(db_entry_desc_array(i)%backend_id, &
-                         db_entry_desc_array(i)%shot, &
-                         db_entry_desc_array(i)%run, &
-                         convert_array2string(db_entry_desc_array(i)%user), &
-                         convert_array2string(db_entry_desc_array(i)%machine), &
-                         convert_array2string(db_entry_desc_array(i)%version), &
-                         db_entry_desc_array(i)%idx, &
-                         status)
-            if (status /= 0) then
-                write (*,*) "ERROR: Cannot open DB entry!", &
-                            " BE: ", db_entry_desc_array(i)%backend_id, &
-                            " USER: ",   convert_array2string(db_entry_desc_array(i)%user), &
-                            " DB: ", convert_array2string(db_entry_desc_array(i)%machine), &
-                            " PULSE/RUN: ",  db_entry_desc_array(i)%shot,  "/", db_entry_desc_array(i)%run
-                            exit
+        if (db_entry_desc%backend_id == MEMORY_BACKEND) then
+            return
+        end if
 
-            end if
-      else
-         db_entry_desc_array(i)%idx = db_entry_desc_array(j)%idx
-      end if
-   end do
-    END SUBROUTINE open_db_entries
-
-
-
-    SUBROUTINE close_db_entries(db_entry_desc_array)
-
-        use ids_routines
-
-
-        type(ids_description_t), dimension(:), intent(INOUT) :: db_entry_desc_array
-        integer :: i, j
-          do i=1, SIZE(db_entry_desc_array)
-      j=1
-      do while (j.lt.i)
-         if (db_entry_desc_array(j)%idx.eq.db_entry_desc_array(i)%idx) then
-            EXIT
-         else
-            j=j+1
-         end if
-      end do
-      if (j.eq.i) then
-         call imas_close(db_entry_desc_array(i)%idx)
-      end if
-   end do
-    END SUBROUTINE close_db_entries
+        call imas_close(idx)
+    END SUBROUTINE close_db
 
 end module iwrap_tools
 

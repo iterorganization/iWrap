@@ -9,6 +9,7 @@
     {% endif-%} ) throws Exception
     {
         final int IDS_ARGS_NO = {{ sbrt_data.arguments | selectattr("intent", "equalto", "OUT") | list | length }};
+        int idx;
         Object[] retArray = null;
 {% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
@@ -87,8 +88,6 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
             String xml_string = iWrapTools.read_code_parameters();
             {% endif %}
 
-            iWrapTools.open_db_entries(idsDescriptions);
-
             //!!!!!!!!! Java wrapper !!!!!!!!!!!!!!!
             wrapper.call_{{  sbrt_role | lower }}(
         {% for argument in sbrt_data.arguments %}
@@ -107,8 +106,6 @@ class Standalone4{{ actor_name }}_{{ sbrt_role }} {
         }
 
         iWrapTools.handle_status_info(status_code, status_message, "{{actor_name}}", "{{ sbrt_role | upper }}");
-
-        iWrapTools.closeDBEntries(idsDescriptions);
 
         //-----------Writing output data to file ---------------------
         try{

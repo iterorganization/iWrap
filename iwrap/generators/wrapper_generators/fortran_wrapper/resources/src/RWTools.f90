@@ -24,12 +24,12 @@ module rwtool
 
         read(10,*) ! skip line " ----- IDS ----- "
         call read_chars( ids_description%ids_name)
-        read(10,*) ids_description%shot
+        read(10,*) ids_description%pulse
         read(10,*) ids_description%run
         read(10,*) ids_description%occurrence
         read(10,*) ids_description%backend_id
         read(10,*) ids_description%idx
-        call read_chars( ids_description%machine)
+        call read_chars( ids_description%db_name)
         call read_chars( ids_description%user)
         call read_chars( ids_description%version)
    end subroutine
@@ -154,12 +154,12 @@ module rwtool
     implicit none
     type(ids_description_t), intent(in) :: ids_description
     write(10,*) ids_description%ids_name
-    write(10,*) ids_description%shot
+    write(10,*) ids_description%pulse
     write(10,*) ids_description%run
     write(10,*) ids_description%occurrence
     write(10,*) ids_description%backend_id
     write(10,*) ids_description%idx
-    write(10,*) ids_description%machine
+    write(10,*) ids_description%db_name
     write(10,*) ids_description%user
     write(10,*) ids_description%version
    end subroutine

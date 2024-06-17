@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class IDSDescription {
     public String ids_type;
-    public int shot;
+    public int pulse;
     public int run;
     public int occurrence;
     public int backend_id;
@@ -21,7 +21,7 @@ public class IDSDescription {
 
     public String toString() {
         return "IDSDescription{ids_type='" + this.ids_type + '\''
-                            + ", shot=" + this.shot
+                            + ", pulse=" + this.pulse
                             + ", run=" + this.run
                             + ", occurrence=" + this.occurrence
                             + ", backend_id=" + this.backend_id
@@ -35,7 +35,7 @@ public class IDSDescription {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IDSDescription that = (IDSDescription) o;
-        return shot == that.shot
+        return pulse == that.pulse
             && run == that.run && idx == that.idx && backend_id == that.backend_id
             && database.equals(that.database) && user.equals(that.user) && version.equals(that.version);
     }
@@ -61,7 +61,7 @@ public class IDSDescription {
 
 
         line = br.readLine(); // shot
-        this.shot = Integer.parseInt(line);
+        this.pulse = Integer.parseInt(line);
 
 
         line = br.readLine(); // run

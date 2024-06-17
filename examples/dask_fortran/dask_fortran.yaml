@@ -1,0 +1,52 @@
+code_description:
+    implementation:
+        subroutines:
+            init:
+                name: init_code
+                need_code_parameters: true
+                arguments:
+                    - name: core_profiles_in
+                      type: core_profiles
+                      intent: IN
+                    - name: distribution_sources_out
+                      type: distribution_sources
+                      intent: OUT
+            main:
+                name: step
+                need_code_parameters: true
+                arguments:
+                -   name: equilibrium_in
+                    type: equilibrium
+                    intent: IN
+                -   name: equilibrium_out
+                    type: equilibrium
+                    intent: OUT
+            finalize:
+                name: clean_up
+                arguments:
+                    - name: distribution_sources_in
+                      type: distribution_sources
+                      intent: IN
+                    - name: core_profiles_out
+                      type: core_profiles
+                      intent: OUT
+        programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
+        data_type: legacy
+        code_path: ./native_code/libdask_fortran.a
+        include_path: ./native_code/mod_dask_fortran.mod
+        code_parameters:
+            parameters: ./input/input_physics.xml
+            schema: ./input/input_physics.xsd
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    settings:
+        compiler_cmd: $FC
+        mpi_compiler_cmd:
+        open_mp_switch: false
+        extra_libraries:
+            pkg_config_defined:
+                    - xmllib
+            path_defined:
