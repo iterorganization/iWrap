@@ -12,6 +12,7 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
 
   use ids_schemas, only: ids_equilibrium,ids_parameters_input,ids_is_valid
   use ids_routines, only: ids_copy
+  use json_module
 
   implicit none
 
@@ -19,6 +20,15 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   character(len=:), allocatable, intent(IN) :: codeparam
   integer, intent(out) :: error_flag
   character(len=:), pointer, intent(out) :: error_message
+
+  character(len=:), allocatable :: ntimes
+  character(len=:), allocatable :: multiplication_factor
+
+  type(json_file) :: json
+  type(json_core) :: jCore
+  type(json_value), pointer :: ntimes_pointer
+  type(json_value), pointer :: multiplication_factor_pointer
+  logical :: value_found
 
   ! INITIALISATION OF ERROR FLAG
   error_flag = 0
@@ -32,29 +42,42 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   if (ids_is_valid(equilibrium_in%ids_properties%homogeneous_time).eqv..True. &
        .and.size(equilibrium_in%time)>0) then
 
-     write(*,*) '------------------------------------'
-     write(*,*) 'Parameters read from input xml file:'
-     write(*,*) codeparam
-     write(*,*) '------------------------------------'
+    call json%deserialize(codeparam)
+    call json % get_core(jCore)
 
-     ! COPY THE INPUT IDS IN THE OUTPUT IDS
-     call ids_copy(equilibrium_in,equilibrium_out)
+    call json % get('ntimes', ntimes, value_found)
+    call json % get('multiplication_factor', multiplication_factor, value_found)
 
-     ! INITIAL PLASMA MAJOR RADIUS
-     write(*,'(a31,f7.3)') ' Initial plasma major radius = ', &
-          equilibrium_in%time_slice(1)%boundary%geometric_axis%r
+    call json_value_to_string(jCore, ntimes_pointer, ntimes)
+    call json_value_to_string(jCore, multiplication_factor_pointer, multiplication_factor)
 
-     ! MODIFY PLASMA MAJOR RADIUS
-     equilibrium_out%time_slice(1)%boundary%geometric_axis%r = &
-          equilibrium_out%time_slice(1)%boundary%geometric_axis%r &
-          * 2 * 1.5
+    write(*,*) '------------------------------------'
+    write(*,*) 'Parameters read from input xml file:'
+    write(*,'(a25,i3)')   ' ntimes                = ',  &
+         ntimes
+    write(*,'(a25,f7.3)') ' multiplication_factor = ',&
+         multiplication_factor
+    write(*,*) '------------------------------------'
 
-     ! MANDATORY FLAG (UNIFORM TIME HERE)
-     equilibrium_out%ids_properties%homogeneous_time = 1
+    ! COPY THE INPUT IDS IN THE OUTPUT IDS
+    call ids_copy(equilibrium_in,equilibrium_out)
 
-     ! FINAL PLASMA MAJOR RADIUS
-     write(*,'(a31,f7.3)') ' Final plasma major radius   = ', &
-          equilibrium_out%time_slice(1)%boundary%geometric_axis%r
+    ! INITIAL PLASMA MAJOR RADIUS
+    write(*,'(a31,f7.3)') ' Initial plasma major radius = ', &
+         equilibrium_in%time_slice(1)%boundary%geometric_axis%r
+
+    ! MODIFY PLASMA MAJOR RADIUS
+    equilibrium_out%time_slice(1)%boundary%geometric_axis%r = &
+         equilibrium_out%time_slice(1)%boundary%geometric_axis%r &
+         * 2 * 1.5
+         !* codeparam_data%ntimes * codeparam_data%multiplication_factor
+
+    ! MANDATORY FLAG (UNIFORM TIME HERE)
+    equilibrium_out%ids_properties%homogeneous_time = 1
+
+    ! FINAL PLASMA MAJOR RADIUS
+    write(*,'(a31,f7.3)') ' Final plasma major radius   = ', &
+         equilibrium_out%time_slice(1)%boundary%geometric_axis%r
 
   else
 
