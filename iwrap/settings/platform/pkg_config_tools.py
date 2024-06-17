@@ -54,7 +54,10 @@ class PkgConfigTools:
             name = split_config[0]
             full_description = split_config[1].strip().split(' - ')
             info = full_description[0]
-            desc = full_description[1]
+            try:
+                desc = full_description[1]
+            except IndexError: # if package doesn't have description an exception is being raised
+                desc = ''
             pkg_config_dict[name] = {'info': info, 'description': desc}
 
         return pkg_config_dict
