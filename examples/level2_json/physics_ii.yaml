@@ -33,4 +33,5 @@ code_description:
     extra_libraries:
       path_defined:
       pkg_config_defined:
+        - json-fortran
     mpi_compiler_cmd:

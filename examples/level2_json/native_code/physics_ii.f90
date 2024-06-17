@@ -13,6 +13,7 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   use ids_schemas, only: ids_equilibrium,ids_parameters_input,ids_is_valid
   use ids_routines, only: ids_copy
   use json_module
+  use json_value_module
 
   implicit none
 
@@ -21,14 +22,10 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   integer, intent(out) :: error_flag
   character(len=:), pointer, intent(out) :: error_message
 
-  character(len=:), allocatable :: ntimes
-  character(len=:), allocatable :: multiplication_factor
+  integer :: ntimes
+  real :: multiplication_factor
 
   type(json_file) :: json
-  type(json_core) :: jCore
-  type(json_value), pointer :: ntimes_pointer
-  type(json_value), pointer :: multiplication_factor_pointer
-  logical :: value_found
 
   ! INITIALISATION OF ERROR FLAG
   error_flag = 0
@@ -43,16 +40,12 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
        .and.size(equilibrium_in%time)>0) then
 
     call json%deserialize(codeparam)
-    call json % get_core(jCore)
 
-    call json % get('ntimes', ntimes, value_found)
-    call json % get('multiplication_factor', multiplication_factor, value_found)
-
-    call json_value_to_string(jCore, ntimes_pointer, ntimes)
-    call json_value_to_string(jCore, multiplication_factor_pointer, multiplication_factor)
+    call json%get('parameters.ntimes', ntimes)
+    call json%get('parameters.multiplication_factor', multiplication_factor)
 
     write(*,*) '------------------------------------'
-    write(*,*) 'Parameters read from input xml file:'
+    write(*,*) 'Parameters read from input json file:'
     write(*,'(a25,i3)')   ' ntimes                = ',  &
          ntimes
     write(*,'(a25,f7.3)') ' multiplication_factor = ',&
@@ -69,8 +62,7 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
     ! MODIFY PLASMA MAJOR RADIUS
     equilibrium_out%time_slice(1)%boundary%geometric_axis%r = &
          equilibrium_out%time_slice(1)%boundary%geometric_axis%r &
-         * 2 * 1.5
-         !* codeparam_data%ntimes * codeparam_data%multiplication_factor
+         * ntimes * multiplication_factor
 
     ! MANDATORY FLAG (UNIFORM TIME HERE)
     equilibrium_out%ids_properties%homogeneous_time = 1
