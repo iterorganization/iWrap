@@ -19,6 +19,8 @@ test_dirs+=("basic_methods_java")
 test_dirs+=("code_restart")
 test_dirs+=("code_restart_cpp")
 test_dirs+=("code_restart_java")
+test_dirs+=("UpperCase")
+test_dirs+=("UpperCase_CPP")
 
 PASSED='\033[1;32m- Passed.\033[0m'
 FAILED='\033[1;31m- Failed.\033[1;33m See log.txt.\033[0m Continuing...'

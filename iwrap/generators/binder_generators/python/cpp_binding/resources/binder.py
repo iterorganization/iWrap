@@ -104,7 +104,7 @@ class LanguageBinder(Binder):
         if not subroutines.get(method_role):
             return None
 
-        sbrt_name = actor_name + "_wrapper_" + method_role
+        sbrt_name = actor_name.lower() + "_wrapper_" + method_role
 
         wrapper_fun = getattr( wrapper_lib, sbrt_name )
         return wrapper_fun
