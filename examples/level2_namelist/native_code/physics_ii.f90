@@ -42,15 +42,8 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
     write(*,*) '------------------------------------'
     write(*,*) 'Parameters read from input parameters file:'
 
-    write(*,*) 'shot = ', shot
-    write(*,*) 'run_in = ', run_in
-    write(*,*) 'run_out = ', run_out
     write(*,*) 'ntimes = ', ntimes
     write(*,*) 'multiplication_factor = ', multiplication_factor
-    write(*,*) 'input_db = ', trim(input_db)
-    write(*,*) 'input_machine = ', trim(input_machine)
-    write(*,*) 'local_db = ', trim(local_db)
-    write(*,*) 'local_machine = ', trim(local_machine)
 
     write(*,*) '------------------------------------'
 

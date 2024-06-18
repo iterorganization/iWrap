@@ -1,13 +1,6 @@
 {
   "parameters": {
-    "shot": 131024,
-    "run_in": 1,
-    "run_out": 10,
     "ntimes": 2,
-    "multiplication_factor": 1.5,
-    "input_db":"public",
-    "input_machine":"iter",
-    "local_db": "user_environment_variable",
-    "local_machine": "iter"
+    "multiplication_factor": 1.5
   }
 }
