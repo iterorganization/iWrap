@@ -1,4 +1,5 @@
-import tkinter, tkinter.ttk, logging, imas
+import tkinter, tkinter.ttk, logging
+from data_dictionary import idsinfo
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Column
 from iwrap.gui.widgets.table import Table
@@ -55,7 +56,7 @@ class SubroutinePane(tkinter.ttk.Frame, IWrapPane):
         buttons_frame_center = tkinter.ttk.Frame(buttons_frame)
         buttons_frame_center.place(in_=buttons_frame, anchor='center', relx=.5, rely=.5)
         # TABLE
-        IDS = [ids.value for ids in list(imas.IDSName)] # pylint: disable=no-member
+        IDS = idsinfo.IDSInfo().get_ids_names() # pylint: disable=no-member
         self.columns = [Column(Column.TEXT, 'Name', 'Name'),
                         Column(Column.RADIOBUTTON, 'Input', 'Intent'),
                         Column(Column.RADIOBUTTON, 'Output', 'Intent'),
