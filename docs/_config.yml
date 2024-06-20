@@ -8,7 +8,7 @@ execute:
   timeout: 540
 
 exclude_patterns:
-  - "docs_book_venv/*"
+  - "tutorial_venv/*"
   - "README.md"
   - "documentation/template.rst"
 

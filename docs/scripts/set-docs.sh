@@ -17,7 +17,7 @@ if [[ $1 == "-h" || $1 == "--help" ]]; then
 fi
 
 # Define the virtual environment directory
-VENV_DIR="docs_book_venv"
+VENV_DIR="tutorial_venv"
 # Function to activate virtual environment and build the JupyterBook
 activate_and_build() {
     echo -e "\nActivating virtual environment '${VENV_DIR}'..."

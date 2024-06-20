@@ -141,13 +141,13 @@ source files**, which will later be **converted to** *Jupyter Notebook* `.ipynb`
 
 ### 1.3.2. Repo Layout After File Conversion (After `Jupyter Book` Build)
 
-After running the `Jupyter Book` build, additional directories `_build` and `docs_book_venv` are generated:
+After running the `Jupyter Book` build, additional directories `_build` and `tutorial_venv` are generated:
 
 ```shell
 docs
 ## -----------------------
 ├── _build                  # this is where Jupyter Book build files are stored - HTML and .ipynb 
-├── docs_book_venv          # Python virtual environment 
+├── tutorial_venv          # Python virtual environment 
 ## -----------------------
 ├── documentation
 ├── images
@@ -219,7 +219,7 @@ source iwrap-tutorial
 ```
 
 following script will do following things:
-1. Creates `Python Virtual Environment` named `docs_book_venv`
+1. Creates `Python Virtual Environment` named `tutorial_venv`
 2. Install all required packages 
 3. Creates symbolic links to interactive tutorials (`.ipynb`) and static documentation (`.html`) 
 4. Open static documentation and launch `Jupyter Lab` with tutorials
@@ -265,7 +265,7 @@ source iwrap-tutorial
 ```
 
 following script will do following things:
-1. Creates `Python Virtual Environment` named `docs_book_venv`
+1. Creates `Python Virtual Environment` named `tutorial_venv`
 2. Install all required packages 
 3. Creates symbolic links to interactive tutorials (`.ipynb`) and static documentation (`.html`) 
 4. Open static documentation and launch `Jupyter Lab` with tutorials

@@ -1,4 +1,4 @@
-source docs_book_venv/bin/activate
+source tutorial_venv/bin/activate
 
 echo -e "\nOpening HTML and JupyterLab!\n"
 firefox _build/html/index.html &
