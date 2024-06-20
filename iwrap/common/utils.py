@@ -69,3 +69,11 @@ def exec_system_cmd(system_cmd: str, return_output:bool = False, working_directo
         raise RuntimeError( f'ERROR [{return_code}] while executing command: {system_cmd}\n{output_value}' )
 
     return output_value
+
+def get_all_ids_names() -> list[str]:
+    try:
+        from data_dictionary import idsinfo
+        return idsinfo.IDSInfo().get_ids_names()
+    except ImportError:
+        import imas
+        return [ids.value for ids in list( imas.IDSName )]
