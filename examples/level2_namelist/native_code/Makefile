@@ -13,9 +13,9 @@ else ifeq ($(AL_MAJOR), 4)
   LIBS=`pkg-config imas-$(FC) --libs`
 endif
 
-# XMLLIB LIBRARIES
-LIBS+=`pkg-config xmllib --libs`
-INCLUDE+=`pkg-config xmllib --cflags`
+# LIBRARIES
+LIBS+=``
+INCLUDE+=``
 
 # LIST OF FORTRAN FILES
 OBJS_ACTOR = physics_ii.o

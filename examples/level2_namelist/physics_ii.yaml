@@ -33,5 +33,4 @@ code_description:
     extra_libraries:
       path_defined:
       pkg_config_defined:
-      - xmllib
     mpi_compiler_cmd:

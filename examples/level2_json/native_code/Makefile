@@ -6,16 +6,16 @@ FFLAGS= -g -fPIC # FPIC AND PREPROCESSING OPTIONS
 ifeq ($(AL_MAJOR),)
     $(error Could not extract major AL version from UAL_VERSION/AL_VERSION system variable. Is your IMAS module loaded?)
 else ifeq ($(AL_MAJOR), 5)
-	INCLUDE=-I. `pkg-config json-fortran al-fortran --cflags`
+	INCLUDE=-I. `pkg-config al-fortran --cflags`
 	LIBS=`pkg-config al-fortran --libs`
 else ifeq ($(AL_MAJOR), 4)
-  INCLUDE=-I. `pkg-config json-fortran imas-$(FC) --cflags`
+  INCLUDE=-I. `pkg-config imas-$(FC) --cflags`
   LIBS=`pkg-config imas-$(FC) --libs`
 endif
 
-# XMLLIB LIBRARIES
-LIBS+=`pkg-config xmllib --libs`
-INCLUDE+=`pkg-config xmllib --cflags`
+# LIBRARIES
+LIBS+=`pkg-config json-fortran --libs`
+INCLUDE+=`pkg-config json-fortran --cflags`
 
 # LIST OF FORTRAN FILES
 OBJS_ACTOR = physics_ii.o
