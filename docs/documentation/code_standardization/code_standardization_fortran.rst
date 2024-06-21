@@ -99,11 +99,19 @@ Arguments
    -  Intent: IN or OUT
    -  Defined as ``type(ids_<ids_name>)``
 
--  XML parameters:
+-  Code parameters:
 
    -  **Optional** argument
    -  Intent: IN
-   -  Defined as ``type(ids_parameters_input), intent(IN)``
+   -  Defined as
+
+     - ``character(len=:), allocatable, intent(IN)`` or
+     - ``type(ids_parameters_input), intent(IN)`` if `legacy-xml` format has been chosen for backward compatibility with older codes
+
+        .. warning::
+           Only XML parameters are passed to the code, so only ``parameters_value`` field
+           of ``ids_parameters_input`` derived type is valid !
+
 
 -  Status code:
 
@@ -179,9 +187,7 @@ Arguments
    -  Defined as: ``character(len=:), pointer, intent(OUT)``
 
 
-.. warning::
-   Only XML parameters are passed to the code, so only ``parameters_value`` field
-   of ``ids_parameters_input`` derived type is valid !
+
 
 Example
 ########################
@@ -193,10 +199,10 @@ Example
          !
          !    INITIALISATION SUBROUTINE
          !
-     subroutine init_code (xml_parameters, status_code, status_message)
+     subroutine init_code (code_parameters, status_code, status_message)
          use ids_schemas, only: ids_parameters_input
          implicit none
-         type(ids_parameters_input) :: xml_parameters
+         character(len=:), allocatable, intent(IN) :: code_parameters
          integer, intent(out) :: status_code
          character(len=:), pointer, intent(out) :: status_message
 
@@ -220,8 +226,8 @@ Example
        ! IN/OUT IDSes
        type(ids_equilibrium):: equilibrium_in, equilibrium_out
 
-       ! XML code parameters
-       type(ids_parameters_input) :: code_param
+       ! code parameters
+       character(len=:), allocatable, intent(IN) :: code_param
 
        ! status info
        integer, intent(out) :: error_flag

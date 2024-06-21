@@ -48,11 +48,18 @@ Arguments
    -  Input or output argument
    -  Defined as ``const IdsNs::IDS::<ids_name>`` (input) or ``IdsNs::IDS::<ids_name>&`` (output)
 
--  XML parameters:
+-  Code parameters:
 
    -  **Optional** argument
    -  Input argument
-   -  Defined as   ``IdsNs::codeparam_t``
+   -  Defined as:
+
+      - ``std::string`` or
+      - ``IdsNs::codeparam_t`` if `legacy-xml` format has been chosen for backward compatibility with older codes
+
+        .. warning::
+           Only XML parameters are passed to the code, so only ``parameters`` field
+           of ``IdsNs::codeparam_t`` structure type is valid !
 
 -  Status code:
 
@@ -129,9 +136,6 @@ Arguments
 
 No INOUT arguments are allowed!
 
-.. warning::
-   Only XML parameters are passed to the code, so only ``parameters`` field
-   of ``IdsNs::codeparam_t`` structure type is valid !
 
 
 Example
@@ -147,12 +151,12 @@ Example
      #include "UALClasses.h"
 
      /* * *   INITIALISATION method   * * */
-     void init_code (IdsNs::codeparam_t codeparam, int& status_code, std::string& status_message);
+     void init_code (std::string codeparam, int& status_code, std::string& status_message);
 
      /* * *   MAIN method   * * */
      void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium,
                                IdsNs::IDS::equilibrium& out_equilibrium,
-                               IdsNs::codeparam_t codeparam,
+                               std::string codeparam,
                                int& status_code, std::string& status_message);
 
      /* * *   FINALISATION method   * * */
@@ -176,7 +180,7 @@ Example
      #include "UALClasses.h"
 
      /* * *   INITIALISATION method   * * */
-     void init_code (IdsNs::codeparam_t codeparam, int& status_code, std::string& status_message)
+     void init_code (std::string codeparam, int& status_code, std::string& status_message)
      {
      ...
      // method body
@@ -186,7 +190,7 @@ Example
      /* * *   MAIN method   * * */
      void physics_ii_cpp(const IdsNs::IDS::equilibrium& in_equilibrium,
                                IdsNs::IDS::equilibrium& out_equilibrium,
-                               IdsNs::codeparam_t codeparam,
+                               std::string codeparam,
                                int& status_code, std::string& status_message)
      {
      ...

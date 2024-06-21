@@ -214,9 +214,16 @@ Generic information common for all programming languages handled by iWrap:
 
         -   *format:*
 
+            -   **optional** entry
             -   meaning: format of the code parameters
-            -   value: string, one of the supported formats (legacy-xml, xml, json, yaml, namelist)
+            -   value: string, one of the supported formats: `legacy-xml` (default), `xml`, `json`, `yaml`, `namelist`
             -   example: 'xml'
+
+                .. note::
+                        Selecting `legacy-xml` format allows to keep backward compatibility with existing codes
+                        that received code parameters packed in IMAS Access Layer structure: `ids_parameters_input`
+                        (Fortran) or `IdsNs::codeparam_t` (C++).
+                        If any other format is chosen, code parameters are passed as a string.
 
 
 
