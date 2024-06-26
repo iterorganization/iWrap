@@ -1,7 +1,14 @@
 #ifndef _BASIC_METHODS_CPP
 #define _BASIC_METHODS_CPP
 
-#include "UALClasses.h"
+#if AL_MAJOR == 5
+    #include "ALClasses.h"
+#elif AL_MAJOR == 4
+    #include "UALClasses.h"
+#else
+    #warning Could not find AL_MAJOR variable. Assuming AL version = 5.x.x.
+    #include "ALClasses.h"
+#endif
 
 // =======================================
 //             INITIALISATION
