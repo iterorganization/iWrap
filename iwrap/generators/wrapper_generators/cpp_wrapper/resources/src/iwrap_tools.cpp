@@ -33,7 +33,7 @@ int read_input(const char* file_name, ids_description_t db_entry_desc_array[], i
     return 0;
 }
 
-int read_code_parameters( char** xml_string)
+void read_code_parameters( char** xml_string)
 {
     FILE *f = fopen("code_parameters.xml", "rb");
     fseek(f, 0, SEEK_END);
@@ -71,7 +71,7 @@ int write_output(const char* file_name, int status_code, char* status_message)
     return 0;
 }
 
-int handle_status_info(int status_code, char* status_message, const char* actor_name, const char* method_name)
+void handle_status_info(int status_code, char* status_message, const char* actor_name, const char* method_name)
 {
     const char* NO_MSG = "<No diagnostic message>";
     if(status_message == NULL)
@@ -95,7 +95,7 @@ void release_status_info(char* status_message)
         free(status_message);
 }
 
-int convert_status_info(std::string in_status_msg, char** out_status_msg)
+void convert_status_info(std::string in_status_msg, char** out_status_msg)
 {
 
     //status message conversion
