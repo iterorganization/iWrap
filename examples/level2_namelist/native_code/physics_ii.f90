@@ -23,7 +23,7 @@ subroutine physics_ii(equilibrium_in,equilibrium_out,codeparam,error_flag,error_
   integer :: shot, run_in, run_out, ntimes
   real :: multiplication_factor
   character(30) :: input_db, input_machine, local_db, local_machine
-  namelist /parameters/ shot, run_in, run_out, ntimes, multiplication_factor, input_db, input_machine, local_db, local_machine
+  namelist /parameters/ ntimes, multiplication_factor
 
 
   ! INITIALISATION OF ERROR FLAG
