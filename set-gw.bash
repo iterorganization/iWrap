@@ -16,7 +16,7 @@ export IWRAP_HOME=$PWD
 module load xmllib/3.3.1/gcc
 module load firefox/111.0.1
 module load json-fortran/8.4.0/gcc/7.3.0
-module load jsoncpp/1.9.5
+module load jsoncpp/1.9.5/gcc/7.3.0 
 
 imasdb iter
 imasdb tmp
