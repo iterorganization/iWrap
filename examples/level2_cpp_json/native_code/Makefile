@@ -15,7 +15,7 @@ endif
 
 # LIBRARIES
 LIBS+=`pkg-config --libs jsoncpp`
-INCLUDE+=`pkg-config --cflags jsoncpp`
+INCLUDES+=`pkg-config --cflags jsoncpp`
 
 DBG ?= -DNDEBUG
 
