@@ -70,8 +70,7 @@ parts:
     - title: Advanced Tutorial Introduction
       file: tutorial/03_Advanced/1_Introduction/01_Goals.md
       sections:
-        - file: tutorial/03_Advanced/1_Introduction/02_Requirements.md
-        - file: tutorial/03_Advanced/1_Introduction/03_Learning_environments.md
+        - file: tutorial/03_Advanced/1_Introduction/02_Learning_environments.md
 
     - title: Advanced Code Functionality
       file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/01_Restart_methods.md
