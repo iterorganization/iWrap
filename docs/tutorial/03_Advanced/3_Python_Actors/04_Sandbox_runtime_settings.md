@@ -46,28 +46,64 @@ The main sandbox settings you can configure are:
 - **SandboxLifeTime.WORKFLOW_RUN:** The content of the sandbox directory is cleaned during the initialization stage of an actor and after other finalization actions of the actor. The sandbox should be available during the whole workflow run.
 - **SandboxLifeTime.PERSISTENT:** The content of the sandbox directory is preserved and never cleaned up.
 
-### Example Usage
+### Example Usage of Sandbox using `MPI` Python Actor
 
-Below is an example of how to configure and use sandbox settings in your actor:
+In this example we will use the `MPI` code example from the [example MPI code chapter](../2_Advanced_Native_Code_Functionality/02_Example_MPI_code.md) and `YAML` code description from [python actor generation chapter](01_Python_actor_generation.md) to showcase the use of the sandbox settings.
+
+Below is an example of how to configure and use manual sandbox mode with persistent life time in your workflow:
 
 ```python
-from my_actor_package.actor import MyActor
-from my_actor_package.common.runtime_settings import SandboxMode, SandboxLifeTime
+import imas
+from imas import imasdef
 
-# Initialize and configure the actor
-actor = MyActor(config)
+from cp2ds_mpi.actor import cp2ds_mpi
+from cp2ds_mpi.common.runtime_settings import SandboxMode, SandboxLifeTime
+
+# Reading of input data
+db_entry_in = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+                           db_name="tutorial_db",
+                           shot=1, run=1)
+db_entry_in.open()
+input_ids = db_entry_in.get('core_profiles')
+db_entry_in.close()
+
+# Creating output datafile
+db_entry_out = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+                           db_name="tutorial_db",
+                           shot=2, run=2)
+db_entry_out.create()
+
+actor = cp2ds_mpi()
 
 # gets runtime settings
 runtime_settings = actor.get_runtime_settings()
 
-# configures sandbox settings
+# MPI settings
+runtime_settings.mpi.mpi_processes = 3
+
+# Sandbox settings
 runtime_settings.sandbox.mode = SandboxMode.MANUAL
-runtime_settings.sandbox.path = '/path/to/existing/sandbox/directory'
-runtime_settings.sandbox.life_time = SandboxLifeTime.WORKFLOW_RUN
+runtime_settings.sandbox.path = '/pfs/work/g2bpogo/iwrap-sandbox/my_sandbox_dir'
+runtime_settings.sandbox.life_time = SandboxLifeTime.PERSISTENT
 
 # updates runtime settings
 actor.initialize(runtime_settings=runtime_settings)
+
+output_ids = actor(input_ids)
+
+# Save IDS
+db_entry_out.put(output_ids)
+
+actor.finalize()
 ```
+
+Trying to run this workflow right away will result in an error
+
+```sh
+ValueError: Actor cp2ds_mpi: Sandbox path points to non existing directory (my_sandbox_dir)
+```
+
+This is because when running manual mode, you are responsible for managing the directory. When you create the directory, the directory will be filled with the outputs of the workflow and will persist throughout workflow runs.
 
 ## Detailed Description of Sandbox Settings
 
