@@ -73,8 +73,7 @@ parts:
     - title: Advanced Code Functionality
       file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/01_Restart_methods.md
       sections:
-        - file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/02_MPI_introduction.md
-        - file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/03_Example_MPI_code.md
+        - file: tutorial/03_Advanced/2_Advanced_Native_Code_Functionality/02_Example_MPI_code.md
 
     - title: Python Actors
       file: tutorial/03_Advanced/3_Python_Actors/01_Python_actor_generation.md
