@@ -10,7 +10,7 @@ kernelspec:
   language: python
   name: python3
 ---
-<!-- #TODO: Add MUSCLE3 aims -->
+
 # Mastering Advanced iWrap Functionalities
 
 This tutorial serves as a comprehensive guide for experienced iWrap users seeking to ascend to the realm of advanced functionalities. It presumes foundational knowledge acquired through the beginner course, ensuring a shared vocabulary and understanding.
@@ -28,3 +28,7 @@ Through a blend of theoretical explanations, practical code examples, and clear 
   - Code debugging
   - Other actor settings
 - Principles and execution of MUSCLE3 based actors
+
+## Setting Up Your Advanced iWrap Learning Environment
+
+Before embarking on your advanced iWrap exploration, it's essential to prepare your learning environment. [Environment setup chapter](../../01_Tutorial_Introduction_And_Environment_Set_Up/03_environment_setup.md) will guide you through the necessary steps.
