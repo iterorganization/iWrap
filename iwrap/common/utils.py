@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from typing import List
 
 
 def resolve_path(in_path: str, root_dir: str = None):
@@ -69,3 +70,16 @@ def exec_system_cmd(system_cmd: str, return_output:bool = False, working_directo
         raise RuntimeError( f'ERROR [{return_code}] while executing command: {system_cmd}\n{output_value}' )
 
     return output_value
+
+def get_all_ids_names() -> List[str]:
+    try:
+        from data_dictionary import idsinfo
+        return idsinfo.IDSInfo().get_ids_names()
+    except ImportError:
+        try:
+            from data_dictionary.idsdef import IDSDef
+            ids_def = IDSDef()
+            return ids_def.get_ids_names()
+        except ImportError:
+            import imas
+            return [ids.value for ids in list(imas.IDSName)]

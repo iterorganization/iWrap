@@ -3,13 +3,13 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
-import imas
 from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
+from iwrap.common.utils import get_all_ids_names
 
 
 class ArgumentsPane( ttk.Frame, IWrapPane ):
@@ -53,7 +53,7 @@ class ArgumentsPane( ttk.Frame, IWrapPane ):
         buttons_frame_center.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
 
         # TABLE
-        IDS = [ids.value for ids in list(imas.IDSName)] # pylint: disable=no-member
+        IDS = get_all_ids_names() # pylint: disable=no-member
 
         self.columns = [Column(Column.TEXT, "Name", "Name"),
                         Column(Column.RADIOBUTTON, "Input", "Intent"),

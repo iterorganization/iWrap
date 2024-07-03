@@ -3,7 +3,7 @@ import sys
 import traceback
 from typing import Set, List
 
-import imas
+from iwrap.common.utils import get_all_ids_names
 
 from iwrap.generators.actor_generators import ActorGenerator, ActorGeneratorRegistry
 from iwrap.generators.binder_generators import BinderGeneratorRegistry
@@ -156,7 +156,7 @@ class Engine:
 
         # TODO: To add "get_ids_types" to generator ABS (?)
         if data_type == 'legacy':
-            ids_list = [ids.value for ids in list( imas.IDSName )]  # pylint: disable=no-member
+            ids_list = get_all_ids_names()  # pylint: disable=no-member
 
         return ids_list
 
