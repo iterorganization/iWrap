@@ -25,7 +25,7 @@ In this chapter, we will delve into the MUSCLE3 exploring how MUSCLE3 facilitate
 
 ## Introduction to MUSCLE3
 
-MUSCLE3 is a coupling library developed by the e-MUSC project of the University of Amsterdam and the Netherlands eScience Center. It is designed for building multiscale simulations by integrating single-scale models into a cohesive framework. To learn more, visit [MUSCLE3 official documentation](https://muscle3.readthedocs.io/en/latest/) and [yMMSL specification](https://ymmsl-python.readthedocs.io/en/master/)
+MUSCLE3 is a coupling library developed by the e-MUSC project of the University of Amsterdam and the Netherlands eScience Center. It is designed for building multiscale simulations by integrating single-scale models into a cohesive framework. To learn more, visit [MUSCLE3 official documentation](https://muscle3.readthedocs.io/en/latest/), [yMMSL specification](https://ymmsl-python.readthedocs.io/en/master/) and [iWrap MUSCLE3 plugin documentation](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/iWrap-plugins/MUSCLE3/resources/code_wrapping.html)
 
 ## MUSCLE3 Actor
 
