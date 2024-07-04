@@ -111,6 +111,8 @@ code_description:
                     type: distribution_sources
                     intent: OUT
             finalize: clean_up
+            get_state: get_code_state
+            set_state: restore_code_state
         programming_language: Python
         data_dictionary_compliant: 3.37.0
         data_type: legacy
