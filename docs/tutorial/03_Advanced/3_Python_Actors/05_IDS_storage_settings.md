@@ -41,50 +41,71 @@ The main IDS storage settings you can configure are:
 - **backend:** `imas.imasdef.MEMORY_BACKEND`
 - **persistent_backend:** `imas.imasdef.MDSPLUS_BACKEND`
 
-### Example Usage
+### Example Usage of IDS storage settings
 
-Below is an example of how to configure and use IDS storage settings in your actor:
+Below is an example of how to configure and use IDS storage settings in your actor. Let's extend the example from the chapter before with new settings:
 
 ```python
 import imas
-from my_actor_package.actor import MyActor
+from imas import imasdef
 
-# Initialize and configure the actor
-actor = MyActor(config)
+from cp2ds_mpi.actor import cp2ds_mpi
+from cp2ds_mpi.common.runtime_settings import SandboxMode, SandboxLifeTime
+
+# Reading of input data
+db_entry_in = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+                           db_name="tutorial_db",
+                           shot=1, run=1)
+db_entry_in.open()
+input_ids = db_entry_in.get('core_profiles')
+db_entry_in.close()
+
+# Creating output datafile
+db_entry_out = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+                           db_name="tutorial_db",
+                           shot=2, run=2)
+db_entry_out.create()
+
+actor = cp2ds_mpi()
 
 # gets runtime settings
 runtime_settings = actor.get_runtime_settings()
 
+# MPI settings
+runtime_settings.mpi.mpi_processes = 3
+
+# Sandbox settings
+runtime_settings.sandbox.mode = SandboxMode.MANUAL
+runtime_settings.sandbox.path = '/pfs/work/g2bpogo/iwrap-sandbox/my_sandbox_dir'
+runtime_settings.sandbox.life_time = SandboxLifeTime.PERSISTENT
+
 # configures IDS storage settings
-runtime_settings.ids_storage.backend = imas.imasdef.MDSPLUS_BACKEND
 runtime_settings.ids_storage.persistent_backend = imas.imasdef.HDF5_BACKEND
 
 # updates runtime settings
 actor.initialize(runtime_settings=runtime_settings)
+
+output_ids = actor(input_ids)
+
+# Save IDS
+db_entry_out.put(output_ids)
+
+actor.finalize()
 ```
 
-## Detailed Description of IDS Storage Settings
+As a result, `my_sandbox_dir` saved `core_profiles` in temporary dir in `HDF5` format.
 
-### `db_name`
-
-Specifies the name of the database to be used for temporary storage. This setting allows you to define a custom database name if needed.
-
-```python
-runtime_settings.ids_storage.db_name = 'custom_db_name'
+```
+my_sandbox_dir
+├── main.in
+├── main.out
+└── tmp
+    └── 3
+        ├── 0
+        └── 1
+            └── 1
+                ├── core_profiles.h5
+                └── master.h5
 ```
 
-### `backend`
-
-Defines the backend to be used for temporary data storage. The default backend is `imas.imasdef.MEMORY_BACKEND`, which stores data in memory.
-
-```python
-runtime_settings.ids_storage.backend = imas.imasdef.MEMORY_BACKEND
-```
-
-### `persistent_backend`
-
-Specifies the backend to be used when temporary data cannot be stored in memory. This is important for scenarios such as running the actor in standalone mode, where the code is executed in a separate process and does not share memory with the workflow. The default persistent backend is `imas.imasdef.MDSPLUS_BACKEND`.
-
-```python
-runtime_settings.ids_storage.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
-```
+If you want a detailed description of IDS storage settings, visit [IDS storage settings documentation](../../../documentation/actor_usage.rst#ids-storage-settings)
