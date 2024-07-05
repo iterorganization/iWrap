@@ -1,4 +1,4 @@
-.. _native_code_api:
+.. _code_api:
 
 ############################################################
 Code standardisation
@@ -8,11 +8,11 @@ Introduction
 ############
 
 .. warning::
-      A signature of user code must follow strict rules to
-      be wrapped by iWrap - without the detailed knowledge
-      of method signature iWrap cannot built an actor.
+      The signature of the code provided by the user must
+      follow strict rules - without the details on method's
+      signature iWrap cannot generate an actor.
 
-iWrap actor can call following methods of the native code:
+iWrap actors can call the following methods from the code:
 
 - Basic methods:
 
@@ -20,7 +20,7 @@ iWrap actor can call following methods of the native code:
   -  *MAIN* - Mandatory main ("step") method
   -  *FINALIZE* - Finalisation method
 
-- Code restarting methods
+- Checkpoint/restart methods
 
   - *GET_STATE* - Method for getting internal state of the code
   - *SET_STATE* - Method for setting internal state of the code
@@ -29,42 +29,25 @@ iWrap actor can call following methods of the native code:
 
   - *GET_TIMESTAMP* - Method for getting currently computed physical time
 
-Signatures of methods may differ, depending of features of
-programming language being used, however the main principia
-remains the same.
+The name and signatures of each method may differ, depending of
+features of programming language being used, however the main
+principia remains the same.
 
 
 Basic methods
 ################
 
-*INIT* method
+API
 ======================
+All *INIT*, *MAIN* and *FINALIZE* methods share the same API:
 
-.. image:: ../images/70877452/77370373.png
+.. image:: ../images/70877452/70877459.png
 
-
-- An optional method used for set-up of native code
-- If provided - the method is called only, when an actor is initialised
-- The method must be run **before** a call of *main* and *finalisation* (if provided)
-- The method can be of arbitrary name (the name has to be specified in the code YAML description)
-- Method arguments:
-
-  - Code parameters:
-
-    -  **Optional** argument
-    -  Type: string
-    -  Intent: IN
-
-
-*MAIN* method
-======================
-
-.. image::../images/70877452/70877459.png                                                       |
-
--  A **mandatory** method that native code **must** provide
--  The method can be run an arbitrary numer of times (e.g. in a loop)
+-  A **mandatory** method in the code where it performs the main computation
+-  Can correspond to the entire computation or to a step that can be run an arbitrary number of times (e.g. in a loop)
 -  It can be of arbitrary name (the name has to be specified in the code YAML description)
 -  The method must be run **after** a call of *initialisation* (if provided) and **before** a call of *finalisation* (if provided)
+-  The methods can be of arbitrary names (they have to be specified in the code YAML description)
 -  Method arguments:
 
    -  Input and output IDSes:
@@ -73,33 +56,38 @@ Basic methods
       -  Type: An object of IDS class (depends on particular language)
       -  Intent: IN or OUT
 
-   -  XML parameters:
+   -  Code parameters:
 
       -  **Optional**  argument
       -  Type: string
       -  Intent: IN
 
 
-*FINALIZE* method
-======================
-   .. image:: ../images//70877452/77370389.png
 
--  An optional method that is usually called to clean-up environment
--  The method can be run an arbitrary numer of times
--  The method can be of arbitrary name (the name has to be specified in the code YAML description)
--  No IN/OUT arguments
+.. warning::
+      -  Be aware that generators of some actor types may put additional restrictions on the methods API!
+      -  A mechanism of exceptions is used for some languages (Java, Python) to communicate code state,
+         instead of output `status code` and `status message` arguments
 
+Methods purpose and usage
+==========================
+
+- *INIT* - An optional method used for the initialization/configuration of the code.
+  If provided - the method should be called only when an actor is initialised.
+  **before** a call of *main* and *finalisation* (if provided).
+
+- *MAIN* - A **mandatory** method in the code where it performs the main computation.
+  It can correspond to the entire computation or to a step that can be run an arbitrary number of times (e.g. in a loop)
+  The method must be run **after** a call of *initialisation* (if provided) and **before** a call of *finalisation* (if provided)
+
+- *FINALZE* - An optional method that is usually called to clean-up environment and/or to post-process data
 
 Code restarting methods
-###############################
-The methods of wrapped code are run ‘atomically’, so no interaction between an actor and native method is possible
-and the actor cannot force the wrapped ``MAIN`` method to save a checkpoint at an arbitrary time,
-while it is executed.
-
-``GET_STATE`` and  ``SET_STATE`` methods enable restart stateful, sometimes compute demanding,
-codes without losing results obtained before computations were stopped. The wrapped code may be asked periodically
-about its internal state using ``GET_STATE`` method. After restart, the code state can be restored
-using ``SET_STATE`` method.
+#######################
+``GET_STATE`` and  ``SET_STATE`` methods enable to restart stateful, sometimes compute demanding,
+codes without losing results obtained before computations were stopped. The actor ask periodically
+the code about its internal state using the ``GET_STATE`` method. After a restart, the code state
+can be restored using the ``SET_STATE`` method.
 
 An internal state of the code has to be passed as a string, however iWrap gives a full flexibility
 to the code developer concerning format and content of state description.
@@ -109,7 +97,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 *GET_STATE* method
 ======================
 
-- An optional method used for getting internal state of native code
+- An optional method used for getting the internal state of the code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -124,7 +112,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 *SET_STATE* method
 ======================
 
-- An optional method used for restoring internal state of native code
+- An optional method used for restoring the internal state of the code
 - The method must be run **after** a call of ``INIT`` (if provided)
 - The method can be of arbitrary name (the name has to be specified in the code YAML description)
 - Method arguments:
@@ -138,7 +126,7 @@ so the only requirement is that information returned by ``GET_STATE`` is underst
 
 .. warning::
        Important!
-          A native code wrapped by iWrap that will become a part of workflow should be compiled using the same
+          A code wrapped by iWrap that will become a part of workflow should be compiled using the same
           environment in which workflow will be run!
 
 
@@ -180,19 +168,20 @@ or using two **mandatory** output arguments (C++ and Fortran):
   - Status message
 
     -  **Mandatory** argument
-    -  Type: string of developer defined, arbitrary content
+    -  Type: string
     -  Intent: OUT
 
 MPI
 ################
-All native codes that use MPI should follow the rules described below:
+All codes that use MPI should follow the rules described below:
 
--  Please make initialisation and finalisation conditional checking if such action was already made.
+-  Do not call MPI_Init and MPI_Finalize in the code's API, or add such conditional checks before:
 
     Fortran
 
     .. code-block:: fortran
 
+      Example code
         !   ----  MPI initialisation ----
         call MPI_initiazed(was_mpi_initialized, ierr)
         if (.not. was_mpi_initialized)   call MPI_Init(ierr)
@@ -218,23 +207,12 @@ All native codes that use MPI should follow the rules described below:
            MPI_Finalize();
 
 
--  Please be aware of a special role of ranked 0 process: Wrapper that run native code, launched in parallel,
-   reads input data in every processes but writes it only in'rank 0' process. So native code should gather all
-   results that need to be stored by 'rank 0' process. It concerns also those coming from 'rank 0' process are
-   analysed by wrapper.
+-  Please be aware of a special role of the process 'rank 0': the wrapper that run the code, launched in parallel,
+   reads input data in every processes but writes it only in 'rank 0' process. So the code shall gather in 'rank 0'
+   process all results that need to be stored as output.
 
 .. warning::
       iWrap supports only **sequential** Java code!
-
-Code packaging
-################
-A native code written in C++ or Fortran should be packed within static Linux library using e.g. ar tool for that purpose.
-
-.. code-block:: console
-
-    ar -cr lib<name>.a <object files *.o list>
-    e.g.:
-    ar -cr libphysics_ii.a *.o
 
 
 
