@@ -153,6 +153,8 @@ class Engine:
 
         # first check if data type is valid
         Engine.validate_actor_data_type(data_type)
+        
+        ids_list = []
 
         # TODO: To add "get_ids_types" to generator ABS (?)
         if data_type == 'legacy':

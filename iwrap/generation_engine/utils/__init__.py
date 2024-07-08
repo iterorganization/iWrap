@@ -38,6 +38,7 @@ def discover_generators(builtin_pkg_name: str, plugin_pkg_name: str, generator_b
 
     for generator_class in generators_class_list:
 
+        generator_name = "<unknown>"
         try:
             generator_name = generator_class.__module__ + generator_class.__qualname__
             generator_class.check_api_compliance()

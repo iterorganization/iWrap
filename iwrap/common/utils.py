@@ -82,4 +82,4 @@ def get_all_ids_names() -> List[str]:
             return ids_def.get_ids_names()
         except ImportError:
             import imas
-            return [ids.value for ids in list(imas.IDSName)]
+            return [ids.value for ids in list(imas.IDSName)]  # pylint: disable=no-member
