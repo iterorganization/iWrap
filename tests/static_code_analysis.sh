@@ -4,36 +4,19 @@ set -e
 
 envs_dir=`pwd`/envs/iter-bamboo
 venv_path=$(realpath $envs_dir/../../venv)
-activate_venv () {
-	source $venv_path/bin/activate
-}
 
-echo "Environement scripts path: $envs_dir"
+echo "Environment scripts path: $envs_dir"
 echo "VENV path: $venv_path"
 chmod a+x $envs_dir/00_load_imas_env.sh
 source $envs_dir/00_load_imas_env.sh
-source $envs_dir/10_python_set_env.sh
-activate_venv
-max_retry=20
-retry=0
-venv_status=2
-while [ ${retry} -lt ${max_retry} ]; do
-	if [ -x $venv_path/bin/python ]; then
-		echo "Virtualenv ready!"
-		venv_status=0
-		sleep 1
-		break
-	else
-		echo "Waiting for virtualenv to activate! Retry: $retry"
-		echo "Path to virtualenv: $venv_path"
-		(( retry = retry + 1 ))
-		sleep 1
-	fi
-done
 
-if [ $venv_status -ne 0 ]; then
+source $venv_path/bin/activate
+
+if [ -x $venv_path/bin/python ]; then
+		echo "Virtualenv ready!"
+else
 	echo "Virtual env not active!"
-	exit $venv_status
+	exit 2
 fi
 
 echo -e Python virtualenv active: `which ${venv_path}/bin/python`
@@ -44,3 +27,4 @@ echo "~~~~~====================PYLINT CODE CHECK====================~~~~~"
 # to be used with pylint 2.17.4
 #$venv_path/bin/python -m pylint --errors-only --output-format=pylint_junit.JUnitReporter --output=pylint.xml iwrap
 $venv_path/bin/python -m pylint -E --output-format=pylint_junit.JUnitReporter iwrap > pylint.xml
+
