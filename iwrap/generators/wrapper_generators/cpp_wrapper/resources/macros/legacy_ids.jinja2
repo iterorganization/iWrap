@@ -16,9 +16,9 @@
 	{{ ids_var_name }}.get({{ ids_var_name }}_desc->occurrence);
 {%- endmacro -%}
 
-{%- macro provenance(ids_var_name, sbrt_name, code_parameters) -%}
-   {{ ids_var_name }}.code.name = "{{sbrt_name}}";
-   {% if code_parameters %}
+{%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
+   {{ ids_var_name }}.code.name = "{{sbrt_data.name}}";
+   {% if code_parameters.parameters and sbrt_data.need_code_parameters%}
        {{ ids_var_name }}.code.parameters = std::string(code_params_str);
    {% endif %}
 {%- endmacro -%}

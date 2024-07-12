@@ -91,7 +91,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% endif %}
    // ------------ Provenance information --------------
 {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
-    {{ ids_macro.provenance( argument.name , sbrt_name, code_parameters) }}
+    {{ ids_macro.provenance( argument.name , sbrt_data, code_parameters) }}
 {% endfor %}
 
 {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
