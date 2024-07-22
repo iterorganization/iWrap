@@ -3,3 +3,4 @@ jinja2
 packaging
 pyyaml
 f90nml
+jsonschema
