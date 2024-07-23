@@ -124,7 +124,7 @@ code_description:
 To create an actor from this code description, execute the following command:
 
 ```{code-block} sh
-iwrap --actor-type MUSCLE3-python -a basic_actor -f basic_python.yml
+iwrap --actor-type muscle3-python -a basic_actor -f basic_python.yml
 ```
 
 This command generates a `basic_actor` MUSCLE3 micro model in the `IWRAP_ACTORS` folder.

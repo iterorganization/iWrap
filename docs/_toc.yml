@@ -89,3 +89,4 @@ parts:
         - file: tutorial/03_Advanced/4_Muscle3_Actors/02_muscle3_quick_overview.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/03_muscle3_actor_generation.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/04_muscle3_MPI.md
+        - file: tutorial/03_Advanced/4_Muscle3_Actors/05_muscle3_checkpointing.md

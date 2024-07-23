@@ -247,8 +247,6 @@ code_description:
                     type: distribution_sources
                     intent: OUT
             finalize: clean_up
-            get_state: get_code_state
-            set_state: restore_code_state
             get_timestamp: get_timestamp_cpp
         programming_language: cpp
         data_dictionary_compliant: 3.39.0
