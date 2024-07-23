@@ -2,39 +2,6 @@
 Installation process
 #######################################################################################################################
 
-
-iWrap requirements
-#######################################################################################################################
-
-**To build and install iWrap, the following requirements must be met:**
-
-* **Installation requires Python 3.7 or later**
-* **Installation requires setuptools 43.0 or later and wheel**
-    .. code-block:: shell
-
-       python3 -m pip install --upgrade pip
-       python3 -m pip install --upgrade setuptools>=43 wheel
-    
-* **Additionaly, installation requires following modules:**
-
-    * *IMAS:*
-
-    .. code-block:: shell
-
-        module load IMAS
-
-    * *LXML:*
-
-    .. code-block:: shell
-
-        module load lxml
-
-    * *tomli:*
-
-    .. code-block:: shell
-
-        python3 -m pip install --upgrade --user tomli
-
 Installation
 #######################################################################################################################
 

@@ -33,6 +33,7 @@ parts:
     - file: documentation/installation_guide/iwrap_installation.rst
       title: Installation Guide
       sections:
+        - file: documentation/installation_guide/iwrap_requirements.rst
         - file: documentation/installation_guide/iwrap_configuration.rst
 
   - caption: Welcome to Tutorial
