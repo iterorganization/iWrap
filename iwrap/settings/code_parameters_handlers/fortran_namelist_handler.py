@@ -1,9 +1,6 @@
 from .dict_based_handler import DictBasedHandler
 import logging
-import f90nml
 from io import StringIO
-from jsonschema import validate
-import json
 from typing import Set
 
 class FortranNamelistHandler(DictBasedHandler):
@@ -15,10 +12,13 @@ class FortranNamelistHandler(DictBasedHandler):
         return {'namelist'}
 
     def to_dict(self):
+        import f90nml
         namelist_object = f90nml.reads(self._parameters_str)
         return namelist_object.todict()
 
     def from_dict(self, dict):
+        import f90nml
+
         namelist_object = f90nml.Namelist(dict)
         string_buffer = StringIO()
         namelist_object.write(string_buffer)
@@ -28,6 +28,9 @@ class FortranNamelistHandler(DictBasedHandler):
         super(FortranNamelistHandler, self).__init__()
 
     def validate(self):
+        import f90nml
+        from jsonschema import validate
+        import json
         if not self._parameters_str or self._new_path_set:
             self.initialize(self._parameters_path, self._schema_path)
 

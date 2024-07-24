@@ -1,6 +1,4 @@
 from .generic_handler import GenericHandler
-from xml.etree import ElementTree as et
-from lxml import etree
 from pathlib import Path
 from typing import Set
 
@@ -39,6 +37,7 @@ class XMLHandler(GenericHandler):
             return self.__get_xml_value(rest_of_splitted_path, found_nodes[index])
 
     def __set_xml_value(self, splitted_path, tree, value):
+        from xml.etree import ElementTree as et
 
         if len(splitted_path) == 1:
             if splitted_path[0] == tree.tag:
@@ -70,6 +69,7 @@ class XMLHandler(GenericHandler):
         return self.__set_xml_value(rest_of_splitted_path, tree.findall(rest_of_splitted_path[0])[index], value)
 
     def get_parameter(self, path_to_node:str) -> str:
+        from xml.etree import ElementTree as et
 
         if not self._default_parameters_path:
             return
@@ -92,6 +92,8 @@ class XMLHandler(GenericHandler):
         return self.__get_xml_value(splitted_path, root)
 
     def set_parameter(self, path_to_node:str, value) -> None:
+        from xml.etree import ElementTree as et
+
         if not self._default_parameters_path:
             return
         if not self._parameters_str or self._new_path_set:
@@ -116,6 +118,7 @@ class XMLHandler(GenericHandler):
         super().__init__()
 
     def validate(self):
+        from lxml import etree
         if not self._parameters_str or self._new_path_set:
             self.initialize(self._parameters_path, self._schema_path)
 

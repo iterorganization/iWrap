@@ -1,7 +1,5 @@
 from .dict_based_handler import DictBasedHandler
 import logging
-import json
-from jsonschema import validate
 from typing import Set
 
 class JsonHandler(DictBasedHandler):
@@ -16,12 +14,17 @@ class JsonHandler(DictBasedHandler):
         super(JsonHandler, self).__init__()
 
     def from_dict(self, dict):
+        import json
         self._parameters_str = json.dumps(dict, indent=4)
 
     def to_dict(self):
+        import json
         return json.loads(self._parameters_str)
 
     def validate(self):
+        import json
+        from jsonschema import validate
+
         if not self._parameters_str or self._new_path_set:
             self.initialize(self._parameters_path, self._schema_path)
 
