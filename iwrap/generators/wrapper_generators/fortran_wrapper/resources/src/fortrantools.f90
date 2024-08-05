@@ -189,11 +189,11 @@ module iwrap_tools
 
         if (status /= 0) then
             write (*,*) "ERROR: Cannot open DB entry!", &
-                        " BE: ", db_entry_desc_array(i)%backend_id, &
-                        " USER: ",   convert_array2string(db_entry_desc_array(i)%user), &
-                        " DB: ", convert_array2string(db_entry_desc_array(i)%db_name), &
-                        " PULSE/RUN: ",  db_entry_desc_array(i)%pulse,  "/", db_entry_desc_array(i)%run
-                        exit
+                        " BE: ", db_entry_desc%backend_id, &
+                        " USER: ",   convert_array2string(db_entry_desc%user), &
+                        " DB: ", convert_array2string(db_entry_desc%db_name), &
+                        " PULSE/RUN: ",  db_entry_desc%pulse,  "/", db_entry_desc%run
+                        return
 
         end if
 
