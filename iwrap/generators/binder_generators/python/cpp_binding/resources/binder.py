@@ -44,7 +44,7 @@ class LanguageBinder(Binder):
         sandbox_dir = self.actor.sandbox.path
         self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
 
-        if self.runtime_settings.debug_mode != DebugMode.NONE:
+        if self.runtime_settings.debug_mode == DebugMode.ATTACH:
             self.__attach_debugger()
 
 
