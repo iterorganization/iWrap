@@ -2,20 +2,22 @@
 Developers manual
 #######################################################################################################################
 
+Introduction
+############
 
-.. note::
+The main purpose of the iWrap is automatic generation of 'actors'. An actor is a component that 'wraps' provided physics models,
+enhancing them with an extra functionality. The added features depend on the actor type and may include, e.g.:
 
-    The iWrap gives to the developer very high level of freedom concerning:
+* calling model subroutines using other programming language than those used for model implementation,
+  to allow integration of physics codes within complex computing scenarios
+* mechanisms for interoperation of various models within given workflow orchestration system in terms of exchange of model input/output data
+* support for configuration of an actor execution (sequential run, parallel mode, usage of sandbox, etc etc)
+* additional features that allows for easy debugging, logging etc, etc
 
-    * Actor design (including API and internal architecture)
-    * A way an actor is generated.
+To create an actor the iWrap utilizes a concept of code 'generators' that, called by iWrap 'engine' produce sources
+constituting particular layers of the actor.
 
-    Thus this section shows *Python actor* design and mechanism of its generation as an example,
-    a reference, that *can* but not *has to* be followed, while adding new actor generations plug-ins
+This manual shows the internals of the iWrap focusing on the actor generation mechanisms
+and provides guidelines describing the way a new types of actor generators could be added.
 
-
-   /documentation/developers_manual/actor_architecture.rst
-   /documentation/developers_manual/actor_generators.rst
-   /documentation/developers_manual/code_parameters_handling.rst
-   /documentation/developers_manual/code_desc_compatibility.rst
 
