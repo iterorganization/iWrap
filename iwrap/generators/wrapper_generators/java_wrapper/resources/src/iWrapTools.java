@@ -1,4 +1,5 @@
 import imasjava.imas;
+import imasjava.wrapper.LowLevel;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -100,51 +101,33 @@ public class iWrapTools{
 
     }
 
-    static public void open_db_entries(IDSDescription idsDescriptions[]) throws Exception {
-        // List<IDSDescription> list = Arrays.stream(idsDescriptions).distinct().collect(Collectors.toList());
-        // TODO Add recycling of already opened DB Entry
-        for (IDSDescription idsDescription: idsDescriptions)
-        {
-            idsDescription.idx = imas.openEnv(idsDescription.shot,
-                    idsDescription.run,
-                    idsDescription.user,
-                    idsDescription.database,
-                    idsDescription.version,
-                    idsDescription.backend_id);
+    static public void open_db(IDSDescription idsDescription) throws Exception {
 
-        }
+        int idx = -1;
+
+        if (idsDescription.backend_id == LowLevel.MEMORY_BACKEND)
+            return;
+
+        idx = imas.openEnv(idsDescription.pulse,
+                idsDescription.run,
+                idsDescription.user,
+                idsDescription.database,
+                idsDescription.version,
+                idsDescription.backend_id);
+
+        idsDescription.idx = idx;
     }
 
-    static public void closeDBEntries(IDSDescription idsDescriptions[]) {
-        Integer[] idxArr = Arrays.stream(idsDescriptions)
-                .map(e -> e.idx)
-                .distinct()
-                .toArray(Integer[]::new);
+    static public void close_db(IDSDescription idsDescription) {
 
-        for (int idx : idxArr)
-        {
+            if (idsDescription.backend_id == LowLevel.MEMORY_BACKEND)
+                return;
+
             try{
-                imas.close(idx);
+                imas.close(idsDescription.idx);
             } catch (Exception ex){
                 // Nothing to do here... It is just cleaning operation.
             }
-        }
-
     }
 
-    public static void main(String[] args) {
-
-        IDSDescription idsDescriptions[];
-
-        try {
-            idsDescriptions = iWrapTools.read_input("/pfs/work/g2bpalak/IWRAP_SANDBOX/basic_methods_java_1-34435/main.in",
-                    2);
-
-            System.out.println(Arrays.toString(idsDescriptions));
-        }
-        catch(Exception exc)
-            {
-                exc.printStackTrace();
-            }
-    }
 }

@@ -8,27 +8,34 @@
 {%- endmacro -%}
 
 {% macro declare(ids_name, ids_var_name) -%}
-    IdsNs::IDS *db_entry_{{ ids_var_name }} =   new IdsNs::IDS({{ ids_var_name }}_desc->idx);
-    IdsNs::IDS::{{ ids_name }} {{ ids_var_name }} = db_entry_{{ ids_var_name }}->_{{ ids_name }};
+
+    IdsNs::IDS *db_entry_{{ ids_var_name }} = init_db({{ ids_var_name }}_desc);
+
+    IdsNs::IDS::{{ ids_name }}* {{ ids_var_name }} = &db_entry_{{ ids_var_name }}->_{{ ids_name }};
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
-	{{ ids_var_name }}.get({{ ids_var_name }}_desc->occurrence);
+    open_db(db_entry_{{ ids_var_name }}, {{ ids_var_name }}_desc);
+    {{ ids_var_name }}->setPulseCtx(db_entry_{{ ids_var_name }}->getPulseCtx());
+	{{ ids_var_name }}->get({{ ids_var_name }}_desc->occurrence);
+    close_db(db_entry_{{ ids_var_name }});
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
-   {{ ids_var_name }}.code.name = "{{sbrt_data.name}}";
+   {{ ids_var_name }}->code.name = "{{sbrt_data.name}}";
    {% if code_parameters.parameters and sbrt_data.need_code_parameters%}
-       {{ ids_var_name }}.code.parameters = std::string(code_params_str);
+       {{ ids_var_name }}->code.parameters = std::string(code_params_str);
    {% endif %}
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
-	{{ ids_var_name }}.put({{ ids_var_name }}_desc->occurrence);
+    open_db(db_entry_{{ ids_var_name }}, {{ ids_var_name }}_desc);
+	{{ ids_var_name }}->put({{ ids_var_name }}_desc->occurrence);
+    close_db(db_entry_{{ ids_var_name }});
 {%- endmacro -%}
 
 {% macro deallocate(ids_var_name) -%}
    // Should not be called until IMAS-3937 will be resolved
-   // {{ ids_var_name }}.clear();
+   // {{ ids_var_name }}->clear();
     delete db_entry_{{ ids_var_name }};
 {%- endmacro -%}

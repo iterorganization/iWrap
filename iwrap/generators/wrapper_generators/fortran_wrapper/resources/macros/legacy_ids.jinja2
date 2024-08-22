@@ -9,8 +9,10 @@
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
+    call open_db( {{ ids_var_name }}_desc, idx, status_code)
     ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
-    call ids_get({{ ids_var_name }}_desc%idx, ids_full_name, {{ ids_var_name }})
+    call ids_get(idx, ids_full_name, {{ ids_var_name }})
+    call close_db( {{ ids_var_name }}_desc, idx)
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
@@ -24,7 +26,7 @@
    allocate({{ ids_var_name }}%code%version(1))
    {{ ids_var_name }}%code%name(1) = "{{sbrt_data.name}}"
    {{ ids_var_name }}%code%version(1) = ""
-   {% if code_parameters and sbrt_data.need_code_parameters%}
+   {% if code_parameters.parameters and sbrt_data.need_code_parameters%}
         if (associated({{ ids_var_name }}%code%parameters)) then
             deallocate({{ ids_var_name }}%code%parameters)
         endif
@@ -35,8 +37,10 @@
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
+    call open_db( {{ ids_var_name }}_desc, idx, status_code)
     ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
-    call ids_put({{ ids_var_name }}_desc%idx, ids_full_name, {{ ids_var_name }})
+    call ids_put(idx, ids_full_name, {{ ids_var_name }})
+    call close_db( {{ ids_var_name }}_desc, idx)
 {%- endmacro -%}
 
 {% macro deallocate(ids_var_name) -%}

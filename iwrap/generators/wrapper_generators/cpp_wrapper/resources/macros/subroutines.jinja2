@@ -70,7 +70,7 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
         // - - - - - - - - - - - - - NATIVE CODE CALL - - - - - -- - - - - - - - - - - -
     {{sbrt_data.name}}(
 {% for argument in sbrt_data.arguments %}
-            {{ argument.name }},
+            *{{ argument.name }},
 {% endfor %}
 {% if code_parameters.parameters  and sbrt_data.need_code_parameters%}
             imas_code_params,
@@ -135,7 +135,6 @@ int main(int argc, char **argv)
 {
    const int IDS_ARGS_NO = {{sbrt_data.arguments | length}};
    ids_description_t db_entry_desc_array[IDS_ARGS_NO];
-   IdsNs::IDS* *db_entry_array ;
 
     //----  Status info  ----
     int status_code = 0;
@@ -160,8 +159,6 @@ int main(int argc, char **argv)
     int code_parameters_len = -1;
     read_code_parameters( &xml_string);
     {% endif %}
-
-    db_entry_array = open_db_entries(db_entry_desc_array, IDS_ARGS_NO);
 
     //!!!!!!!!! Cpp wrapper !!!!!!!!!!!!!!!
     {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
@@ -190,7 +187,6 @@ int main(int argc, char **argv)
 {% if mpi_compiler_cmd %}
     } //The end of section called only for RANK 0 process
 {% endif %}
-    close_db_entries(db_entry_array, IDS_ARGS_NO);
 
     {% if code_parameters.parameters and sbrt_data.need_code_parameters %}
     // ------Deallocating code parameters ----------------------------

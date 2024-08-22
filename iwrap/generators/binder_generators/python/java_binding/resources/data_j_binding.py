@@ -11,7 +11,7 @@ class JavaIDSDescription(IDSDescription):
     def __init__(self, ids_description:IDSDescription):
         self.ids_description_class = JClass( 'IDSDescription' )
         self.ids_type = ids_description.ids_type
-        self.shot = ids_description.shot
+        self.pulse = ids_description.pulse
         self.run = ids_description.run
         self.occurrence = ids_description.occurrence
         self.backend_id = ids_description.backend_id
@@ -24,7 +24,7 @@ class JavaIDSDescription(IDSDescription):
         java_ids_description = self.ids_description_class()
 
         java_ids_description.ids_type = self.ids_type
-        java_ids_description.shot = self.shot
+        java_ids_description.pulse = self.pulse
         java_ids_description.run = self.run
         java_ids_description.occurrence = self.occurrence
         java_ids_description.backend_id = self.backend_id

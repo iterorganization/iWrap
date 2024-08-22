@@ -1,8 +1,37 @@
 #include <fstream>
 #include <sstream>
+#include <cstring>
+#include <cctype>
+
 #include "iwrap_tools.h"
 #include "serialization_tools.h"
 
+
+char* iwrap_trim(char* text, int text_size = -1)
+{
+
+    int size = -1;
+
+    if (*text == '\0')
+        return text;
+
+    char* last_char_ptr = text + strlen(text) -1;
+
+    if (text_size > 0)
+        size = text_size;
+    else
+        size = strlen(text);
+
+    last_char_ptr = text + size -1;
+
+    while(last_char_ptr >= text && isspace(*last_char_ptr))
+    {
+        *last_char_ptr = '\0';
+        last_char_ptr--;
+    }
+
+    return text;
+}
 
 int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size)
 {
@@ -105,60 +134,54 @@ void convert_status_info(std::string in_status_msg, char** out_status_msg)
     strcpy(*out_status_msg, in_status_msg.c_str());
 }
 
-
-IdsNs::IDS** open_db_entries(ids_description_t* db_entry_desc_array, int array_size)
+IdsNs::IDS* init_db(ids_description_t* db_entry_desc)
 {
-    if ( array_size < 1 )
-        return NULL;
+    IdsNs::IDS* db_entry = NULL;
 
-    IdsNs::IDS* *db_entry_array = new IdsNs::IDS* [array_size];
+    if ( db_entry_desc->backend_id == MEMORY_BACKEND){
+        db_entry = new IdsNs::IDS(db_entry_desc->idx);
+    } else {
+        db_entry = new IdsNs::IDS(db_entry_desc->pulse,  db_entry_desc->run, 0, 0);
+   }
 
-    for (int i=0; i<array_size; i++)
-    {
-        db_entry_desc_array[i].idx = -1;
-        int j=0;
-        // check if same entry already present
-        while (j<i)
-        {
-        if ((db_entry_desc_array[j].shot == db_entry_desc_array[i].shot) &&
-           (db_entry_desc_array[j].run == db_entry_desc_array[i].run) &&
-           (db_entry_desc_array[j].user == db_entry_desc_array[i].user) &&
-           (db_entry_desc_array[j].machine == db_entry_desc_array[i].machine) &&
-           (db_entry_desc_array[j].backend_id == db_entry_desc_array[i].backend_id) &&
-           (db_entry_desc_array[j].version == db_entry_desc_array[i].version))
-         break;
-        else
-         j++;
-        }
-        // open DB entry
-        if (j==i)
-        {
-           IdsNs::IDS *ids =  new IdsNs::IDS(db_entry_desc_array[i].shot,db_entry_desc_array[i].run,0,0);
-           ids->setBackend(static_cast<BACKEND>(db_entry_desc_array[i].backend_id));
-           ids->openEnv(db_entry_desc_array[i].user,db_entry_desc_array[i].machine,db_entry_desc_array[i].version);
-
-           db_entry_array[j]  =    ids ;
-           db_entry_desc_array[i].idx = ids->getIdx();
-        }
-        else // propagate already opened DB entry
-            db_entry_desc_array[i].idx=db_entry_desc_array[j].idx;
-    }
-    
-    return db_entry_array;
+    return db_entry;
  }
 
-void close_db_entries(IdsNs::IDS** db_entry_array, int array_size)
+int open_db(IdsNs::IDS* db_entry, ids_description_t* db_entry_desc)
 {
+    char* user = NULL;
+    char* db_name = NULL;
+    char* version = NULL;
 
-    if ( !db_entry_array )
-        return;
 
-    for (int i=0; i<array_size; i++)
+    if ( db_entry_desc->backend_id == MEMORY_BACKEND){
+        db_entry->setPulseCtx(db_entry_desc->idx);
+        printf(">>MEM BE: SET CTX ENTRY %d\n", db_entry_desc->idx);
+        }else{
+            puts(">> Open ENV - begin ");
+            user = iwrap_trim(db_entry_desc->user, sizeof db_entry_desc->user);
+            db_name = iwrap_trim(db_entry_desc->db_name, sizeof db_entry_desc->db_name);
+            version = iwrap_trim(db_entry_desc->version, sizeof db_entry_desc->version);
+
+            db_entry->setBackend(static_cast<BACKEND>(db_entry_desc->backend_id));
+            db_entry->openEnv(user, db_name, version);
+
+                   printf(">>PF IDX: %d\n", db_entry->getPulseCtx());
+                   puts(">>Open ENV - end ");
+           }
+
+    return 0;
+ }
+
+
+
+void close_db(IdsNs::IDS* db_entry)
+{
+    if ( db_entry->getBackend() == MEMORY_BACKEND)
     {
-        IdsNs::IDS* db_entry = db_entry_array[i];
-        if(db_entry != NULL)
-            db_entry->close();
-            delete db_entry;
+        puts(">>MEM BE: CLOSING ENTRY");
+        return;
     }
 
+    db_entry->close();
 }

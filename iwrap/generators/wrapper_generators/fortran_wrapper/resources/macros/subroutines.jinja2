@@ -15,6 +15,7 @@ SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
 
     implicit none
     character(132):: ids_full_name
+    integer :: idx
 
 {% for argument in sbrt_data.arguments %}
     ! {{ argument.name }}
@@ -185,13 +186,6 @@ PROGRAM standalone_{{ sbrt_role | upper }}
         STOP -1
     end if
 
-    !-----------Open DB entries---------------------
-    call open_db_entries(db_entry_desc_array, status)
-    if (status /= 0) then
-        call write_output("{{ sbrt_role }}.out", status, "ERROR: Cannot open DB entry.")
-        STOP -1
-    end if
-
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
     CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&
 {% for argument in sbrt_data.arguments %}
@@ -217,8 +211,6 @@ PROGRAM standalone_{{ sbrt_role | upper }}
 {% if mpi_compiler_cmd %}
     endif ! --- The end of section called only for RANK 0 process
 {% endif %}
-    !-----------Close DB entries---------------------
-    call close_db_entries(db_entry_desc_array)
 
     {% if mpi_compiler_cmd %}
     !----  MPI Finalization ----
