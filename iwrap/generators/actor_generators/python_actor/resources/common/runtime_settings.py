@@ -103,10 +103,33 @@ class RuntimeSettings:
 
     """
 
+    @property
+    def run_mode(self):
+        return self._run_mode
+
+    @run_mode.setter
+    def run_mode(self, value):
+        if isinstance(value, str):
+            value = RunMode[value.upper()]
+
+        self._run_mode = value
+
+    @property
+    def debug_mode(self):
+        return self._debug_mode
+
+    @debug_mode.setter
+    def debug_mode(self, value):
+        if isinstance(value, str):
+            value = DebugMode[value.upper()]
+
+        self._debug_mode = value
+
+
     def __init__(self):
         # handled/implemented
-        self.run_mode = RunMode.NORMAL
-        self.debug_mode = DebugMode.NONE
+        self._run_mode = RunMode.NORMAL
+        self._debug_mode = DebugMode.NONE
         self.ids_storage = IdsStorageSettings()
         self.commandline_cmd = ''
         self.exec_options = ''
@@ -250,7 +273,29 @@ class RuntimeSettings:
         # Class logger
         __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
+        @property
+        def life_time(self):
+            return self._life_time
+
+        @life_time.setter
+        def life_time(self, value):
+            if isinstance(value, str):
+                value = SandboxLifeTime[value.upper()]
+
+            self._life_time = value
+
+        @property
+        def mode(self):
+            return self._mode
+
+        @mode.setter
+        def mode(self, value):
+            if isinstance(value, str):
+                value = SandboxMode[value.upper()]
+
+            self._mode = value
+
         def __init__(self):
             self.path: str = ''
-            self.life_time: SandboxLifeTime = SandboxLifeTime.ACTOR_RUN
-            self.mode: SandboxMode = SandboxMode.AUTOMATIC
+            self._life_time: SandboxLifeTime = SandboxLifeTime.ACTOR_RUN
+            self._mode: SandboxMode = SandboxMode.AUTOMATIC

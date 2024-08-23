@@ -324,18 +324,18 @@ Actor runtime settings, to be updated must be passed as ``initialization`` argum
 Run mode
 =========================================================================================
 
--   Defined by setting one of predefined ``RunMode`` enumeration class values
+-   Defined by setting one of predefined ``RunMode`` enumeration class values or corresponding strings:
 
--   ``RunMode.NORMAL`` (default) - the code is loaded as a library and its routines are called directly from Python,
+-   ``NORMAL`` or ``RunMode.NORMAL`` (default) - the code is loaded as a library and its routines are called directly from Python,
     within the same process (and environment) used for the workflow script. Usually system resources,
     shared with other Python threads are limited, however this mode is suitable for most of the actors.
 
--   ``RunMode.STANDALONE``   - the actor runs the code as an executable in a separate process, having its
+-   ``STANDALONE`` or ``RunMode.STANDALONE``   - the actor runs the code as an executable in a separate process, having its
     own environment and (usually) bigger system resources available. This mode is set automatically for MPI
     applications, however it can be set automatically e.g. for memory demanding code. It  has also its limitations:
     only `INIT`, `MAIN` and `FINALIZE` methods of the code can be run in the 'STANDALONE mode.
 
--   ``RunMode.BATCH`` - an actor standalone executable is submitted to a batch queue.
+-   ``BATCH`` or ``RunMode.BATCH`` - an actor standalone executable is submitted to a batch queue.
     See `Batch settings`_ for details concerning batch job configuration
 
 -  Import of enumerated values:
@@ -355,6 +355,8 @@ Run mode
        runtime_settings = actor_object.get_runtime_settings()
 
        #configures runtime settings
+       runtime_settings.run_mode = 'STANDALONE`
+       # OR
        runtime_settings.run_mode = RunMode.STANDALONE
 
        # updates runtime_settings
@@ -366,14 +368,14 @@ Debug settings
 Debug mode
 -----------------------------------------------------
 
--   Defined by setting one of predefined ``DebugMode`` enumeration class values
+-   Defined by setting one of predefined ``DebugMode`` enumeration class values or corresponding strings:
 
--   ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *the code as an executable
+-   ``STANDALONE`` or ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *the code as an executable
     in a separate process*, but this time under debugger control. Debugged code can be run several
     times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable
     for most of the purposes.
 
--   ``DebugMode.ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
+-   ``ATTACH`` or ``DebugMode.ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
     and setting breakpoint on wrapped code of the debugged actor.  Because debugger attaches to a
     workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be
     chosen if the issue within the code cannot be reproduced in STANDALONE mode and the issue results from actor
@@ -396,6 +398,8 @@ Debug mode
       runtime_settings = actor_object.get_runtime_settings()
 
       #configures runtime settings
+      runtime_settings.debug_mode = 'STANDALONE'
+      # OR
       runtime_settings.debug_mode = DebugMode.STANDALONE
 
       # updates runtime_settings
@@ -538,27 +542,27 @@ directory will be created automatically or has to be specified by user.
 
 Sandbox attributes:
 
--   *mode* - defines how sandbox is managed. One of the predefined values of class SandboxMode:
+-   *mode* - defines how sandbox is managed. One of the predefined values of class SandboxMode or corresponding string:
 
-    -   ``SandboxMode.MANUAL`` - full manual mode. It is developer responsibility to maintain sandbox
+    -   ``MANUAL`` or ``SandboxMode.MANUAL`` - full manual mode. It is developer responsibility to maintain sandbox
         (i.e. create it, clean it up, etc), Requires *path* attribute to be set.
 
-    -   ``SandboxMode.AUTOMATIC`` - iWrap generated actor manages the sandbox creation, clean up, etc
+    -   ``AUTOMATIC`` or ``SandboxMode.AUTOMATIC`` - iWrap generated actor manages the sandbox creation, clean up, etc
 
 -   *path* - a **valid** path to an existing directory, that in 'manual' mode will be used as a sandbox.
     In 'automatic' mode directory is created by an actor...
 
 -   *life_time* - defines when the sandbox will be cleaned up and removed. One of the predefined values
-    of the class SandboxLifeTime:
+    of the class SandboxLifeTime or corresponding string:
 
-    -   ``SandboxLifeTime.ACTOR_RUN`` - content of the sandbox directory is cleaned before and after
+    -   ``ACTOR_RUN`` or ``SandboxLifeTime.ACTOR_RUN`` - content of the sandbox directory is cleaned before and after
         every main actor method execution.
 
-    -   ``SandboxLifeTime.WORKFLOW_RUN`` - content of the sandbox directory is cleaned, during initialising stage
+    -   ``WORKFLOW_RUN`` or ``SandboxLifeTime.WORKFLOW_RUN`` - content of the sandbox directory is cleaned, during initialising stage
         of an actor and after other finalisation actions of the actor (so, sandbox should be available during
         the whole workflow run)
 
-    -   ``SandboxLifeTime.PERSISTENT`` - content of the sandbox directory is preserved and never cleaned up
+    -   ``PERSISTENT`` or ``SandboxLifeTime.PERSISTENT`` - content of the sandbox directory is preserved and never cleaned up
 
 -   Import of enumerated values:
 
@@ -577,7 +581,10 @@ Sandbox attributes:
        runtime_settings = actor_object.get_runtime_settings()
 
        #configures runtime settings
+       runtime_settings.sandbox.mode = 'MANUAL'
+       # OR
        runtime_settings.sandbox.mode = SandboxMode.MANUAL
+
        runtime_settings.sandbox.path = '/path/to/existing/sandbox/directory'
 
        # updates runtime_settings
