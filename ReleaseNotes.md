@@ -1,5 +1,20 @@
 # Release notes
 
+## Pre-release version
+
+### New features
+TBD
+
+### YAML changes
+* Code parameters format added
+  * Field: `code_description/implementation/code_parameters/format`, optional
+  * Available values: `legacy-xml` (default), `xml`, `namelist`, `yaml`, `json` 
+
+### API version: 2.1
+Minor version number changed due to:
+* new field added to YAML
+
+
 ## Version 0.10.0
 ### New Features
 * Wrapping Java code into a Python actor

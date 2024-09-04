@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from packaging.version import Version
 
-API_VERSION: str = "2.0"
+API_VERSION: str = "2.1"
 """ API_VERSION `str`: Version of iWrap <--> plugins interface. 
 
 The "plugin interface" includes all generators methods used to communicate between iWrap and plugins 
