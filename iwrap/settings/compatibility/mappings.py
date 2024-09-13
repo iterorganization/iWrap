@@ -55,7 +55,8 @@ mappings = [
     { # since 0.10.0
      'command': 'move',
      'source': 'code_description/settings/open_mp_switch',
-     'target': 'code_description/settings/compiler_flags'},
+     'target': 'code_description/settings/compiler_flags',
+     'condition': '$TYPE_OF("code_description/settings/open_mp_switch") is not None'},
 
     #set code_description/settings/compiler_flags to None if contains boolean value (due to probable usage of open_mp_switch as Boolean flag in past)
     { # since 0.10.0
