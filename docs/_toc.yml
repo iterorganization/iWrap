@@ -25,10 +25,16 @@ parts:
     - file: documentation/developers_manual.rst
       title: Developers Manual
       sections:
-        - file:  documentation/developers_manual/actor_architecture.rst
-        - file:  documentation/developers_manual/actor_generators.rst
-        - file:  documentation/developers_manual/code_parameters_handling.rst
-        - file:  documentation/developers_manual/code_desc_compatibility.rst
+        - file:  documentation/developers_manual/01_internal_design.rst
+        - file:  documentation/developers_manual/02_actor_layers.rst
+        - file:  documentation/developers_manual/03_actor_generators.rst
+        - file:  documentation/developers_manual/04_adding_generators.rst
+        - file:  documentation/developers_manual/05_plugins_compatibility.rst
+        - file:  documentation/developers_manual/06_code_desc_compatibility.rst
+        - file:  documentation/developers_manual/07_code_parameters_handling.rst
+        - file:  documentation/developers_manual/08_ids_handling.rst
+
+
 
     - file: documentation/installation_guide/iwrap_installation.rst
       title: Installation Guide
@@ -90,3 +96,8 @@ parts:
         - file: tutorial/03_Advanced/4_Muscle3_Actors/03_muscle3_actor_generation.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/04_muscle3_MPI.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/05_muscle3_checkpointing.md
+
+  - caption: iWrap Packages and Modules
+    chapters:
+      - title: iWrap Sources Documentation
+        file:  documentation/api-autogen.rst

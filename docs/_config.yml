@@ -10,12 +10,42 @@ execute:
 exclude_patterns:
   - "tutorial_venv/*"
   - "README.md"
-  - "documentation/template.rst"
 
 #
 sphinx:
   recursive_update: true
+
+  autodoc_default_options:
+    member-order: 'bysource'
+    special-members: '__init__'
+    undoc-members': True
+    exclude-members': '__weakref__'
+
+  extra_extensions:
+    - 'sphinx.ext.autodoc'
+    - 'sphinx.ext.autosummary'
+    - 'sphinx.ext.napoleon'
+    - 'sphinx.ext.viewcode'
+    - 'sphinx.ext.extlinks'
+    - 'sphinx.ext.intersphinx'
+    - 'sphinx.ext.autosectionlabel'
+    - "sphinx_immaterial"
+    - "sphinx_immaterial.apidoc.python.apigen"
   config:
+    html_theme: "sphinx_immaterial"
+    autosummary_generate: True
+    autoclass_content: "both"
+    add_module_names: False
     html_theme_options:
       show_navbar_depth: 3      #left sidebar
       show_toc_level: 3         #rigth sidebar
+      repo_url: "https://git.iter.org/projects/IMEX/repos/iwrap"
+      repo_name: "iWrap"
+
+
+    autodoc_default_options:
+      member-order: 'bysource'
+      special-members: '__init__'
+      exclude-members': '__weakref__'
+      members: True
+      show-inheritance: True
