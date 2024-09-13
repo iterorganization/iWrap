@@ -16,8 +16,11 @@ and back.
 
 .. note::
 
-   Refer to the following `link <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/binder_generators/python/common/data_storages/__init__.py.jinja2>`_
-   to review the ``converter`` API, and `here <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/binder_generators/python/common/data_storages/ids_converter.py>`_
+   Refer to the class :py:class:`iwrap.generators.binder_generators.python.common.data_storages.IDSConverter()`
+   :py:mod:`iwrap.generators.binder_generators.python.common.data_storages`
+                                 iwrap/generators/binder_generators/python/common/data_storages/__init__.py
+   :py:class:`iwrap.generators.actor_generators.python_actor.resources.common.binder.Binder`
+   to review the ``converter`` API, and :py:class:`iwrap.generators.binder_generators.python.common.data_storages.ids_converter.LegacyIDSConverter`
    to see the `legacy IDS` converter implementation.
 
 .. code-block:: python

@@ -11,15 +11,15 @@ The existing set of generators can be easily extended in one of two ways:
 Regardless of the chosen approach, the implementation of the generator remains the same. The only difference lies in 
 where it is placed.
 
-===================== ======================================= ========================= ==========
-   Generator Type               Built-in Package                 Plug-in Package         Interface
-===================== ======================================= ========================= ==========
-  Actor Generator      ``iwrap.generators.actor_generators``     ``iwrap_actor_generator``  ActorGenerator
---------------------- --------------------------------------- ------------------------- ----------
-  Binder Generator     ``iwrap.generators.binder_generators``    ``iwrap_binder_generator``  BinderGenerator
---------------------- --------------------------------------- ------------------------- ----------
-  Wrapper Generator    ``iwrap.generators.wrapper_generators``  ``iwrap_wrapper_generator`` WrapperGenerator
-===================== ======================================= ========================= ==========
+===================== ========================================= ============================= ==================
+   Generator Type               Built-in Package                       Plug-in Package         Interface
+===================== ========================================= ============================= ==================
+  Actor Generator      ``iwrap.generators.actor_generators``     ``iwrap_actor_generator``     ActorGenerator
+--------------------- ----------------------------------------- ----------------------------- ------------------
+  Binder Generator     ``iwrap.generators.binder_generators``    ``iwrap_binder_generator``    BinderGenerator
+--------------------- ----------------------------------------- ----------------------------- ------------------
+  Wrapper Generator    ``iwrap.generators.wrapper_generators``   ``iwrap_wrapper_generator``   WrapperGenerator
+===================== ========================================= ============================= ==================
 
 * ``Generator Type`` - Type of the implemented generator.
 * ``Built-in Package`` - The location in the iWrap repository structure where a "built-in" generator should be placed.
@@ -32,9 +32,9 @@ Implementation of the Generator
 A generator for a particular actor layer must inherit from the appropriate base class. Depending on the layer 
 being generated, it should implement the abstract methods of one of the following base classes:
 
-* ``ActorGenerator`` class (defined in package `iwrap.generators.actor_generators <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/actor_generators/__init__.py>`_)
-* ``BinderGenerator`` class (defined in package `iwrap.generators.binder_generators <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/binder_generators/__init__.py>`_)
-* ``WrapperGenerator`` class (defined in package `iwrap.generators.wrapper_generators <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/wrapper_generators/__init__.py>`_)
+* ``ActorGenerator`` class (defined in package :py:mod:`iwrap.generators.actor_generators`)
+* ``BinderGenerator`` class (defined in package :py:mod:`iwrap.generators.binder_generators`)
+* ``WrapperGenerator`` class (defined in package :py:mod:`iwrap.generators.wrapper_generators`)
 
 Making the New Generator Discoverable
 #######################################################################################################################
@@ -89,6 +89,13 @@ mechanism has been proposed:
 
   This method can be overridden in generator implementation classes to better address issues
   related to the compatibility of the particular plugin.
+
+.. note::
+   The symbols used in the text above to denote versions:
+
+   * ``Mi.mi``: iWrap API version (``Major.minor``)
+   * ``Mp.mp``: iWrap API version handled by particular plugin (``Major.minor``)
+
 
 .. code-block:: python
 

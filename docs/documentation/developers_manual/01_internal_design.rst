@@ -27,7 +27,7 @@ The command-line interface is designed for advanced users and utilizes pre-confi
 .. hint::
 
     * Refer to the :ref:`iWrap CLI<iWrap CLI>` section for detailed instructions on how to use the iWrap CLI.
-    * The command-line interface is implemented in the `iwrap_main <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/iwrap_main.py>`_ module.
+    * The command-line interface is implemented in the :py:mod:`iwrap.iwrap_main` module.
 
 
 GUI: Graphical User Interface
@@ -36,8 +36,7 @@ The iWrap GUI is intended for less experienced users, providing a more intuitive
 
 .. hint::
     * Detailed description of the iWrap GUI and its functionality could be found :ref:`here <iWrap GUI>`
-    * Graphical interface consists of classes that belongs to package
-      `iwrap.gui <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/gui>`_
+    * Graphical interface consists of classes that belongs to package :py:mod:`iwrap.gui`
 
 
 Actor Generation Engine
@@ -47,7 +46,7 @@ Actor Generation Engine
 
 .. hint::
 
-   * The implementation of the engine could be found in the package `iwrap.generation_engine <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generation_engine>`_
+   * The implementation of the engine could be found in the package :py:mod:`iwrap.generation_engine`
 
 
 Actor Generators

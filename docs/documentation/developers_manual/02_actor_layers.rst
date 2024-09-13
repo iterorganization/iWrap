@@ -32,7 +32,7 @@ The Actor API Layer is the topmost layer in the actor stack. This layer:
 .. admonition:: Example
 
     Below is an example of the API defined by a `Simple Python` type actor (the sources could be found
-    `here <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/actor_generators/python_actor/resources/common/definitions.py#20>`_)
+    :py:class:`iwrap.generators.actor_generators.python_actor.resources.common.definitions.Actor`)
 
     .. code-block:: python
 
@@ -77,8 +77,8 @@ The Binding Layer provides the mechanism for connecting higher-level layers, typ
 
 .. admonition:: Example
 
-    Example of the Python ``Binder`` class API (the sources could be found
-    `here <https://git.iter.org/projects/IMEX/repos/iwrap/browse/iwrap/generators/actor_generators/python_actor/resources/common/binder.py>`_)
+    Example of the Python ``Binder`` class API (the sources could be found in the class
+    :py:class:`iwrap.generators.actor_generators.python_actor.resources.common.binder.Binder`)
 
     .. code-block:: python
 

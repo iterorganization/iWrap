@@ -96,3 +96,8 @@ parts:
         - file: tutorial/03_Advanced/4_Muscle3_Actors/03_muscle3_actor_generation.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/04_muscle3_MPI.md
         - file: tutorial/03_Advanced/4_Muscle3_Actors/05_muscle3_checkpointing.md
+
+  - caption: iWrap Packages and Modules
+    chapters:
+      - title: iWrap Sources Documentation
+        file:  documentation/api-autogen.rst
