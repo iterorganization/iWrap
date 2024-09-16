@@ -25,7 +25,7 @@ code_description:
     settings:
         compiler_cmd: gfortran
         mpi_compiler_cmd:
-        open_mp_switch: false
+        open_mp_switch: -qopenmp
         extra_libraries:
             pkg_config_defined:
                     - xmllib

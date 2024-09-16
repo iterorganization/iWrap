@@ -29,7 +29,7 @@ code_description:
         need_code_parameters: true
   settings:
     compiler_cmd: gfortran
-    compiler_flags:
+    compiler_flags: -qopenmp
     extra_libraries:
       path_defined:
       pkg_config_defined:
