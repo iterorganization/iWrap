@@ -5,10 +5,6 @@ import subprocess
 class PkgConfigTools:
     """The class enables to get a dictionary with all pkg configs and get info and description values for the system library.
 
-    Attributes:
-        PKG_CONFIG_CMD (str): The config command.
-        PKG_CONFIG_OPT_LIST_ALL (str): The command option enables to list all configs.
-
     Properties:
         system_lib_dict (dict): The dictionary with all pkg configs. Keys are pkg configs names, dictionary values are
         info and descriptions.
@@ -17,7 +13,9 @@ class PkgConfigTools:
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     PKG_CONFIG_CMD = "pkg-config"
+    """PKG_CONFIG_CMD (str): The config command."""
     PKG_CONFIG_OPT_LIST_ALL = "--list-all"
+    """PKG_CONFIG_OPT_LIST_ALL (str): The command option enables to list all configs."""
     PKG_CONFIG_OPT_GET_LINKER_FLAGS = "--libs"
     PKG_CONFIG_OPT_GET_CFLAGS = "--cflags"
 

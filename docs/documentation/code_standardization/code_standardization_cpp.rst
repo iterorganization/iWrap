@@ -19,7 +19,7 @@ Code signature
      /* * * SET_STATE method * * */
     void <method name>( std::string state, int& status_code, std::string& status_message);
 
-    /* * * GET_TIMESTAMP method * * */
+     /* * * GET_TIMESTAMP method * * */
     void <method name>(double& timestamp_out, int& status_code, std::string& status_message);
 
 Header
@@ -182,9 +182,9 @@ Example
      /* * *   INITIALISATION method   * * */
      void init_code (std::string codeparam, int& status_code, std::string& status_message)
      {
-     ...
-     // method body
-     ...
+         ...
+         // method body
+         ...
      }
 
      /* * *   MAIN method   * * */
@@ -193,17 +193,17 @@ Example
                                std::string codeparam,
                                int& status_code, std::string& status_message)
      {
-     ...
-     // method body
-     ...
+         ...
+         // method body
+         ...
      }
 
      /* * *   FINALISATION method   * * */
      void clean_up(int& status_code, std::string& status_message)
      {
-     ...
-     // method body
-     ...
+         ...
+         // method body
+         ...
      }
 
      /* * * GET_STATE method * * */

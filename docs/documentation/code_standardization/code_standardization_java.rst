@@ -129,6 +129,9 @@ Example
         public void clean_up( ) throws Exception
         {
             System.out.println("Java code: FINALISATION called");
+             ...
+             // method body
+             ...
         }
 
         /* * * GET_STATE method * * */

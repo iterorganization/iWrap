@@ -166,7 +166,7 @@ This method of the actor is usually used to perform any internal finalization ac
 - Cleans up IDS temporary storage
 - The actor sandbox directory is cleaned up (depending on `Sandbox settings`_)
 - The actor sandbox directory is removed (depending on `Sandbox settings`_)
-- Typically this method should be run when at the end of the workflow 
+- Typically this method should be run when at the end of the workflow
 
 Additional actor methods
 ######################################################################################################################
@@ -324,40 +324,30 @@ Actor runtime settings, to be updated must be passed as ``initialization`` argum
 Run mode
 =========================================================================================
 
--   Defined by setting one of predefined ``RunMode`` enumeration class values or corresponding strings:
+-   Defined by setting one of predefined values
 
--   ``NORMAL`` or ``RunMode.NORMAL`` (default) - the code is loaded as a library and its routines are called directly from Python,
+-   ``NORMAL`` (default) - the code is loaded as a library and its routines are called directly from Python,
     within the same process (and environment) used for the workflow script. Usually system resources,
     shared with other Python threads are limited, however this mode is suitable for most of the actors.
 
--   ``STANDALONE`` or ``RunMode.STANDALONE``   - the actor runs the code as an executable in a separate process, having its
+-   ``STANDALONE``   - the actor runs the code as an executable in a separate process, having its
     own environment and (usually) bigger system resources available. This mode is set automatically for MPI
     applications, however it can be set automatically e.g. for memory demanding code. It  has also its limitations:
     only `INIT`, `MAIN` and `FINALIZE` methods of the code can be run in the 'STANDALONE mode.
 
--   ``BATCH`` or ``RunMode.BATCH`` - an actor standalone executable is submitted to a batch queue.
+-   ``BATCH`` - an actor standalone executable is submitted to a batch queue.
     See `Batch settings`_ for details concerning batch job configuration
-
--  Import of enumerated values:
-
-   .. code-block:: Python
-
-       from <actor name>.common.runtime_settings import RunMode
 
 -  Example of the usage:
 
    .. code-block:: Python
 
-       from <actor name>.common.runtime_settings import RunMode
-
        ...
        # gets runtime settings
        runtime_settings = actor_object.get_runtime_settings()
 
-       #configures runtime settings
-       runtime_settings.run_mode = 'STANDALONE`
-       # OR
-       runtime_settings.run_mode = RunMode.STANDALONE
+       # configures runtime settings
+       runtime_settings.run_mode = "STANDALONE"
 
        # updates runtime_settings
        actor_object.initialize(runtime_settings=runtime_settings)
@@ -368,30 +358,22 @@ Debug settings
 Debug mode
 -----------------------------------------------------
 
--   Defined by setting one of predefined ``DebugMode`` enumeration class values or corresponding strings:
+-   Defined by setting one of predefined values
 
--   ``STANDALONE`` or ``DebugMode.STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *the code as an executable
+-   ``STANDALONE``   - similarly to STANDALONE *run mode* - an actor runs *the code as an executable
     in a separate process*, but this time under debugger control. Debugged code can be run several
     times. To proceed with workflow execution is enough to close the debugger. This debugging mode is suitable
     for most of the purposes.
 
--   ``ATTACH`` or ``DebugMode.ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
+-   ``ATTACH``   - an actor runs a debugger as parallel process, attaching it to a running workflow
     and setting breakpoint on wrapped code of the debugged actor.  Because debugger attaches to a
     workflow (and not a particular actor) killing debugged process kills the whole workflow. This mode has to be
     chosen if the issue within the code cannot be reproduced in STANDALONE mode and the issue results from actor
     interdependencies (e.g. one actor overwrites memory of the other one).
 
--   Import of enumerated values:
-
-    .. code-block:: Python
-
-      from <actor name>.common.runtime_settings import DebugMode
-
 -   Example of the usage:
 
     .. code-block:: Python
-
-      from <actor name>.common.runtime_settings import DebugMode
 
        ...
       # gets runtime settings
@@ -414,20 +396,19 @@ More advanced users may use a debbuger different than the default one. This can 
 
 -   ``debugger_cmd``
 
-    - Used only if debug mode is set to ``DebugMode.STANDALONE``
+    - Used only if debug mode is set to ``STANDALONE``
     - Attribute replaces default debugger
     - It should be set to debugger executable (e.g. 'gdb', 'totalview', etc)
     - Example of the usage:
 
       .. code-block:: Python
 
-       from <actor name>.common.runtime_settings import DebugMode
        ...
        # gets runtime settings
        runtime_settings = actor_object.get_runtime_settings()
 
-       #configures runtime settings
-       runtime_settings.debug_mode = DebugMode.STANDALONE
+       # configures runtime settings
+       runtime_settings.debug_mode = "STANDALONE"
        runtime_settings.debugger.debugger_cmd = 'gdb'
 
        # updates runtime_settings
@@ -436,20 +417,19 @@ More advanced users may use a debbuger different than the default one. This can 
 
 -   ``debugger_attach_cmd``
 
-    - Used only if debug mode is set to ``DebugMode.ATTACH``
+    - Used only if debug mode is set to ``ATTACH``
     - Attribute replaces default command, which runs separate process that attaches to Python process
     - The syntax of command is usually a bit comples (see example below)
     - Example of the usage:
 
       .. code-block:: Python
 
-           from <actor name>.common.runtime_settings import DebugMode
            ...
            # gets runtime settings
            runtime_settings = actor_object.get_runtime_settings()
 
-           #configures runtime settings
-           runtime_settings.debug_mode = DebugMode.ATTACH
+           # configures runtime settings
+           runtime_settings.debug_mode = "ATTACH"
            runtime_settings.debugger.debugger_attach_cmd = "xterm -e gdb  -ex 'set breakpoint pending on'  -ex 'attach ${process_id}' -ex 'break ${main_sbrt_name}' -ex 'continue'"
 
            # updates runtime_settings
@@ -542,12 +522,12 @@ directory will be created automatically or has to be specified by user.
 
 Sandbox attributes:
 
--   *mode* - defines how sandbox is managed. One of the predefined values of class SandboxMode or corresponding string:
+-   *mode* - defines how sandbox is managed. One of the predefined values:
 
-    -   ``MANUAL`` or ``SandboxMode.MANUAL`` - full manual mode. It is developer responsibility to maintain sandbox
+    -   ``MANUAL`` - full manual mode. It is developer responsibility to maintain sandbox
         (i.e. create it, clean it up, etc), Requires *path* attribute to be set.
 
-    -   ``AUTOMATIC`` or ``SandboxMode.AUTOMATIC`` - iWrap generated actor manages the sandbox creation, clean up, etc
+    -   ``AUTOMATIC`` - iWrap generated actor manages the sandbox creation, clean up, etc
 
 -   *path* - a **valid** path to an existing directory, that in 'manual' mode will be used as a sandbox.
     In 'automatic' mode directory is created by an actor...
@@ -555,14 +535,14 @@ Sandbox attributes:
 -   *life_time* - defines when the sandbox will be cleaned up and removed. One of the predefined values
     of the class SandboxLifeTime or corresponding string:
 
-    -   ``ACTOR_RUN`` or ``SandboxLifeTime.ACTOR_RUN`` - content of the sandbox directory is cleaned before and after
+    -   ``ACTOR_RUN`` - content of the sandbox directory is cleaned before and after
         every main actor method execution.
 
-    -   ``WORKFLOW_RUN`` or ``SandboxLifeTime.WORKFLOW_RUN`` - content of the sandbox directory is cleaned, during initialising stage
+    -   ``WORKFLOW_RUN`` - content of the sandbox directory is cleaned, during initialising stage
         of an actor and after other finalisation actions of the actor (so, sandbox should be available during
         the whole workflow run)
 
-    -   ``PERSISTENT`` or ``SandboxLifeTime.PERSISTENT`` - content of the sandbox directory is preserved and never cleaned up
+    -   ``PERSISTENT`` - content of the sandbox directory is preserved and never cleaned up
 
 -   Import of enumerated values:
 
@@ -580,8 +560,8 @@ Sandbox attributes:
        # gets runtime settings
        runtime_settings = actor_object.get_runtime_settings()
 
-       #configures runtime settings
-       runtime_settings.sandbox.mode = 'MANUAL'
+       # configures runtime settings
+       runtime_settings.sandbox.mode = "MANUAL"
        # OR
        runtime_settings.sandbox.mode = SandboxMode.MANUAL
 
@@ -734,13 +714,13 @@ Workflow developer may access actor build info as follows:
     from physics_ii.actor import physics_ii
 
     actor_physics_ii = physics_ii()
-    build_info_dict = actor_physics_ii.build_info
+    build_info_dict  = actor_physics_ii.build_info
 
-    iwrap_version = build_info_dict.get("iwrap_version")
-    imas_version = build_info_dict.get("imas_version")
-    imas_prefix = build_info_dict.get("imas_prefix")
-    al_version = build_info_dict.get("al_version")
-    generation_date = build_info_dict.get("generation_date")
+    iwrap_version    = build_info_dict.get("iwrap_version")
+    imas_version     = build_info_dict.get("imas_version")
+    imas_prefix      = build_info_dict.get("imas_prefix")
+    al_version       = build_info_dict.get("al_version")
+    generation_date  = build_info_dict.get("generation_date")
 
 
 Logging
@@ -789,7 +769,6 @@ The workflow example
     import imas,os
 
     from physics_ii.actor import physics_ii
-    from physics_ii.common.runtime_settings import RunMode, DebugMode, SandboxLifeTime
 
 
 
@@ -824,8 +803,8 @@ The workflow example
             runtime_settings = None
             # # # # # # # # Initialization of ALL actors  # # # # # # # #
 
-            runtime_settings.debug_mode = DebugMode.STANDALONE
-            runtime_settings.sandbox.life_time  = SandboxLifeTime.PERSISTENT
+            runtime_settings.debug_mode = "STANDALONE"
+            runtime_settings.sandbox.life_time  = "PERSISTENT"
 
             code_parameters = self.actor_physics_ii.get_code_parameters()
             value = code_parameters.get_parameter('parameters/multiplication_factor')

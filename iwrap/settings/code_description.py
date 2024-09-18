@@ -27,7 +27,7 @@ class Argument( SettingsBaseClass ):
     Attributes:
         name (`str`): name of the argument
         type (`str`): type of the IDS (e.g. 'equilibrium')
-        intent : determines if the argument is IN or OUT
+        _intent : determines if the argument is IN or OUT
     """
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
@@ -159,7 +159,7 @@ class Implementation( SettingsBaseClass ):
 
     Attributes:
         root dir (str): root directory
-        programming_language (str): language of in which the code's API is implemented
+        _programming_language (str): language of in which the code's API is implemented
         data_type (:obj:str): data type handled by the code { 'Legacy IDS', 'HDC IDS'}
         code_path  (str):  path to library (C, CPP), script (Python), etc, containing the code and
             methods/subroutines to be called
@@ -267,12 +267,7 @@ class Implementation( SettingsBaseClass ):
 
 
 class CodeParameters( SettingsBaseClass ):
-    """The data class containing information about files defining code parameters.
-
-    Attributes:
-        parameters (str): Path to a file with code parameters
-        schema (str): Path to a file with schema definition for code parameters file
-    """
+    """The data class containing information about files defining code parameters."""
     # Class logger
     __logger = logging.getLogger( __name__ + "." + __qualname__ )
 
@@ -353,9 +348,8 @@ class CodeDescription( SettingsBaseClass ):
     """Description of the code used for wrapping the code within an actor.
 
     Attributes:
-        arguments (list [:obj:`Arguments`]): list of the in/out arguments of the code
         documentation (str): human readable description of the code
-        settings (dict): code settings
+        _settings (dict): code settings
         implementation(:obj:`Implementation`): details on the implementation of the code
     """
     # Class logger
@@ -461,7 +455,7 @@ class Subroutine(SettingsBaseClass):
         name (str): Name of a subroutine init, main, or finalize.
         need_code_parameters (bool): A boolean for making code
             parameters optional.
-        arguments (list [:obj:`Arguments`]): List of native code in/out arguments.
+        _arguments (list [:obj:`Arguments`]): List of native code in/out arguments.
     """
 
     @property

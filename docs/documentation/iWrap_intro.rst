@@ -20,13 +20,13 @@ Introduction
       or more sophisticated "orchestrator" (e.g. MUSCLE, Kepler)
 
     Actor
-        A basic component of scenario / workflow
-        An actor performs some actions (e.g. computations, visualisation, etc)
-        Usually given actor consumes results provided by a previous actor in a scenario and produces data for
-        a next actor in a scenario
-        Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor
+        A basic component of scenario / workflow.
+        An actor performs some actions (e.g. computations, visualisation, etc).
+        Usually given actor consumes results provided by a previous actor in a scenario and produces data for.
+        a next actor in a scenario.
+        Actor API strictly depends on targeted workflow system: an orchestrator "fires" particular actions on actor.
         An actor, using its internal mechanisms ('wrappers') calls the 'code' method(s), usually written
-        in other language than actor
+        in other language than actor.
 
     Code
       An implementation of a physics model, of standardized signature
@@ -68,7 +68,7 @@ iWrap creates a Python script (aka an actor) that:
 * Calls debugger (if run in "debug" mode)
 * Runs MPI code
 
-Wrap generates a Fortran/CPP wrapper, which intermediates between Python script (workflow) and user code in terms of:
+iWrap generates a Fortran/CPP/Java wrapper, which intermediates between Python script (workflow) and user code in terms of:
 * Calling physical model methods – the code provided by developer
 * Converting arguments passed between the code and computing scenario from/to the workflow programming language to/from the physics model programming language
 * Managing the temporary IDS  (Interface Data Structures) storage used to pass data between workflow and physic model subroutines run in separate process as standalone executable.

@@ -31,7 +31,7 @@ We will reuse [MUSCLE3 macro & micro code from the previous chapter](04_muscle3_
 
 To enable checkpointing in `MUSCLE3`, we need to provide `get_state` and `set_state` methods in iWrap yaml description.
 
-```{code-block} yml
+```{code-block} yaml
 :caption: mpi-cpp.yml
 
 code_description:
@@ -70,7 +70,7 @@ These methods will be used internally by `MUSCLE3` framework to save snapshots o
 
 ## Writing the yMMSL File
 
-Reusing the `yMMSL` example [from the previous example](04_muscle3_MPI.md#writing-the-ymmsl-file), we will add `checkpoint` directive to it. This description will tell `MUSCLE3` when to save snapshots. Possible entries are as follow:
+Reusing the `yMMSL` example [from the previous example](04_muscle3_MPI.md#Writing the yMMSL File), we will add `checkpoint` directive to it. This description will tell `MUSCLE3` when to save snapshots. Possible entries are as follow:
 
 ```{code-block} yaml
 checkpoints:
@@ -162,7 +162,7 @@ run_helloworld_20240724_132706
 
 As you can see, running the simulation will produce the snapshot folder with a snapshot that looks like this
 
-``` {code-block} yml
+``` {code-block} yaml
 ymmsl_version: v0.1
 description: |
   Workflow snapshot for helloworld taken on 2024-07-24 13:27:08.

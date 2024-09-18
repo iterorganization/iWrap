@@ -2,7 +2,6 @@
 Fortran code standardisation
 ############################################################
 
-########################
 
 Code signature
 ########################
@@ -17,10 +16,10 @@ Code signature
      subroutine <subroutine name> ([ids1, ids2, ..., idsN,] [xml_parameters], status_code, status_message)
        use ids_schemas
        ! IN/OUT IDSes
-       type(ids_<ids_name>), intent([IN|OUT]):: ids1
-       type(ids_<ids_name>), intent([IN|OUT]):: ids2
+       type(ids_<ids_name>), intent([IN/OUT]):: ids1
+       type(ids_<ids_name>), intent([IN/OUT]):: ids2
         . . .
-       type(ids_<ids_name>), intent([IN|OUT]):: idsN
+       type(ids_<ids_name>), intent([IN/OUT]):: idsN
 
        ! XML code parameters
        type(ids_parameters_input) :: xml_parameters
@@ -84,7 +83,6 @@ Subroutines
 ########################
 -  A user code should be provided as subroutines (and not a functions)
 -  A name of subroutines could be arbitrary - chosen by code developer
--  A name of the module could be arbitrary - chosen by code developer
 -  Arguments shall be provided in a strict order
 -  No INOUT arguments are allowed!
 

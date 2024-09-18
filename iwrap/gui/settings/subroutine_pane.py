@@ -13,14 +13,16 @@ class SubroutinePane(tkinter.ttk.Frame, IWrapPane):
 
     def __init__(self, method_type, master=None):
         '''
-        Arguments
+        Arguments:
             method_type (str): Must be one of the three following: init /
                 main / finalize, for the reflection mechanism.
             master: Parent widget from Tkinter class. Defaults to None.
+
         Attributes:
             method_type (tk.StringVar()): A name of a subroutine that
                 could be used to initialise or finalise the native code
                 or the main subroutine that will be called from an actor.
+                
         '''
         super().__init__(master)
         self.method_type = method_type

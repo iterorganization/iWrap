@@ -39,7 +39,7 @@ class AbstractGenerator( ABC ):
         + The plugin doesn't implement versioning API
         + The major versions differs (Mp != Mi)
         + The plugin API version is newer than iWrap one (Mp.mp > Mi.mi), i.e.: plugin may use changes
-           not yet available in the current
+        not yet available in the current
 
         The COMPATIBILITY is assumed only if:
         + The major versions are equal (Mp == Mi) and
@@ -75,66 +75,66 @@ class AbstractGenerator( ABC ):
         self.__info_output_stream = info_output_stream
 
     @abstractmethod
-    def initialize(self, actor_settings: dict = None):
+    def initialize(self, project_settings: dict = None):
         """
         Generator initialisation.
         The method is usually used for initialization of the generator environment
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...
 
-    def validate(self, actor_settings: dict = None):
+    def validate(self, project_settings: dict = None):
         """
         Validation of the actor description
         The method checks if an actor description contains all necessary information and if all provided data are correct
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...
 
     @abstractmethod
-    def generate(self, actor_settings: dict = None):
+    def generate(self, project_settings: dict = None):
         """
         Actor files generation.
         Generation of all essential files of from templates
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...
 
     @abstractmethod
-    def build(self, actor_settings: dict = None):
+    def build(self, project_settings: dict = None):
         """
         Build of the generated actor layer
         The method is used to build an actor
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...
 
     @abstractmethod
-    def install(self, actor_settings: dict = None):
+    def install(self, project_settings: dict = None):
         """
         Actor installation
         If the actor is generated / built in a temporary directory, this method copies all necessary files in a target/install directory
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...
 
     @abstractmethod
-    def cleanup(self, actor_settings: dict = None):
+    def cleanup(self, project_settings: dict = None):
         """
         Clean up after the actor layer creation/build process
         The method removes all temporary files, directories, etc...
 
         Args:
-            actor_settings (`dict`) - complete actor description
+            project_settings (`dict`) - complete actor description
         """
         ...

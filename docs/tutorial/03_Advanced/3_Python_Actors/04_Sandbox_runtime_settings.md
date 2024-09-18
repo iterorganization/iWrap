@@ -105,4 +105,4 @@ ValueError: Actor cp2ds_mpi: Sandbox path points to non existing directory (my_s
 
 This is because when running manual mode, you are responsible for managing the directory. When you create the directory, the directory will be filled with the outputs of the workflow and will persist throughout workflow runs.
 
-If you want a detailed description of sandbox settings, visit [sandbox settings documentation](../../../documentation/actor_usage.rst#sandbox-settings)
+If you want a detailed description of sandbox settings, visit [sandbox settings documentation](../../../documentation/actor_usage.rst#Sandbox settings)

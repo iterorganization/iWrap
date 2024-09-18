@@ -108,4 +108,4 @@ my_sandbox_dir
                 └── master.h5
 ```
 
-If you want a detailed description of IDS storage settings, visit [IDS storage settings documentation](../../../documentation/actor_usage.rst#ids-storage-settings)
+If you want a detailed description of IDS storage settings, visit [IDS storage settings documentation](../../../documentation/actor_usage.rst#IDS storage settings)

@@ -125,6 +125,6 @@ class PythonActorGenerator(ActorGenerator):
         shutil.copy( parameters_file, destination_dir )
         shutil.copy( schema_file, destination_dir )
 
-    def cleanup(self):
+    def cleanup(self, project_settings:dict):
         if os.path.isdir(self.install_dir):
             shutil.rmtree(self.install_dir)

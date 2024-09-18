@@ -422,8 +422,6 @@ code_description:
             path_defined:
 ```
 ````
-````{tab-item} GUI
-````
 `````
 
 ##### `GET_TIMESTAMP` YAML Code Description
@@ -475,7 +473,5 @@ code_description:
             pkg_config_defined:
             path_defined:
 ```
-````
-````{tab-item} GUI
 ````
 `````

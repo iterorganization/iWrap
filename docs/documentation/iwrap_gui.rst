@@ -1,4 +1,5 @@
 .. _iWrap GUI:
+
 #######################################################################################################################
 iWrap - graphical interface
 #######################################################################################################################
@@ -20,21 +21,13 @@ Introduction
 iWrap purpose
 ###############
 
-**This section explains:**
-
--  iWrap generates a Fortran/CPP wrapper, which
-   intermediates between Kepler actor and user code in terms
-   of:
-
-   -  reading/writing of in/out physical data (IDS)
-   -  passing other arguments to/from the actor
-
 -  iWrap creates a Python script (aka an actor) that:
 
+   -  takes advantage of generated Fortran/CPP/Java wrapper in order to communicate with user code
+   -  passes in/out IDS into user code
    -  calls a user code
    -  provides error handling
    -  calls debugger (if run in "debug" mode)
-
 
 iWrap main window
 ##################
@@ -48,7 +41,7 @@ This group of graphical controls allows setting the
 description of the actor.
 
 -  Actor name - a user-defined name of the actor
--  Actor type - a user-defined type of the actor
+-  Actor type - a type of the actor (currently, only python actors are available)
 -  Data type -  an actor data type
 
 Code description
@@ -62,19 +55,19 @@ Implementation
 -  **Data** **type** - data type handled by the physics code
 -  **Data Dictionary compliant** - oldest known version of Data Directory compatible with actor
 -  **Rood dir** - the root directory
--  **Code** **path** - path to system library (C, CPP),
-   script (Python), etc, containing the physics code and
-   method/subroutine to be run
--  **Include path** -  a module's / header's file path
+-  **Code** **path** - path to system library (C, C++, Fortran) , script (Python), jar (Java), etc., containing the code,
+   containing the physics code and method/subroutine to be run
+-  **Include path** -  a module's / header's file path (C, C++, Fortran), full main class name (Java) eg.: "org.MyPackage.MyMainClass"
 
 Subroutines tab
----------------
+===============
 
 A user code should be provided as a subroutine/method.
 
 |image8|
 
 *Init*, *Main* and *Finalize* - for that methods user can specify:
+
 - a name of a subroutine that could be used to initialize the native code (mandatory for *Main*)
 - flag determining if given method uses code parameters or not
 - a set of IDSes - input or output arguments
@@ -92,7 +85,7 @@ In the table, there are columns like:
 -  **Input/Output** - defines argument as \ *an
    input/output*
 -  **Type** - defines an IDS based type of argument (e.g.
-   equilibrium, topinfo, etc.)
+   equilibrium, core_sources, etc.)
 
 On the right side of the table, there is a section with
 buttons. Add button allows to add a new argument, edit to
@@ -127,33 +120,6 @@ button in the *Arguments* section is clicked, a new window
 approve it by clicking **Close** button. To exit the window
 click **Cancel**.
 
-Implementation
-===============
-|image6|
-
--  **Programming language** - a user code language
--  **Data** **type** - data type handled by the physics code
--  **Data Dictionary compliant** - oldest known version of Data Directory compatible with actor
--  **Rood dir** - the root directory
--  **Code** **path** - path to system library (C, CPP),
-   script (Python), etc, containing the physics code and
-   method/subroutine to be run
--  **Include path** -  a module's / header's file path
-
-Subroutines tab
----------------
-
-A user code should be provided as a subroutine.
-
-|image8|
-
--  **Init** - the name of the subroutine that can be used to
-   initialize the code (optional)
--  **Main** - the name of the main subroutine that will be
-   called from the actor (mandatory)
--  **Finalize** - the name of the subroutine that can be used
-   to finalize the code (optional)
-
 Code parameters tab
 --------------------
 
@@ -173,7 +139,7 @@ Settings
 
 -  **Compiler cmd** - the compiler command used to compile
    the code
--  **OpenMP switch** - theOpenMP switch
+-  **Compiler flags** - flags to be passed during compilation
 -  **MPI compiler cmd** - the MPI compiler command
 
 Extra libraries
@@ -205,9 +171,9 @@ placed on the right side of the table.
 
 To add new arguments click **Add...** button in the
 *pkg-config defined*\ section. A new window named *Add
-system library* will appear. The *search *\ field allows for
+system library* will appear. The *search* field allows for
 easy filtering of the list of libraries. To add a pkg-config
-definedselect your choice and click **Ok** button. To close
+defined library, select your choice and click **Ok** button. To close
 the window click **Cancel**.
 
 |image14|

@@ -35,7 +35,7 @@ class SettingsPane(ttk.Frame, IWrapPane):
         """Update specific language pane when programming language in combobox is changed.
 
         Args:
-            event: Combobox change value event object. Default to None.
+            selected_language: A programming language of the code selected by user.
         """
         if selected_language == self.active_language:
             return # no need to change the pane

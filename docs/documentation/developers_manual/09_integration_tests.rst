@@ -11,10 +11,10 @@ Introduction
 
 `here <file://../../../iwrap/iwrap_main.py>`_
 
-`Link to file <../../../iwrap/iwrap_main.py>`_
+`Link to file python <../../../iwrap/iwrap_main.py>`_
 
 
-`Link to file <./iwrap_main.html>`_
+`Link to file html <./iwrap_main.html>`_
 
 Test launcher
 #######################################################################################################################

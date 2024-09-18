@@ -25,7 +25,7 @@ In this chapter, we will delve into creating an MPI example utilizing iWrap. We 
 
 ## Reusing the Macro Code
 
-We will reuse [MUSCLE3 macro code from the previous chapter](03_MUSCLE3_actor_generation.md#example-of-a-macro-model-in-fortran) for this example. This macro code serves as the framework for the simulation, handling the coordination of various components.
+We will reuse [MUSCLE3 macro code from the previous chapter](03_MUSCLE3_actor_generation.md#Example of a Macro Model in Fortran) for this example. This macro code serves as the framework for the simulation, handling the coordination of various components.
 
 ## Creating the Micro Code in C++
 
@@ -230,7 +230,7 @@ ar -cr libparallel_mpi.a parallel_mpi.o
 
 Next, we provide a code description for iWrap in a YAML file:
 
-```{code-block} yml
+```{code-block} yaml
 :caption: mpi-cpp.yml
 
 code_description:

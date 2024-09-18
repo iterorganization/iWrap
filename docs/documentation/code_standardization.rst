@@ -47,7 +47,6 @@ All *INIT*, *MAIN* and *FINALIZE* methods share the same API:
 -  Can correspond to the entire computation or to a step that can be run an arbitrary number of times (e.g. in a loop)
 -  It can be of arbitrary name (the name has to be specified in the code YAML description)
 -  The method must be run **after** a call of *initialisation* (if provided) and **before** a call of *finalisation* (if provided)
--  The methods can be of arbitrary names (they have to be specified in the code YAML description)
 -  Method arguments:
 
    -  Input and output IDSes:

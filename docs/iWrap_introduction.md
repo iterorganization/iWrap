@@ -46,7 +46,7 @@ By doing so, it relieves users from the need to manually developing the wrappers
 
 ## About iWrap
 
-`iWrap` is a tool designed in `Python`, and is used fo creating what we call **actors** for the Integrated Modeling and Analysis Suite (IMAS).   
+`iWrap` is a tool designed in `Python`, and is used to create what we call **actors** for the Integrated Modeling and Analysis Suite (IMAS).   
 These actors serve as connectors between your physics models (written in languages like Fortran or C++) and more complex computing (workflows) built in languages like Python.
 
 ```{admonition} Actor model in general Information Technology

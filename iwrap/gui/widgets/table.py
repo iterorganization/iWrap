@@ -560,9 +560,6 @@ class Column:
     """The column class enables define table columns, set their type, and add them to the grid.
 
     Attributes:
-        TEXT (str): Defines text column type.
-        RADIOBUTTON (str): Defines radiobutton column type.
-        COMBOBOX (str): Defines combobox column type.
         label_var (StringVar): The column label.
         column_type (str): The column type.
         list_of_values (List[str, Any]): The list of possible values in the column. These values will be added to combobox
@@ -573,8 +570,11 @@ class Column:
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     TEXT = 'text'
+    """TEXT (str): Defines text column type."""
     RADIOBUTTON = 'radiobutton'
+    """RADIOBUTTON (str): Defines radiobutton column type."""
     COMBOBOX = 'combobox'
+    """COMBOBOX (str): Defines combobox column type."""
 
     def __init__(self, column_type, table_label, data_label, list_of_values=None):
         """Initialize the Column class object.

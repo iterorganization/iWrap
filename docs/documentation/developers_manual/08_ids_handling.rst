@@ -16,33 +16,15 @@ and back.
 
 .. note::
 
-   Refer to the class :py:class:`iwrap.generators.binder_generators.python.common.data_storages.IDSConverter()`
-   :py:mod:`iwrap.generators.binder_generators.python.common.data_storages`
-                                 iwrap/generators/binder_generators/python/common/data_storages/__init__.py
-   :py:class:`iwrap.generators.actor_generators.python_actor.resources.common.binder.Binder`
-   to review the ``converter`` API, and :py:class:`iwrap.generators.binder_generators.python.common.data_storages.ids_converter.LegacyIDSConverter`
-   to see the `legacy IDS` converter implementation.
+   Refer to the :download:`class IDSConverter<../../../iwrap/generators/binder_generators/python/common/data_storages/__init__.py.jinja2>`
+   to review the *'converter'* API, and
+   to the :download:`class LegacyIDSConverter<../../../iwrap/generators/binder_generators/python/common/data_storages/ids_converter.py>`
+   to see the *'legacy IDS'* converter implementation.
 
-.. code-block:: python
+.. literalinclude:: ../../../iwrap/generators/binder_generators/python/common/data_storages/__init__.py.jinja2
+    :pyobject: IDSConverter
+    :language: python
 
-    class IDSConverter():
-
-        @classmethod
-        def data_type(cls) -> str:
-            ...
-
-        @classmethod
-        def code_languages(cls) -> Set[str]:
-            ...
-
-        def convert_to_native_type(self, ids_description: IDSDescription, ids_intent, ids_object):
-            ...
-
-        def convert_to_actor_type(self, ids_description: IDSDescription, ids_intent, ids_object):
-            ...
-
-        def release(self, ids_description: IDSDescription):
-            ...
 
 Converter Methods
 ===========================================================================================

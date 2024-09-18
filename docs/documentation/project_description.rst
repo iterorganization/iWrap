@@ -74,7 +74,7 @@ Code description
 
 Description of the code has to be provided as a YAML document. It consist of two parts. The first one contains
 generic information common for all languages, The latter one contains information specific for a given code
-language (currently defined only for Fortran and C++).
+language.
 
 Generic part
 =========================================================================================
@@ -86,7 +86,7 @@ Generic information common for all programming languages handled by iWrap:
     -   *programming_language:*
 
         -   meaning:  language used to implement the code's API
-        -   value: one of predefined values: 'Fortran', 'CPP'
+        -   value: one of predefined values: 'Fortran', 'CPP', 'Java'
         -   example: 'Fortran'
 
     -   *data_dictionary_compliant:*
@@ -104,38 +104,73 @@ Generic information common for all programming languages handled by iWrap:
 
     -   *subroutines:*
 
-        -   *init*:
+        -   *init*: a structure containing init function description. **optional**  :
 
-            - **optional** entry
-            -   meaning:
+            -   *name:*
 
-                -  name of the method / subroutine to be called,
-                -  must be **exactly the same** as name of called method / subroutine
-                -  it is used, usually, to set up the code, however subroutine may contain any arbitrary actions
-            -  value: string
-            -  example: 'init_code'
+                -  meaning: user defined function name
+                -  value: string
+                -  example: init_code
 
-        -   *main:*
+            -   *arguments*: a structure containing function arguments description.
+                    For more information see *arguments* definition in *main:* function entry.
 
-            -   meaning:
+            -   *need_code_parameters:*
 
-                -  name of the method / subroutine to be called,
-                -  must be **exactly the same** as name of called  method / subroutine
+                -  meaning: flag, set to true, if function needs code parameters
+                -  value: boolean
+                -  example: true
 
-            -  value: string
-            -  example: 'my_subroutine'
+        -   *main:* a structure containing main function description.  :
 
-        -    *finalize:*
+            -   *name:*
 
-             - **optional** entry
-             -   meaning:
+                -  meaning: user defined function name
+                -  value: string
+                -  example: code_step
 
-                 -  name of the method / subroutine to be called
-                 -  must be **exactly the same** as name of called  method / subroutine
-                 -  it is used, usually, to clean up the code, however subroutine may contain any arbitrary actions
+            -   *arguments:* list of arguments. Argument definition:
 
-             -  value: string
-             -  example: 'clean_up'
+                -   *name:*
+
+                    -  meaning: user defined argument name
+                    -  value: string
+                    -  example: equilibrium00
+
+                -   *type:*
+
+                    -  meaning: a type of an IDS argument
+                    -  value: predefined name of one of the IDSes
+                    -  example: 'equilibrium'
+
+                -   *intent:*
+
+                    -  meaning: determines if given argument is input or output one
+                    -  value: predefined - string "IN", "OUT"
+                    -  example: 'IN'
+
+            -   *need_code_parameters:*
+
+                -  meaning: flag, set to true, if function needs code parameters
+                -  value: boolean
+                -  example: true
+
+        -   *finalize:* a structure containing finalize function description.  :
+
+            -   *name:*
+
+                -  meaning: user defined function name
+                -  value: string
+                -  example: finalize
+
+            -   *arguments*: a structure containing function arguments description.
+                For more information see *arguments* definition in *main* function entry.
+
+            -   *need_code_parameters:*
+
+                -  meaning: flag, set to true, if function needs code parameters
+                -  value: boolean
+                -  example: true
 
         -    *get_state:*
 
@@ -181,7 +216,7 @@ Generic information common for all programming languages handled by iWrap:
 
     -  *code_path:*
 
-       -  meaning: path to system library (C, C++, Fortran) , script (Python), etc., containing the code, including
+       -  meaning: path to system library (C, C++, Fortran) , script (Python), jar (Java), etc., containing the code, including
           methods/subroutines to be called
        -  value: string, valid path to file
        -  example: '/path/to/code/lib/libcode.a'
@@ -198,7 +233,7 @@ Generic information common for all programming languages handled by iWrap:
             Please check if the name of generated module file provided in YAML is correct!
 
 
-    -   *code_parameters:* a structure containing parameters and schema entry. **optional**  :
+    -   *code_parameters:* a structure containing parameters, schema and format entry. **optional**  :
 
         -   *parameters:*
 
@@ -216,7 +251,7 @@ Generic information common for all programming languages handled by iWrap:
 
             -   **optional** entry
             -   meaning: format of the code parameters
-            -   value: string, one of the supported formats: `legacy-xml` (default), `xml`, `json`, `yaml`, `namelist`
+            -   value: string, one of the supported formats: `legacy-xml` (default), `xml`, `json`, `namelist`
             -   example: 'xml'
 
                 .. note::
@@ -225,27 +260,6 @@ Generic information common for all programming languages handled by iWrap:
                         (Fortran) or `IdsNs::codeparam_t` (C++).
                         If any other format is chosen, code parameters are passed as a string.
 
-
-
--   *arguments:* list of arguments. Argument definition:
-
-    -   *name:*
-
-        -  meaning: user defined argument name
-        -  value: string
-        -  example: equilibrium00
-
-    -   *type:*
-
-        -  meaning: a type of an IDS argument
-        -  value: predefined name of one of the IDSes
-        -  example: 'equilibrium'
-
-    -   *intent:*
-
-        -  meaning: determines if given argument is input or output one
-        -  value: predefined - string "IN", "OUT"
-        -  example: 'IN'
 
 -   *documentation:*
     - **optional** entry
@@ -319,45 +333,46 @@ Example - description of an actor wrapping a Fortran code
 
 .. code-block:: YAML
 
-    ---
     actor_description:
-        actor_name: core2dist
-        actor_type: python
-        data_type: legacy
-
+      actor_name: core2dist
+      actor_type: python
+      data_type: legacy
     code_description:
-        implementation:
-            subroutines:
-                init:   init_code
-                main:   code_lifecycle
-                finalize: clean_up
-            programming_language: Fortran
-            data_directory_compliant: 3.37.0
-            data_type: legacy
-            code_path: ./native_code/libcode_lifecycle.a
-            include_path: ./native_code/mod_code_lifecycle.mod
-            code_parameters:
-                parameters: ./input/input_physics.xml
-                schema: ./input/input_physics.xsd
-        arguments:
-        -   name: equilibrium_in
-            type: equilibrium
-            intent: IN
-        -   name: equilibrium_out
-            type: equilibrium
-            intent: OUT
-        documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. '
-        settings:
-            compiler_cmd: gfortran
-            mpi_compiler_cmd: mpif90
-            compiler_flags: -qopenmp
-            extra_libraries:
-                pkg_config_defined:
-                  - xmllib
-                path_defined:
-                  - ./lib/custom/libcustom1.a
-                  - ./lib/custom/libcustom2.a
-    ...
+      documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+      implementation:
+        code_parameters:
+          parameters: ./input/input_physics.xml
+          schema: ./input/input_physics.xsd
+        code_path: ./native_code/libcode_lifecycle.a
+        data_dictionary_compliant: 3.39.0
+        data_type: legacy
+        include_path: ./native_code/mod_code_lifecycle.mod
+        programming_language: Fortran
+        subroutines:
+          finalize:
+            name: clean_up
+          init:
+            name: init_code
+            need_code_parameters: true
+          main:
+            arguments:
+            - intent: IN
+              name: equilibrium_in
+              type: equilibrium
+            - intent: OUT
+              name: equilibrium_out
+              type: equilibrium
+            name: code_lifecycle
+            need_code_parameters: true
+      settings:
+        compiler_cmd: gfortran
+        compiler_flags:
+        extra_libraries:
+          path_defined:
+          - ./lib/custom/libcustom1.a
+          - ./lib/custom/libcustom2.a
+          pkg_config_defined:
+          - xmllib
+        mpi_compiler_cmd: mpif90

@@ -23,7 +23,6 @@ class FortranPane( ttk.Frame, IWrapPane ):
     LibraryPathPane frame contains the Table widget with library paths.
 
     Attributes:
-        language (string): The language related to the class.
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         compiler_cmd (tk.StringVar()): The compiler cmd.
         compiler_flags (tk.StringVar()): Compiler flgs.
@@ -35,6 +34,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     language = 'fortran'
+    """language (string): The language related to the class. """
 
     def __init__(self, master=None, language="fortran"):
         """Initialize the FortranPane class object.

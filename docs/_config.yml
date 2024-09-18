@@ -15,12 +15,6 @@ exclude_patterns:
 sphinx:
   recursive_update: true
 
-  autodoc_default_options:
-    member-order: 'bysource'
-    special-members: '__init__'
-    undoc-members': True
-    exclude-members': '__weakref__'
-
   extra_extensions:
     - 'sphinx.ext.autodoc'
     - 'sphinx.ext.autosummary'
@@ -28,11 +22,11 @@ sphinx:
     - 'sphinx.ext.viewcode'
     - 'sphinx.ext.extlinks'
     - 'sphinx.ext.intersphinx'
-    - 'sphinx.ext.autosectionlabel'
-    - "sphinx_immaterial"
-    - "sphinx_immaterial.apidoc.python.apigen"
+#  'immaterial' theme cannot be used due to incompatibilities between sphinx-8.0.2 vs sphinx_immaterial-0.12.2
+#    - "sphinx_immaterial"
+#    - "sphinx_immaterial.apidoc.python.apigen"
   config:
-    html_theme: "sphinx_immaterial"
+#    html_theme: "sphinx_immaterial"
     autosummary_generate: True
     autoclass_content: "both"
     add_module_names: False
@@ -41,11 +35,12 @@ sphinx:
       show_toc_level: 3         #rigth sidebar
       repo_url: "https://git.iter.org/projects/IMEX/repos/iwrap"
       repo_name: "iWrap"
-
+    suppress_warnings:
+      - "etoc.toctree"
 
     autodoc_default_options:
       member-order: 'bysource'
-      special-members: '__init__'
       exclude-members': '__weakref__'
       members: True
+      undoc-members: True
       show-inheritance: True
