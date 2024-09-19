@@ -33,7 +33,6 @@ parts:
         - file:  documentation/developers_manual/06_code_desc_compatibility.rst
         - file:  documentation/developers_manual/07_code_parameters_handling.rst
         - file:  documentation/developers_manual/08_ids_handling.rst
-        - file:  documentation/developers_manual/09_integration_tests.rst
 
 
 
