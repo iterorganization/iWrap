@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "ntimes": {
+          "type": "integer"
+        },
+        "multiplication_factor": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "ntimes",
+        "multiplication_factor"
+      ]
+    }
+  },
+  "required": [
+    "parameters"
+  ]
+}

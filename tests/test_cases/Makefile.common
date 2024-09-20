@@ -1,0 +1,45 @@
+.PHONY: code code-all actor actor-gui wf-run clean-all
+
+TEST_DIR:=$(shell pwd)
+#replace '-' character with '_' in actor name
+FULL_ACTOR_NAME=$(subst -,_,$(ACTOR_NAME)_$(CODE_LANGUAGE)_$(PARAMETERS_FORMAT))
+
+actor:
+	@echo "================ ACTOR BUILD ========================="
+
+	iwrap --actor-type python \
+          --actor-name $(FULL_ACTOR_NAME)\
+          --install-dir $(TEST_DIR)/actors \
+          -f $(TESTS_DIR)/actors/$(CODE_LANGUAGE)/$(ACTOR_NAME)/$(ACTOR_NAME).yaml
+
+actor-gui:
+	iwrap-gui --actor-type $(ACTOR_TYPE) -a $(ACTOR_NAME)_$(CODE_LANGUAGE) -f $(TESTS_DIR)/actors/$(CODE_LANGUAGE)/$(ACTOR_NAME)/$(ACTOR_NAME).yaml
+
+code:
+	@echo "================ CODE BUILD ========================="
+	@echo $(CODE_NAME)
+	@$(MAKE) -C $(TESTS_DIR)/codes/$(CODE_LANGUAGE)/$(CODE_NAME) clean
+	@$(MAKE) -C $(TESTS_DIR)/codes/$(CODE_LANGUAGE)/$(CODE_NAME)
+
+code-all:
+	@echo -n "Are you sure you want to compile all codes? [y/N] " && read ans && [ $${ans:-N} = y ]
+	@$(MAKE) -C $(TESTS_DIR)/codes code-all
+
+clean:
+	# TBD
+	# @$(MAKE) -C $(TESTS_DIR)/codes/$(CODE_LANGUAGE)/$(CODE_NAME) clean
+
+clean-all:
+	@echo -n "Are you sure you want to clean all compiled codes and workflow outputs? [y/N] " && read ans && [ $${ans:-N} = y ]
+	@$(MAKE) -C $(TESTS_DIR)/codes clean-all
+
+check-output:
+	#TODO check if out exists before comparing
+	@cmp $(TEST_DIR)/expected.out $(TEST_DIR)/test.out &> /dev/null || \
+	(echo 'ERROR: expected and real workflow outcome differs!' && exit 1 )
+
+
+wf-run: PYTHONPATH:=$(TEST_DIR)/actors:$(TESTS_DIR)/misc:$(PYTHONPATH)
+wf-run:
+	@rm -rf $(TEST_DIR)/test.out
+	python3 $(TEST_SCRIPT)

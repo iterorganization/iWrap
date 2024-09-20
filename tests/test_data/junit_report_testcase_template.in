@@ -1,1 +1,0 @@
-<testcase classname="TEST __NAME__" file="examples/__NAME__" name="__NAME__: make __TESTCOMMAND__">__FAILURE_MSG__</testcase>

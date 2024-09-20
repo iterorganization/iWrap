@@ -156,18 +156,13 @@ int open_db(IdsNs::IDS* db_entry, ids_description_t* db_entry_desc)
 
     if ( db_entry_desc->backend_id == MEMORY_BACKEND){
         db_entry->setPulseCtx(db_entry_desc->idx);
-        printf(">>MEM BE: SET CTX ENTRY %d\n", db_entry_desc->idx);
         }else{
-            puts(">> Open ENV - begin ");
             user = iwrap_trim(db_entry_desc->user, sizeof db_entry_desc->user);
             db_name = iwrap_trim(db_entry_desc->db_name, sizeof db_entry_desc->db_name);
             version = iwrap_trim(db_entry_desc->version, sizeof db_entry_desc->version);
 
             db_entry->setBackend(static_cast<BACKEND>(db_entry_desc->backend_id));
             db_entry->openEnv(user, db_name, version);
-
-                   printf(">>PF IDX: %d\n", db_entry->getPulseCtx());
-                   puts(">>Open ENV - end ");
            }
 
     return 0;
@@ -179,7 +174,6 @@ void close_db(IdsNs::IDS* db_entry)
 {
     if ( db_entry->getBackend() == MEMORY_BACKEND)
     {
-        puts(">>MEM BE: CLOSING ENTRY");
         return;
     }
 

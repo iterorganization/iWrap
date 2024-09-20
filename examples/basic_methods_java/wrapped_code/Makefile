@@ -1,7 +1,6 @@
-
 all:
-	mkdir -p build
-	javac src/*.java -d build/
+	mkdir -p build lib
+	javac -cp $(CLASSPATH):java_dependencies/* src/*.java -d build/
 	jar cf basic_test.jar  -C build/ .
 
 

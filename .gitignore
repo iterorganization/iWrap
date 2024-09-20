@@ -6,7 +6,6 @@ dist/
 *egg-info/
 lib/
 .idea
-*.yaml
 .vscode/
 *.code-workspace
 .env
@@ -21,9 +20,11 @@ docstring_files/
 *.a
 *.so
 .DS_Store
-/reports
+/tests/reports
 /docs/html
 /docs/doctrees
 *.tmp
-*.jar
 tutorial_venv
+test.out
+.ipynb_checkpoints
+failed_tests.log

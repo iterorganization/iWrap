@@ -6,12 +6,13 @@ FFLAGS= -g -fPIC # FPIC AND PREPROCESSING OPTIONS
 ifeq ($(AL_MAJOR),)
     $(error Could not extract major AL version from UAL_VERSION/AL_VERSION system variable. Is your IMAS module loaded?)
 else ifeq ($(AL_MAJOR), 5)
-	INCLUDE=-I. `pkg-config al-fortran --cflags`
-	LIBS=`pkg-config al-fortran --libs`
+	IMAS_PKG_NAME=al-fortran
 else ifeq ($(AL_MAJOR), 4)
-  INCLUDE=-I. `pkg-config imas-$(FC) --cflags`
-  LIBS=`pkg-config imas-$(FC) --libs`
+ 	IMAS_PKG_NAME=imas-$(FC)
 endif
+
+INCLUDE=-I. `pkg-config $(IMAS_LIB_NAME) --cflags`
+LIBS=`pkg-config $(IMAS_LIB_NAME) --libs`
 
 # XMLLIB LIBRARIES
 LIBS+=`pkg-config xmllib --libs`

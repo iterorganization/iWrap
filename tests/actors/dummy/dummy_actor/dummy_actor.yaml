@@ -1,0 +1,27 @@
+code_description:
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+    code_path:
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path:
+    programming_language: None
+    subroutines:
+      finalize:
+        name: cleanUp
+      init:
+        name: initCode
+        need_code_parameters: false
+      main:
+        name: codeStep
+        need_code_parameters: false
+  settings:
+    compiler_cmd:
+    compiler_flags:
+    extra_libraries:
+      path_defined:
+      pkg_config_defined:
+    mpi_compiler_cmd:

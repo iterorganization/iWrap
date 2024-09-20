@@ -94,7 +94,7 @@ class LanguageBinder(Binder):
 
     def __get_wrapper_function(self, method_role: str):
 
-        actor_name = self.actor.name
+        actor_name: str = self.actor.name
         lib_path = self.actor_dir + '/lib/lib' + actor_name + '.so'
 
         wrapper_lib = ctypes.CDLL( lib_path )

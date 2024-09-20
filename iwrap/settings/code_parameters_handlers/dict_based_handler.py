@@ -14,7 +14,7 @@ class DictBasedHandler(GenericHandler, ABC):
 
     def _get_dict_value(self, splitted_path, parameters_dict):
         if len(splitted_path) == 0:
-            return dict
+            return parameters_dict
 
         current_path_without_index, index, rest_of_splitted_path = self._extract_path_info(splitted_path)
 
@@ -62,6 +62,7 @@ class DictBasedHandler(GenericHandler, ABC):
 
         splitted_path = path_to_node.split("/")
         parameters_dict = self.to_dict()
+
         return self._get_dict_value(splitted_path, parameters_dict)
 
     def set_parameter(self, path_to_node: str, value) -> None:
