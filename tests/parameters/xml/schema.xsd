@@ -1,0 +1,45 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	   elementFormDefault="qualified">
+   <xs:annotation>
+     <xs:documentation>Code parameters for Physics Code</xs:documentation>
+   </xs:annotation>
+
+   <xs:simpleType name="integer_minmaxInclusive_010">
+     <xs:restriction base="xs:integer">
+       <xs:minInclusive value="1"/>
+       <xs:maxInclusive value="10"/>
+     </xs:restriction>
+   </xs:simpleType>
+
+  <xs:simpleType name="float_minInclusive_dot0001">
+     <xs:restriction base="xs:float">
+       <xs:minInclusive value="0.0001"/>
+     </xs:restriction>
+   </xs:simpleType>
+
+   <!-- document element -->
+   <xs:element name="parameters">
+     <xs:complexType>
+       <xs:all>
+         <xs:element ref="ntimes" minOccurs="0"/>
+         <xs:element ref="multiplication_factor" minOccurs="0"/>
+       </xs:all>
+     </xs:complexType>
+   </xs:element>
+
+   <!-- Number of times the multiplication factor is applied -->
+   <xs:element name="ntimes" type="integer_minmaxInclusive_010">
+      <xs:annotation>
+          <xs:documentation>Number of times the multiplication factor is applied</xs:documentation>
+      </xs:annotation>
+   </xs:element>
+
+   <!-- Multiplication factor for the major radius -->
+   <xs:element name="multiplication_factor" type="float_minInclusive_dot0001">
+      <xs:annotation>
+          <xs:documentation>Multiplication factor for the major radius</xs:documentation>
+      </xs:annotation>
+   </xs:element>
+  
+</xs:schema>
+ 
