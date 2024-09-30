@@ -1,8 +1,0 @@
-<parameters>
-    <!-- NUMBER OF TIMES THE MULTIPLICATION FACTOR IS APPLIED -->
-    <ntimes> 2 </ntimes>
-
-    <!-- MULTIPLICATION FACTOR FOR THE MAJOR RADIUS -->
-    <multiplication_factor> 1.5 </multiplication_factor>
-</parameters>
-
