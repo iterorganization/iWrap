@@ -2,13 +2,13 @@
 # Task: Setup Environment and Run Pylint code check. Publish report artifacts with python modules and imas env modules.
 set -e
 
-envs_dir=`pwd`/envs/iter-bamboo
-venv_path=$(realpath $envs_dir/../../venv)
+envs_dir=`pwd`/envs
+venv_path=$(realpath $envs_dir/../venv)
 
 echo "Environment scripts path: $envs_dir"
 echo "VENV path: $venv_path"
-chmod a+x $envs_dir/00_load_imas_env.sh
-source $envs_dir/00_load_imas_env.sh
+#chmod a+x $envs_dir/00_load_imas_env.sh
+source $envs_dir/set-env.sh iter gcc 5
 
 source $venv_path/bin/activate
 
@@ -20,7 +20,7 @@ else
 fi
 
 echo -e Python virtualenv active: `which ${venv_path}/bin/python`
-source $envs_dir/03_report_module_list.sh
+source $envs_dir/common/03_report_module_list.sh
 
 # Run pylint code check
 echo "~~~~~====================PYLINT CODE CHECK====================~~~~~"

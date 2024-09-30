@@ -32,10 +32,12 @@ parts:
         - file:  documentation/developers_manual/05_plugins_compatibility.rst
         - file:  documentation/developers_manual/06_code_desc_compatibility.rst
         - file:  documentation/developers_manual/07_code_parameters_handling.rst
-        - file:  documentation/developers_manual/08_ids_handling.rst
-
-
-
+        - file:  documentation/developers_manual/09_system_tests.rst
+          title: System tests
+          sections:
+            - file: documentation/developers_manual/system_tests/01_tests_usage.rst
+            - file: documentation/developers_manual/system_tests/02_adding_tests.rst
+            - file: documentation/developers_manual/system_tests/03_tests_environment.rst
     - file: documentation/installation_guide/iwrap_installation.rst
       title: Installation Guide
       sections:

@@ -9,7 +9,7 @@ from utils import (
 
 class ExampleWorkflowManager:
     def __init__(self):
-        self.actor = get_actor_instance()
+        self.actor = get_actor_instance(actor_name="codeLifecycleParametrizable", code_language="fortran", parameters_format="xml")
         self.input_entry = None
         self.output_entry = None
 

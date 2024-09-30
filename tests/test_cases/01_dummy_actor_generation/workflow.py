@@ -5,7 +5,7 @@ from utils import get_actor_instance, get_test_equilibrium
 
 class ExampleWorkflowManager:
     def __init__(self):
-        self.actor = get_actor_instance()
+        self.actor = get_actor_instance(actor_name="dummy_actor", code_language="dummy")
 
     def init_workflow(self):
         print("=> Workflow initialization")

@@ -5,7 +5,7 @@ from utils import get_actor_instance, get_test_equilibrium
 
 class ExampleWorkflowManager:
     def __init__(self):
-        self.actor = get_actor_instance()
+        self.actor = get_actor_instance(actor_name="basicParametrizable", code_language="fortran", parameters_format="xml")
         self.input_entry = None
         self.output_entry = None
 

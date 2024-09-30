@@ -32,16 +32,18 @@ LANGUAGE_FORMATS_DICT["dummy"]="none"
 ##########################################################################
 print_help() {
     echo -e "Usage:"
-    echo -e "\t $0 [--language|-l <language>] [--test-case|-t <test name>] [--compiler|-c <vendor> ] [--run-mode |-m <mode> ] [--help|-h]"
+    echo -e "\t $0 [--language|-l <language>] [--test-case|-t <test name>] [--compiler|-c <vendor> ] [--run-mode |-m <mode> ] [--parameters-format|-f <format>] [--help|-h]"
     echo
     echo -e "optional arguments:"
-    echo -e "\t -l, --language <language> \t Test given language only. Available values: '${ALL_CODE_LANGUAGES[*]}'"
-    echo -e "\t -t, --test-case <test name> \t Run specified test case. Default: all values"
-    echo -e "\t -c, --compiler <vendor> \t Specifies compiler vendor. Available values: '${ALL_VENDORS[*]}'. Default: 'gcc'"
-    echo -e "\t -m, --run-mode <mode>   \t Defines actor run mode. Available values: '${ALL_RUN_MODES[*]}'. Default: all values "
+    echo -e "\t -l, --language <language> \t Test the specified language only. Available values: '${ALL_CODE_LANGUAGES[*]}'"
+    echo -e "\t -t, --test-case <test name> \t Run a specific test case. Default: all values"
+    echo -e "\t -c, --compiler <vendor> \t Specify the compiler vendor. Available values: '${ALL_VENDORS[*]}'. Default: 'gcc'"
+    echo -e "\t -m, --run-mode <mode>   \t Define the actor run mode. Available values: '${ALL_RUN_MODES[*]}'. Default: all values "
+    echo -e "\t -f, --parameters-format <format>   \t Specify the code parameters formats to be tested Available values: '${ALL_PARAMETER_FORMATS[*]}'. Default: all values "
     echo -e "\t -s, --test-site <site>   \t Site where tests are run. Available values: '${ALL_SITES[*]}'. Default: 'iter'"
     echo -e "\t -a, --al-version <version>   \t IMAS Access Layer version. Available values: '${ALL_AL_VERSIONS[*]}'. Default: '5'"
-    echo -e "\t -h, --help             \t show this help message and exit"
+    echo -e "\t -h, --help             \t Show this help message and exit"
+
 }
 
 ##########################################################################
@@ -89,6 +91,8 @@ clear_test_environment() {
   unset CODE_NAME
   unset TEST_LANGUAGES
   unset TEST_PARAMETERS_FORMATS
+  unset PARAMETERS_EXTENSION
+  unset SCHEMA_EXTENSION
 }
 
 ##########################################################################
@@ -227,7 +231,7 @@ do_test() {
 ########################################################################################################################
 #                                                 SCRIPT STARTS HERE                                                   #
 ########################################################################################################################
-
+export IWRAP_HOME=$(realpath "$(dirname ${BASH_SOURCE})/..")
 
 TEST_CASES_DIR=${TESTS_DIR}/"test_cases"
 
@@ -243,7 +247,7 @@ al_version='5'
 parse_command_line "$@"
 
 
-source ../envs/set-env.sh ${current_site} ${compiler_vendor} ${al_version}
+source ${IWRAP_HOME}/envs/set-env.sh ${current_site} ${compiler_vendor} ${al_version}
 ret_val=$?
 if [ ${ret_val} -ne 0 ]; then
     echo "Environment cannot be configured. Exiting...."

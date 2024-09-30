@@ -6,7 +6,7 @@ from utils import get_actor_instance, get_test_equilibrium
 
 class ExampleWorkflowManager:
     def __init__(self):
-        self.actor = get_actor_instance()
+        self.actor = get_actor_instance(actor_name="codeRestart", code_language="fortran")
         self.input_entry = None
         self.output_entry = None
 

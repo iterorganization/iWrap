@@ -57,8 +57,15 @@ if [ ! -e ${configuration_file} ]; then
     return 1
 fi
 
-# Read and set environment configuration
+# Set up environment such that module files can be loaded
+if test -f /etc/profile.d/modules.sh ;then
+. /etc/profile.d/modules.sh
+else
+. /usr/share/Modules/init/sh
+fi
 module purge
+
+# Read and set environment configuration
 source ${configuration_file}
 source ${IWRAP_HOME}/envs/common/01_set_iwrap_env.sh
 

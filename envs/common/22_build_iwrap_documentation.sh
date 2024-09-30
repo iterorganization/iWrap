@@ -1,7 +1,7 @@
 #!/bin/sh --login
-envs_dir=`pwd`/envs/iter-bamboo
+envs_dir=`pwd`/envs/
 . `pwd`/set-iter.sh
-. $envs_dir/13_python_create_env.sh
+. $envs_dir/common/13_python_create_env.sh
 
 ./docs/scripts/create_db
 echo "-----------------IMAS DB created------------"

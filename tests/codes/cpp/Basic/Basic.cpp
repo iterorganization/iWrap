@@ -122,8 +122,8 @@ void initCode(const IdsNs::IDS::core_profiles& core_profiles_in,
                           IdsNs::IDS::distribution_sources& distribution_sources_out,
                           int& status_code, std::string& status_message)
 {
-    IdsNs::codeparam_t codeparam;
-    initCode(core_profiles_in, distribution_sources_out, codeparam, status_code, status_message);
+    std::string parameters_str;
+    initCode(core_profiles_in, distribution_sources_out, parameters_str, status_code, status_message);
 }
 
 // =======================================

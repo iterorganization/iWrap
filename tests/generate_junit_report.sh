@@ -5,17 +5,17 @@ declare -i tests_failures=0
 declare test_command
 declare test_cases
 declare failure_msg
-declare -r project_root=$(pwd)
-declare -r junit_report_template=$project_root/misc/junit_report_template.in
-declare -r junit_report_testcase_template=$project_root/misc/junit_report_testcase_template.in
-declare -r report_destination=$project_root/reports/report.xml
+declare -r project_root=$(realpath "$(dirname ${BASH_SOURCE})/..")
+declare -r junit_report_template=$project_root/tests/misc/junit_report_template.in
+declare -r junit_report_testcase_template=$project_root/tests/misc/junit_report_testcase_template.in
+declare -r report_destination=$project_root/tests/reports/report.xml
 
 
 # Exit shell on error
 set -e
 
 # Look for a tests artifacts with exit codes values
-for report_dir_path in $project_root/reports/**/; do
+for report_dir_path in $project_root/tests/reports/**/; do
 
   echo `basename $report_dir_path`
   report_dir_name=$(basename $report_dir_path)
