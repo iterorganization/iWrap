@@ -13,7 +13,7 @@ MOD_DIR=./build/
 
 FFLAGS= -g -fPIC
 #TO DO - any clever way to do this?
-ifeq ($(FC), ifort)
+ifeq ($(FC),$(filter $(FC),ifort ifx))
 # INTEL
   FFLAGS+=-module $(MOD_DIR)
 else
