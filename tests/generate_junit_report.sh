@@ -5,31 +5,34 @@ declare -i tests_failures=0
 declare test_command
 declare test_cases
 declare failure_msg
-declare -r project_root=$(pwd)
-declare -r junit_report_template=$project_root/tests/test_data/junit_report_template.in
-declare -r junit_report_testcase_template=$project_root/tests/test_data/junit_report_testcase_template.in
-declare -r report_destination=$project_root/reports/report.xml
+declare -r project_root=$(realpath "$(dirname ${BASH_SOURCE})/..")
+declare -r junit_report_template=$project_root/tests/misc/junit_report_template.in
+declare -r junit_report_testcase_template=$project_root/tests/misc/junit_report_testcase_template.in
+declare -r report_destination=$project_root/tests/reports/report.xml
 
 
 # Exit shell on error
 set -e
 
 # Look for a tests artifacts with exit codes values
-for file in $project_root/reports/*_exit_code.txt; do
+for report_dir_path in $project_root/tests/reports/**/; do
+
+  echo `basename $report_dir_path`
+  report_dir_name=$(basename $report_dir_path)
+
     tests_count=$tests_count+1
 
-    test_command=$(echo $file | cut -d'_' -f 2)
+    test_command=$(echo ${report_dir_path}/exit_code.txt | cut -d'_' -f 2)
 
-    if [ $(<$file) -ne 0 ]; then
+    if [ $(<${report_dir_path}/exit_code.txt) -ne 0 ]; then
         tests_failures=$tests_failures+1
-        failure_msg="<failure message=\"$(cat ${project_root}/reports/make_${test_command}_stderr.txt | tr '\n' ' ' | tr "\"" "\'" | tr '<>' '.')\"/>"
+        failure_msg="<failure message=\"$(cat ${report_dir_path}/stderr.txt | tr '\n' ' ' | tr "\"" "\'" | tr '<>' '.')\"/>"
     fi
 
     test_cases=$(echo $(<$junit_report_testcase_template) |
-                (sed -e "s;__NAME__;$TEST_DIR_NAME;g;" \
-                     -e "s;__TESTCOMMAND__;$test_command;" \
+                (sed -e "s;__NAME__;${report_dir_name};g;" \
                      -e "s;__FAILURE_MSG__;$failure_msg;"))$test_cases
-    
+
     failure_msg=""
 done
 

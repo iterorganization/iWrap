@@ -1,0 +1,3 @@
+\n\t<testcase classname="TEST __NAME__" file="test_cases/__NAME__" name="__NAME__">
+\n\t\t __FAILURE_MSG__
+\n\t </testcase>

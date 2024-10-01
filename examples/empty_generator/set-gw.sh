@@ -1,2 +1,0 @@
-setenv PYTHONPATH ${PWD}:${PYTHONPATH}
-

@@ -298,7 +298,8 @@ class CodeParameters( SettingsBaseClass ):
                 raise ValueError( f'Path to parameters schema file is invalid! {str( __path )}' )
 
         if self.parameters:
-            parameters_handler : ParametersHandlerInterface = HandlerFactory.get_handler(self.format)
+            __format = utils.resolve_variable(self.format)
+            parameters_handler : ParametersHandlerInterface = HandlerFactory.get_handler(__format)
             parameters_handler.initialize(utils.resolve_path(self.parameters, project_root_dir), utils.resolve_path(self.schema, project_root_dir))
             parameters_handler.validate()
 
@@ -339,7 +340,8 @@ class CodeParameters( SettingsBaseClass ):
 
             # format
             if self.format:
-                ret_dict.update( {'format': self.format} )
+                __format = utils.resolve_variable(self.format)
+                ret_dict.update( {'format': __format} )
 
         return ret_dict
 

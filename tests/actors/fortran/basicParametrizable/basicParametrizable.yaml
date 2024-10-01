@@ -1,0 +1,34 @@
+code_description:
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+      format: $PARAMETERS_FORMAT
+      parameters: $TESTS_DIR/parameters/$PARAMETERS_FORMAT/parameters.$PARAMETERS_EXTENSION
+      schema: $TESTS_DIR/parameters/$PARAMETERS_FORMAT/schema.$SCHEMA_EXTENSION
+    code_path: $TESTS_DIR/codes/fortran/Basic/libBasic.a
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path: $TESTS_DIR/codes/fortran/Basic/mod_basic.mod
+    programming_language: Fortran
+    subroutines:
+      main:
+        arguments:
+        - intent: IN
+          name: equilibrium_in
+          type: equilibrium
+        - intent: OUT
+          name: equilibrium_out
+          type: equilibrium
+        name: codeStep
+        need_code_parameters: true
+  settings:
+    compiler_cmd: $FC
+    compiler_flags:
+    extra_libraries:
+      path_defined:
+      pkg_config_defined:
+      - xmllib
+      - json-fortran
+    mpi_compiler_cmd:

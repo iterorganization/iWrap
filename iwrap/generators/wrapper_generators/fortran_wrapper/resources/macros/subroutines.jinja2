@@ -1,6 +1,6 @@
 {% macro sbrt_definition( sbrt_role, ids_macro, actor_name, sbrt_data, code_parameters, mpi_compiler_cmd) -%}
 
-SUBROUTINE {{actor_name}}_wrapper_{{  sbrt_role | lower }}(&
+SUBROUTINE {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(&
 {% for argument in sbrt_data.arguments %}
                 {{ argument.name }}_desc,  &
 {% endfor %}
@@ -187,7 +187,7 @@ PROGRAM standalone_{{ sbrt_role | upper }}
     end if
 
     !!!!!!!!! Fortran wrapper !!!!!!!!!!!!!!!
-    CALL {{actor_name}}_wrapper_{{ sbrt_role | lower }}(&
+    CALL {{actor_name | lower}}_wrapper_{{ sbrt_role | lower }}(&
 {% for argument in sbrt_data.arguments %}
                 db_entry_desc_array({{loop.index}}),  &
 {% endfor %}

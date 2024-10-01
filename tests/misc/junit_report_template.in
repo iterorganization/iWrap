@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites>
+    <testsuite errors="__ERRORS__" failures="__FAILURES__" hostname="Bamboo" name="__NAME__" skipped="0" tests="__TESTS__" time="0" timestamp="__TIME__">
+    __TEST_CASES__
+    </testsuite>
+</testsuites>

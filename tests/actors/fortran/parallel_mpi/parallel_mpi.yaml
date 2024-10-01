@@ -1,0 +1,32 @@
+code_description:
+  documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. '
+  implementation:
+    code_parameters:
+      parameters:
+      schema:
+    code_path: $TESTS_DIR/codes/fortran/parallel_mpi/libParallelMpi.a
+    data_dictionary_compliant: 3.37.0
+    data_type: legacy
+    include_path: $TESTS_DIR/codes/fortran/parallel_mpi/mod_parallel_mpi.mod
+    programming_language: Fortran
+    subroutines:
+      finalize:
+      init:
+      main:
+        arguments:
+        - intent: IN
+          name: core_profiles_in
+          type: core_profiles
+        - intent: OUT
+          name: distribution_sources_out
+          type: distribution_sources
+        name: codeStep
+  settings:
+    compiler_cmd: $FC
+    compiler_flags:
+    extra_libraries:
+      path_defined:
+      pkg_config_defined:
+    mpi_compiler_cmd: $MPIFC
