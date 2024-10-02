@@ -1,9 +1,16 @@
 # Release notes
 
-## Pre-release version
+## Version 1.0.0
 
 ### New features
-TBD
+* Handling new code parameters format
+* The actor methods are able to be run in separate processes
+* Python actor runtime settings - assigning strings to define enums
+* Integration tests redesigned
+* Installation mechanism reviewed and corrected
+* iWrap tutorial for the advanced users
+* Developers manual: evaluation and enhancements
+* A number of minor bug fixes and improvements
 
 ### YAML changes
 * Code parameters format added
