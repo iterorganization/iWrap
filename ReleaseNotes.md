@@ -3,13 +3,13 @@
 ## Version 1.0.0
 
 ### New features
-* Handling new code parameters format
-* The actor methods are able to be run in separate processes
+* Handling of additional code parameters format (json, namelist, single string xml)
+* The actor methods are able to be run in separate processes (e.g. when called from DASK)
 * Python actor runtime settings - assigning strings to define enums
 * Integration tests redesigned
-* Installation mechanism reviewed and corrected
-* iWrap tutorial for the advanced users
-* Developers manual: evaluation and enhancements
+* Installation mechanism improved
+* Addition of a tutorial for the advanced users
+* Extension and improvement of the developers manual
 * A number of minor bug fixes and improvements
 
 ### YAML changes

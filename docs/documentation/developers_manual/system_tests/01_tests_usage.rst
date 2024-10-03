@@ -25,13 +25,13 @@ Tests can be launched using the highly configurable `run-tests.sh` script.
 
 .. admonition:: **EXAMPLES:**
 
-    * Running all the tests on the SDCC cluster for all languages, compilers, run modes, formats, etc.
+    * Running all tests for all languages, compilers, run modes, formats, etc.
 
     .. code-block:: shell
 
         shell> ./run-tests.sh
 
-    * Running all the tests on the SDCC cluster for Access Layer 4.x and Intel compilers
+    * Running all tests for Access Layer 4.x and Intel compilers
 
     .. code-block:: shell
 
@@ -39,7 +39,7 @@ Tests can be launched using the highly configurable `run-tests.sh` script.
            OR
         shell> ./run-tests.sh -a 4 -c intel
 
-    * Running a single test on the SDCC cluster for Fortran (GCC)
+    * Running a single test for Fortran (GCC)
 
     .. code-block:: shell
 
