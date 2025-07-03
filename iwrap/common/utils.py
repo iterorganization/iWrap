@@ -73,7 +73,7 @@ def exec_system_cmd(system_cmd: str, return_output:bool = False, working_directo
 
 def get_all_ids_names() -> List[str]:
     import imas
-    if "ids_factory" not in dir(imas):
+    if "ids_factory" in dir(imas):
         factory = imas.ids_factory.IDSFactory()
         return factory.ids_names()
     else:
