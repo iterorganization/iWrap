@@ -72,7 +72,8 @@ def exec_system_cmd(system_cmd: str, return_output:bool = False, working_directo
     return output_value
 
 def get_all_ids_names() -> List[str]:
-    if "ids_factory" in dir(imas):
+    import imas
+    if "ids_factory" not in dir(imas):
         factory = imas.ids_factory.IDSFactory()
         return factory.ids_names()
     else:
@@ -85,6 +86,5 @@ def get_all_ids_names() -> List[str]:
                 ids_def = IDSDef()
                 return ids_def.get_ids_names()
             except ImportError:
-                import imas
                 return [ids.value for ids in list(imas.IDSName)]  # pylint: disable=no-member
 
