@@ -72,8 +72,8 @@ class IdsStorageSettings:
 
     Attributes:
         db_name (str, default='tmp'): name of the database to be used
-        backend (str, default=imas.imasdef.MEMORY_BACKEND): backend to be used
-        persistent_backend  (str, default=imas.imasdef.MDSPLUS_BACKEND): backend to be used when temporary data
+        backend (str, default=imas.ids_defs.MEMORY_BACKEND): backend to be used
+        persistent_backend  (str, default=imas.ids_defs.MDSPLUS_BACKEND): backend to be used when temporary data
             cannot be stored in memory (e.g. while running actor in a standalone mode,
             when the code is run as separate process, so it doesn’t share memory with other actors.
     """
@@ -83,9 +83,12 @@ class IdsStorageSettings:
 
     def __init__(self):
         self.db_name = 'tmp'
-        self.backend = imas.imasdef.MEMORY_BACKEND
-        self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
-
+        if "ids_defs" in dir(imas):
+            self.backend = imas.ids_defs.MEMORY_BACKEND
+            self.persistent_backend = imas.ids_defs.MDSPLUS_BACKEND
+        else:
+            self.backend = imas.imasdef.MEMORY_BACKEND
+            self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
 
 class RuntimeSettings:
     """The runtime settings determines how the code should be run.
