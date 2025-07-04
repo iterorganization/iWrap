@@ -4,6 +4,8 @@
 # Set up environment
 
 module load IMAS/3.42.0-2024.08.1-intel-2023b
+module unload IMAS-AL-Python
+module load IMAS-Python
 
 module load XMLlib/3.3.2-intel-compilers-2023.2.1
 module load lxml/4.9.3-GCCcore-13.2.0

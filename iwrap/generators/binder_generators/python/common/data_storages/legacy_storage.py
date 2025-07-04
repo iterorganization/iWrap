@@ -30,9 +30,7 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
     def __open_db(self):
 
-        if  "ids_defs" in dir(imas) and self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
-            return
-        if  "imasdef" in dir(imas) and self.__backend_id == imas.imasdef.MEMORY_BACKEND:
+        if self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
             return
         status, _not_used = self.__db_entry.open()
         if status != 0:

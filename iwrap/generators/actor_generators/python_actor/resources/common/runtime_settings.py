@@ -83,12 +83,8 @@ class IdsStorageSettings:
 
     def __init__(self):
         self.db_name = 'tmp'
-        if "ids_defs" in dir(imas):
-            self.backend = imas.ids_defs.MEMORY_BACKEND
-            self.persistent_backend = imas.ids_defs.MDSPLUS_BACKEND
-        else:
-            self.backend = imas.imasdef.MEMORY_BACKEND
-            self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
+        self.backend = imas.ids_defs.MEMORY_BACKEND
+        self.persistent_backend = imas.ids_defs.MDSPLUS_BACKEND
 
 class RuntimeSettings:
     """The runtime settings determines how the code should be run.
