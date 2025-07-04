@@ -1,7 +1,6 @@
 import sys
 
 import imas, os
-from imas import imasdef
 
 from actor1_fortran.actor import actor1_fortran
 from actor2_cpp.actor import actor2_cpp
@@ -9,7 +8,7 @@ from actor2_cpp.actor import actor2_cpp
 # # # # # # # # INITIALIZATION # # # # # # # #
 
 # Reading of input data
-db_entry_in = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_in = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                            db_name="tutorial_db",
                            shot=1, run=1)
 
@@ -52,7 +51,7 @@ print("\n\n--- WORKFLOW  OUTCOME: --- \n")
 print(ids1.ids_properties.comment)
 
 # Saving of output data
-db_entry_out = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_out = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                             db_name="tutorial_db",
                             shot=2, run=2)
 db_entry_out.create()

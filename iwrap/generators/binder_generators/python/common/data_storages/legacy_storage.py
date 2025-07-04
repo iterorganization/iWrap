@@ -29,24 +29,24 @@ class LegacyIDSStorage( GenericIDSStorage ):
         self.__occ_dict[ids_name] = occ - 1
 
     def __open_db(self):
-
         if self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
             return
-        status, _not_used = self.__db_entry.open()
-        if status != 0:
-            raise Exception(
-                f"Error opening the temporary DB: "
-                f"backend={self.__backend_id} "
-                f"name={self.__db_name} "
-                f"pulse={self.__pulse} "
-                f"run={self.__run} "
-                f"dir={self.__sandbox_dir}" )
+        
+        try:
+            self.__db_entry.open()
+        except Exception as e:
+            raise RuntimeError(
+                f"Error opening the temporary DB:\n"
+                f"  backend = {self.__backend_id}\n"
+                f"  name    = {self.__db_name}\n"
+                f"  pulse   = {self.__pulse}\n"
+                f"  run     = {self.__run}\n"
+                f"  dir     = {self.__sandbox_dir}\n"
+                f"Original exception: {e}"
+            ) from e
 
     def __close_db(self):
-
-        if "ids_defs" in dir(imas) and self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
-            return
-        if "imasdef" in dir(imas) and self.__backend_id == imas.imasdef.MEMORY_BACKEND:
+        if self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
             return
         self.__db_entry.close()
 

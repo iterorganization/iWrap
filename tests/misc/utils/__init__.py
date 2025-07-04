@@ -46,29 +46,30 @@ def get_test_equilibrium():
     """
     Returns an instance of equilibrium IDS used in test workflows
     """
-    return create_test_ids(imas.equilibrium, 1, 3)
+    return create_test_ids("equilibrium", 1, 3)
 
 
 def get_test_core_profiles():
     """
     Returns an instance of core_profiles IDS used in test workflows
     """
-    return create_test_ids(imas.core_profiles, 10, 3)
+    return create_test_ids("core_profiles", 10, 3)
 
 
 def get_test_distribution_sources():
     """
     Returns an instance of distribution_sources IDS used in test workflows
     """
-    return create_test_ids(distribution_sources.equilibrium, 100, 3)
+    return create_test_ids("distribution_sources", 100, 3)
 
 
 def create_test_ids(ids_class, seed=1, steps=3):
     """
     Returns an instance IDS filled with test data
     """
-    ids = ids_class()
-    ids.ids_properties.homogeneous_time = imas.imasdef.IDS_TIME_MODE_HOMOGENEOUS
+    factory = imas.IDSFactory()
+    ids = factory.new(ids_class)
+    ids.ids_properties.homogeneous_time = imas.ids_defs.IDS_TIME_MODE_HOMOGENEOUS
     ids.time = np.array([float(x) for x in range(seed, seed + steps)])
 
     return ids
