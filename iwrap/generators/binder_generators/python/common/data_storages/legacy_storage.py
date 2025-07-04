@@ -67,16 +67,18 @@ class LegacyIDSStorage( GenericIDSStorage ):
                                  self.__run,         # run
                                  user_name=self.__sandbox_dir,  # AL hack to use sandbox dir
          )
-
-        status, _not_used = self.__db_entry.create()
-        if status != 0:
-            raise Exception(
-                f"Error creating the temporary DB: "
-                f"backend={self.__backend_id} "
-                f"name={self.__db_name} "
-                f"pulse={self.__pulse} "
-                f"run={self.__run} "
-                f"dir={self.__sandbox_dir}" )
+        try:
+            self.__db_entry.create()
+        except Exception as e:
+            raise RuntimeError(
+                f"Error creating the temporary DB:\n"
+                f"  backend = {self.__backend_id}\n"
+                f"  name    = {self.__db_name}\n"
+                f"  pulse   = {self.__pulse}\n"
+                f"  run     = {self.__run}\n"
+                f"  dir     = {self.__sandbox_dir}\n"
+                f"Original exception: {e}"
+            ) from e
 
         self.__close_db()
 
