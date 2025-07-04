@@ -20,7 +20,7 @@ class IDSDescription:
         except AttributeError:
             self.pulse = db_entry.shot
         self.run = db_entry.run
-        self.idx = db_entry.db_ctx
+        self.idx = db_entry._dbe_impl._db_ctx.ctx
         self.ids_type = ids_name
         self.occurrence = occurrence
         self.intent = None
