@@ -39,9 +39,9 @@ class LegacyIDSConverter(IDSConverter):
     @staticmethod
     def __check(ids_name, ids_object):
 
-        if ids_name != ids_object.__name__:
+        if ids_name != ids_object.metadata.name:
             raise RuntimeError("ERROR! Argument passed doesn't match arguments list: ", ids_name, ' vs ',
-                               ids_object.__name__)
+                               ids_object.metadata.name)
 
     def prepare_native_type(self, ids_description_class, ids_name):
         ids_description: IDSDescription = self.__data_storage.prepare_data(ids_name)

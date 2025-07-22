@@ -11,10 +11,18 @@ class IDSDescription:
         return uri
 
     def __init__(self, db_entry, ids_name, occurrence):
+
+        print(db_entry._dbe_impl._db_ctx.ctx)
+        print(db_entry.run)
+        print(db_entry.pulse)
+        print(db_entry.data_version)
+        print(db_entry.db_name)
+        print(db_entry.user_name)
+        print(db_entry.backend_id)
         self.backend_id = db_entry.backend_id
         self.user = db_entry.user_name
         self.database = db_entry.db_name
-        self.version = db_entry.data_version
+        self.version = db_entry.dd_version[0] if db_entry.dd_version else ""
         try:
             self.pulse = db_entry.pulse
         except AttributeError:
