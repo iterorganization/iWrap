@@ -84,8 +84,9 @@ class LegacyIDSStorage( GenericIDSStorage ):
 
     def prepare_data(self, ids_name):
         occurrence = self.__get_occurrence( ids_name )
-
+        self.__open_db()
         ids_description = IDSDescription(self.__db_entry, ids_name, occurrence)
+        self.__close_db()
         return ids_description
 
     def save_data(self, ids_description:IDSDescription, legacy_ids):

@@ -48,7 +48,7 @@ class ExampleWorkflowManager:
         with open("test.out", "w") as file:
             file.write(f"{str(code_state).strip()}\n")
             file.write(f"{self.output_equilibrium.code.output_flag[0]:.2f}\n")
-            file.write(str(self.output_equilibrium.time))
+            file.write(str(self.output_equilibrium.time.value))
 
         # Finalize ALL actors
         self.actor.finalize()

@@ -45,7 +45,7 @@ class ExampleWorkflowManager:
 
         # SAVE WORKFLOW RESULT
         with open("test.out", "w") as file:
-            file.write(f"{self.distribution_sources_out.time}")
+            file.write(f"{self.distribution_sources_out.time.value}")
 
 
 manager = ExampleWorkflowManager()
