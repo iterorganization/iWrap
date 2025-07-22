@@ -2,10 +2,11 @@
 # Set up ITER modules environment
 
 # Set up environment
-
-module load IMAS/3.42.0-2024.08.1-intel-2023b
-module unload IMAS-AL-Python
-module load IMAS-Python
+module load IMAS-AL-Fortran/5.4.0-intel-2023b-DD-4.0.0
+module load IMAS-AL-Java/5.4.0-intel-2023b-DD-4.0.0
+module load IMAS-AL-Cpp/5.4.0-intel-2023b-DD-4.0.0
+module load IMAS-AL-Matlab/5.4.0-intel-2023b-DD-4.0.0
+module load IMAS-Python/2.0.1-intel-2023b
 
 module load XMLlib/3.3.2-intel-compilers-2023.2.1
 module load lxml/4.9.3-GCCcore-13.2.0
