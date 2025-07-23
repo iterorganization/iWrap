@@ -7,8 +7,8 @@ try:
                             db_name="tutorial_db",
                             shot=1, run=1)
     db_entry.create()
-
-    ids = imas.core_profiles()
+    factory = imas.IDSFactory()
+    ids = factory.core_profiles()
     ids.ids_properties.homogeneous_time = imas.ids_defs.IDS_TIME_MODE_HETEROGENEOUS
     ids.ids_properties.comment='START:'
     db_entry.put( ids )

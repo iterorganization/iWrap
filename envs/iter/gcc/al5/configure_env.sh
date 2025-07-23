@@ -7,6 +7,7 @@ module load IMAS-AL-Java/5.4.0-foss-2023b-DD-4.0.0
 module load IMAS-AL-Cpp/5.4.0-foss-2023b-DD-4.0.0
 module load IMAS-AL-Matlab/5.4.0-foss-2023b-DD-4.0.0
 module load IMAS-Python/2.0.1-foss-2023b
+module load Tkinter/3.11.5-GCCcore-13.2.0
 
 module load lxml/4.9.3-GCCcore-13.2.0
 module load XMLlib/3.3.2-GCC-13.2.0
