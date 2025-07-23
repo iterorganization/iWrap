@@ -1,16 +1,15 @@
 #!/bin/env python3
 import imas,os
 
-from imas import imasdef
 
 try:
-    db_entry = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+    db_entry = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                             db_name="tutorial_db",
                             shot=1, run=1)
     db_entry.create()
 
     ids = imas.core_profiles()
-    ids.ids_properties.homogeneous_time = imasdef.IDS_TIME_MODE_HETEROGENEOUS
+    ids.ids_properties.homogeneous_time = imas.ids_defs.IDS_TIME_MODE_HETEROGENEOUS
     ids.ids_properties.comment='START:'
     db_entry.put( ids )
     db_entry.close()

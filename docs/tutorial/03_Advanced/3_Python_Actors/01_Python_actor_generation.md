@@ -97,12 +97,11 @@ The code below showcases how to integrate the `MPI` python iWrap actor (implemen
 
 ```{code-block} python
 import imas
-from imas import imasdef
 
 from cp2ds_mpi.actor import cp2ds_mpi
 
 # Reading of input data
-db_entry_in = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_in = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                            db_name="tutorial_db",
                            shot=1, run=1)
 db_entry_in.open()
@@ -110,7 +109,7 @@ input_ids = db_entry_in.get('core_profiles')
 db_entry_in.close()
 
 # Creating output datafile
-db_entry_out = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_out = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                            db_name="tutorial_db",
                            shot=2, run=2)
 db_entry_out.create()

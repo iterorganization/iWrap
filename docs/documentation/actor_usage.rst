@@ -586,14 +586,14 @@ This attribute defines settings of temporary storage being used while passing ID
    -   backend:
 
        -  Meaning - backend to be used
-       -  Default value -   ``imas.imasdef.MEMORY_BACKEND``
+       -  Default value -   ``imas.ids_defs.MEMORY_BACKEND``
 
    -    persistent_backend
 
         -  Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running
            the actor in standalone mode, when the code is run in a separate process, so it doesn't share
            memory with the workflow).
-        -  Default value -  ``imas.imasdef.MDSPLUS_BACKEND``
+        -  Default value -  ``imas.ids_defs.MDSPLUS_BACKEND``
 
 .. note::
    Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
@@ -792,12 +792,12 @@ The workflow example
 
             # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
             print('=> Open input datafile')
-            self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
+            self.input_entry = imas.DBEntry(imas.ids_defs.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
             self.input_entry.open()
 
             # CREATE OUTPUT DATAFILE
             print('=> Create output datafile')
-            self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
+            self.output_entry = imas.DBEntry(imas.ids_defs.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
             self.output_entry.create()
 
             runtime_settings = None
