@@ -63,12 +63,12 @@ def get_test_distribution_sources():
     return create_test_ids("distribution_sources", 100, 3)
 
 
-def create_test_ids(ids_class, seed=1, steps=3):
+def create_test_ids(ids_name, seed=1, steps=3):
     """
     Returns an instance IDS filled with test data
     """
     factory = imas.IDSFactory()
-    ids = factory.new(ids_class)
+    ids = factory.new(ids_name)
     ids.ids_properties.homogeneous_time = imas.ids_defs.IDS_TIME_MODE_HOMOGENEOUS
     ids.time = np.array([float(x) for x in range(seed, seed + steps)])
 
