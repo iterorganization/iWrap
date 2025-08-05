@@ -1,6 +1,4 @@
 # iWrap
-_**Disclaimer**_  
-_iWrap is still under development, so its API and features may change!_
 
 iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex computing scenarios designed in other language (e.g. Python).
 
