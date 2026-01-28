@@ -8,8 +8,8 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
 
-from iwrap.generators.actor_generators.python_actor.resources.common.code_parameters_handlers.handler_factory import HandlerFactory
-from iwrap.generators.actor_generators.python_actor.resources.common.code_parameters_handlers.parameters_handler_interface import ParametersHandlerInterface
+from iwrap.settings.code_parameters_handlers.handler_factory import HandlerFactory
+from iwrap.settings.code_parameters_handlers.parameters_handler_interface import ParametersHandlerInterface
 
 class CodeParametersPane(ttk.Frame, IWrapPane):
     # Class logger
