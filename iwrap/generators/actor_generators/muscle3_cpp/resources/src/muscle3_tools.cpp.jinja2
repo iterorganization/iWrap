@@ -1,0 +1,356 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+
+{%- import './macros/flags.jinja2' as flags with context-%}
+
+#include <fstream>
+#include <sstream>
+#include <libmuscle/libmuscle.hpp>
+#include <ymmsl/ymmsl.hpp>
+
+//for code_parameters copying
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/sendfile.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+{{ ids_macro.imports(build_info.al_version) }}
+
+#include "muscle3_tools.h"
+
+using libmuscle::Data;
+using libmuscle::DataConstRef;
+using libmuscle::Message;
+using ymmsl::Operator;
+
+{% if flags.mpi_code %}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   INIT MPI
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+int init_mpi()
+{
+    int mpi_rank;
+    int was_mpi_initialized;
+
+    MPI_Initialized(&was_mpi_initialized);
+    if (!was_mpi_initialized)
+        MPI_Init(NULL, NULL);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+
+    return mpi_rank;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   FINISH MPI
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void finish_mpi()
+{
+    int was_mpi_finalized;
+    //----  MPI Finalization ----
+    MPI_Finalized(&was_mpi_finalized);
+    if (!was_mpi_finalized)
+       MPI_Finalize();
+}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   BROADCAST IDS
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void broadcast_ids(char** serialized_ids, int *serialized_ids_size)
+{
+    // Share information among all processors
+    MPI_Bcast(serialized_ids_size, 1, MPI_INTEGER, MPI_ROOT_RANK, MPI_COMM_WORLD);
+
+    if( *serialized_ids == NULL && *serialized_ids_size > 0) // Not a MPI root
+    {
+        *serialized_ids = (char*) malloc(*serialized_ids_size);
+    }
+
+    MPI_Bcast( *serialized_ids, *serialized_ids_size, MPI_CHARACTER, MPI_ROOT_RANK, MPI_COMM_WORLD);
+}
+{% endif %}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   INIT MUSCLE3
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+libmuscle::Instance* init_muscle3()
+{
+    libmuscle::Instance* m3_instance;
+    std::vector<std::string> input_ports;
+    std::vector<std::string> output_ports;
+    {% if flags.checkpointable  %}
+    libmuscle::InstanceFlags flags = libmuscle::InstanceFlags::USES_CHECKPOINT_API;
+    {% else %}
+    libmuscle::InstanceFlags flags = libmuscle::InstanceFlags::NONE;
+    {% endif %}
+
+    /* * * * - - - INPUT ('F_INIT') ports  - - - * * * */
+{% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'IN' %}
+    // {{ argument.name }}
+    input_ports.push_back("{{ argument.name }}");
+
+{% endfor %}
+
+    /* * * * - - - OUTPUT ('O_F') ports  - - - * * * */
+{% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'OUT' %}
+    // {{ argument.name }}
+    output_ports.push_back("{{ argument.name }}");
+
+    {% endfor %}
+
+
+    {% if flags.mpi_code %}
+        m3_instance = new libmuscle::Instance(0, NULL,
+                         {% raw %}{{Operator::F_INIT, input_ports}, {Operator::O_F, output_ports}},  {% endraw %}
+                        flags,
+                        MPI_COMM_WORLD, MPI_ROOT_RANK);
+    {% else %}
+        m3_instance = new libmuscle::Instance(0, NULL,
+                          {% raw %} {{Operator::F_INIT, input_ports}, {Operator::O_F, output_ports}}, {% endraw %}
+                            flags);
+    {% endif %}
+
+    return m3_instance;
+}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   FINISH MUSCLE3
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void finish_muscle3(libmuscle::Instance* m3_instance)
+{
+
+    delete(m3_instance);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   RECEIVE IDS
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void receive_ids(libmuscle::Instance* m3_instance, std::string argument_name, IdsNs::Ids* ids)
+{
+    char* serialized_ids = NULL;
+    int serialized_ids_size = 0;
+
+    auto msg = m3_instance->receive(argument_name);
+    libmuscle::DataConstRef data = msg.data();
+
+    if(! data.is_nil() ) // MPI root or a single process
+    {
+        serialized_ids_size = data.size();
+        serialized_ids = (char*)data.as_byte_array();
+    }
+
+    {% if flags.mpi_code  %}
+    broadcast_ids(&serialized_ids, &serialized_ids_size);
+    {% endif %}
+
+    std::string ids_string(serialized_ids, serialized_ids_size);
+
+    ids->deserialize(ids_string);
+
+    if( data.is_nil() ) // should be called for MPI run (not a root process)
+         free(serialized_ids);
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  GET INPUT IDSES
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void receive_input_idses(
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                         {{ ids_macro.argument(argument.type,  argument.name) }},
+{% endfor %}
+                        libmuscle::Instance* m3_instance)
+{
+
+ {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+    //--------- RECEIVE IDS : {{ argument.name }} ------------------------
+    receive_ids(m3_instance, "{{ argument.name }}", &{{ argument.name }});
+
+{% endfor %}
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   SEND IDS
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void send_ids(libmuscle::Instance* m3_instance, std::string argument_name, IdsNs::Ids* ids, double timestamp)
+{
+    std::string ids_str;
+
+    ids_str = ids->serialize(DEFAULT_SERIALIZER_PROTOCOL);
+    auto ids_bytes = libmuscle::Data::byte_array(ids_str.data(), ids_str.size());
+    libmuscle::Message msg( timestamp, ids_bytes);
+
+    m3_instance->send(argument_name, msg);
+}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                  SEND OUTPUT IDSES
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void send_output_idses(double timestamp,
+{%- for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' -%}
+                         {{ ids_macro.argument(argument.type,  argument.name) }},
+{% endfor %}
+                        libmuscle::Instance* m3_instance)
+{
+    int time_size = -1.0;
+
+
+
+ {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+    //--------- SEND IDS : {{ argument.name }} ------------------------
+    {% if not code_description.implementation.subroutines.get_timestamp %}
+    timestamp = -1.0; // resetting value
+    time_size = {{ argument.name }}.time.size();
+    if (time_size > 0)
+    {
+        timestamp = {{ argument.name }}.time(time_size - 1);
+    }
+    {% endif %}
+    send_ids(m3_instance, "{{ argument.name }}", &{{ argument.name }}, timestamp);
+
+{% endfor %}
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   READ CODE PARAMETERS
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void read_code_parameters(libmuscle::Instance* m3_instance, char* exec_path, IdsNs::codeparam_t &imas_code_params)
+{
+    std::string code_parameters_file_path;
+    std::string exec_path_str(exec_path);
+    bool copy_xml_parameters = false;
+    std::string default_file_name = "{{ (code_description.implementation.code_parameters.parameters or "") | basename }}";
+
+    try
+    {
+        // checking if property 'parameters_file' can be read
+        code_parameters_file_path = m3_instance->get_setting_as<std::string>("parameters_file");
+    }
+    catch (std::out_of_range& exc)
+    {
+        //Value for setting parameters_file was not set. Using default file.
+        string directory;
+        const size_t last_slash_idx = exec_path_str.rfind('/');
+        directory = exec_path_str.substr(0, last_slash_idx);
+        code_parameters_file_path = directory + "/../input/" + default_file_name;
+    }
+
+    read_code_parameters_file(code_parameters_file_path, imas_code_params);
+
+    try
+    {
+        // checking if property 'copy_code_parameters' can be read
+        copy_xml_parameters = m3_instance->get_setting_as<bool>("copy_xml_parameters");
+
+        if(copy_xml_parameters)
+        {
+            // copy code parameters into workdir
+            // create file descriptors
+            int fd_in = open(code_parameters_file_path.c_str(),O_RDONLY);
+            int fd_out = open(default_file_name.c_str(),O_RDWR);
+            struct stat stat_buf ;
+
+            fstat(fd_in,&stat_buf);
+            ssize_t size = sendfile(fd_out,fd_in,0,stat_buf.st_size);
+
+            close(fd_in);
+            close(fd_out);
+        }
+    }
+    catch (std::out_of_range& exc)
+    {
+        //just do not copy parameters file
+    }
+}
+
+void read_code_parameters_file(std::string file_path, IdsNs::codeparam_t &imas_code_params)
+{
+    std::string code_parameters;
+    char* cstr;
+
+    code_parameters = read_file( file_path);
+
+    cstr = (char*) malloc(code_parameters.size() + 1);
+    strcpy(cstr, code_parameters.c_str());
+
+    *(imas_code_params.parameters) = cstr;
+    imas_code_params.default_param = NULL;
+    imas_code_params.schema = NULL;
+}
+
+std::string read_file(std::string file_path)
+{
+    std::ifstream file;
+    std::stringstream buffer;
+    std::string file_content;
+
+    file = std::ifstream (file_path);
+    buffer << file.rdbuf();
+    file_content = buffer.str();
+    return file_content;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   XXX XXX
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+void handle_status_info(int status_code, std::string status_message, const std::string actor_name)
+{
+    std::string message = "<No diagnostic message>";
+    if(status_message.empty())
+    {
+        message = status_message;
+    }
+
+    if(status_code !=0) {
+      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
+      printf("-------Status code    : %d\n", status_code);
+      printf("-------Status message : %s\n", message);
+      printf("---------------------------------------------------------\n");
+      }
+}
+
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+//                                   RESTORING CODE STATE
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+{% if flags.checkpointable %}
+std::string receive_code_state(libmuscle::Instance* m3_instance)
+{
+    std::string state_str;
+
+    //----  Status info  ----
+    int status_code = 0;
+    std::string status_message;
+
+    libmuscle::Message m3_message = m3_instance->load_snapshot();
+    libmuscle::DataConstRef m3_data = m3_message.data();
+
+    if (!m3_data.is_nil()) {
+        state_str = m3_data.as<std::string>();
+
+    return state_str;
+
+    }
+} // receive_code_state
+
+
+void save_code_state(libmuscle::Instance* m3_instance, std::string state_str)
+{
+    double timestamp = -1.0;
+
+    //----  Status info  ----
+    int status_code = 0;
+    std::string status_message;
+
+    libmuscle::DataConstRef m3_data = libmuscle::DataConstRef(state_str);
+    libmuscle::Message m3_message(timestamp, m3_data);
+    m3_instance->save_final_snapshot(m3_message);
+
+    } // save_code_state
+{% else %}
+// Subroutines not generated - no GET_STATE/SET_STATE methods provided
+{% endif %}

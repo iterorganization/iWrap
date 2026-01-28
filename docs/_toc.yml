@@ -7,9 +7,17 @@ root: iWrap_introduction.md
 parts:
   - caption: Welcome to Documentation
     chapters:
+    - file: documentation/quickstart.rst
+      title: Quick Start Guide
     - file: documentation/iWrap_intro.rst
       title: Users Manual
       sections:
+        - file: documentation/actor_types.rst
+          title: Actor Types Overview
+        - file: documentation/muscle3_actors.rst
+          title: MUSCLE3 Actor Generators
+        - file: documentation/muscle3_migration_guide.rst
+          title: MUSCLE3 Migration Guide
         - file: documentation/code_standardization.rst
           sections:
             - file: documentation/code_standardization/code_standardization_fortran.rst

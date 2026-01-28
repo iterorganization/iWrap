@@ -1,0 +1,34 @@
+code_description:
+    implementation:
+        subroutines:
+            init:   init_code
+            main:   code_step
+            finalize: clean_up
+        programming_language: Fortran
+        data_dictionary_compliant: 3.37.0
+        data_type: legacy
+        code_path: $TESTS_DIR/wrapped_codes/fortran/basic/libbasic.a
+        include_path: $TESTS_DIR/wrapped_codes/fortran/basic/mod_basic.mod
+        code_parameters:
+            parameters: $TESTS_DIR/code_parameters/xml/input/input_physics.xml
+            schema: $TESTS_DIR/code_parameters/xml/input/input_physics.xsd
+    arguments:
+    -   name: core_profiles_in
+        type: core_profiles
+        intent: IN
+    -   name: distribution_sources_out
+        type: distribution_sources
+        intent: OUT
+    documentation: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. '
+    settings:
+        compiler_cmd: gfortran
+        mpi_compiler_cmd:
+        extra_libraries:
+            pkg_config_defined:
+                    - xmllib
+            path_defined:
+
+

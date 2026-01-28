@@ -1,8 +1,20 @@
 # iWrap
 
+[![Read the Docs](https://img.shields.io/badge/docs-readthedocs-blue)](https://iwrap.readthedocs.io)
+
 iWrap is a modular component generator, implemented in Python, used for creating IMAS actors from physics models. This mechanism allows to integrate physics codes written in one language (Fortran, CPP) within complex computing scenarios designed in other language (e.g. Python).
 
 It's plug-in based modular design with clear separation of concerns allows to generate various types of actors and easily change data access paradigm (from dataset descriptor for AL to direct HDC data for instance)
+
+## Available Actor Types
+
+iWrap includes the following built-in actor generators:
+
+- **Python Actor**: Standard Python actors for straightforward Python integrations
+- **MUSCLE3 Actors** (optional): High-performance multiscale coupling framework
+  - MUSCLE3-Python: Python code with MUSCLE3 coupling
+  - MUSCLE3-CPP: C++ code with MUSCLE3 coupling
+  - MUSCLE3-Fortran: Fortran code with MUSCLE3 coupling
 
 For user conveniency it provides two kinds of interfaces: 
 * user friendly graphical interface that allows non-experienced users to define an actor in intuitive way 
@@ -13,6 +25,35 @@ For user conveniency it provides two kinds of interfaces:
 To learn about iWrap, please follow `tutorials/README.md` to generate an interactive and step-by-step tutorial in a Jupyter Notebook. 
 
 We have also prepared HTML and Docker versions, so you can choose the one that suits you best.
+
+# Installation
+
+## Quick Install
+
+### Basic Installation (Core Only)
+```bash
+pip install iwrap
+```
+This installs iWrap with the standard Python actor generator.
+
+### Installation with MUSCLE3 Support
+```bash
+pip install iwrap[muscle3]
+```
+This enables MUSCLE3 actor generators (MUSCLE3-Python, MUSCLE3-CPP, MUSCLE3-Fortran).
+
+### Development Installation
+```bash
+pip install iwrap[all]
+```
+Installs all optional dependencies including MUSCLE3.
+
+## Verify Installation
+
+List available actor types:
+```bash
+iwrap --list-actor-types
+```
 
 # Configuration of working environment
 

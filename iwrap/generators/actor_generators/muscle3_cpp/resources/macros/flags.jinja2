@@ -1,0 +1,5 @@
+{%- set checkpointable = code_description.implementation.subroutines.get_state and code_description.implementation.subroutines.set_state %}
+{%- set code_parameters_provided = code_description.implementation.code_parameters.parameters %}
+{%- set mpi_code = code_description.settings.mpi_compiler_cmd -%}
+
+{%- set skeleton_only = not code_description.implementation.programming_language -%}

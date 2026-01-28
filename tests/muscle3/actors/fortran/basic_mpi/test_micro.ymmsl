@@ -1,0 +1,15 @@
+ymmsl_version: v0.1
+
+model:
+  name: basic_mpi
+
+implementations:
+  micro:
+    execution_model: openmpi
+    executable: bash
+    args: ['-c', '${ACTOR_DIR}/basic_mpi/bin/basic_mpi.exe']
+
+resources:
+  micro:
+    mpi_processes: 2
+

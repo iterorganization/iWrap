@@ -1,0 +1,76 @@
+# actor name
+ACTOR_NAME={{actor_description.actor_name}}
+
+
+{% if code_description.settings.mpi_compiler_cmd   %}
+CXX={{ code_description.settings.mpi_compiler_cmd }}
+
+{% elif code_description.settings.compiler_cmd %}
+CXX={{ code_description.settings.compiler_cmd }}
+{% endif %}
+
+
+WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+COMPILER_FLAGS={{ code_description.settings.compiler_flags or '' }}
+
+CXXFLAGS= -g -fpic -pthread $(COMPILER_FLAGS)
+
+CODE_LIB_DEF=
+{%- if code_description.implementation.code_path -%}
+./lib/{{code_description.implementation.code_path | basename}}
+{% endif %}
+
+{% if code_description.settings.mpi_compiler_cmd   %}
+MUSCLE3_PKG=libmuscle_mpi
+{% else %}
+MUSCLE3_PKG=libmuscle
+{% endif %}
+
+# main IMAS libs to be used
+{% if build_info.al_version.startswith('4.')   %}
+IMAS_LIB_NAME=imas-cpp
+{% else %}
+IMAS_LIB_NAME=al-cpp
+{% endif %}
+CORE_LIBS_FLAGS= $(shell pkg-config --cflags $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
+CORE_LIBS=$(shell pkg-config --libs $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
+
+# required libs published using pkg-config mechanism
+{% if code_description.settings.extra_libraries and code_description.settings.extra_libraries.pkg_config_defined %}
+LIBS_PKGCONFIG_DEFINED_NAMES={{ (code_description.settings.extra_libraries.pkg_config_defined or []) | join(' ')}}
+LIBS_PKGCONFIG_DEFINED_FLAGS=$(shell pkg-config --cflags $(LIBS_PKGCONFIG_DEFINED_NAMES))
+LIBS_PKGCONFIG_DEFINED=$(shell pkg-config --libs $(LIBS_PKGCONFIG_DEFINED_NAMES))
+{% else %}
+LIBS_PKGCONFIG_DEFINED_NAMES=
+LIBS_PKGCONFIG_DEFINED_FLAGS=
+LIBS_PKGCONFIG_DEFINED=
+{% endif %}
+
+
+# required libs provided by user as a path
+LIBS_PATH_DEFINED=
+{%- if code_description.settings %}
+{%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
+ ./extra-libs/{{ lib_path | basename }}
+{%- endfor %}
+{% endif %}
+
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
+LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED)  $(CODE_LIB_DEF)
+
+
+all:  ./bin/$(ACTOR_NAME).exe
+
+./bin/$(ACTOR_NAME).exe: src/standalone.cpp build/muscle3_tools.o
+	@echo "   * $^ -> $@"
+	@mkdir -p ./bin
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ -Wl,--start-group $^  $(LIBS) -Wl,--end-group  -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
+
+build/%.o: src/%.cpp
+	@echo "   * $^ -> $@"
+	@mkdir -p build
+	$(CXX) $(CXXFLAGS) -c -w $^ -o $@  $(INCLUDES)
+
+clean:
+	-rm -f *.o build/* ./bin/*

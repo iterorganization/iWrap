@@ -1,0 +1,13 @@
+ymmsl_version: v0.1
+
+model:
+  name: basic_cpp
+
+implementations:
+  micro:
+    executable: ${ACTOR_DIR}/basic_cpp/bin/basic_cpp.exe
+
+
+resources:
+  micro:
+    threads: 1

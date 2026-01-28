@@ -1,0 +1,18 @@
+ymmsl_version: v0.1
+
+model:
+  name: restart_mpi_cpp
+
+checkpoints:
+    at_end: true
+
+implementations:
+  micro:
+    execution_model: openmpi
+    executable: bash
+    args: ['-c', '${ACTOR_DIR}/restart_mpi_cpp/bin/restart_mpi_cpp.exe']
+
+
+resources:
+  micro:
+    mpi_processes: 2

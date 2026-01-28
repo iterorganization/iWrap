@@ -1,0 +1,16 @@
+ymmsl_version: v0.1
+
+model:
+  name: code_restart
+
+checkpoints:
+    at_end: true
+
+implementations:
+  micro:
+    executable: ${ACTOR_DIR}/code_restart/bin/code_restart.exe
+
+
+resources:
+  micro:
+    threads: 1

@@ -1,0 +1,16 @@
+ymmsl_version: v0.1
+
+model:
+  name: helloworld
+  components:
+    macro: macro
+    micro: micro
+  conduits:
+    macro.core_profiles_out: micro.core_profiles_in
+    micro.distribution_sources_out: macro.distribution_sources_in
+settings:
+  t_max: 4.0
+  dt: 1.0
+  muscle_remote_log_level: DEBUG
+
+

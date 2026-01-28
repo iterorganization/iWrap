@@ -1,13 +1,8 @@
 [build-system]
 # Minimum requirements for the build system to execute.
-requires = ["setuptools>=43", "wheel", "tomli", "versioneer[toml]"]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440"
-versionfile_source = "iwrap/_version.py"
-versionfile_build = "iwrap/_version.py"
-tag_prefix = ""
-parentdir_prefix = ""
+[tool.setuptools_scm]
+write_to = "iwrap/_version.py"

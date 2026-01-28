@@ -7,7 +7,6 @@ import site
 import sys
 import subprocess
 from glob import glob
-import versioneer
 
 # Import other stdlib packages
 from itertools import chain
@@ -73,7 +72,7 @@ pyproject_text = pyproject_toml.read_text()
 pyproject_data = tomli.loads(pyproject_text)
 
 optional_reqs = {}
-for req in ["core"]:
+for req in ["core", "muscle3"]:
     optional_reqs[req] = DistTextFile(this_dir / f"requirements_{req}.txt").readlines()
 install_requires = optional_reqs.pop("core")
 # collect all optional dependencies in a "all" target
@@ -89,12 +88,12 @@ if __name__ == "__main__":
     # For allowed version strings, see:
     # https://packaging.python.org/specifications/core-metadata/ for allow version strings
 
-    cmdclassdict = versioneer.get_cmdclass()
-    cmdclassdict['clean'] = CleanCommand
-    
     setup(
-        version=versioneer.get_version(),
+        use_scm_version={
+            'write_to': 'iwrap/_version.py',
+        },
         packages=find_packages(exclude=('tests*', 'testing*', 'test_suite*')),
+        cmdclass={'clean': CleanCommand},
         setup_requires=pyproject_data["build-system"]["requires"],
         include_package_data=True,
         install_requires=install_requires,
