@@ -1,5 +1,5 @@
 import logging
-from .code_parameters_handlers.handler_factory import HandlerFactory
+from iwrap.settings.code_parameters_handlers.handler_factory import HandlerFactory
 
 class CodeParameters:
     # Class logger

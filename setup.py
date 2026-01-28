@@ -93,12 +93,10 @@ if __name__ == "__main__":
             'write_to': 'iwrap/_version.py',
         },
         packages=find_packages(exclude=('tests*', 'testing*', 'test_suite*')),
-        cmdclass={'clean': CleanCommand},
         setup_requires=pyproject_data["build-system"]["requires"],
         include_package_data=True,
         install_requires=install_requires,
         extras_require=optional_reqs,
-        cmdclass=cmdclassdict,
         entry_points={
             'console_scripts': [
                 'iwrap-gui = bin.run:gui',
