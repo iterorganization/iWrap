@@ -1,0 +1,55 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+{%- import './macros/flags.jinja2' as flags with context-%}
+
+
+#ifndef _IWRAP_TOOLS
+#define _IWRAP_TOOLS
+
+#include <libmuscle/libmuscle.hpp>
+{{ ids_macro.imports(build_info.al_version) }}
+
+
+const int MPI_ROOT_RANK = 0;
+
+{% if flags.mpi_code  %}
+int init_mpi();
+void finish_mpi();
+{% endif %}
+
+libmuscle::Instance* init_muscle3();
+void finish_muscle3(libmuscle::Instance* m3_instance);
+
+void send_ids(libmuscle::Instance* m3_instance, std::string argument_name, IdsNs::Ids* ids, double timestamp);
+void send_output_idses(double timestamp,
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+                         {{ ids_macro.argument(argument.type,  argument.name) }},
+{% endfor %}
+                        libmuscle::Instance* m3_instance);
+
+void receive_ids(libmuscle::Instance* m3_instance, std::string argument_name, IdsNs::Ids* ids);
+void receive_input_idses(
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                         {{ ids_macro.argument(argument.type,  argument.name) }},
+{% endfor %}
+                        libmuscle::Instance* m3_instance);
+
+void read_code_parameters(libmuscle::Instance* m3_instance, char* exec_path, IdsNs::codeparam_t &imas_code_params);
+
+void read_code_parameters_file(std::string file_path, IdsNs::codeparam_t &imas_code_params);
+
+std::string read_file(std::string file_path);
+
+void handle_status_info(int status_code, std::string status_message, const std::string actor_name);
+
+void release_status_info(char* status_message);
+
+// RESTORING CODE STATE
+{% if flags.checkpointable %}
+std::string receive_code_state(libmuscle::Instance* m3_instance);
+void save_code_state(libmuscle::Instance* m3_instance, std::string state_str);
+{% else %}
+// Subroutines not generated - no GET_STATE/SET_STATE methods provided
+{% endif %}
+
+
+#endif // _IWRAP_TOOLS

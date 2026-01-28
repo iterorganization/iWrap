@@ -1,0 +1,243 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+
+{%- import './macros/flags.jinja2' as flags with context-%}
+
+{%- if flags.skeleton_only %}
+    {% set comment_out = '!'  -%}
+{%  endif %}
+
+! = = = = = = =  ACTOR: {{actor_description.actor_name}} = = = = = =
+program standalone
+
+{% if flags.mpi_code %}
+    use mpi
+{% endif %}
+    use iwrap_tools
+    use muscle3_tools
+    {% if code_description.implementation.include_path %}
+    use {{code_description.implementation.include_path | stemname}}
+    {% else %}
+    ! Put "use <provided module name>" here
+    {% endif %}
+    implicit none
+
+    !---------------------------------------------------------
+    character(len=*), parameter :: ACTOR_NAME = "{{actor_description.actor_name}}"
+    type(LIBMUSCLE_Instance) :: instance
+    integer :: process_rank = MPI_ROOT_RANK
+
+    !----  code state  ----
+    character(len=:), allocatable :: state_str
+
+    !----  timestamp  ----
+    real (kind=LIBMUSCLE_real8) :: timestamp = -1.0_LIBMUSCLE_real8
+
+    !----  Status info  ----
+    integer :: status_code = 0
+	character(len=:), pointer :: status_message
+
+    !----  Code parameters  ----
+    character(len=:), allocatable :: xml_string
+    type(ids_parameters_input) :: imas_code_params
+
+    !----  IN/OUT IDSes  ----
+{% for argument in code_description.implementation.subroutines.main.arguments %}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
+{% endfor %}
+
+{% if code_description.implementation.subroutines.init.name %}
+    logical :: initial_run
+    initial_run = .TRUE.
+{% endif %}
+
+
+     ! > > > - - - INITIALISATION - - - < < <
+{% if flags.mpi_code %}
+    CALL init_mpi(process_rank)
+{% endif %}
+
+    CALL init_muscle(instance)
+
+{% if flags.code_parameters_provided %}
+    ! ------------------ code parameters ----------------------------
+    status_code = read_code_parameters(instance, imas_code_params)
+    if (status_code /= 0) CALL exit (status_code)
+
+{% endif %}
+
+    ! > > >  MUSCLE3 LOOP. < < <
+    do while (LIBMUSCLE_Instance_reuse_instance(instance))
+
+        !  - - - WRAPPED CODE INITIALIZATION - - -  # # # #
+{% if flags.checkpointable %}
+        if ( LIBMUSCLE_Instance_resuming(instance)) then
+            ! > > >  RESTART : the code is restored from the saved snapshot  < < <
+            if (process_rank == MPI_ROOT_RANK) then
+                CALL receive_wrapped_code_state(instance, state_str)
+                ! Calling SET_STATE
+                {%  if flags.skeleton_only %}
+                !
+                ! >>> Subroutine "SET_STATE" should be called here <<<
+                !
+                {% endif %}
+                {{ comment_out }} CALL  {{code_description.implementation.subroutines.set_state}}(state_str, status_code, status_message)
+
+            endif
+{% endif %}
+
+{% if code_description.implementation.subroutines.init.name %}
+     {% if flags.checkpointable %}
+     else  ! m3_instance is not resuming
+        ! > > >  INITIALIZATION by calling INIT method  of the code < < <
+     {% endif %}
+
+        if (initial_run) then
+            !----  RESET status info  ----
+            nullify(status_message)
+            status_code = 0
+            ! Calls the wrapped INIT subroutine
+            {%  if flags.skeleton_only %}
+            !
+            ! >>> Subroutine "INIT" should be called here <<<
+            !
+            {% endif %}
+            {{ comment_out }} CALL  {{code_description.implementation.subroutines.init.name}}(
+        {%- if flags.code_parameters_provided -%}
+                 imas_code_params,
+        {%- endif -%}
+                 status_code, status_message)
+            CALL check_status(instance, status_code, status_message, ACTOR_NAME, "INIT")
+            initial_run = .FALSE.
+        endif
+    {% endif %}
+
+ {% if flags.checkpointable %}
+        endif ! LIBMUSCLE_Instance_resuming
+
+        if( LIBMUSCLE_Instance_should_init(instance)) then
+{% endif %}
+
+        ! > > >  RECEIVING INPUT IDSes  < < <
+        CALL receive_input_idses(&
+        {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                    {{ argument.name }}, &
+        {% endfor %}
+                    instance )
+
+{% if flags.checkpointable %}
+        endif ! LIBMUSCLE_Instance_should_init
+{% endif %}
+
+         !----  RESET status info  ----
+         nullify(status_message)
+         status_code = 0
+
+        ! > > > - - - WRAPPED CODE CALL - MAIN SBRT - - - < < <
+        {%  if flags.skeleton_only %}
+        !
+        ! >>> Subroutine "MAIN" should be called here <<<
+        !
+        {% endif %}
+        {{ comment_out }} CALL {{code_description.implementation.subroutines.main.name}}( &
+    {% for argument in code_description.implementation.subroutines.main.arguments %}
+            {{ comment_out }} {{ argument.name }}, &
+    {% endfor %}
+    {% if flags.code_parameters_provided %}
+           {{ comment_out }} imas_code_params,  &
+    {% endif %}
+            {{ comment_out }} status_code, status_message)
+
+
+        !-----------Check status info ---------------------
+        CALL check_status(instance, status_code, status_message, ACTOR_NAME, "MAIN")
+
+{% if flags.mpi_code %}
+    if (process_rank == MPI_ROOT_RANK) then
+{% endif %}
+
+        ! > > >  RETURNING OUTPUT IDSes  < < <
+        {% if code_description.implementation.subroutines.get_timestamp %}
+        ! > > >  GET TIMESTAMP < < <
+        nullify(status_message)
+        status_code = 0
+        {%  if flags.skeleton_only %}
+        !
+        ! >>> Subroutine "GET_TIMESTAMP" should be called here <<<
+        !
+        {% endif %}
+        {{ comment_out }} CALL {{code_description.implementation.subroutines.get_timestamp}}(timestamp, status_code, status_message)
+
+        CALL check_status(instance, status_code, status_message, "{{actor_description.actor_name}}", "GET_TIMESTAMP")
+
+        {% endif %}
+        CALL send_output_idses(instance, &
+        {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+                    {{ argument.name }}, &
+        {% endfor %}
+                    timestamp)
+
+{% if flags.mpi_code %}
+    endif ! --- The end of section called only for RANK 0 process
+{% endif %}
+
+
+{% if flags.checkpointable %}
+         ! > > >  SAVE SNAPSHOT < < <
+         if (LIBMUSCLE_Instance_should_save_final_snapshot(instance)) then
+            if (process_rank == MPI_ROOT_RANK ) then ! Always .TRUE. for non-MPI code
+                ! Calling GET_STATE
+                nullify(status_message)
+                status_code = 0
+                {%  if flags.skeleton_only %}
+                !
+                ! >>> Subroutine "GET_STATE" should be called here <<<
+                !
+                {%  endif %}
+
+                {{ comment_out }} CALL {{code_description.implementation.subroutines.get_state}}(state_str, status_code, status_message)
+
+                CALL check_status(instance, status_code, status_message, ACTOR_NAME, "GET_STATE")
+                CALL save_wrapped_code_state(instance, state_str)
+            endif
+        endif
+
+{% endif %}
+
+        ! > > >  CLEAN UP  < < <
+        {% for argument in code_description.implementation.subroutines.main.arguments %}
+         {{ ids_macro.deallocate( argument.name) }}
+        {% endfor %}
+
+    end do ! < < < MUSCLE3 LOOP < < <
+
+ {% if code_description.implementation.subroutines.finalize.name %}
+    ! > > > - - - - - - - - - - - - - WRAPPED CODE CALL - FINALISE SBRT - - - - - - - - - - - - - - - - - - < < <
+    !----  RESET status info  ----
+    nullify(status_message)
+    status_code = 0
+    {%  if flags.skeleton_only %}
+    !
+    ! >>> Subroutine "FINALIZE" should be called here <<<
+    !
+    {%  endif %}
+    {{ comment_out }} CALL {{code_description.implementation.subroutines.finalize.name}}(status_code, status_message)
+
+    !-----------Check status info ---------------------
+    CALL check_status(instance, status_code, status_message, ACTOR_NAME, "FINALIZE")
+
+{% endif %}
+
+    {% if flags.code_parameters_provided %}
+    ! ------Deallocating code parameters ----------------------------
+    if (associated(imas_code_params%parameters_value))  deallocate(imas_code_params%parameters_value)
+    {% endif %}
+
+    !----  MUSCLE3 Finalization ----
+    call LIBMUSCLE_Instance_free(instance)
+
+    {% if flags.mpi_code %}
+    !----  MPI Finalization ----
+    call finish_mpi()
+
+    {% endif %}
+end program

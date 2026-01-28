@@ -1,0 +1,158 @@
+{%- import './macros/flags.jinja2' as flags with context -%}
+
+import os
+import ymmsl
+from shutil import copy
+import libmuscle
+from libmuscle import Instance, USES_CHECKPOINT_API
+
+import imas
+from imas import imasdef
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   INIT MUSCLE3
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def init_muscle3():
+
+    input_ports = []
+    output_ports = []
+
+    # # # # - - - INPUT ('F_INIT') ports  - - - # # # #
+{% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'IN' %}
+    # {{ argument.name }}
+    input_ports.append("{{ argument.name }}")
+
+{% endfor %}
+    # # # # - - - OUTPUT ('O_F') ports  - - - # # # #
+{% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'OUT' %}
+    # {{ argument.name }}
+    output_ports.append("{{ argument.name }}")
+
+    {% endfor %}
+    ports = {ymmsl.Operator.F_INIT : input_ports, ymmsl.Operator.O_F : output_ports}
+{% if flags.checkpointable %}
+    m3_instance = libmuscle.Instance(ports, libmuscle.USES_CHECKPOINT_API)
+{%  else %}
+    m3_instance = libmuscle.Instance(ports)
+{%  endif %}
+
+    return m3_instance
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   FINISH MUSCLE3
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def finish_muscle3(m3_instance): 
+    ...
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   RECEIVE IDS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def receive_ids(m3_instance: libmuscle.Instance, port_name, ids):
+    m3_message = m3_instance.receive(port_name)
+
+    ids_bytes = m3_message.data
+    ids.deserialize(ids_bytes)
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   SEND IDS
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def send_ids(m3_instance: libmuscle.Instance, port_name, ids, timestamp):
+
+    ids_bytes = ids.serialize(imasdef.DEFAULT_SERIALIZER_PROTOCOL)
+    m3_message = libmuscle.Message( timestamp, None, ids_bytes)
+    
+    m3_instance.send(port_name, m3_message)
+
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   RECEIVE INPUT IDSES
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def receive_input_idses(m3_instance: libmuscle.Instance,
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                         {{  argument.name }},
+{%- endfor -%}
+                        ):
+
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+    # {{ argument.name }}
+    receive_ids(m3_instance, "{{ argument.name }}", {{ argument.name }})
+
+{% endfor %}
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                  SEND OUTPUT IDSES
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+def send_output_idses(m3_instance: libmuscle.Instance, timestamp,
+{% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+                         {{ argument.name }},
+{% endfor -%}
+                        ):
+
+ {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+    #--------- SEND IDS : {{ argument.name }} ------------------------
+    {% if not code_description.implementation.subroutines.get_timestamp %}
+    timestamp = -1.0 # resetting value
+    time_size = len({{ argument.name }}.time)
+    if time_size > 0:
+        time_stamp = {{ argument.name }}.time[time_size - 1]
+
+    {% endif %}
+    send_ids(m3_instance, "{{ argument.name }}", {{ argument.name }},  timestamp)
+
+{% endfor %}
+
+{% if code_description.implementation.code_parameters.parameters %}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   XXX XXX
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+def read_code_parameters(m3_instance: libmuscle.Instance):
+
+    try:
+        # checking if property 'parameters_file' can be read
+        code_parameters_file_path = m3_instance.get_setting("parameters_file", "str")
+    except KeyError:
+
+        # Value for setting parameters_file was not set. Using default file.
+        directory = os.path.realpath(os.path.dirname(__file__))
+        code_parameters_file_path = directory + "/input/{{code_description.implementation.code_parameters.parameters | basename }}"
+
+    with open(code_parameters_file_path, 'r') as file:
+        code_parameters = file.read()
+
+    try:
+        # checking if property 'copy_xml_parameters' can be read
+        copy_xml_parameters = m3_instance.get_setting("copy_xml_parameters", "bool")
+        if copy_xml_parameters:
+            #shutil.copy()
+            copy( code_parameters_file_path, "./" )
+    except KeyError:
+        ...
+        #just don't copy parameters
+
+    return code_parameters
+
+{%  endif %}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                   RESTORING CODE STATE
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+{% if flags.checkpointable  %}
+def receive_code_state(m3_instance: libmuscle.Instance):
+    m3_message = m3_instance.load_snapshot()
+    if m3_message is None:
+        return None
+
+    return m3_message.data
+
+def save_code_state(m3_instance: libmuscle.Instance, state_str):
+
+    timestamp = -1.0
+    m3_message = libmuscle.Message( timestamp, None, state_str)
+    m3_instance.save_final_snapshot(m3_message)
+
+{% else %}
+# Methods not generated - no GET_STATE/SET_STATE methods provided
+{% endif %}

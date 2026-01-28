@@ -1,0 +1,359 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+
+{%- import './macros/flags.jinja2' as flags with context-%}
+
+MODULE muscle3_tools
+    use ymmsl
+    {% if flags.mpi_code %}
+    use mpi
+    use libmuscle_mpi
+    {% else %}
+    use libmuscle
+    {% endif %}
+    use ids_schemas
+    use ids_routines
+    use iwrap_tools
+    implicit none
+
+    integer, parameter :: MPI_ROOT_RANK = 0
+contains
+
+
+{% if flags.mpi_code %}
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   INIT MPI
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE init_mpi(process_rank)
+
+        integer, intent(OUT) :: process_rank
+        integer :: status
+        logical :: was_initialized
+
+        call MPI_Init(status)
+        call MPI_COMM_RANK(MPI_COMM_WORLD, process_rank, status)
+
+    END SUBROUTINE init_mpi
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   FINISH MPI
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE finish_mpi()
+
+        integer :: status
+        logical :: was_mpi_finalized
+
+        call MPI_finalized(was_mpi_finalized, status)
+        if (.not. was_mpi_finalized)   call MPI_Finalize(status)
+
+    END SUBROUTINE finish_mpi
+
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   BROADCAST IDS
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE broadcast_ids(serialized_ids)
+
+        character(len=1), dimension(:), allocatable :: serialized_ids
+        integer :: ierror
+        integer :: serialized_ids_size = 0
+
+        ! Share information among all processors
+        if(allocated(serialized_ids)) serialized_ids_size = SIZE(serialized_ids)
+
+        CALL mpi_bcast(serialized_ids_size, 1, MPI_INTEGER, MPI_ROOT_RANK, MPI_COMM_WORLD, ierror)
+        if(.not. allocated(serialized_ids) .and. serialized_ids_size > 0) allocate(serialized_ids(serialized_ids_size))
+        CALL mpi_bcast(serialized_ids, serialized_ids_size, MPI_CHARACTER, MPI_ROOT_RANK, MPI_COMM_WORLD, ierror)
+
+    END SUBROUTINE broadcast_ids
+
+{% endif %}
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   INIT MUSCLE3
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE init_muscle(instance)
+
+        type(LIBMUSCLE_Instance), INTENT(OUT) :: instance
+        type(LIBMUSCLE_PortsDescription) :: ports
+
+        logical, parameter :: CHECKPOINT_API_ENABLED = {% if flags.checkpointable %}.TRUE.{% else %}.FALSE.{% endif %}
+
+
+        ports = LIBMUSCLE_PortsDescription_create()
+
+        ! Creation of INPUT ('F_INIT') ports
+    {% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'IN' %}
+        ! {{ argument.name }}
+        CALL LIBMUSCLE_PortsDescription_add(ports, YMMSL_OPERATOR_F_INIT, '{{ argument.name }}')
+    {% endfor %}
+
+        ! Creation of OUTPUT ('O_F') ports
+    {% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'OUT' %}
+        ! {{ argument.name }}
+        CALL LIBMUSCLE_PortsDescription_add(ports, YMMSL_OPERATOR_O_F, '{{ argument.name }}')
+    {% endfor %}
+
+    {% if flags.mpi_code %}
+        instance = LIBMUSCLE_Instance_create(ports, LIBMUSCLE_InstanceFlags(USES_CHECKPOINT_API=CHECKPOINT_API_ENABLED), &
+        MPI_COMM_WORLD, MPI_ROOT_RANK)
+    {% else %}
+        instance = LIBMUSCLE_Instance_create(ports, LIBMUSCLE_InstanceFlags( USES_CHECKPOINT_API=CHECKPOINT_API_ENABLED))
+    {% endif %}
+
+        call LIBMUSCLE_PortsDescription_free(ports)
+
+    END SUBROUTINE init_muscle
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   SEND IDS
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE send_ids(instance, serialized_ids, ids_name, time_stamp)
+
+        type(LIBMUSCLE_Instance) :: instance
+        character(len=1), dimension(:), allocatable :: serialized_ids
+        character(len=*) :: ids_name
+        real (kind=LIBMUSCLE_int8) :: time_stamp
+        real (kind=LIBMUSCLE_int8) :: next_time_stamp
+
+        type(LIBMUSCLE_Message) :: m3_message
+        type(LIBMUSCLE_Data) :: m3_data
+
+        m3_data = LIBMUSCLE_Data_create_byte_array(serialized_ids)
+        m3_message = LIBMUSCLE_Message_create(time_stamp, m3_data)
+
+        call LIBMUSCLE_Instance_send(instance, ids_name, m3_message)
+        call LIBMUSCLE_Message_free(m3_message)
+
+        call LIBMUSCLE_Data_free(m3_data)
+
+    END SUBROUTINE send_ids
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   RECEIVE IDS
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE receive_ids(instance, ids_name, serialized_ids)
+
+        type(LIBMUSCLE_Instance), INTENT(IN) :: instance
+        character(len=*), INTENT(IN) :: ids_name
+        character(len=1), dimension(:), allocatable, INTENT(OUT) :: serialized_ids
+
+        type(LIBMUSCLE_Message) :: m3_message
+        type(LIBMUSCLE_DataConstRef) :: m3_data
+
+        m3_message = LIBMUSCLE_Instance_receive(instance, ids_name)
+        m3_data = LIBMUSCLE_Message_get_data(m3_message)
+
+        if ( .not. LIBMUSCLE_DataConstRef_is_nil(m3_data)) then
+            allocate(serialized_ids(LIBMUSCLE_DataConstRef_size(m3_data)))
+            call LIBMUSCLE_DataConstRef_as_byte_array(m3_data, serialized_ids)
+            call LIBMUSCLE_DataConstRef_free(m3_data)
+        end if
+        call LIBMUSCLE_Message_free(m3_message)
+
+
+    END SUBROUTINE receive_ids
+
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   RECEIVE INPUT IDSES
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE receive_input_idses(&
+    {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                            {{ argument.name }}, &
+    {% endfor %}
+                            instance)
+
+        type(LIBMUSCLE_Instance), INTENT(IN) :: instance
+        character(len=1), dimension(:), allocatable :: serialized_ids
+
+        {% if flags.mpi_code %}
+         ! workaround for fixed random seed and MPI (to be removed if IMAS-4524 solved)
+        integer, allocatable :: wa_seed(:)
+        integer :: wa_n
+        {% endif %}
+
+    {% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'IN' %}
+        {{ ids_macro.declare(argument.type,  argument.name) }}
+    {% endfor %}
+
+     {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+         !--------- RECEIVE IDS : {{ argument.name }} ------------------------
+         CALL receive_ids(instance, '{{ argument.name }}', serialized_ids)
+
+        {% if flags.mpi_code %}
+         CALL broadcast_ids(serialized_ids)  ! MUSCLE3 sends data to root process only
+
+         ! Workaround: get current random state (to be removed if IMAS-4524 solved)
+         call random_seed(size = wa_n)
+         allocate(wa_seed(wa_n))
+         call random_seed(get = wa_seed)
+         ! replace with a unique random seed (hopefully unique across different MPI processes)
+         call random_seed()
+         {% endif %}
+
+         CALL ids_deserialize(serialized_ids, {{ argument.name }})
+         deallocate(serialized_ids)
+
+         {% if flags.mpi_code %}
+         ! restore random seed (to be removed if IMAS-4524 solved)
+         call random_seed(put = wa_seed)
+         deallocate(wa_seed)
+         {% endif %}
+
+    {% endfor %}
+
+    END SUBROUTINE receive_input_idses
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   RETURN OUTPUT IDSES
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE send_output_idses(instance, &
+    {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+            {{ argument.name }}, &
+    {% endfor %}
+        in_timestamp)
+
+        type(LIBMUSCLE_Instance), INTENT(IN) :: instance
+        real (kind=LIBMUSCLE_real8), INTENT(IN)  :: in_timestamp
+        real (kind=LIBMUSCLE_real8) :: timestamp       ! = -1.0_LIBMUSCLE_real8
+        integer :: time_size
+        !----  Status info  ----
+        integer :: status_code = 0
+        character(len=:), pointer :: status_message
+
+        character(len=1), dimension(:), allocatable :: serialized_ids
+    {% for argument in code_description.implementation.subroutines.main.arguments  if argument.intent == 'OUT' %}
+        {{ ids_macro.declare(argument.type,  argument.name) }}
+    {% endfor %}
+
+     {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+        !--------- SEND IDS : {{ argument.name }} ------------------------
+        CALL ids_serialize({{ argument.name }}, serialized_ids)
+        if ( in_timestamp .GE. 0) then
+                timestamp = in_timestamp
+        else
+            timestamp = -1.0_LIBMUSCLE_real8 ! resetting a value
+            if ( ASSOCIATED({{ argument.name }}%time) .AND. SIZE({{ argument.name }}%time) > 0) then
+                time_size = SIZE({{ argument.name }}%time)
+                timestamp = {{ argument.name }}%time(time_size)
+            endif
+        endif
+        CALL send_ids(instance, serialized_ids, '{{ argument.name }}', timestamp )
+        deallocate(serialized_ids)
+
+    {% endfor %}
+
+    END SUBROUTINE send_output_idses
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   RESTORING CODE STATE
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+{% if flags.checkpointable %}
+    SUBROUTINE receive_wrapped_code_state(instance, state_str)
+        type(LIBMUSCLE_Instance), intent(IN) :: instance
+        character(len=:), allocatable, intent(OUT) :: state_str
+        type(LIBMUSCLE_Message) :: m3_message
+        type(LIBMUSCLE_DataConstRef) :: m3_data
+        integer :: string_size
+            !----  Status info  ----
+        integer :: status_code = 0
+        character(len=:), pointer :: status_message
+
+
+        m3_message = LIBMUSCLE_Instance_load_snapshot(instance)
+        m3_data = LIBMUSCLE_Message_get_data(m3_message)
+
+        if ( .not. LIBMUSCLE_DataConstRef_is_nil(m3_data)) then
+            state_str = LIBMUSCLE_DataConstRef_as_character(m3_data )
+            call LIBMUSCLE_DataConstRef_free(m3_data)
+        end if
+        call LIBMUSCLE_Message_free(m3_message)
+    END SUBROUTINE receive_wrapped_code_state
+
+    SUBROUTINE save_wrapped_code_state(instance, state_str)
+
+        type(LIBMUSCLE_Instance), intent(IN) :: instance
+        character(len=:), allocatable, intent(IN)  :: state_str
+        type(LIBMUSCLE_Message) :: m3_message
+        type(LIBMUSCLE_Data) :: m3_data
+        integer :: string_size
+        real (kind=LIBMUSCLE_real8) :: timestamp       ! = -1.0_LIBMUSCLE_real8
+            !----  Status info  ----
+        integer :: status_code = 0
+        character(len=:), pointer :: status_message
+
+        m3_data = LIBMUSCLE_Data_create(state_str)
+        m3_message = LIBMUSCLE_Message_create(timestamp, m3_data)
+        CALL LIBMUSCLE_Instance_save_final_snapshot(instance, m3_message)
+
+        call LIBMUSCLE_Data_free(m3_data)
+        call LIBMUSCLE_Message_free(m3_message)
+    END SUBROUTINE save_wrapped_code_state
+{% else %}
+    ! Subroutines not generated - no GET_STATE/SET_STATE methods provided
+{% endif %}
+
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    !                                   CHECK CONNECTION
+    ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    SUBROUTINE check_connection(instance, port_name)
+
+        type(LIBMUSCLE_Instance) :: instance
+        character(len=*) :: port_name
+
+        if (  LIBMUSCLE_Instance_is_connected(instance, port_name)) return
+
+        ! any error to report?
+        write(*,*) "ERROR: Port " //  port_name //" not connected!"
+        call LIBMUSCLE_Instance_error_shutdown(instance, "ERROR: Port " // port_name //" not connected!")
+        call exit(1)
+
+    END SUBROUTINE check_connection
+
+    FUNCTION read_code_parameters(instance, imas_code_params) RESULT(status)
+        use ids_schemas, ONLY: ids_parameters_input
+        type(LIBMUSCLE_Instance), INTENT(IN) :: instance
+        character(len=:), allocatable :: default_file_name
+        character(len=:), allocatable :: exec_dir, file_path, err_msg
+        type(ids_parameters_input), intent(OUT)  :: imas_code_params
+        integer :: status
+        logical :: copy_xml_parameters
+        copy_xml_parameters = .false.
+
+        default_file_name = "{{ (code_description.implementation.code_parameters.parameters or "") | basename }}"
+        file_path = LIBMUSCLE_Instance_get_setting_as_character(instance, "parameters_file", status, err_msg)
+
+        ! checking if property was read or not
+        if (status .ne. LIBMUSCLE_success) then
+            ! checking if an error occured while reading property
+            if (status .ne. LIBMUSCLE_out_of_range) then
+                write(*,*) " ERROR: Reading 'parameters_file' property failed! ", err_msg
+                return
+            end if
+
+            ! reading default code parameters file
+            exec_dir = get_exec_dir()
+            exec_dir = trim(exec_dir)
+            file_path = exec_dir//"/../input/"//default_file_name
+        end if
+
+        status = read_code_parameters_file(file_path, imas_code_params)
+        if (status /= 0) return
+
+        copy_xml_parameters = LIBMUSCLE_Instance_get_setting_as_logical(instance, "copy_xml_parameters", status, err_msg)
+
+        if (status .eq. LIBMUSCLE_success .and. &
+                copy_xml_parameters .eqv. .true. .and. &
+                associated(imas_code_params%parameters_value)) then
+            OPEN(UNIT=1, FILE=default_file_name, STATUS="REPLACE")
+            write(1, *) imas_code_params%parameters_value
+            CLOSE(UNIT=1)
+        else
+            !copy_xml_parameters setting is not mandatory so don't propagate error
+            status = 0
+            return
+        end if
+
+    END FUNCTION read_code_parameters
+
+END MODULE muscle3_tools

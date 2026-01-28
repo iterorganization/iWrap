@@ -1,0 +1,22 @@
+code_description:
+    implementation:
+        subroutines:
+            init: wrapped_code_init
+            main: wrapped_code_main
+            finalize: wrapped_code_finalise
+        programming_language: Fortran
+        data_type: legacy
+        code_path: ./libwrapped_code.a
+        include_path: ./mod_wrapped_code.mod
+    arguments:
+    -   name: core_profiles_in
+        type: core_profiles
+        intent: IN
+    -   name: distribution_sources_out
+        type: distribution_sources
+        intent: OUT
+    settings:
+        compiler_cmd: gfortran
+
+
+

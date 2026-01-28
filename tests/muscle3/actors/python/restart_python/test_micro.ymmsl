@@ -1,0 +1,17 @@
+ymmsl_version: v0.1
+
+model:
+  name: restart_python
+
+checkpoints:
+    at_end: true
+
+implementations:
+  micro:
+    executable: python
+    args: ${ACTOR_DIR}/restart_python/standalone.py
+
+
+resources:
+  micro:
+    threads: 1

@@ -1,0 +1,9 @@
+ymmsl_version: v0.1
+
+implementations:
+  macro:
+    executable: ${TESTS_DIR}/macro/test_macro.exe
+
+resources:
+  macro:
+    threads: 1

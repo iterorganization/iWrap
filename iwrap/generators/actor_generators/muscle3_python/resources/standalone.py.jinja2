@@ -1,0 +1,162 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro %}
+
+{%- import './macros/flags.jinja2' as flags with context -%}
+
+{% set ARG_INDENT = "\n"~20*" " %}
+
+{%- if flags.checkpointable %}
+    {% set chkp_indent = 4 %}
+{%  else %}
+    {% set chkp_indent = 0 %}
+{%  endif %}
+
+{%- if code_description.implementation.code_path %}
+    {% set python_module = code_description.implementation.code_path | stemname %}
+{%  else %}
+    {% set python_module = "<python module>" %}
+{%  endif %}
+
+{%- if flags.skeleton_only %}
+    {% set comment_out = '# '  -%}
+{%  endif %}
+
+{{ ids_macro.imports() }}
+
+from {{actor_description.actor_name}} import muscle3_tools
+{{ comment_out }}from {{actor_description.actor_name}}.wrapped_code import {{ python_module }}
+
+if __name__ == "__main__":
+
+    timestamp = -1.0
+{% if code_description.implementation.subroutines.init.name %}
+    initial_run = True
+{% endif %}
+
+    #----  IN/OUT IDSes  ----
+{% for argument in code_description.implementation.subroutines.main.arguments %}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
+{% endfor %}
+
+    # # # #  - - - M3 INITIALISATION - - - # # # #
+    m3_instance = muscle3_tools.init_muscle3()
+
+    {% if flags.code_parameters_provided %}
+    #----  Code parameters  ----
+    imas_code_params = muscle3_tools.read_code_parameters(m3_instance)
+
+    {% endif %}
+
+    # # # #  - - - MUSCLE3 LOOP  - - - # # # #
+    while m3_instance.reuse_instance():
+
+        # # # #  - - - WRAPPED CODE INITIALIZATION - - -  # # # #
+{% if flags.checkpointable %}
+        if m3_instance.resuming():
+            # > > >  RESTART : the code is restored from the saved snapshot  < < <
+            state_str = muscle3_tools.receive_code_state(m3_instance)
+            # Calling SET_STATE
+            {%  if flags.skeleton_only %}
+            #
+            # >>> Subroutine "SET_STATE" should be called here <<<
+            #
+            {% endif %}
+            {{ comment_out }}{{ python_module }}.{{code_description.implementation.subroutines.set_state}}(state_str)
+{% endif %}
+        {% if code_description.implementation.subroutines.init.name %}
+        {% if flags.checkpointable %}
+        else:   # m3_instance is not resuming
+            # > > >  INITIALIZATION by calling INIT method  of the code < < <
+        {% endif %}
+        {% filter indent(width=chkp_indent, first=True) %}
+        if initial_run:
+            {%  if flags.skeleton_only %}
+            ...
+            #
+            # >>> Subroutine "INIT" should be called here <<<
+            #
+            {% endif %}
+            {{ comment_out }}{{ python_module }}.{{code_description.implementation.subroutines.init.name}}(
+                {%- if flags.code_parameters_provided -%}
+                    imas_code_params
+                {%- endif -%}
+                        )
+
+            {% endfilter  %}
+        initial_run = False
+        {% endif %}
+
+{% if flags.checkpointable %}
+        if m3_instance.should_init():
+{% endif %}
+     {% filter indent(width=chkp_indent) %}
+        # # # #  - - - RECEIVING INPUT IDSes - - - # # # #
+        muscle3_tools.receive_input_idses(
+                    {{- ARG_INDENT }} m3_instance,
+        {%- for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' -%}
+                    {{ ARG_INDENT }} {{ argument.name }},
+        {%- endfor -%} )
+
+    {%  endfilter %}
+
+        # # # #  - - - WRAPPED CODE CALL - MAIN SBRT - - - # # # #
+        {%  if flags.skeleton_only %}
+        #
+        # >>> Subroutine "MAIN" should be called here <<<
+        #
+        {% endif %}
+        {{ comment_out }}{{ python_module }}.{{code_description.implementation.subroutines.main.name}}(
+        {%- for argument in code_description.implementation.subroutines.main.arguments -%}
+               {{ ARG_INDENT }}{{ comment_out }} {{ argument.name }},
+        {%- endfor -%}
+        {% if flags.code_parameters_provided -%}
+               {{ ARG_INDENT }}{{ comment_out }} imas_code_params
+        {% endif -%}      )
+
+
+        # # # #  - - - SENDING OUTPUT IDSes - - - # # # #
+    {% if code_description.implementation.subroutines.get_timestamp %}
+        # > > >  GET TIMESTAMP < < <
+        {%  if flags.skeleton_only %}
+        #
+        # >>> Subroutine "GET_TIMESTAMP" should be called here <<<
+        #
+        {% endif %}
+        {{ comment_out }}timestamp =  {{ python_module }}.{{code_description.implementation.subroutines.get_timestamp}}()
+
+
+    {% endif %}
+        muscle3_tools.send_output_idses(
+                    {{- ARG_INDENT }} m3_instance, timestamp,
+        {%- for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' -%}
+                    {{ ARG_INDENT }} {{ argument.name }},
+        {%- endfor -%}    )
+
+{% if flags.checkpointable %}
+        # > > >  SAVE SNAPSHOT < < <
+        if m3_instance.should_save_final_snapshot():
+            # Calling GET_STATE
+            {%  if flags.skeleton_only %}
+            #
+            # >>> Subroutine "GET_STATE" should be called here <<<
+            #
+            {% endif %}
+            {{ comment_out }}state_str =  {{ python_module }}.{{code_description.implementation.subroutines.get_state}}()
+
+            muscle3_tools.save_code_state(m3_instance, state_str)
+{% endif %}
+
+    #> > > > THE END OF MUSCLE3 LOOP
+
+    # # # #  - - - FINALIZATION - - - # # # # 
+    {% if code_description.implementation.subroutines.finalize.name %}
+
+    # # # #  - - - WRAPPED CODE CALL - FINISH SBRT - - -  # # # #
+    {%  if flags.skeleton_only %}
+    #
+    # >>> Subroutine "FINALIZATION" should be called here <<<
+    #
+    {% endif %}
+    {{ comment_out }}{{ python_module }}.{{code_description.implementation.subroutines.finalize.name}} ()
+    {% endif %}
+
+    muscle3_tools.finish_muscle3(m3_instance)

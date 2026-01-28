@@ -147,3 +147,72 @@ Load the module into the environment:
    
    iwrap-gui
 
+iWrap Installation
+==================
+
+Installation Options
+--------------------
+
+Basic Installation (Core Only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Install iWrap core without MUSCLE3 support:
+
+.. code-block:: bash
+
+   pip install iwrap
+
+This installs the basic iWrap functionality with the standard Python actor generator.
+
+Installation with MUSCLE3 Support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To enable MUSCLE3 actor generators, install with the MUSCLE3 extra:
+
+.. code-block:: bash
+
+   pip install iwrap[muscle3]
+
+Or alternatively:
+
+.. code-block:: bash
+
+   pip install iwrap
+   pip install -r requirements_muscle3.txt
+
+This adds the following actor generators:
+- MUSCLE3-Python: Generate Python actors with MUSCLE3 coupling
+- MUSCLE3-CPP: Generate C++ actors with MUSCLE3 coupling
+- MUSCLE3-Fortran: Generate Fortran actors with MUSCLE3 coupling
+
+Full Installation (All Features)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For development or to install all optional features:
+
+.. code-block:: bash
+
+   pip install iwrap[all]
+
+This includes MUSCLE3 support and all other optional dependencies.
+
+Verifying Installation
+~~~~~~~~~~~~~~~~~~~~~~
+
+To verify which actor generators are available:
+
+.. code-block:: bash
+
+   iwrap --list-actor-types
+
+Expected output with MUSCLE3 installed:
+
+.. code-block:: text
+
+            Id          :              Name              : Description
+   ----------------------------------------------------------------------
+       MUSCLE3-CPP      :         MUSCLE3 (C++)          : Wrapping C++ code into MUSCLE3 micro model
+     MUSCLE3-Fortran    :       MUSCLE3 (Fortran)        : Wrapping Fortran code into MUSCLE3 micro model
+      MUSCLE3-Python    :        MUSCLE3 (Python)        : Wrapping Python code into MUSCLE3 micro model
+          python        :             python             : python
+

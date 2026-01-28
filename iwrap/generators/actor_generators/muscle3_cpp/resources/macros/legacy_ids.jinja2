@@ -1,0 +1,26 @@
+{% macro imports(al_version) -%}
+
+{% if al_version.startswith('4.')   %}
+#include "UALClasses.h"
+{% else %}
+#include "ALClasses.h"
+{% endif %}
+{%- endmacro -%}
+
+{% macro declare(ids_name, ids_var_name) -%}
+    IdsNs::IDS::{{ ids_name }} {{ ids_var_name }};
+{%- endmacro -%}
+
+{%- macro argument(ids_name, ids_var_name) -%}
+    IdsNs::IDS::{{ ids_name }}& {{ ids_var_name }}
+{%- endmacro -%}
+
+{%- macro provenance(ids_var_name, sbrt_name) -%}
+   {{ ids_var_name }}.code.name = "{{sbrt_name}}";
+   {{ ids_var_name }}.code.version = "";
+{%- endmacro -%}
+
+{% macro deallocate(ids_var_name) -%}
+   // Should not be called until IMAS-3937 will be resolved
+   // {{ ids_var_name }}.clear();
+{%- endmacro -%}
