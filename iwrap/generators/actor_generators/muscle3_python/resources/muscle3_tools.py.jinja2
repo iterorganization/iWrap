@@ -7,7 +7,6 @@ import libmuscle
 from libmuscle import Instance, USES_CHECKPOINT_API
 
 import imas
-from imas import imasdef
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -60,7 +59,7 @@ def receive_ids(m3_instance: libmuscle.Instance, port_name, ids):
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 def send_ids(m3_instance: libmuscle.Instance, port_name, ids, timestamp):
 
-    ids_bytes = ids.serialize(imasdef.DEFAULT_SERIALIZER_PROTOCOL)
+    ids_bytes = ids.serialize(imas.ids_defs.DEFAULT_SERIALIZER_PROTOCOL)
     m3_message = libmuscle.Message( timestamp, None, ids_bytes)
     
     m3_instance.send(port_name, m3_message)

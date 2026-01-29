@@ -3,7 +3,8 @@
 {%- endmacro -%}
 
 {% macro declare(ids_name, ids_var_name) -%}
-     {{ ids_var_name }} = imas.{{ ids_name }}()
+     _factory = imas.IDSFactory()
+     {{ ids_var_name }} = _factory.{{ ids_name }}()
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_name) -%}
