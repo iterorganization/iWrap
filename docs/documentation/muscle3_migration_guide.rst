@@ -1,6 +1,6 @@
-========================================
+====================================================
 Migration Guide: MUSCLE3 Plugin Integration
-========================================
+====================================================
 
 This guide helps users and developers migrate from the external ``iwrap-plugins-muscle3`` package to the new built-in MUSCLE3 generators in iWrap core.
 
