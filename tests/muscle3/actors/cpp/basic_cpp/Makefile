@@ -12,9 +12,9 @@ clean wrapped actor actor-gui wf-run check-output test:
 	fi
 	@echo "TESTS_DIR: $(TESTS_DIR)"
 
-@if [ ! -f "$(TESTS_DIR)/Makefile" ]; then \
-	echo "Error: $(TESTS_DIR)/Makefile not found"; \
-	exit 1; \
-fi
+	@if [ ! -f "$(TESTS_DIR)/Makefile" ]; then \
+		echo "Error: $(TESTS_DIR)/Makefile not found"; \
+		exit 1; \
+	fi
 	$(MAKE) -f $(TESTS_DIR)/Makefile $@
 
