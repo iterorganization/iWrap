@@ -1,17 +1,11 @@
 # Set up environment
-source ci-build/st00-defs.sh
+source ci/muscle3/st00-defs.sh
 
-# Set up environment
-echo "--------------Module load iWrap--------------"
-if [ "$COMPILER_VENDOR" == "intel" ]; then  
+export IWRAP_HOME=$(realpath "$(dirname ${BASH_SOURCE})/../..")
 
-  # INTEL
-  try  module load iWrap/0.10.0-intel-2023b
+export PATH=${IWRAP_HOME}/bin:${PATH}
 
-else
+export PYTHONPATH=${IWRAP_HOME}:${PYTHONPATH}
+export TESTS_DIR="${IWRAP_HOME}/tests"
 
-  # INTEL
-  try module load iWrap/0.10.0-GCCcore-13.2.0
-
-fi
 
