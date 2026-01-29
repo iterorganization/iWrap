@@ -48,6 +48,6 @@ export AL_MAJOR="${AL_VERSION%.*.*}"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-export TESTS_DIR=$( cd -- "${SCRIPT_DIR}/../../tests" &> /dev/null && pwd )
+export TESTS_DIR=$( cd -- "${SCRIPT_DIR}/../../tests/muscle3" &> /dev/null && pwd )
 
 echo TESTS_DIR: $TESTS_DIR
