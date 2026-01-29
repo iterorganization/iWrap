@@ -44,11 +44,11 @@ else
 fi
 
 # check if 'local' or installed version should be used
-if $use_installed ; then
-    echo "WARNING: Using pre-loaded instance of plugins!"
-else
-    echo "INFO: Setting up plugins from local directory!"
-    source ci/muscle3/st03-m3plugins-local.sh "$@" || exit 1
-fi
+# if $use_installed ; then
+#     echo "WARNING: Using pre-loaded instance of plugins!"
+# else
+#     echo "INFO: Setting up plugins from local directory!"
+#     source ci/muscle3/st03-m3plugins-local.sh "$@" || exit 1
+# fi
 
 

@@ -1,6 +1,6 @@
 # auxiliary functions definitions
 
-
+echo "executing $(basename "$0")"
 function yell () 
 { 
   echo "$0: $*" >&2
