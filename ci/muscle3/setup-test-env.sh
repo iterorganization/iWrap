@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "executing $(basename "$0")"
 
 print_help() {
     echo -e "Usage:"

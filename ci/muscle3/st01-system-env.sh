@@ -1,6 +1,6 @@
 # Set up environment
 source ci/muscle3/st00-defs.sh
-
+echo "executing $(basename "$0")"
 # Set up environment such that module files can be loaded
 if test -f /etc/profile.d/modules.sh ;then
 . /etc/profile.d/modules.sh
@@ -8,13 +8,10 @@ else
 . /usr/share/Modules/init/sh
 fi
 module purge
-# Set up environment 
-# module use /work/imas/etc/modules/all
 
 # Set up environment
 echo "--------------Module load IMAS--------------"
 if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
-
 
   try module load XMLlib/3.3.1-intel-compilers-2023.2.1
 
@@ -24,7 +21,6 @@ if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
   try module load IMAS-AL-Cpp/5.4.0-intel-2023b-DD-4.0.0
   try module load IMAS-AL-Matlab/5.4.0-intel-2023b-DD-4.0.0
   try module load IMAS-Python/2.0.1-intel-2023b
-
 
   export CXX="icpc"
   export FC="ifort"
