@@ -21,6 +21,7 @@ if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
   try module load IMAS-AL-Cpp/5.4.0-intel-2023b-DD-4.0.0
   try module load IMAS-AL-Matlab/5.4.0-intel-2023b-DD-4.0.0
   try module load IMAS-Python/2.0.1-intel-2023b
+  try module load PyYAML/6.0.1-GCCcore-13.2.0
 
   export CXX="icpc"
   export FC="ifort"
@@ -37,6 +38,7 @@ else
   try module load IMAS-Python/2.0.1-foss-2023b
   try module load XMLlib/3.3.1-GCC-13.2.0
   try module load MUSCLE3/0.7.1-foss-2023b
+  try module load PyYAML/6.0.1-GCCcore-13.2.0
 
   export CXX="g++"
   export FC="gfortran"
