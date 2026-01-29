@@ -118,8 +118,9 @@ Create a workflow ``workflow.py``:
    from my_first_actor import MyFirstActor
    
    # Create IDS objects
-   equilibrium = imas.equilibrium()
-   core_profiles = imas.core_profiles()
+   _factory = imas.IDSFactory()
+   equilibrium = _factory.equilibrium()
+   core_profiles = _factory.core_profiles()
    
    # Initialize and run actor
    actor = MyFirstActor()
