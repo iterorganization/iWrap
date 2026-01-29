@@ -368,7 +368,7 @@ Now that you've created your first actor, explore:
 
 🔧 **Advanced Topics**
   - :doc:`code_standardization` - Code requirements and best practices
-  - :doc:`developers_manual/index` - Extending iWrap
+  - :doc:`developers_manual` - Extending iWrap
   - :doc:`actor_usage` - Using generated actors in workflows
 
 💡 **Examples**
@@ -380,7 +380,7 @@ Getting Help
 
 If you need assistance:
 
-1. Check the documentation: :doc:`../index`
+1. Check the documentation: :doc:`iWrap_intro`
 2. Review examples in the repository
 3. Contact: iWrap Development Team
 

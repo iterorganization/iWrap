@@ -195,19 +195,19 @@ Differences from Standard Python Actors
 MUSCLE3 actors differ from standard Python actors in several ways:
 
 +---------------------------+-------------------------+-------------------------+
-| Feature                   | Standard Python Actor   | MUSCLE3 Actor          |
+| Feature                   | Standard Python Actor   | MUSCLE3 Actor           |
 +===========================+=========================+=========================+
-| Coupling Framework        | Direct Python calls     | MUSCLE3 messaging      |
+| Coupling Framework        | Direct Python calls     | MUSCLE3 messaging       |
 +---------------------------+-------------------------+-------------------------+
-| Workflow Description      | Python script           | yMMSL file             |
+| Workflow Description      | Python script           | yMMSL file              |
 +---------------------------+-------------------------+-------------------------+
-| Data Exchange             | Direct IDS passing      | MUSCLE3 ports          |
+| Data Exchange             | Direct IDS passing      | MUSCLE3 ports           |
 +---------------------------+-------------------------+-------------------------+
-| Execution Model           | Sequential/MPI          | MUSCLE3 managed        |
+| Execution Model           | Sequential/MPI          | MUSCLE3 managed         |
 +---------------------------+-------------------------+-------------------------+
-| Init/Finalize Arguments   | Can have IDS            | No IDS allowed         |
+| Init/Finalize Arguments   | Can have IDS            | No IDS allowed          |
 +---------------------------+-------------------------+-------------------------+
-| Multiscale Coupling       | Manual                  | Built-in               |
+| Multiscale Coupling       | Manual                  | Built-in                |
 +---------------------------+-------------------------+-------------------------+
 
 Best Practices
@@ -322,7 +322,7 @@ All existing YAML files and workflows remain compatible. No changes to your code
 See Also
 ========================================
 
-- :doc:`../project_description` - Actor definition and generation
-- :doc:`../actor_generation_cmdln` - Command-line interface
-- :doc:`../iwrap_gui` - Graphical user interface
-- :doc:`../developers_manual/04_adding_generators` - Creating custom generators
+- :doc:`project_description` - Actor definition and generation
+- :doc:`actor_generation_cmdln` - Command-line interface
+- :doc:`iwrap_gui` - Graphical user interface
+- :doc:`developers_manual/04_adding_generators` - Creating custom generators
