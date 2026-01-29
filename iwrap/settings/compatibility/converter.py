@@ -63,6 +63,10 @@ class Converter:
                     return False
                 return True
             else:
+                # Check if the key exists before trying to access it
+                if splitted_path[0] not in current_node:
+                    return False
+                    
                 if isinstance(current_node[splitted_path[0]], list):
                     condition = condition.replace("$TARGET", "current_node[splitted_path[0]][x]")
                     del_indexes = []
