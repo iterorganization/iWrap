@@ -40,19 +40,27 @@ class CodeParameters:
         
         # Resolve paths relative to actor's input directory
         # Actor structure: actor_name/common/code_parameters.py and actor_name/input/
-        actor_dir = PathLib(__file__).parent.parent  # Go up from common/ to actor root
+        # Use resolve() to get the absolute real path, handling symlinks
+        actor_dir = PathLib(__file__).resolve().parent.parent  # Go up from common/ to actor root
         input_dir = actor_dir / 'input'
+        
+        self.__logger.debug(f"Actor directory: {actor_dir}")
+        self.__logger.debug(f"Input directory: {input_dir}")
+        self.__logger.debug(f"Input params path: {default_parameters_path}")
+        self.__logger.debug(f"Input schema path: {schema_path}")
         
         # Convert relative paths (filenames) to absolute paths in actor's input directory
         if default_parameters_path:
             params_path = PathLib(default_parameters_path)
             if not params_path.is_absolute():
                 default_parameters_path = str(input_dir / params_path)
+                self.__logger.debug(f"Resolved params path: {default_parameters_path}")
         
         if schema_path:
             schema_path_obj = PathLib(schema_path)
             if not schema_path_obj.is_absolute():
                 schema_path = str(input_dir / schema_path_obj)
+                self.__logger.debug(f"Resolved schema path: {schema_path}")
         
         self._default_parameters_path = default_parameters_path
         self._schema_path = schema_path
