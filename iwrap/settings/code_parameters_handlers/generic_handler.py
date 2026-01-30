@@ -10,7 +10,6 @@ class GenericHandler(ParametersHandlerInterface, ABC):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self._default_params_dir = Path(Path(__file__).parent, '../../input/')
         self._new_path_set: bool = True
         self._parameters_path: str = None
         self._default_parameters_path: str = None
@@ -106,43 +105,24 @@ class GenericHandler(ParametersHandlerInterface, ABC):
         self._schema_path = schema_path
 
         # Read schema (if not yet loaded)
-        if not self._schema_str:
-            # Resolve schema path
-            if schema_path:
-                schema_path_obj = Path(schema_path)
-                if schema_path_obj.is_absolute():
-                    full_schema_path = schema_path_obj
-                else:
-                    # Relative paths are resolved from current working directory (actor location)
-                    # not from iwrap code location
-                    full_schema_path = Path.cwd() / schema_path_obj
+        if not self._schema_str and schema_path:
+            schema_file = Path(schema_path).resolve()
+            self.__logger.debug(f"Reading schema from: {schema_file}")
+            
+            if not schema_file.exists():
+                raise FileNotFoundError(f"Schema file not found: {schema_file}")
                 
-                full_schema_path = full_schema_path.resolve()
-                self.__logger.debug(f"Reading schema from: {full_schema_path}")
-                
-                if not full_schema_path.exists():
-                    raise FileNotFoundError(f"Schema file not found: {full_schema_path}")
-                    
-                self._schema_str = self._read_file(full_schema_path)
+            self._schema_str = self._read_file(schema_file)
 
-        if self._new_path_set:
-            if self._parameters_path:
-                # Resolve parameters path
-                params_path_obj = Path(self._parameters_path)
-                if params_path_obj.is_absolute():
-                    full_params_path = params_path_obj
-                else:
-                    # Relative paths are resolved from current working directory (actor location)
-                    full_params_path = Path.cwd() / params_path_obj
-                
-                full_params_path = full_params_path.resolve()
-                self.__logger.debug(f"Reading parameters from: {full_params_path}")
-                
-                if not full_params_path.exists():
-                    raise FileNotFoundError(f"Parameters file not found: {full_params_path}")
-                
-                self._parameters_str = self._read_file(full_params_path)
-                self._new_path_set = False
+        if self._new_path_set and self._parameters_path:
+            params_file = Path(self._parameters_path).resolve()
+            self.__logger.debug(f"Reading parameters from: {params_file}")
+            
+            if not params_file.exists():
+                raise FileNotFoundError(f"Parameters file not found: {params_file}")
+            
+            self._parameters_str = self._read_file(params_file)
+            self._new_path_set = False
 
     def restore_default_parameters_path(self):
         self._parameters_path = self._default_parameters_path
