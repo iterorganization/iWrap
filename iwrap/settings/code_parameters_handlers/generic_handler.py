@@ -105,15 +105,28 @@ class GenericHandler(ParametersHandlerInterface, ABC):
         self._parameters_path = parameters_path
         self._schema_path = schema_path
 
-        # Read XSD (if not yet loaded)
+        # Read schema (if not yet loaded)
         if not self._schema_str:
-            schema_path = Path( self._default_params_dir, Path(self._schema_path))
-            self._schema_str = self._read_file( schema_path )
+            # Resolve schema path - make absolute if relative
+            if schema_path and not Path(schema_path).is_absolute():
+                full_schema_path = Path(self._default_params_dir, schema_path).resolve()
+            else:
+                full_schema_path = Path(schema_path).resolve() if schema_path else None
+            
+            if full_schema_path:
+                self.__logger.debug(f"Reading schema from: {full_schema_path}")
+                self._schema_str = self._read_file(full_schema_path)
 
         if self._new_path_set:
             if self._parameters_path:
-                parameters_path = Path( self._default_params_dir, Path(self._parameters_path))
-                self._parameters_str = self._read_file(parameters_path)
+                # Resolve parameters path - make absolute if relative
+                if not Path(self._parameters_path).is_absolute():
+                    full_params_path = Path(self._default_params_dir, self._parameters_path).resolve()
+                else:
+                    full_params_path = Path(self._parameters_path).resolve()
+                
+                self.__logger.debug(f"Reading parameters from: {full_params_path}")
+                self._parameters_str = self._read_file(full_params_path)
                 self._new_path_set = False
 
     def restore_default_parameters_path(self):
