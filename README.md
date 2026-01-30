@@ -58,7 +58,7 @@ iwrap --list-actor-types
 # Configuration of working environment
 
 ## Downloading software
-    git clone ssh://git@git.iter.org/imex/iwrap.git
+    git clone https://github.com/iterorganization/iWrap.git
     cd iwrap
     git checkout <branch>
 
