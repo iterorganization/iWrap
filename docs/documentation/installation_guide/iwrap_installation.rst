@@ -156,7 +156,7 @@ Installation Options
 Basic Installation (for Python actors only)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Install iWrap core without MUSCLE3 support:
+Install iWrap without MUSCLE3 support:
 
 .. code-block:: bash
 
