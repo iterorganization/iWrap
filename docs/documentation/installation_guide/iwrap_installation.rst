@@ -153,7 +153,7 @@ iWrap Installation
 Installation Options
 --------------------
 
-Basic Installation (Core Only)
+Basic Installation (for Python actors only)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Install iWrap core without MUSCLE3 support:
