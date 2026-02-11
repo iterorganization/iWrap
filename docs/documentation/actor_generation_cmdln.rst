@@ -35,7 +35,7 @@ Once YAML file is prepared it can be used for generation of an actor using iWrap
                             lists details of given actor type generator
       -v, --version         show program's version number and exit
 
-    For more information, visit <https://imas-core.readthedocs.io/en/latest/>.
+    For more information, visit <https://iwrap.readthedocs.io/en/latest/>.
 
 If YAML file contains both code description and actor description parts, no additional switches are required.
 
