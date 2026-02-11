@@ -5,7 +5,8 @@ MUSCLE3 Actor Generators
 Overview
 ========================================
 
-iWrap includes built-in support for generating MUSCLE3 actors, enabling multiscale and multiphysics coupling scenarios. MUSCLE3 (Multiscale Coupling Library and Environment) is a high-performance coupling framework designed for complex scientific simulations.
+iWrap includes built-in support for generating MUSCLE3 actors, enabling multiscale and multiphysics coupling scenarios. 
+MUSCLE3 (Multiscale Coupling Library and Environment) is a high-performance coupling framework designed for complex scientific simulations.
 
 Available MUSCLE3 Generators
 ========================================
@@ -35,43 +36,6 @@ Generate Fortran actors with MUSCLE3 coupling capabilities.
 **Use case:** Legacy Fortran codes or performance-critical Fortran implementations needing MUSCLE3 coupling.
 
 **Actor Type ID:** ``MUSCLE3-Fortran``
-
-Installation
-========================================
-
-MUSCLE3 support requires the MUSCLE3 library to be installed.
-
-Installing iWrap with MUSCLE3 Support
---------------------------------------
-
-.. code-block:: bash
-
-   pip install iwrap[muscle3]
-
-This will install:
-- iWrap core
-- MUSCLE3 Python library (>= 0.7.0)
-- Enable all three MUSCLE3 actor generators
-
-Verifying Installation
-----------------------
-
-Check that MUSCLE3 generators are available:
-
-.. code-block:: bash
-
-   iwrap --list-actor-types
-
-Expected output:
-
-.. code-block:: text
-
-            Id          :              Name              : Description
-   ----------------------------------------------------------------------
-       MUSCLE3-CPP      :         MUSCLE3 (C++)          : Wrapping C++ code into MUSCLE3 micro model
-     MUSCLE3-Fortran    :       MUSCLE3 (Fortran)        : Wrapping Fortran code into MUSCLE3 micro model
-      MUSCLE3-Python    :        MUSCLE3 (Python)        : Wrapping Python code into MUSCLE3 micro model
-          python        :             python             : python
 
 Usage
 ========================================
@@ -199,7 +163,7 @@ MUSCLE3 actors differ from standard Python actors in several ways:
 +===========================+=========================+=========================+
 | Coupling Framework        | Direct Python calls     | MUSCLE3 messaging       |
 +---------------------------+-------------------------+-------------------------+
-| Workflow Description      | Python script           | yMMSL file              |
+| Workflow Description      | XML file                | yMMSL file              |
 +---------------------------+-------------------------+-------------------------+
 | Data Exchange             | Direct IDS passing      | MUSCLE3 ports           |
 +---------------------------+-------------------------+-------------------------+

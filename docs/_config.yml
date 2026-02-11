@@ -33,8 +33,6 @@ sphinx:
     html_theme_options:
       show_navbar_depth: 3      #left sidebar
       show_toc_level: 3         #rigth sidebar
-      repo_url: "https://git.iter.org/projects/IMEX/repos/iwrap"
-      repo_name: "iWrap"
     suppress_warnings:
       - "etoc.toctree"
 

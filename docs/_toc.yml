@@ -9,15 +9,13 @@ parts:
     chapters:
     - file: documentation/quickstart.rst
       title: Quick Start Guide
+    - file: documentation/actor_types.rst
+      title: Actor Types Overview
+    - file: documentation/muscle3_actors.rst
+      title: MUSCLE3 Actor Generators
     - file: documentation/iWrap_intro.rst
       title: Users Manual
       sections:
-        - file: documentation/actor_types.rst
-          title: Actor Types Overview
-        - file: documentation/muscle3_actors.rst
-          title: MUSCLE3 Actor Generators
-        - file: documentation/muscle3_migration_guide.rst
-          title: MUSCLE3 Migration Guide
         - file: documentation/code_standardization.rst
           sections:
             - file: documentation/code_standardization/code_standardization_fortran.rst
@@ -40,6 +38,7 @@ parts:
         - file:  documentation/developers_manual/05_plugins_compatibility.rst
         - file:  documentation/developers_manual/06_code_desc_compatibility.rst
         - file:  documentation/developers_manual/07_code_parameters_handling.rst
+        - file:  documentation/developers_manual/08_ids_handling.rst
         - file:  documentation/developers_manual/09_system_tests.rst
           title: System tests
           sections:
@@ -51,6 +50,12 @@ parts:
       sections:
         - file: documentation/installation_guide/iwrap_requirements.rst
         - file: documentation/installation_guide/iwrap_configuration.rst
+    
+    - file: documentation/muscle3.rst
+      title: MUSCLE3 Actors
+      sections:
+        - file: documentation/muscle3_resources/installation.rst
+        - file: documentation/muscle3_resources/code_wrapping.rst
 
   - caption: Welcome to Tutorial
     chapters:
