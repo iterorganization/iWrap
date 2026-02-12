@@ -156,7 +156,7 @@ MUSCLE3 support is now included in the main iWrap package and can be installed u
 Requirements
 #######################################################################################################################
 
-Software required to use MUSCLE3 plugins:
+Software required to use MUSCLE3 actor generators:
 
 - `Python` 
 - `iWrap` 
@@ -269,7 +269,7 @@ Variables that can be configured:
 Verification
 #######################################################################################################################
 
-Verification of MUSCLE3 Plugins Installation
+Verification of MUSCLE3 Generators Installation
 =========================================================================================
 
 Once iWrap is installed with MUSCLE3 support, verify that the MUSCLE3 actor generators are available:
@@ -295,7 +295,7 @@ You can also verify that the MUSCLE3 generators can be imported:
     from iwrap.generators.actor_generators.muscle3_python import M3PythonActor
     from iwrap.generators.actor_generators.muscle3_common import m3_utils
 
-If these imports succeed without errors, the MUSCLE3 plugins are correctly installed.
+If these imports succeed without errors, the MUSCLE3 generators are correctly installed.
 
 Manual Environment Setup
 ========================
