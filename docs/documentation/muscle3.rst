@@ -35,11 +35,7 @@ executable (C++ and Fortran) or a wrapping script (Python).
 
    muscle3_resources/code_wrapping.rst
 
-.. toctree::
-   :maxdepth: 10
-   :caption: Installation guide
 
-   muscle3_resources/installation.rst
 
 .. note:: Further reading
 

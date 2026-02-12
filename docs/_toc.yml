@@ -9,10 +9,6 @@ parts:
     chapters:
     - file: documentation/quickstart.rst
       title: Quick Start Guide
-    - file: documentation/actor_types.rst
-      title: Actor Types Overview
-    - file: documentation/muscle3_actors.rst
-      title: MUSCLE3 Actor Generators
     - file: documentation/iWrap_intro.rst
       title: Users Manual
       sections:
@@ -54,7 +50,6 @@ parts:
     - file: documentation/muscle3.rst
       title: MUSCLE3 Actors
       sections:
-        - file: documentation/muscle3_resources/installation.rst
         - file: documentation/muscle3_resources/code_wrapping.rst
 
   - caption: Welcome to Tutorial

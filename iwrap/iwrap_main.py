@@ -17,7 +17,7 @@ def get_parser(is_commandline_mode: bool) -> argparse.ArgumentParser:
     # Management of input arguments
     parser = argparse.ArgumentParser( description='iWrap - a modular IMAS actor generator, used for creating '
                                                   'standardized actors from a code interfaced with IDSs.',
-                                      epilog='For more information, visit <https://imas-core.readthedocs.io/en/latest/>.',
+                                      epilog='For more information, visit <https://iwrap.readthedocs.io/en/latest/>.',
                                       # formatter_class=argparse.ArgumentDefaultsHelpFormatter
                                       )
 

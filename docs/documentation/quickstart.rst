@@ -5,45 +5,9 @@ Quick Start Guide
 This guide will help you get started with iWrap quickly, covering both standard Python actors and MUSCLE3 actors.
 
 Installation
-========================================
+============
 
-Choose Your Installation
-------------------------
-
-**Option 1: Core Only (Minimal)**
-
-.. code-block:: bash
-
-   pip install iwrap
-
-Includes: Standard Python actor generator
-
-**Option 2: With MUSCLE3 Support (Recommended)**
-
-.. code-block:: bash
-
-   pip install iwrap[muscle3]
-
-Includes: Python actor + MUSCLE3 actors (Python, C++, Fortran)
-
-**Option 3: Development (All Features)**
-
-.. code-block:: bash
-
-   pip install iwrap[all]
-
-Includes: All features and development tools
-
-Verify Installation
--------------------
-
-.. code-block:: bash
-
-   iwrap --version
-   iwrap --list-actor-types
-
-Your First Actor (Standard Python)
-========================================
+For detailed installation instructions, see :doc:`installation_guide/iwrap_installation`.
 
 Step 1: Prepare Your Code
 --------------------------
@@ -141,12 +105,7 @@ Prerequisites
 -------------
 
 Ensure MUSCLE3 is installed:
-
-.. code-block:: bash
-
-   pip install iwrap[muscle3]
-   # Verify
-   python -c "import muscle3; print(muscle3.__version__)"
+For detailed installation instructions, see :doc:`installation_guide/iwrap_installation`.
 
 Step 1: Prepare Your Code
 --------------------------
@@ -263,18 +222,6 @@ Or load an existing description:
 
    iwrap-gui -f code_description.yaml
 
-GUI Steps
----------
-
-1. **Select Actor Type:** Choose from dropdown (python, MUSCLE3-Python, etc.)
-2. **Enter Actor Name:** Specify your actor name
-3. **Code Details:** Browse and select your code file
-4. **Define Methods:** Add init, step, finalize methods
-5. **Specify IDS Arguments:** Define input/output IDS for each method
-6. **Generate:** Click generate button
-
-The GUI will create the YAML file and generate the actor.
-
 Common Tasks
 ========================================
 
@@ -307,81 +254,3 @@ Viewing Actor Generator Details
 
    iwrap --list-actor-details python
    iwrap --list-actor-details MUSCLE3-Python
-
-Common Issues and Solutions
-========================================
-
-Issue: MUSCLE3 Generators Not Available
-----------------------------------------
-
-**Symptom:** Only ``python`` appears in ``--list-actor-types``
-
-**Solution:**
-
-.. code-block:: bash
-
-   pip install iwrap[muscle3]
-
-Issue: Import Error
--------------------
-
-**Symptom:** ``ModuleNotFoundError: No module named 'iwrap'``
-
-**Solution:** Ensure iWrap is installed and PYTHONPATH is set:
-
-.. code-block:: bash
-
-   pip install iwrap
-   # Or use environment setup script
-   source set-iter.sh
-
-Issue: MUSCLE3 Init/Finalize Error
------------------------------------
-
-**Symptom:** ``ValueError: MUSCLE3 actor generator cannot handle INIT/FINALIZE methods with IDS arguments``
-
-**Solution:** Remove IDS arguments from init and finalize methods in YAML:
-
-.. code-block:: yaml
-
-   subroutines:
-     init:
-       name: init
-       arguments: []  # Empty - no IDS allowed
-     finalize:
-       name: finalize
-       arguments: []  # Empty - no IDS allowed
-
-Next Steps
-========================================
-
-Now that you've created your first actor, explore:
-
-📚 **Documentation**
-  - :doc:`actor_types` - Learn about all actor types
-  - :doc:`muscle3_actors` - Deep dive into MUSCLE3
-  - :doc:`project_description` - Complete actor description reference
-
-🎓 **Tutorials**
-  - Follow interactive Jupyter tutorials in ``docs/tutorial/``
-  - Try example actors in ``examples/``
-
-🔧 **Advanced Topics**
-  - :doc:`code_standardization` - Code requirements and best practices
-  - :doc:`developers_manual` - Extending iWrap
-  - :doc:`actor_usage` - Using generated actors in workflows
-
-💡 **Examples**
-  - Browse ``examples/`` directory for complete working examples
-  - Check plugin tests for advanced usage patterns
-
-Getting Help
-========================================
-
-If you need assistance:
-
-1. Check the documentation: :doc:`iWrap_intro`
-2. Review examples in the repository
-3. Contact: iWrap Development Team
-
-Happy coding with iWrap! 🚀
