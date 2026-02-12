@@ -29,13 +29,6 @@ without changes of the code API. The MUSCLE3 wrapper is one of ‘actor generato
 The iWrap is able to wrap native code provided in Python, C++ and Fortran, producing either a standalone binary
 executable (C++ and Fortran) or a wrapping script (Python).
 
-.. toctree::
-   :maxdepth: 10
-   :caption: Code wrapping
-
-   muscle3_resources/code_wrapping.rst
-
-
 
 .. note:: Further reading
 
