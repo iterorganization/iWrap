@@ -10,6 +10,9 @@ build:
   commands:
     - pip install -r docs/requirements.txt
     - cd docs && jupyter-book build .
+    # RTD expects the built HTML at: $READTHEDOCS_OUTPUT/html
+    - mkdir -p $READTHEDOCS_OUTPUT/html
+    - cp -a docs/_build/html/. $READTHEDOCS_OUTPUT/html/
 
 # Optionally set the Python requirements used to build documentation
 python:
