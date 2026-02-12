@@ -8,6 +8,7 @@ build:
   tools:
     python: "3.11"
   commands:
+    - pip install -e .
     - pip install -r docs/requirements.txt
     - cd docs && jupyter-book build .
     # RTD expects the built HTML at: $READTHEDOCS_OUTPUT/html

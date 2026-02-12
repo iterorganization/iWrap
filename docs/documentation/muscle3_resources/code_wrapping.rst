@@ -8,13 +8,12 @@ MUSCLE3 actor generators requirements
 #######################################################################################################################
 Following software must be available to wrap the code into MUSCLE3 models:
 
-- *iWrap* - MUSCLE3 actors generators are provided as iWrap plugins, thus they cannot be used without iWrap
+- *iWrap* - MUSCLE3 actors generators are built-in and included in the main iWrap package (v0.8.0+)
 - *MUSCLE3 libraries* - indispensable for building actors - should be available via ``pkg-config`` mechanism
-- *MUSCLE3 actor generator plugins* - all paths to generator packages must be listed on the ``PYTHONPATH``
 
 .. note::
-   Usually operation system can be configured using ``modules`` toolkit, so in most cases loading ``iwrap4paf``
-   is enough to configure user working environment.
+   Usually operation system can be configured using ``modules`` toolkit, so in most cases loading ``iwrap``
+   module is enough to configure user working environment. MUSCLE3 libraries must also be available.
 
    **Warning**: Module name(s) may vary depending on platform!
 
@@ -54,7 +53,7 @@ it can be done using either iwrap command line, YAML describing an actor or iWra
         ...
 
 .. tip::
-   To help developers write MUSCLE3-compliant code, the iWrap MUSCLE3 plug-in allows you
+   To help developers write MUSCLE3-compliant code, the iWrap MUSCLE3 actor generators allow you
    to generate so-called **actor's skeleton**.
    The **actor's skeleton** is a source code for a given actor without embedding actual calls to native code.
    All places where subroutines from the code could be introduced are clearly marked with comments
