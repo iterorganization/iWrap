@@ -53,57 +53,6 @@ The added generator will be found by iWrap if and only if:
 Plugins <--> iWrap API Compatibility
 #######################################################################################################################
 
-Plugins, thanks to their modularity, allow users to compose iWrap from only the components necessary for a given purpose, 
-omitting unused functionalities. However, as both iWrap and the plug-ins evolve, ensuring cross-compatibility between a 
-specific version of iWrap and the plug-ins can be challenging. To warn users about potential incompatibilities, the following 
-mechanism has been proposed:
-
-* iWrap maintains the current version of the plugin API (``iwrap.generators.API_VERSION``).
-
-  .. note::
-       iWrap can be queried from the command line to check the current version of the API used
-       to communicate between iWrap and plugins.
-
-       .. code-block:: bash
-
-           bash> iwrap --plugins-api-version
-           iWrap <-> plugins API version:   2.0
-
-* Every plugin should declare the compliant API using the class attribute ``COMPLIANT_API``.
-* The class method ``check_api_compliance()`` determines whether the plugin is definitely compatible with the current version 
-  of iWrap or if it may not be compatible.
-* The method checks the API version currently handled by iWrap (``Mi.mi``) against the declared compliant version handled 
-  by the plugin (``Mp.mp``).
-* The method detects INCOMPATIBILITY if:
-
-  + The plugin doesn't implement versioning API.
-  + The major versions differ (``Mp != Mi``).
-  + The plugin API version is newer than iWrap's (``Mp.mp > Mi.mi``), i.e., the plugin may use changes
-    not yet available in the current version of iWrap.
-
-* COMPATIBILITY is assumed only if:
-   + The major versions are equal (``Mp == Mi``) and
-   + The plugin API version is older or equal to iWrap's (``Mp.mp <= Mi.mi``).
-
-* If the plugin is not compatible, the user is informed of the error, and the plugin is not loaded.
-
-  This method can be overridden in generator implementation classes to better address issues
-  related to the compatibility of the particular plugin.
-
-.. note::
-   The symbols used in the text above to denote versions:
-
-   * ``Mi.mi``: iWrap API version (``Major.minor``)
-   * ``Mp.mp``: iWrap API version handled by particular plugin (``Major.minor``)
-
-
-.. code-block:: python
-
-   class AbstractGenerator(ABC):
-
-        COMPLIANT_API: str = 'Major.minor'
-
-        @classmethod
-        def check_api_compliance(cls) -> None:
-            ...
+See :doc:`05_plugins_compatibility` for a full description of the iWrap plugin API versioning and
+compatibility mechanism.
 

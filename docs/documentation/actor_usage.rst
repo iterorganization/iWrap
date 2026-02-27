@@ -181,15 +181,9 @@ Code restarting methods
    actor_object.set_state(code_state)
 
 
-The actor ``get_state`` and  ``set_state`` methods enable restart stateful, sometimes compute demanding,
-codes without losing intermediate results that are not captured in the code's outputs. The code may be asked periodically
-about its internal state using the ``get_state`` method. After a restart, the code state can be restored
-using the ``set_state`` method.
-
-The internal state of the code has to be passed as a string, however iWrap gives full flexibility
-to the code developer concerning the format and content of state description.
-It is a kind of a ‘black box’ returned from ``get_state`` and passed to ``set_state`` method during restart,
-so the only requirement is that information returned by ``get_state`` is understandable by ``set_state``.
+The actor ``get_state`` and ``set_state`` methods enable restarting stateful codes without losing
+intermediate results. For a full description of the GET_STATE/SET_STATE contract, see
+:doc:`../code_standardization`.
 
 - Example of usage:
 
