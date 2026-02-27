@@ -26,3 +26,6 @@ tutorial_venv
 test.out
 .ipynb_checkpoints
 failed_tests.log
+
+# SCM setuptools
+iwrap/_version.py

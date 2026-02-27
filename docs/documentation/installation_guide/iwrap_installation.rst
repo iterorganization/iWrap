@@ -156,27 +156,9 @@ MUSCLE3 support is now included in the main iWrap package and can be installed u
 Requirements
 #######################################################################################################################
 
-Software required to use MUSCLE3 actor generators:
+For a complete list of iWrap dependencies, see :doc:`iwrap_requirements`.
 
-- `Python` 
-- `iWrap` 
-- `MUSCLE3`
-- `IMAS-Fortran` (if using Fortran actors)
-- `IMAS-Cpp` (if using C++ actors)
-- `IMAS-Java` (if using Java actors)
-- `XMLLib` (for XML parsing)
-
-Software required to build documentation:
-
-- `make` 
-- `Python` 
-- Python packages:
-
-  - `Sphinx` 
-  - `sphinx-bootstrap-theme` 
-  - `sphinx-rtd-theme` 
-
-
+If using MUSCLE3-Cpp or MUSCLE3-Fortran actors, libmuscle must be installed separately:
 `C and Fortran libmuscle installation <https://muscle3.readthedocs.io/en/latest/installing.html#c-and-fortran>`_
 
 Overview
@@ -269,9 +251,6 @@ Variables that can be configured:
 Verification
 #######################################################################################################################
 
-Verification of MUSCLE3 Generators Installation
-=========================================================================================
-
 Once iWrap is installed with MUSCLE3 support, verify that the MUSCLE3 actor generators are available:
 
 .. code-block:: console
@@ -285,18 +264,6 @@ Once iWrap is installed with MUSCLE3 support, verify that the MUSCLE3 actor gene
 
 If the MUSCLE3 actor types are listed, the installation was successful.
 
-Verify Python Imports
-=========================================================================================
-
-You can also verify that the MUSCLE3 generators can be imported:
-
-.. code-block:: python
-
-    from iwrap.generators.actor_generators.muscle3_python import M3PythonActor
-    from iwrap.generators.actor_generators.muscle3_common import m3_utils
-
-If these imports succeed without errors, the MUSCLE3 generators are correctly installed.
-
 Manual Environment Setup
 ========================
 
@@ -308,7 +275,7 @@ If you're not using the provided scripts, ensure the following are available:
 
       pkg-config --modversion muscle3
 
-      * libmuscle (CPP + Fortran) — `MUSCLE3 <https://github.com/multiscale/muscle3>`_ (if using MUSCLE3 actors)
+   * libmuscle (CPP + Fortran) — `MUSCLE3 <https://github.com/multiscale/muscle3>`_ (if using MUSCLE3 actors)
 
 2. **IMAS Access Layer**: Properly configured
 
@@ -331,33 +298,6 @@ If you're not using the provided scripts, ensure the following are available:
    .. code-block:: bash
 
       module load XMLLib
-
-Verifying Installation
-~~~~~~~~~~~~~~~~~~~~~~
-
-To verify which actor generators are available:
-
-.. code-block:: bash
-
-   iwrap --list-actor-types
-
-Expected output with MUSCLE3 installed:
-
-.. code-block:: text
-
-            Id          :              Name              : Description
-   ----------------------------------------------------------------------
-           python        :      Simple Python actor       : Simple Python actor
-       MUSCLE3-Python    :        MUSCLE3 (Python)        : Wrapping Python code into MUSCLE3 micro model
-
-You can also verify that the MUSCLE3 generators can be imported:
-
-.. code-block:: python
-
-    from iwrap.generators.actor_generators.muscle3_python import M3PythonActor
-    from iwrap.generators.actor_generators.muscle3_common import m3_utils
-
-If these imports succeed without errors, the MUSCLE3 plugins are correctly installed.
 
 Troubleshooting
 #######################################################################################################################
@@ -428,24 +368,25 @@ If you get errors about MUSCLE3 libraries not being found during actor compilati
 Migration from Separate Plugin Package
 #######################################################################################################################
 
-If you were previously using the separate ``iwrap-plugins-muscle3`` package:
+If you were previously using the separate ``iwrap-plugins-muscle3`` package and were directly
+importing iWrap generator classes in your own code, update the import paths as follows:
 
-Import Path Changes
-=========================================================================================
+.. note::
 
-Update your code to use the new import paths:
+   End users generating actors via the ``iwrap`` CLI do not need to change anything.
+   This section is only relevant if you were importing iWrap internals directly.
 
-**Old (separate plugin):**
-
-.. code-block:: python
-
-    from iwrap_plugins.iwrap_actor_generator.muscle3_python import M3PythonActor
-
-**New (integrated):**
+**Old (separate ``iwrap-plugins-muscle3`` package):**
 
 .. code-block:: python
 
-    from iwrap.generators.actor_generators.muscle3_python import M3PythonActor
+    from iwrap_plugins.iwrap_actor_generator.muscle3_python import PythonActorGenerator
+
+**New (integrated into iWrap):**
+
+.. code-block:: python
+
+    from iwrap.generators.actor_generators.muscle3_python.m3_python_actor import PythonActorGenerator
 
 
 

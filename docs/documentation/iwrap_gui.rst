@@ -21,13 +21,7 @@ Introduction
 iWrap purpose
 ###############
 
--  iWrap creates a Python script (aka an actor) that:
-
-   -  takes advantage of generated Fortran/CPP/Java wrapper in order to communicate with user code
-   -  passes in/out IDS into user code
-   -  calls a user code
-   -  provides error handling
-   -  calls debugger (if run in "debug" mode)
+For an overview of iWrap's purpose and goals, see :doc:`../iWrap_intro`.
 
 iWrap main window
 ##################
