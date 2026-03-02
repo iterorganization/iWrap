@@ -36,7 +36,7 @@ class PythonActorGenerator(ActorGenerator):
 
     @property
     def description(self) -> str:
-        return 'python'
+        return 'Simple Python actor'
 
     @property
     def actor_language(self) -> List[str]:
