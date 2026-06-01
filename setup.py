@@ -91,6 +91,7 @@ if __name__ == "__main__":
     setup(
         use_scm_version={
             'write_to': 'iwrap/_version.py',
+            'local_scheme': 'no-local-version',
         },
         packages=find_packages(exclude=('tests*', 'testing*', 'test_suite*')),
         setup_requires=pyproject_data["build-system"]["requires"],
