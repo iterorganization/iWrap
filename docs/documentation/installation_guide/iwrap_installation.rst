@@ -181,13 +181,6 @@ To enable MUSCLE3 actor generators, install with the MUSCLE3 extra:
 
    pip install iwrap[muscle3]
 
-Or alternatively:
-
-.. code-block:: bash
-
-   pip install iwrap
-   pip install -r requirements_muscle3.txt
-
 This will install:
 
 - iWrap core package
