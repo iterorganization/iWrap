@@ -12,7 +12,5 @@ python -m pip install --ignore-installed ".[docs]"
 
 cd docs/
 
-echo ${PYTHONPATH}
-
 echo "--------Building Jupyter-Book-------------"
 jupyter-book build .

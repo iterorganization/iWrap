@@ -5,12 +5,12 @@ export IWRAP_HOME=$(realpath "$(dirname ${BASH_SOURCE})/../..")
 
 export PATH=${IWRAP_HOME}/bin:${PATH}
 
-export PYTHONPATH=${IWRAP_HOME}:${PYTHONPATH}
-
+# Ensure build tools are available, then install iWrap (deps come from EasyBuild modules)
+pip install --quiet setuptools setuptools_scm
+pip install -e ${IWRAP_HOME} --no-deps -q
 
 echo "IWRAP_HOME: $IWRAP_HOME"
 echo "PATH: $PATH"
-echo "PYTHONPATH: $PYTHONPATH"
 
 echo "IWRAP setup completed successfully"
 

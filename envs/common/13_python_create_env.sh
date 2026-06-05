@@ -14,6 +14,10 @@ python -m venv --system-site-packages venv
 echo "-----------Activate Python Virtual ENV-------------"
 . `pwd`/venv/bin/activate
 
+echo "--------------PIP install iWrap (editable, no-deps)----------"
+python -m pip install --quiet setuptools setuptools_scm
+python -m pip install -e . --no-deps -q
+
 echo "-----------------PIP pylint-junit------------"
 python -m pip install pylint
 
