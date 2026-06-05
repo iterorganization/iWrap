@@ -24,22 +24,22 @@ dependencies = [
 [project.optional-dependencies]
 muscle3 = ["muscle3>=0.7.0"]
 docs = [
-    "urllib3>=2.5.0",
-    "jupyterlab>=4.4.5",
-    "jupyter-book>=1.0.4",
-    "docutils>=0.21.2",
-    "jupyterlab_myst>=2.4.2",
-    "markdown_it_py>=3.0.0",
-    "mdit_py_plugins>=0.4.2",
-    "myst-nb>=1.3.0",
-    "myst-parser>=3.0.1",
-    "sphinx>=7.4.7",
-    "sphinx_inline_tabs>=2023.4.21",
-    "typing-extensions>=4.14.1",
-    "pylint>=3.3.7",
-    "pyparsing>=3.2.3",
-    "numpy>=1.26.4",
-    "sphinx_immaterial>=0.13.5",
+    "urllib3==2.5.0",
+    "jupyterlab==4.4.5",
+    "jupyter-book==1.0.4.post1",
+    "docutils==0.21.2",
+    "jupyterlab_myst==2.4.2",
+    "markdown_it_py==3.0.0",
+    "mdit_py_plugins==0.4.2",
+    "myst-nb==1.3.0",
+    "myst-parser==3.0.1",
+    "sphinx==7.4.7",
+    "sphinx_inline_tabs==2023.4.21",
+    "typing-extensions==4.14.1",
+    "pylint==3.3.7",
+    "pyparsing==3.2.3",
+    "numpy==1.26.4",
+    "sphinx_immaterial==0.13.5",
 ]
 all = ["muscle3>=0.7.0"]
 
