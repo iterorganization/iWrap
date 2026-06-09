@@ -44,8 +44,8 @@ iwrap_build:
 	( \
 		$(PY_CMD) -m venv .venv; \
 		. .venv/bin/activate; \
-		pip install -r requirements_build.txt; \
-		python setup.py bdist_wheel --dist-dir=./dist/$(VERSION); \
+		pip install build; \
+		python -m build --wheel -o ./dist/$(VERSION); \
 		deactivate; \
 	)
 	rm -rf .venv

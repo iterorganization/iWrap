@@ -3,14 +3,16 @@ source ci/muscle3/st00-defs.sh
 echo "executing $(basename "$0")"
 export IWRAP_HOME=$(realpath "$(dirname ${BASH_SOURCE})/../..")
 
-export PATH=${IWRAP_HOME}/bin:${PATH}
-
-export PYTHONPATH=${IWRAP_HOME}:${PYTHONPATH}
-
+# Ensure we are inside a virtual env before pip installing
+if [ -z "$VIRTUAL_ENV" ]; then
+    python -m venv --system-site-packages ${IWRAP_HOME}/.venv
+    . ${IWRAP_HOME}/.venv/bin/activate
+fi
+pip install --quiet setuptools setuptools_scm
+pip install -e ${IWRAP_HOME} --no-deps -q
 
 echo "IWRAP_HOME: $IWRAP_HOME"
 echo "PATH: $PATH"
-echo "PYTHONPATH: $PYTHONPATH"
 
 echo "IWRAP setup completed successfully"
 
