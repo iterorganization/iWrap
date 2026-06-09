@@ -1,5 +1,5 @@
 #!/bin/sh --login
-set -x
+set -e
 
 envs_dir=`pwd`/envs
 #chmod a+x $envs_dir/00_load_imas_env.sh
