@@ -22,7 +22,6 @@
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
-   {{ ids_var_name }}->code.name = "{{sbrt_data.name}}";
    {% if code_parameters.parameters and sbrt_data.need_code_parameters%}
        {{ ids_var_name }}->code.parameters = std::string(code_params_str);
    {% endif %}
