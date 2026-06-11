@@ -19,6 +19,7 @@ dependencies = [
     "f90nml",
     "jsonschema",
     "JPype1",
+    "imas-python",
 ]
 
 [project.optional-dependencies]
