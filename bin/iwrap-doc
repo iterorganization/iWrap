@@ -1,12 +1,2 @@
 #!/bin/sh
-echo "IWRAP-DOC"
-echo "LAUNCHED IWRAP DOCUMENTATION"
-
-if command -v firefox &> /dev/null
-then
-	echo "USING FIREFOX BROWSER"
-	firefox $IWRAP_HOME/docs/_build/html/index.html
-else
-	echo "USING DEAFULT BROWSER"
-	xdg-open $IWRAP_HOME/docs/_build/html/index.html
-fi
+xdg-open https://iwrap.readthedocs.io/en/latest
