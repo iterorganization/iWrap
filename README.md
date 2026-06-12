@@ -134,9 +134,7 @@ Start your tutorial journey by heading to the `tutorials` directory and opening 
 
 
 # Manuals
-To launch a browser with documentation, simply run:
-
-`shell> iwrap-doc`
+Documentation is available at [iwrap.readthedocs.io](https://iwrap.readthedocs.io/en/latest)
 
 # Examples
 Examples placed in directory `iwrap/examples` can be an excellent source of knowledge

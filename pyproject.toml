@@ -58,7 +58,7 @@ local_scheme = "no-local-version"
 
 [tool.setuptools]
 include-package-data = true
-script-files = ["bin/iwrap-doc", "bin/iwrap-yaml-update"]
+script-files = ["bin/iwrap-yaml-update"]
 
 [tool.setuptools.packages.find]
 exclude = ["tests*", "testing*", "test_suite*"]
