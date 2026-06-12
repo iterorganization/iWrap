@@ -117,7 +117,7 @@ Minor version number changed due to:
 * provides unique temporary storage per actor, now located in sandbox dir
 * resolves system variables for install dir
 * redesign handling of XML parameters in standalone mode
-* access to documentation through iwrap-doc command
+* access to documentation at [iwrap.readthedocs.io](https://iwrap.readthedocs.io/en/latest)
 * change "mpi_nodes" to "mpi_processes" in runtime settings
 * other bug fixes and improvements
 
