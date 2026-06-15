@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install iwrap and dependencies
+        run: python3 -m pip install ".[all]"
+
       - name: Install lint dependencies
         run: python3 -m pip install ruff pylint
 
