@@ -18,10 +18,13 @@ jobs:
           python-version: "3.11"
 
       - name: Install lint dependencies
-        run: python3 -m pip install flake8 pylint
+        run: python3 -m pip install ruff pylint
 
-      - name: flake8
-        run: flake8 iwrap/
+      - name: ruff check
+        run: ruff check iwrap/
+
+      - name: ruff format check
+        run: ruff format --check iwrap/
 
       - name: pylint (errors only)
         run: pylint -E iwrap/

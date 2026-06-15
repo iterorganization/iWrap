@@ -7,43 +7,49 @@ from iwrap.gui.settings.documentation_pane import DocumentationPane
 from iwrap.gui.settings.implementation_pane import ImplementationPane
 from iwrap.gui.settings.subroutines_pane import SubroutinesPane
 from iwrap.gui.settings.code_parameters_pane import CodeParametersPane
-from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import LanguagePanesManager
+from iwrap.gui.settings.language_specific_panes.language_panes_mgmt import (
+    LanguagePanesManager,
+)
 from iwrap.gui.settings.signature_pane import SignaturePane
 from iwrap.settings.project import ProjectSettings
 
 
-class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
+class SettingsMainPane(ttk.LabelFrame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master=None):
-        super().__init__( master, text="Code description:", relief="groove", borderwidth=2, height=100 )
+        super().__init__(
+            master, text="Code description:", relief="groove", borderwidth=2, height=100
+        )
 
-        self.pack( pady=10 )
-        self.notebook = ttk.Notebook( self )
-        self.notebook.pack( expand=True, fill=tk.BOTH)
+        self.pack(pady=10)
+        self.notebook = ttk.Notebook(self)
+        self.notebook.pack(expand=True, fill=tk.BOTH)
 
-        self.implementation_pane = ImplementationPane( self.notebook )
+        self.implementation_pane = ImplementationPane(self.notebook)
         self.subroutines_pane = SubroutinesPane(self.notebook)
         self.code_parameters_pane = CodeParametersPane(self.notebook)
-        self.documentation_pane = DocumentationPane( self.notebook )
-        self.signature_pane = SignaturePane( self.notebook )
+        self.documentation_pane = DocumentationPane(self.notebook)
+        self.signature_pane = SignaturePane(self.notebook)
 
         self.language_settings_pane = None
         self.notebook.add(self.implementation_pane, text="Implementation")
-        self.notebook.add(self.subroutines_pane, text='Subroutines')
-        self.notebook.add(self.code_parameters_pane, text='Code parameters')
-        self.notebook.add( self.documentation_pane, text='Documentation' )
+        self.notebook.add(self.subroutines_pane, text="Subroutines")
+        self.notebook.add(self.code_parameters_pane, text="Code parameters")
+        self.notebook.add(self.documentation_pane, text="Documentation")
         self.add_language_pane()
 
         # Set tab index property with notebook's index
-        #self.signature_pane.tab_index = notebook.index(self.signature_pane)
+        # self.signature_pane.tab_index = notebook.index(self.signature_pane)
 
-        self.notebook.select( None )
+        self.notebook.select(None)
         self.notebook.enable_traversal()
         # When tab is changed execute event handler.
         self.notebook.bind("<<NotebookTabChanged>>", self.event_handler)
-        self.implementation_pane.programming_language_combobox.bind("<<ComboboxSelected>>", self.change_language_pane)
+        self.implementation_pane.programming_language_combobox.bind(
+            "<<ComboboxSelected>>", self.change_language_pane
+        )
 
     def event_handler(self, event) -> None:
         """Conditions events."""
@@ -65,11 +71,14 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.add_language_pane()
 
     def add_language_pane(self):
-        """Add specific language pane for selected programming language.
-        """
+        """Add specific language pane for selected programming language."""
         selected_language = self.implementation_pane.programming_language_combobox.get()
-        language_pane_manager = LanguagePanesManager.get_language_pane(selected_language)
-        self.language_settings_pane = language_pane_manager(self.notebook, selected_language)
+        language_pane_manager = LanguagePanesManager.get_language_pane(
+            selected_language
+        )
+        self.language_settings_pane = language_pane_manager(
+            self.notebook, selected_language
+        )
         self.notebook.insert(1, self.language_settings_pane, text="Settings")
         self.language_settings_pane.reload()
 
@@ -86,4 +95,3 @@ class SettingsMainPane( ttk.LabelFrame, IWrapPane ):
         self.documentation_pane.reload()
         self.subroutines_pane.reload()
         self.code_parameters_pane.reload()
-

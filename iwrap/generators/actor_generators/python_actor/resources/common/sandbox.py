@@ -6,33 +6,38 @@ from .runtime_settings import SandboxMode, SandboxLifeTime
 
 
 class Sandbox:
-
     def __init__(self, actor):
         self.__current_dir = None
         self.actor = actor
         self.sandbox_settings = actor._ActorBaseClass__runtime_settings.sandbox
-        self.path = ''
+        self.path = ""
 
     def __set_path(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
             if not self.sandbox_settings.path:
-                raise ValueError(f"A path must be set in sandbox MANUAL mode and is empty for actor {self.actor.name}")
+                raise ValueError(
+                    f"A path must be set in sandbox MANUAL mode and is empty for actor {self.actor.name}"
+                )
 
             path = Path(self.sandbox_settings.path)
 
             if not path.exists():
-                raise ValueError(f"Actor {self.actor.name}: Sandbox path points to non existing directory ({path})" )
+                raise ValueError(
+                    f"Actor {self.actor.name}: Sandbox path points to non existing directory ({path})"
+                )
 
             if not path.is_dir():
-                raise ValueError(f"Actor {self.actor.name}: Sandbox path points to a file and not directory ({path})")
+                raise ValueError(
+                    f"Actor {self.actor.name}: Sandbox path points to a file and not directory ({path})"
+                )
 
-            self.path =  self.sandbox_settings.path
+            self.path = self.sandbox_settings.path
         else:
             actor_id = self.actor.unique_id
             sandbox_dir = self.actor.sandbox_default_dir
-            sandbox_dir = os.path.expandvars( sandbox_dir )
-            sandbox_dir = os.path.expanduser( sandbox_dir )
-            sandbox_path = Path( sandbox_dir, actor_id )
+            sandbox_dir = os.path.expandvars(sandbox_dir)
+            sandbox_dir = os.path.expanduser(sandbox_dir)
+            sandbox_path = Path(sandbox_dir, actor_id)
             self.path = str(sandbox_path)
 
     def initialize(self):
@@ -45,7 +50,7 @@ class Sandbox:
         # go to sandbox
         cwd = os.getcwd()
         if os.path.realpath(cwd) == os.path.realpath(self.path):
-            return # we are in the sandbox already
+            return  # we are in the sandbox already
 
         self.create()
         self.__current_dir = cwd
@@ -54,32 +59,32 @@ class Sandbox:
     def jump_out(self):
         # go back to initial dir
         if self.__current_dir:
-            os.chdir( self.__current_dir )
+            os.chdir(self.__current_dir)
         self.clean()
 
     def create(self):
-        Path(self.path).mkdir( parents=True, exist_ok=True)
+        Path(self.path).mkdir(parents=True, exist_ok=True)
 
     def clean(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
-            return # It is the user duty to clean sbx in manual mode
+            return  # It is the user duty to clean sbx in manual mode
 
         if self.sandbox_settings.life_time == SandboxLifeTime.WORKFLOW_RUN:
-            return # Sbx content will be cleaned up by 'finalize'
+            return  # Sbx content will be cleaned up by 'finalize'
 
         if self.sandbox_settings.life_time == SandboxLifeTime.PERSISTENT:
-            return # Sbx content should be kept forever
+            return  # Sbx content should be kept forever
 
         sandbox_path = self.path
 
-        for root, dirs, files in os.walk( sandbox_path ):
+        for root, dirs, files in os.walk(sandbox_path):
             for f in files:
-                os.unlink( os.path.join( root, f ) )
+                os.unlink(os.path.join(root, f))
             for d in dirs:
-                if d in ('tmp', ):
+                if d in ("tmp",):
                     dirs.remove(d)
                     continue
-                shutil.rmtree( os.path.join( root, d ) )
+                shutil.rmtree(os.path.join(root, d))
 
     def remove(self):
         if self.sandbox_settings.mode == SandboxMode.MANUAL:
@@ -90,4 +95,4 @@ class Sandbox:
 
         sandbox_path = self.path
         if Path(sandbox_path).exists():
-            shutil.rmtree( sandbox_path )
+            shutil.rmtree(sandbox_path)

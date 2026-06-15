@@ -9,14 +9,13 @@ from iwrap.gui.widgets.table import Table
 from iwrap.gui.widgets.table import Column
 from iwrap.settings.settings.fortran_settings import ExtraLibraries
 from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
-from iwrap.gui.settings.implementation_pane import ImplementationPane
 from iwrap.settings.platform.pkg_config_tools import PkgConfigTools
 from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
 from iwrap.gui.utils import center_wnd
 
 
-class FortranPane( ttk.Frame, IWrapPane ):
+class FortranPane(ttk.Frame, IWrapPane):
     """The FortranPane contains a compiler cmd entry, module path entry which enables the selection od module path from
     filedialog, two Combobox widgets that enables selection of MPI and OpenMP switch, and two tabs including
     PkgConfigPane, and LibraryPathPane. PkgConfigPane  contains the Table widget with system libraries and the
@@ -30,10 +29,11 @@ class FortranPane( ttk.Frame, IWrapPane ):
         pkg_config_pane (PkgConfigPane): The PkgConfigPane class object.
         library_path_pane (LibraryPathPane): The LibraryPathPane class object.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    language = 'fortran'
+    language = "fortran"
     """language (string): The language related to the class. """
 
     def __init__(self, master=None, language="fortran"):
@@ -42,7 +42,7 @@ class FortranPane( ttk.Frame, IWrapPane ):
         Args:
             master (ttk.Frame): The master frame.
         """
-        super().__init__( master )
+        super().__init__(master)
         FortranPane.language = language
 
         self.settings = LanguageSettingsManager.get_settings(FortranPane.language)
@@ -62,7 +62,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.NW, pady=5)
 
         # LABEL FRAME
-        labelframe = ttk.LabelFrame(settings_lib_tab, text="Settings", borderwidth=2, relief="groove")
+        labelframe = ttk.LabelFrame(
+            settings_lib_tab, text="Settings", borderwidth=2, relief="groove"
+        )
         labelframe.pack(fill=tk.BOTH, expand=1, pady=10)
 
         # FRAME
@@ -72,31 +74,37 @@ class FortranPane( ttk.Frame, IWrapPane ):
 
         # COMPILER CMD
         self.compiler_cmd = tk.StringVar()
-        ttk.Label(frame, text="*Compiler cmd:").grid(column=0, row=2, padx=10, sticky=(tk.N, tk.W), pady=5)
+        ttk.Label(frame, text="*Compiler cmd:").grid(
+            column=0, row=2, padx=10, sticky=(tk.N, tk.W), pady=5
+        )
         compiler_text = ttk.Entry(frame, textvariable=self.compiler_cmd)
         compiler_text.grid(column=1, row=2, padx=10, sticky=(tk.W, tk.E), pady=5)
-        ToolTip(compiler_text, 'compiler_cmd')
+        ToolTip(compiler_text, "compiler_cmd")
 
         # FRAME MPI
         main_frame = ttk.Frame(labelframe)
         main_frame.pack(fill=tk.BOTH, side=tk.TOP, expand=0)
 
         self.compiler_flags = tk.StringVar()
-        ttk.Label(frame, text="Compiler flags:").grid(column=0, row=3, padx=10, sticky=(tk.N, tk.W), pady=5)
+        ttk.Label(frame, text="Compiler flags:").grid(
+            column=0, row=3, padx=10, sticky=(tk.N, tk.W), pady=5
+        )
         compiler_flags_entry = ttk.Entry(frame, textvariable=self.compiler_flags)
         compiler_flags_entry.grid(column=1, row=3, padx=10, sticky=(tk.W, tk.E), pady=5)
-        ToolTip(compiler_flags_entry, 'compiler_flags')
+        ToolTip(compiler_flags_entry, "compiler_flags")
 
         # MPI COMPILER CMD
         self.mpi_compiler_cmd = tk.StringVar()
-        ttk.Label(frame, text="Mpi compiler cmd:").grid(column=0, row=4, padx=10, sticky=(tk.N, tk.W), pady=5)
+        ttk.Label(frame, text="Mpi compiler cmd:").grid(
+            column=0, row=4, padx=10, sticky=(tk.N, tk.W), pady=5
+        )
         mpi_compiler_text = ttk.Entry(frame, textvariable=self.mpi_compiler_cmd)
         mpi_compiler_text.grid(column=1, row=4, padx=10, sticky=(tk.W, tk.E), pady=5)
-        ToolTip(mpi_compiler_text, 'mpi_compiler_cmd')
+        ToolTip(mpi_compiler_text, "mpi_compiler_cmd")
 
         # TABS FRAME
         tab_frame = ttk.Frame(libraries_lib_tab)
-        tab_frame.pack(fill=tk.BOTH, side = tk.BOTTOM, expand=1, anchor=tk.NW)
+        tab_frame.pack(fill=tk.BOTH, side=tk.BOTTOM, expand=1, anchor=tk.NW)
 
         # NOTEBOOK WITH TABS
         tab_control = ttk.Notebook(tab_frame)
@@ -123,7 +131,9 @@ class FortranPane( ttk.Frame, IWrapPane ):
         Call PkgConfigPane and LibraryPathPane reload methods.
         """
         FortranPane.language = ProjectSettings.get_settings().code_description.implementation.programming_language
-        self.settings = LanguageSettingsManager.get_settings(FortranPane.language or 'fortran')
+        self.settings = LanguageSettingsManager.get_settings(
+            FortranPane.language or "fortran"
+        )
         self.compiler_cmd.set(self.settings.compiler_cmd)
         self.mpi_compiler_cmd.set(self.settings.mpi_compiler_cmd or "")
         self.compiler_flags.set(self.settings.compiler_flags or "")
@@ -144,14 +154,15 @@ class FortranPane( ttk.Frame, IWrapPane ):
         library_paths = self.library_path_pane.get_list_of_paths()
         extra_lib.pkg_config_defined = pkg_configs
         extra_lib.path_defined = library_paths
-        ProjectSettings.get_settings().code_description.settings = {'compiler_cmd': compiler_cmd,
-                                                                    'mpi_compiler_cmd': mpi_compiler_cmd,
-                                                                    'compiler_flags': compiler_flags,
-                                                                    'extra_libraries': extra_lib.to_dict()}
+        ProjectSettings.get_settings().code_description.settings = {
+            "compiler_cmd": compiler_cmd,
+            "mpi_compiler_cmd": mpi_compiler_cmd,
+            "compiler_flags": compiler_flags,
+            "extra_libraries": extra_lib.to_dict(),
+        }
 
     def save_pane_settings(self):
-        """Save the data from a language pane to the dictionary using the LanguageSettingsManager.
-        """
+        """Save the data from a language pane to the dictionary using the LanguageSettingsManager."""
         compiler_cmd = self.compiler_cmd.get()
         compiler_flags = self.compiler_flags.get()
         mpi_compiler_cmd = self.mpi_compiler_cmd.get()
@@ -162,10 +173,15 @@ class FortranPane( ttk.Frame, IWrapPane ):
         extra_lib.pkg_config_defined = pkg_configs
         extra_lib.path_defined = library_paths
 
-        self.settings.from_dict({'compiler_cmd': compiler_cmd,
-                                 'mpi_compiler_cmd': mpi_compiler_cmd,
-                                 'compiler_flags': compiler_flags,
-                                 'extra_libraries': extra_lib.to_dict()})
+        self.settings.from_dict(
+            {
+                "compiler_cmd": compiler_cmd,
+                "mpi_compiler_cmd": mpi_compiler_cmd,
+                "compiler_flags": compiler_flags,
+                "extra_libraries": extra_lib.to_dict(),
+            }
+        )
+
 
 class MpiCombo:
     def __init__(self, frame, column, row, padx, text, settings):
@@ -181,14 +197,26 @@ class MpiCombo:
         self.add_combobox()
 
     def add_combobox(self):
-        ttk.Label(self.frame, text=self.text).grid(column=self.column, row=self.row, padx=self.padx, pady=5, sticky=(tk.W, tk.N))
+        ttk.Label(self.frame, text=self.text).grid(
+            column=self.column,
+            row=self.row,
+            padx=self.padx,
+            pady=5,
+            sticky=(tk.W, tk.N),
+        )
         self.value.set(self.settings)
-        self.value.trace('w', self.change_current_value)
+        self.value.trace("w", self.change_current_value)
         self.current_value.set(self.value.get())
         self.combobox = ttk.Combobox(self.frame, textvar=self.value, width=15)
-        self.combobox['values'] = [None]
+        self.combobox["values"] = [None]
         self.combobox.set(self.settings or "")
-        self.combobox.grid(column=self.column+1, row=self.row, padx=self.padx, pady=5, sticky=(tk.W, tk.E))
+        self.combobox.grid(
+            column=self.column + 1,
+            row=self.row,
+            padx=self.padx,
+            pady=5,
+            sticky=(tk.W, tk.E),
+        )
         self.combobox.bind("<<ComboboxSelected>>", self.add_settings_to_combo)
 
     def reload(self):
@@ -198,8 +226,11 @@ class MpiCombo:
         self.settings = self.combobox.get()
 
     def add_settings_to_combo(self, *args):
-        if self.current_value.get() not in self.combobox['value'] and self.current_value.get() != '':
-            self.combobox['values'] += (self.current_value.get(),)
+        if (
+            self.current_value.get() not in self.combobox["value"]
+            and self.current_value.get() != ""
+        ):
+            self.combobox["values"] += (self.current_value.get(),)
 
     def get(self):
         return self.combobox.get()
@@ -208,7 +239,7 @@ class MpiCombo:
         self.combobox.set(value)
 
     def change_current_value(self, *args):
-        if self.value.get() not in self.combobox['values']:
+        if self.value.get() not in self.combobox["values"]:
             self.current_value.set(self.value.get())
 
 
@@ -225,6 +256,7 @@ class PkgConfigPane:
         pkg_config (PkgConfigTools): The PkgConfigTools class object.
 
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -247,7 +279,9 @@ class PkgConfigPane:
         buttons_frame = ttk.Frame(master, width=100)
         buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
         buttons_center_frame = ttk.Frame(buttons_frame)
-        buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
+        buttons_center_frame.place(
+            in_=buttons_frame, anchor="center", relx=0.5, rely=0.5
+        )
 
         # BUTTONS
         add_button = ttk.Button(buttons_center_frame, text="Add...", width=10)
@@ -258,20 +292,21 @@ class PkgConfigPane:
         remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
         # TABLE
-        self.columns = [Column(Column.TEXT, "Name", "Name"),
-                        Column(Column.TEXT, "Info", "Info"),
-                        Column(Column.TEXT, "Description", "Description")]
+        self.columns = [
+            Column(Column.TEXT, "Name", "Name"),
+            Column(Column.TEXT, "Info", "Info"),
+            Column(Column.TEXT, "Description", "Description"),
+        ]
 
         self.table = Table([], self.columns, table_frame, [remove_button, info_button])
-        add_button['command'] = lambda: AddPkgConfigWindow(self)
+        add_button["command"] = lambda: AddPkgConfigWindow(self)
 
-        remove_button['command'] = self.table.delete_row
-        info_button['command'] = lambda: SystemLibraryInfoWindow(self, self.master)
+        remove_button["command"] = self.table.delete_row
+        info_button["command"] = lambda: SystemLibraryInfoWindow(self, self.master)
         self.__add_table_data()
 
     def __add_table_data(self):
-        """Add pkg config to the table.
-        """
+        """Add pkg config to the table."""
         self.table.delete_data_from_table()
 
         if not self.settings or not self.settings.extra_libraries.pkg_config_defined:
@@ -285,8 +320,8 @@ class PkgConfigPane:
                 messagebox.showwarning("Warning", f"{name}: Unknown system library.")
                 continue
             else:
-                info = system_lib_dict['info']
-                description = system_lib_dict['description']
+                info = system_lib_dict["info"]
+                description = system_lib_dict["description"]
                 data.append([name, info, description])
 
         self.table.add_new_table_content(data)
@@ -306,19 +341,17 @@ class PkgConfigPane:
         pkg_configs = self.table.get_data_from_table()
         pkg_config_name = []
         for pkg_config in pkg_configs:
-            pkg_config_name.append(pkg_config['Name'])
+            pkg_config_name.append(pkg_config["Name"])
 
         return pkg_config_name
 
     def reload(self):
-        """Reload settings from the LanguageSettingsManager and add system libraries to the Table widget.
-        """
+        """Reload settings from the LanguageSettingsManager and add system libraries to the Table widget."""
         self.settings = ProjectSettings.get_settings().code_description.settings
         self.__add_table_data()
 
     def update_settings(self):
-        """Update system library values in the ProjectSettings.
-        """
+        """Update system library values in the ProjectSettings."""
         pkg_config = self.get_data_from_table()
         ProjectSettings.get_settings().code_description.settings.extra_libraries.pkg_config_defined = pkg_config
 
@@ -333,7 +366,7 @@ class SystemLibraryInfoWindow:
 
         # WINDOW
         self.window = tk.Toplevel(masterwindow)
-        self.window.geometry('700x500')
+        self.window.geometry("700x500")
         self.window.resizable(False, False)
         self.window.title("System library info")
         self.window.focus_force()
@@ -351,28 +384,38 @@ class SystemLibraryInfoWindow:
         footer.pack(side=tk.BOTTOM, fill=tk.X)
 
         # LABELS
-        tk.Label(frame_lib_name, text=f"{self.lib_name}")\
-            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
-        tk.Label(frame_libs, text=f"pkg-config --libs {self.lib_name}")\
-            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
-        tk.Label(frame_cflags, text=f"pkg-config --cflags {self.lib_name}")\
-            .pack(side=tk.TOP, anchor=tk.SW, expand=True)
+        tk.Label(frame_lib_name, text=f"{self.lib_name}").pack(
+            side=tk.TOP, anchor=tk.SW, expand=True
+        )
+        tk.Label(frame_libs, text=f"pkg-config --libs {self.lib_name}").pack(
+            side=tk.TOP, anchor=tk.SW, expand=True
+        )
+        tk.Label(frame_cflags, text=f"pkg-config --cflags {self.lib_name}").pack(
+            side=tk.TOP, anchor=tk.SW, expand=True
+        )
 
         # TEXT EDITORS
-        self.text_editor_name = tk.Text(frame_lib_name, height=8, state='disabled')
+        self.text_editor_name = tk.Text(frame_lib_name, height=8, state="disabled")
         self.text_editor_name.pack(side=tk.TOP, expand=True, fill=tk.X)
         self.insert_text(self.text_editor_name, self.lib_description)
 
-        self.text_editor_libs = tk.Text(frame_libs, height=8, state='disabled')
+        self.text_editor_libs = tk.Text(frame_libs, height=8, state="disabled")
         self.text_editor_libs.pack(side=tk.TOP, expand=True, fill=tk.X)
-        self.insert_text(self.text_editor_libs, self.master.pkg_config.get_linker_flags(self.lib_name))
+        self.insert_text(
+            self.text_editor_libs,
+            self.master.pkg_config.get_linker_flags(self.lib_name),
+        )
 
-        self.text_editor_cflags = tk.Text(frame_cflags, height=8, state='disabled')
+        self.text_editor_cflags = tk.Text(frame_cflags, height=8, state="disabled")
         self.text_editor_cflags.pack(side=tk.TOP, expand=True, fill=tk.X)
-        self.insert_text(self.text_editor_cflags, self.master.pkg_config.get_c_flags(self.lib_name))
+        self.insert_text(
+            self.text_editor_cflags, self.master.pkg_config.get_c_flags(self.lib_name)
+        )
 
         # CLOSE BUTTON
-        remove_button = ttk.Button(footer, text="OK", command=self.window.destroy, width=10)
+        remove_button = ttk.Button(
+            footer, text="OK", command=self.window.destroy, width=10
+        )
         remove_button.pack(padx=10, pady=10)
 
     def get_lib_info(self):
@@ -383,9 +426,9 @@ class SystemLibraryInfoWindow:
         self.lib_description = selected_data[2]
 
     def insert_text(self, text_editor, text):
-        text_editor.configure(state='normal')
-        text_editor.insert('end', text)
-        text_editor.configure(state='disabled')
+        text_editor.configure(state="normal")
+        text_editor.insert("end", text)
+        text_editor.configure(state="disabled")
 
 
 class AddPkgConfigWindow:
@@ -396,6 +439,7 @@ class AddPkgConfigWindow:
         window (tk.Toplevel): The new window with system library table.
         table (Table): The table contains system library.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -411,7 +455,7 @@ class AddPkgConfigWindow:
         # WINDOW
         self.window = tk.Toplevel(master.master)
         self.window.minsize(1000, 600)
-        self.window.geometry('1000x600')
+        self.window.geometry("1000x600")
         self.window.resizable(width=False, height=True)
         self.window.title("Add system library")
         self.window.focus_force()
@@ -427,7 +471,9 @@ class AddPkgConfigWindow:
 
         # FILTER BUTTON
         filter_value = tk.StringVar()
-        tk.Entry(filter_frame, textvariable=filter_value, width=80).pack(side=tk.LEFT, expand=False, padx=20)
+        tk.Entry(filter_frame, textvariable=filter_value, width=80).pack(
+            side=tk.LEFT, expand=False, padx=20
+        )
         filter_button = ttk.Button(filter_frame, text="Search", width=10)
         filter_button.pack(side=tk.LEFT, padx=10, pady=10)
         info_button = ttk.Button(filter_frame, text="Info...", width=10)
@@ -440,21 +486,27 @@ class AddPkgConfigWindow:
 
         data = []
         for key, value in self.pkg_config.system_lib_dict.items():
-            data.append([key, value['info'], value['description']])
+            data.append([key, value["info"], value["description"]])
         self.table.add_rows(data)
-        info_button['command'] = lambda: SystemLibraryInfoWindow(self, self.master.master)
+        info_button["command"] = lambda: SystemLibraryInfoWindow(
+            self, self.master.master
+        )
 
         # BUTTONS
-        add_button = ttk.Button(footer, text="Add", command=self.add_selected_data_to_table, width=10)
+        add_button = ttk.Button(
+            footer, text="Add", command=self.add_selected_data_to_table, width=10
+        )
         add_button.pack(side=tk.RIGHT, padx=10, pady=10)
-        remove_button = ttk.Button(footer, text="Cancel", command=self.window.destroy, width=10)
+        remove_button = ttk.Button(
+            footer, text="Cancel", command=self.window.destroy, width=10
+        )
         remove_button.pack(side=tk.RIGHT, padx=10, pady=10)
-        filter_button['command'] = lambda: self.table.filter_table(filter_value.get(), data)
-
+        filter_button["command"] = lambda: self.table.filter_table(
+            filter_value.get(), data
+        )
 
     def add_selected_data_to_table(self):
-        """Add selected system library to the master frame table.
-        """
+        """Add selected system library to the master frame table."""
         selected_row = self.table.get_selected_row()
         table_data = self.table.get_data_from_table()
         if selected_row is not None:
@@ -471,6 +523,7 @@ class LibraryPathPane:
         settings (LanguageSettingsManager): The project settings for fortran language pane.
         table (Table): The Table contains custom libraries.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -489,23 +542,25 @@ class LibraryPathPane:
         buttons_frame = ttk.Frame(master, width=100)
         buttons_frame.pack(fill=tk.BOTH, side=tk.RIGHT, expand=0, anchor=tk.NE)
         buttons_center_frame = ttk.Frame(buttons_frame)
-        buttons_center_frame.place(in_=buttons_frame, anchor="center", relx=.5, rely=.5)
+        buttons_center_frame.place(
+            in_=buttons_frame, anchor="center", relx=0.5, rely=0.5
+        )
 
         # BUTTONS
-        ttk.Button(buttons_center_frame, text="Add...", command=self.__add_on_click, width=10)\
-            .pack(side=tk.TOP, expand=1, pady=5)
+        ttk.Button(
+            buttons_center_frame, text="Add...", command=self.__add_on_click, width=10
+        ).pack(side=tk.TOP, expand=1, pady=5)
         remove_button = ttk.Button(buttons_center_frame, text="Remove", width=10)
         remove_button.pack(side=tk.TOP, expand=1, pady=5)
 
         # TABLE
         columns = [Column(Column.TEXT, "Library path", "Library path")]
         self.table = Table([], columns, library_path_frame, [remove_button])
-        remove_button['command'] = self.table.delete_row
+        remove_button["command"] = self.table.delete_row
         self.__add_path_from_settings()
 
     def __add_path_from_settings(self):
-        """Add custom libraries from the ProjectSettings to the Table widget.
-        """
+        """Add custom libraries from the ProjectSettings to the Table widget."""
         if not self.settings:
             return
 
@@ -516,12 +571,11 @@ class LibraryPathPane:
         self.table.add_new_table_content(data)
 
     def __add_on_click(self):
-        """Open the filedialog and add selected path to the Table widget.
-        """
+        """Open the filedialog and add selected path to the Table widget."""
         path = tk.filedialog.askopenfilename()
-        if path not in ['', ()]:
+        if path not in ["", ()]:
             root_dir_path = ProjectSettings.get_settings().root_dir_path
-            path = utils.make_relative( path, root_dir_path )
+            path = utils.make_relative(path, root_dir_path)
             self.table.add_rows([[path]])
 
     def get_list_of_paths(self):
@@ -530,11 +584,10 @@ class LibraryPathPane:
         Returns: The list of library paths.
         """
         data_table = self.table.get_data_from_table()
-        return [data['Library path'] for data in data_table]
+        return [data["Library path"] for data in data_table]
 
     def reload(self):
-        """Reload library paths list from the LanguageSettingsManager and add it to the Table widget.
-        """
+        """Reload library paths list from the LanguageSettingsManager and add it to the Table widget."""
         from iwrap.settings.project import ProjectSettings
 
         settings = ProjectSettings.get_settings().code_description.settings
@@ -544,8 +597,6 @@ class LibraryPathPane:
         self.__add_path_from_settings()
 
     def update_settings(self):
-        """Update library paths in the ProjectSettings.
-        """
+        """Update library paths in the ProjectSettings."""
         library_paths = self.get_list_of_paths()
         ProjectSettings.get_settings().code_description.settings.extra_libraries.path_defined = library_paths
-

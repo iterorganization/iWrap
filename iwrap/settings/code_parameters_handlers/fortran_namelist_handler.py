@@ -3,16 +3,18 @@ import logging
 from io import StringIO
 from typing import Set
 
+
 class FortranNamelistHandler(DictBasedHandler):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
     def formats(self) -> Set[str]:
-        return {'namelist'}
+        return {"namelist"}
 
     def to_dict(self):
         import f90nml
+
         namelist_object = f90nml.reads(self._parameters_str)
         return namelist_object.todict()
 
@@ -31,6 +33,7 @@ class FortranNamelistHandler(DictBasedHandler):
         import f90nml
         from jsonschema import validate
         import json
+
         if not self._parameters_str or self._new_path_set:
             self.initialize(self._parameters_path, self._schema_path)
 
