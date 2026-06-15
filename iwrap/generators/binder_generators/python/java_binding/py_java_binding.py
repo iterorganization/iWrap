@@ -20,7 +20,7 @@ class JavaBinderGenerator(BinderGenerator):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     COMPLIANT_API = generators.API_VERSION
-    """ The API version compatible with this plugin. 
+    """ The API version compatible with this plugin.
     It is a built-in plugin, so it should be always up to date
     """
 

@@ -11,15 +11,15 @@ class DebugMode(Enum):
     """Debug turned off"""
 
     STANDALONE = auto()
-    """The actor runs the code as an executable in a separate process, under debugger control. Debugged code 
-    can be run several times. To continue the workflow execution it is enough to close the debugger. 
+    """The actor runs the code as an executable in a separate process, under debugger control. Debugged code
+    can be run several times. To continue the workflow execution it is enough to close the debugger.
     This debugging mode is suitable for most purposes."""
 
     ATTACH = auto()
-    """The actor runs a debugger as a parallel process, attaching it to a running workflow and setting breakpoint 
-    on the wrapped code of the the debugged actor. Because debugger attaches to a workflow (and not a particular actor) 
-    killing debugged process kills the whole workflow. 
-    This mode has to be chosen if the issue within the wrapper or the code cannot be reproduced in STANDALONE mode or 
+    """The actor runs a debugger as a parallel process, attaching it to a running workflow and setting breakpoint
+    on the wrapped code of the the debugged actor. Because debugger attaches to a workflow (and not a particular actor)
+    killing debugged process kills the whole workflow.
+    This mode has to be chosen if the issue within the wrapper or the code cannot be reproduced in STANDALONE mode or
     if the issue results from actor interdependencies (e.g. one actor overwrites memory of others)."""
 
 
@@ -27,12 +27,12 @@ class RunMode(Enum):
     """Provides enumerated values describing run mode"""
 
     NORMAL = auto()
-    """The code is loaded from a library and called directly from Python, 
-    within the same process (and environment). Usually system resources, shared with other Python 
+    """The code is loaded from a library and called directly from Python,
+    within the same process (and environment). Usually system resources, shared with other Python
     threads are limited, however this mode is suitable for most of the actors."""
 
     STANDALONE = auto()
-    """The actor runs the code as an executable in a separate system process, having its own environment 
+    """The actor runs the code as an executable in a separate system process, having its own environment
     and (usually) bigger system resources available. This mode is set automatically for MPI applications,
     however it can be set also for memory demanding code."""
 
@@ -58,7 +58,7 @@ class SandboxLifeTime(Enum):
     """Content of the sandbox directory is cleaned before and after every call to the actor main method"""
 
     WORKFLOW_RUN = auto()
-    """Content of the sandbox directory is cleaned, during initialising stage of an actor and after 
+    """Content of the sandbox directory is cleaned, during initialising stage of an actor and after
     other finalization actions of the actor (so, sandbox should be available during the whole workflow run)"""
 
     PERSISTENT = auto()

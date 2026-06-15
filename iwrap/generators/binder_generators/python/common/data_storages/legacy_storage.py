@@ -106,5 +106,5 @@ class LegacyIDSStorage(GenericIDSStorage):
     def finalize(self):
         try:
             self.__db_entry.close(erase=True)
-        except:
+        except Exception:
             self.__db_entry.close()

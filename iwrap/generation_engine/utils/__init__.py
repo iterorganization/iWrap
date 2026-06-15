@@ -3,8 +3,6 @@ import pkgutil
 import logging
 
 # Class logger
-import traceback
-
 __logger = logging.getLogger(__name__)
 
 
@@ -41,7 +39,7 @@ def discover_generators(
                 __logger.info(
                     f'External {generator_base_class.__name__} plug-in found: "{name}"'
                 )
-            except:
+            except Exception:
                 __logger.exception(
                     f'Error while loading external {generator_base_class.__name__} plug-in "{name}"'
                 )

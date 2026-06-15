@@ -1,7 +1,7 @@
 import logging
 
 import jpype
-from jpype.types import *
+from jpype.types import *  # noqa: F403
 
 from .data_storages import IDSConvertersRegistry
 
@@ -127,7 +127,7 @@ class LanguageBinder(Binder):
         java_fqcn = "Wrapper4" + self.actor.name
         # TODO Use generator specific 'include_path' handling
 
-        java_class = JClass(java_fqcn)
+        java_class = JClass(java_fqcn)  # noqa: F405
         return java_class()
 
     def __get_wrapper_function(self, method_role: str):

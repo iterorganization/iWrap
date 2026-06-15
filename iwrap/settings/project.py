@@ -57,7 +57,7 @@ class ProjectSettings(SettingsBaseClass):
         self.code_description = CodeDescription()
 
     """Checks settings, field by field, if they are valid to be used to generate actor
-    
+
        Args:
            engine (Engine): generation engine used to validate particular settings
        """

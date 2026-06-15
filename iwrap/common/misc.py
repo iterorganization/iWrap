@@ -62,7 +62,7 @@ class Dictionarizable(ABC):
         Returns
             Dict[str, Any]: Dictionary containing object data
         """
-        obj_as_dict_ = self._list_attributes()
+        self._list_attributes()
         dict_ = {}
         for key, value in self._list_attributes():
             if isinstance(value, Dictionarizable):

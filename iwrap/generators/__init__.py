@@ -5,14 +5,14 @@ from abc import ABC, abstractmethod
 from packaging.version import Version
 
 API_VERSION: str = "2.1"
-""" API_VERSION `str`: Version of iWrap <--> plugins interface. 
+""" API_VERSION `str`: Version of iWrap <--> plugins interface.
 
-The "plugin interface" includes all generators methods used to communicate between iWrap and plugins 
-and data structures passed from the iWrap to plugins. Version specifiers 
+The "plugin interface" includes all generators methods used to communicate between iWrap and plugins
+and data structures passed from the iWrap to plugins. Version specifiers
 (https://packaging.python.org/en/latest/specifications/version-specifiers) has to be updated manually after any API change,
 following Semantic Versioning schema (https://semver.org/).
 
-Side note: This attribute MUST NOT be reassigned, but Python doesn't offer any (good) mechanism to lock it 
+Side note: This attribute MUST NOT be reassigned, but Python doesn't offer any (good) mechanism to lock it
 """
 
 
@@ -22,10 +22,10 @@ class AbstractGenerator(ABC):
 
     COMPLIANT_API = "0.0"
     """iWrap <-> plugin API version compatible with this plugin.
-    
+
     Value: API version specifier (`str`) (https://packaging.python.org/en/latest/specifications/version-specifiers)
     This attribute should be specified in all implementation classes.
-    
+
     Side note: It be defined as an abstract class property but Python offers such feature
     since version 3.9 (introduced) to 3.13 (deprecated) only.
     """

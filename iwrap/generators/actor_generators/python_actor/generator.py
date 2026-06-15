@@ -23,7 +23,7 @@ class PythonActorGenerator(ActorGenerator):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     COMPLIANT_API = generators.API_VERSION
-    """ The API version compatible with this plugin. 
+    """ The API version compatible with this plugin.
     It is a built-in plugin, so it should be always up to date
     """
 
@@ -84,7 +84,6 @@ class PythonActorGenerator(ActorGenerator):
         os.makedirs(self.install_dir, exist_ok=True)
 
         self.temp_dir = tempfile.TemporaryDirectory().name
-        generation_env = {"temp_dir": self.install_dir}
 
         def filter_func(x: str) -> bool:
             if "__pycache__" in x:
