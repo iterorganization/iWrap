@@ -7,6 +7,13 @@ Installation
 
 **1. Build an installable iWrap distribution:**
 
+.. note::
+
+   Starting from iWrap 2.x, the legacy ``IMAS-AL-Python`` module has been dropped in favour of
+   `IMAS-Python <https://github.com/iterorganization/IMAS-Python>`_
+   (`docs <https://imas-python.readthedocs.io/en/latest/>`_, `PyPI <https://pypi.org/project/imas-python/>`_).
+   Ensure that ``IMAS-Python`` is loaded or installed, and unload the legacy ``IMAS-AL-Python`` module if present.
+
 * Navigate to the project's root directory and run:
 
 .. code-block:: shell
