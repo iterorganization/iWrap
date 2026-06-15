@@ -1,6 +1,6 @@
 FLAGS = -g -fPIC
-LIBS =   `pkg-config --libs imas-$(FC)`
-INCLUDES = `pkg-config --cflags imas-$(FC)`
+LIBS   = `pkg-config --libs al-fortran`
+INCLUDES = `pkg-config --cflags al-fortran`
 
 all: libbasic_parametrizable.a
 
