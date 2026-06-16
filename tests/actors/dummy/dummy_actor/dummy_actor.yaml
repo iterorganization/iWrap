@@ -5,7 +5,7 @@ code_description:
   implementation:
     code_parameters:
     code_path:
-    data_dictionary_compliant: 4.1.1
+    data_dictionary_compliant: 3.37.0
     data_type: legacy
     include_path:
     programming_language: None

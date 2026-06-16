@@ -23,7 +23,7 @@ code_description:
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 4.1.1
+        data_dictionary_compliant: 3.37.0
         data_type: legacy
         code_parameters:
             parameters: ./iWrapped_codes/code_parameters/input.xml   # ADDED

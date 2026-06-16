@@ -6,7 +6,7 @@ code_description:
             main:   code_step
         data_type: legacy
         programming_language: cpp
-        data_dictionary_compliant: 4.1.1
+        data_dictionary_compliant: 3.37.0
         code_path: $TESTS_DIR/wrapped_codes/cpp/parallel_mpi/libparallel_mpi.a
         include_path: $TESTS_DIR/wrapped_codes/cpp/parallel_mpi/parallel_mpi.h
         code_parameters:

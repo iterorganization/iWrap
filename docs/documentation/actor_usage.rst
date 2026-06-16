@@ -656,7 +656,7 @@ For list of available code description information see: :ref:`yaml_code_descript
          'schema': '/gss_efgw_work/work/username/iwrap/examples/level2/input/input_physics.xsd'
         },
         'code_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/libphysics_ii.a',
-        'data_dictionary_compliant': '3.37.0',
+        'data_dictionary_compliant': '4.1.1',
         'data_type': 'legacy',
         'include_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/mod_physics_ii.mod',
         'programming_language': 'fortran',

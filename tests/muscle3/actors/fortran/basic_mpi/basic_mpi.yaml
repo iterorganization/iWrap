@@ -5,7 +5,7 @@ code_description:
             finalize: clean_up
             main:   code_step
         programming_language: Fortran
-        data_dictionary_compliant: 4.1.1
+        data_dictionary_compliant: 3.37.0
         code_path: $TESTS_DIR/wrapped_codes/fortran/parallel_mpi/libparallel_mpi.a
         include_path: $TESTS_DIR/wrapped_codes/fortran/parallel_mpi/mod_parallel_mpi.mod
         data_type: legacy
