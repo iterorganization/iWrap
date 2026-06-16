@@ -1,9 +1,9 @@
 test: clean output/updated_1_v0.6.0.yaml output/updated_1_v0.7.0.yaml output/updated_1_v0.10.0.yaml output/updated_1_newest.yaml
 
-IMAS_VERSION=3.37.0
+export IMAS_VERSION=4.1.1
 output/updated_%.yaml: input/test_%.yaml
 	mkdir -p output
-	iwrap-yaml-update  -f $< -o $@
+	IMAS_VERSION=4.1.1 iwrap-yaml-update  -f $< -o $@
 	@cmp expected_output.yaml $@ &> /dev/null || \
 	   (echo 'ERROR: expected and real output differs!' && exit 1 )
 
