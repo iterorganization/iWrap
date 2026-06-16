@@ -11,7 +11,7 @@ code_description:
         code_path:  $TESTS_DIR/wrapped_codes/cpp/parallel_mpi/libparallel_mpi.a
         include_path:  $TESTS_DIR/wrapped_codes/cpp/parallel_mpi/parallel_mpi.h
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
     arguments:
     -   name: core_profiles_in
         type: core_profiles

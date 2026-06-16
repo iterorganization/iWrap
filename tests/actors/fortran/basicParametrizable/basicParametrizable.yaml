@@ -8,7 +8,7 @@ code_description:
       parameters: $TESTS_DIR/parameters/$PARAMETERS_FORMAT/parameters.$PARAMETERS_EXTENSION
       schema: $TESTS_DIR/parameters/$PARAMETERS_FORMAT/schema.$SCHEMA_EXTENSION
     code_path: $TESTS_DIR/codes/fortran/Basic/libBasic.a
-    data_dictionary_compliant: 3.37.0
+    data_dictionary_compliant: 4.1.1
     data_type: legacy
     include_path: $TESTS_DIR/codes/fortran/Basic/mod_basic.mod
     programming_language: Fortran

@@ -5,7 +5,7 @@ code_description:
   implementation:
     code_parameters:
     code_path: $TESTS_DIR/codes/java/Basic/lib/basic_test.jar
-    data_dictionary_compliant: 3.37.0
+    data_dictionary_compliant: 4.1.1
     data_type: legacy
     include_path: iwrap.test_codes.basic.BasicTest
     programming_language: Java

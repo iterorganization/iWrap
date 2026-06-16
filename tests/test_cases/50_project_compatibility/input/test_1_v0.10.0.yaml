@@ -17,7 +17,7 @@ code_description:
             name: code_lifecycle
             need_code_parameters: true
         programming_language: Fortran
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: ./native_code/libcode_lifecycle.a
         include_path: ./native_code/mod_code_lifecycle.mod

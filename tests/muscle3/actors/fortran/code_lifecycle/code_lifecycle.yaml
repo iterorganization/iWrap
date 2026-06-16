@@ -5,7 +5,7 @@ code_description:
             main:   code_step
             finalize: clean_up
         programming_language: Fortran
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: $TESTS_DIR/wrapped_codes/fortran/basic/libbasic.a
         include_path: $TESTS_DIR/wrapped_codes/fortran/basic/mod_basic.mod

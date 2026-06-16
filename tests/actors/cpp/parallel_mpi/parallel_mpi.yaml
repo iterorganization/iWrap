@@ -7,7 +7,7 @@ code_description:
       parameters:
       schema:
     code_path: $TESTS_DIR/codes/cpp/parallel_mpi/libParallelMpi.a
-    data_dictionary_compliant: 3.37.0
+    data_dictionary_compliant: 4.1.1
     data_type: legacy
     include_path: $TESTS_DIR/codes/cpp/parallel_mpi/parallel_mpi.h
     programming_language: cpp

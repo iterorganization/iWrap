@@ -5,7 +5,7 @@ code_description:
             main:   code_step
             finalize: clean_up
         programming_language: Python
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: $TESTS_DIR/wrapped_codes/python/basic/basic.py
         include_path: $TESTS_DIR/wrapped_codes/python/basic/basic.py
