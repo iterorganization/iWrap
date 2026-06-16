@@ -16,7 +16,7 @@ if [ "$COMPILER_VENDOR" == "intel" ]; then
     echo "ERROR: INTEL_MODULES is not set."
     echo ""
     echo "  Set this variable in your Bamboo plan with all required modules:"
-    echo "    IMAS-AL-Fortran  IMAS-AL-Cpp  IMAS-AL-Java  IMAS-AL-Matlab"
+    echo "    IMAS-Fortran  IMAS-Cpp  IMAS-Java  IMAS-Matlab"
     echo "    IMAS-Python  MUSCLE3  XMLlib  PyYAML  lxml"
     exit 1
   fi
@@ -35,7 +35,7 @@ else
     echo "ERROR: GCC_MODULES is not set."
     echo ""
     echo "  Set this variable in your Bamboo plan with all required modules:"
-    echo "    IMAS-AL-Fortran  IMAS-AL-Cpp  IMAS-AL-Java  IMAS-AL-Matlab"
+    echo "    IMAS-Fortran  IMAS-Cpp  IMAS-Java  IMAS-Matlab"
     echo "    IMAS-Python  MUSCLE3  XMLlib  PyYAML  lxml"
     exit 1
   fi

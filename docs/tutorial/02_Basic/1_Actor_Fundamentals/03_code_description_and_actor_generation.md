@@ -14,7 +14,7 @@ kernelspec:
 
 # Actor and  code description
 
-Please [refer to the docs](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/IWRAP-doc/resources/project_description.html).
+Please [refer to the docs](https://iwrap.readthedocs.io/en/latest/documentation/project_description.html).
 
 ```{admonition} What will you learn in this section
 :class: note
