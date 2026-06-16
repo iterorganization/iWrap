@@ -15,7 +15,6 @@ ALL_CODE_LANGUAGES=("dummy" "fortran" "cpp" "java")
 ALL_RUN_MODES=("normal" "standalone")
 ALL_VENDORS=("gcc" "intel")
 ALL_SITES=("iter" "gw")
-ALL_AL_VERSIONS=("4" "5")
 
 declare -A LANGUAGE_FORMATS_DICT
 LANGUAGE_FORMATS_DICT["fortran"]="legacy-xml xml json namelist none"
@@ -41,7 +40,6 @@ print_help() {
     echo -e "\t -m, --run-mode <mode>   \t Define the actor run mode. Available values: '${ALL_RUN_MODES[*]}'. Default: all values "
     echo -e "\t -f, --parameters-format <format>   \t Specify the code parameters formats to be tested Available values: '${ALL_PARAMETER_FORMATS[*]}'. Default: all values "
     echo -e "\t -s, --test-site <site>   \t Site where tests are run. Available values: '${ALL_SITES[*]}'. Default: 'iter'"
-    echo -e "\t -a, --al-version <version>   \t IMAS Access Layer version. Available values: '${ALL_AL_VERSIONS[*]}'. Default: '5'"
     echo -e "\t -h, --help             \t Show this help message and exit"
 
 }
@@ -160,10 +158,6 @@ parse_command_line () {
            shift
           ;;
 
-        --al-version|-a)
-           al_version=${2}
-           shift
-          ;;
 
         --help|-h)
           print_help
@@ -241,13 +235,13 @@ tested_run_modes=(${ALL_RUN_MODES[@]})
 tested_formats=(${ALL_PARAMETER_FORMATS[@]})
 compiler_vendor='gcc'
 current_site='iter'
-al_version='5'
+
 
 # get command line settings
 parse_command_line "$@"
 
 
-source ${IWRAP_HOME}/envs/set-env.sh ${current_site} ${compiler_vendor} ${al_version}
+source ${IWRAP_HOME}/envs/set-env.sh ${current_site} ${compiler_vendor}
 ret_val=$?
 if [ ${ret_val} -ne 0 ]; then
     echo "Environment cannot be configured. Exiting...."

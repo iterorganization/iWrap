@@ -1,7 +1,6 @@
 # Set up environment
 source ci/muscle3/st00-defs.sh
 echo "executing $(basename "$0")"
-# Set up environment such that module files can be loaded
 if test -f /etc/profile.d/modules.sh ;then
 . /etc/profile.d/modules.sh
 else
@@ -9,20 +8,20 @@ else
 fi
 module purge
 
-# Set up environment
 echo "--------------Module load IMAS--------------"
-if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
+if [ "$COMPILER_VENDOR" == "intel" ]; then
 
-  try module load XMLlib/3.3.1-intel-compilers-2023.2.1
+  # INTEL_MODULES must be set by the user (e.g. via Bamboo plan variable).
+  if [ -z "${INTEL_MODULES}" ]; then
+    echo "ERROR: INTEL_MODULES is not set."
+    echo ""
+    echo "  Set this variable in your Bamboo plan with all required modules:"
+    echo "    IMAS-AL-Fortran  IMAS-AL-Cpp  IMAS-AL-Java  IMAS-AL-Matlab"
+    echo "    IMAS-Python  MUSCLE3  XMLlib  PyYAML  lxml"
+    exit 1
+  fi
 
-  try module load MUSCLE3/0.7.1-intel-2023b
-  try module load IMAS-AL-Fortran/5.4.0-intel-2023b-DD-4.0.0
-  try module load IMAS-AL-Java/5.4.0-intel-2023b-DD-4.0.0
-  try module load IMAS-AL-Cpp/5.4.0-intel-2023b-DD-4.0.0
-  try module load IMAS-AL-Matlab/5.4.0-intel-2023b-DD-4.0.0
-  try module load IMAS-Python/2.0.1-intel-2023b
-  try module load PyYAML/6.0.1-GCCcore-13.2.0
-  try module load lxml/4.9.3-GCCcore-13.2.0
+  for m in ${INTEL_MODULES}; do try module load ${m}; done
 
   export CXX="icpc"
   export FC="ifort"
@@ -31,16 +30,17 @@ if [ "$COMPILER_VENDOR" == "intel" ]; then  # INTEL
 
 else
 
-  # GFORTRAN
-  try module load IMAS-AL-Fortran/5.4.0-foss-2023b-DD-4.0.0
-  try module load IMAS-AL-Java/5.4.0-foss-2023b-DD-4.0.0
-  try module load IMAS-AL-Cpp/5.4.0-foss-2023b-DD-4.0.0
-  try module load IMAS-AL-Matlab/5.4.0-foss-2023b-DD-4.0.0
-  try module load IMAS-Python/2.0.1-foss-2023b
-  try module load XMLlib/3.3.1-GCC-13.2.0
-  try module load MUSCLE3/0.7.1-foss-2023b
-  try module load PyYAML/6.0.1-GCCcore-13.2.0
-  try module load lxml/4.9.3-GCCcore-13.2.0
+  # GCC_MODULES must be set by the user (e.g. via Bamboo plan variable).
+  if [ -z "${GCC_MODULES}" ]; then
+    echo "ERROR: GCC_MODULES is not set."
+    echo ""
+    echo "  Set this variable in your Bamboo plan with all required modules:"
+    echo "    IMAS-AL-Fortran  IMAS-AL-Cpp  IMAS-AL-Java  IMAS-AL-Matlab"
+    echo "    IMAS-Python  MUSCLE3  XMLlib  PyYAML  lxml"
+    exit 1
+  fi
+
+  for m in ${GCC_MODULES}; do try module load ${m}; done
 
   export CXX="g++"
   export FC="gfortran"
