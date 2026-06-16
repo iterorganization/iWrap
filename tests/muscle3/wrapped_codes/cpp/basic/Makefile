@@ -19,17 +19,3 @@ lib%.a: %.o
 # CLEAN DIRECTORY
 clean:
 	$(RM) *.o *.a
-
-
-
-
-
-
-
-
-
-
-
-
-
-
