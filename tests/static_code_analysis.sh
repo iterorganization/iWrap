@@ -8,7 +8,7 @@ venv_path=$(realpath $envs_dir/../venv)
 echo "Environment scripts path: $envs_dir"
 echo "VENV path: $venv_path"
 #chmod a+x $envs_dir/00_load_imas_env.sh
-source $envs_dir/set-env.sh iter gcc 5
+source $envs_dir/set-env.sh iter gcc
 
 source $venv_path/bin/activate
 
