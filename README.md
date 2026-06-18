@@ -81,8 +81,9 @@ To launch _iWrap_, just execute on commandline:
 * to  run iWrap user interface
     > iwrap-gui
   
-Both scripts share the same set arguments and switches
-```This is a code block.
+Both scripts share the same set arguments and switches:
+
+```text
 shell>iwrap -h
 usage: iwrap [-h] [-a ACTOR_NAME] [-t ACTOR_TYPE] [-d DATA_TYPE] [-f FILE]
              [-i INSTALL_DIR] [--list-actor-types]
@@ -125,7 +126,7 @@ For more information, visit <https://confluence.iter.org/display/IMP/IMAS+compon
 
 # Tutorials
 
-iWrap provides its tutorials in two formats::
+iWrap provides its tutorials in two formats:
   - interactive Jupyter Notebooks `.ipynb`
   - static nested HTML pages in a book format `.html`
 
@@ -133,9 +134,7 @@ Start your tutorial journey by heading to the `tutorials` directory and opening 
 
 
 # Manuals
-To launch a browser with documentation, simply run:
-
-`shell> iwrap-doc`
+Documentation is available at [iwrap.readthedocs.io](https://iwrap.readthedocs.io/en/latest)
 
 # Examples
 Examples placed in directory `iwrap/examples` can be an excellent source of knowledge

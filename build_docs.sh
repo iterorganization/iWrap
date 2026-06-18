@@ -31,7 +31,7 @@ build_docs() {
     source "${IWRAP_HOME}/${VENV_DIR}/bin/activate"
 
     pip install --upgrade pip
-    pip install --force-reinstall -r ${IWRAP_HOME}/docs/requirements.txt
+    pip install --force-reinstall ".[docs]"
 
     # Always build the JupyterBook
     jupyter-book build ${IWRAP_HOME}/docs

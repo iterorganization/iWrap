@@ -29,3 +29,5 @@ failed_tests.log
 
 # SCM setuptools
 iwrap/_version.py
+doc_venv/*
+myenv/*

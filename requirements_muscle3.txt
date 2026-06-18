@@ -1,3 +1,0 @@
-# Optional dependencies for MUSCLE3 actor generators
-# Install with: pip install -r requirements_muscle3.txt
-muscle3>=0.7.0

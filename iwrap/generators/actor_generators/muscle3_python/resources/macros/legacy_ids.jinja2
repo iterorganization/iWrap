@@ -6,8 +6,3 @@
     _factory = imas.IDSFactory()
     {{ ids_var_name }} = _factory.{{ ids_name }}()
 {%- endmacro -%}
-
-{%- macro provenance(ids_var_name, sbrt_name) -%}
-    {{ ids_var_name }}.code.name = "{{sbrt_name}}"
-    {{ ids_var_name }}.code.version = ""
-{%- endmacro -%}

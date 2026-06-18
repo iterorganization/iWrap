@@ -49,11 +49,6 @@
      {{ argument.name }} = (imas.{{ argument.type }}) retArray[{{loop.index - 1 }}];
 {% endfor %}
 
-   // ------------ Provenance information --------------
-{% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
-    {{ ids_macro.provenance( argument.name , sbrt_name) }}
-{% endfor %}
-
 {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
     //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.put( argument.name) }}

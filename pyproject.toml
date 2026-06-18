@@ -1,8 +1,77 @@
 [build-system]
-# Minimum requirements for the build system to execute.
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=7.0"]
 build-backend = "setuptools.build_meta"
 
 
+[project]
+name = "iwrap"
+description = "A modular component generator, implemented in Python, used for creating IMAS actors from physics models."
+authors = [{name = "iWrap Developers", email = "olivier.hoenen@iter.org"}]
+license = {text = "ITER license"}
+readme = "README.md"
+requires-python = ">=3.8"
+dynamic = ["version"]
+dependencies = [
+    "lxml",
+    "jinja2",
+    "packaging",
+    "pyyaml",
+    "f90nml",
+    "jsonschema",
+    "JPype1",
+    "imas-python",
+]
+
+[project.optional-dependencies]
+muscle3 = ["muscle3>=0.7.0"]
+docs = [
+    "urllib3==2.5.0",
+    "jupyterlab==4.4.5",
+    "jupyter-book==1.0.4.post1",
+    "docutils==0.21.2",
+    "jupyterlab_myst==2.4.2",
+    "markdown_it_py==3.0.0",
+    "mdit_py_plugins==0.4.2",
+    "myst-nb==1.3.0",
+    "myst-parser==3.0.1",
+    "sphinx==7.4.7",
+    "sphinx_inline_tabs==2023.4.21",
+    "typing-extensions==4.14.1",
+    "pylint==3.3.7",
+    "pyparsing==3.2.3",
+    "numpy==1.26.4",
+    "sphinx_immaterial==0.13.5",
+]
+all = ["muscle3>=0.7.0"]
+
+[project.scripts]
+iwrap = "bin.run:cmd_line"
+iwrap-gui = "bin.run:gui"
+
+[project.urls]
+Homepage = "https://github.com/iterorganization/iWrap.git"
+
+
 [tool.setuptools_scm]
-write_to = "iwrap/_version.py"
+version_file = "iwrap/_version.py"
+local_scheme = "no-local-version"
+
+[tool.setuptools]
+include-package-data = true
+script-files = ["bin/iwrap-yaml-update"]
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "testing*", "test_suite*"]
+
+[tool.setuptools.package-data]
+iwrap = [
+    "**/*.jinja2",
+    "**/*.yaml",
+    "**/*.gif",
+    "**/*.in",
+    "**/*.f90",
+    "**/*.cpp",
+    "**/*.h",
+    "**/*.java",
+    "**/*.py",
+]
