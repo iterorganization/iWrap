@@ -3,7 +3,7 @@ echo "Setting ITER"
 module purge
 
 
-source ./envs/set-env.sh iter gcc 5
+source ./envs/set-env.sh iter gcc
 
 mkdir -p $HOME/public/imasdb/tmp/3/0
 mkdir -p $HOME/public/imasdb/iter/3/0

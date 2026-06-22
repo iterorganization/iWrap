@@ -1,7 +1,7 @@
 module purge
 module load cineca
 
-source ./envs/set-env.sh gw gcc 5
+source ./envs/set-env.sh gw gcc
 
 imasdb iter
 imasdb tmp

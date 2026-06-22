@@ -132,13 +132,13 @@ int main(int argc, char* argv[])
 ````
 `````
 
-```{admonition} So to make above plain  codes **IMAS AL5 compatible**  
+```{admonition} So to make above plain  codes **IMAS compatible**  
 :class: tip
 
  we need to take below steps:
 ```
 
-```{admonition} 1. get to know  [official IMAS AL5 HLI docs](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/cpp/dev/using_al.html)  
+```{admonition} 1. get to know  [official IMAS HLI docs](https://imas-cpp.readthedocs.io/en/latest/using_al.html#using-the-access-layer-with-your-c-program)  
 :class: hint
 
    a. remember to change to desired supported language (`Python, java, fortran, matlab`)  
@@ -248,7 +248,7 @@ int main(int argc, char* argv[])
 :class: hint
 
 
-Compile codes using intructions provided in [IMAS AL5 HLI docs](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/fortran/5.0/using_al.html#using-the-access-layer-with-your-fortran-program): 
+Compile codes using intructions provided in [IMAS HLI docs](https://imas-fortran.readthedocs.io/en/latest/using_al.html#using-the-access-layer-with-your-fortran-program): 
 ```
 
 

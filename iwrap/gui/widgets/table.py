@@ -7,7 +7,8 @@ from iwrap.gui.settings.tooltip import ToolTip
 
 from iwrap.gui.utils import center_wnd
 
-class Table( ttk.Frame ):
+
+class Table(ttk.Frame):
     """The Table class enables the creation of tables made of columns and rows. Rows can contain text cells and
     radio buttons. Table class has methods that enable select clicked row, move this row up and down in the table
     and delete the selected row. There is availability to add and edit row using the sheet.
@@ -32,12 +33,10 @@ class Table( ttk.Frame ):
         Table(values, columns, master_frame)
     """
 
-
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, rows, columns, master=None, lost_focus_listeners=None):
-
         """Initialize the Table class object.
 
         Args:
@@ -51,7 +50,7 @@ class Table( ttk.Frame ):
         self.columns = []
         self.rows = []
         self.selected_row = tk.IntVar()
-        self.selected_row.trace('w', self.change_listeners_state)
+        self.selected_row.trace("w", self.change_listeners_state)
         self.lost_focus_listeners = lost_focus_listeners
         self._row_frames = []
 
@@ -75,8 +74,7 @@ class Table( ttk.Frame ):
             self.selected_row.set(0)
 
     def delete_data_from_table(self):
-        """Delete all data from rows in the table.
-        """
+        """Delete all data from rows in the table."""
         for row in self.rows:
             for row_cell in row.row_cells:
                 row_cell.cell.pack_forget()
@@ -115,21 +113,25 @@ class Table( ttk.Frame ):
             table_row = Row(row_number, row, row_frame, self.columns)
             self.rows.append(table_row)
             for row_cell in table_row.row_cells:
-                row_cell.cell.bind("<1>", lambda event, parent_row=table_row: self.select_row(parent_row))
-                row_cell.cell.bind("<Double-Button-1>", lambda event, parent_row=table_row: self.show_info())
+                row_cell.cell.bind(
+                    "<1>",
+                    lambda event, parent_row=table_row: self.select_row(parent_row),
+                )
+                row_cell.cell.bind(
+                    "<Double-Button-1>",
+                    lambda event, parent_row=table_row: self.show_info(),
+                )
 
         self.frame.update()
 
     def show_info(self):
-        """Show window with information about selected row.
-        """
+        """Show window with information about selected row."""
         for listener in self.lost_focus_listeners:
-            if listener['text'] == "Info...":
+            if listener["text"] == "Info...":
                 listener.invoke()
 
     def _add_columns(self):
-        """Add the Columns objects to the table grid.
-        """
+        """Add the Columns objects to the table grid."""
         column_frame = tk.Frame(self.frame)
         column_frame.pack(side="top", fill="x")
         for idx, column in enumerate(self.columns):
@@ -161,8 +163,7 @@ class Table( ttk.Frame ):
                     row_cell.change_color_to_white()
 
     def change_listeners_state(self, *args):
-        """Change the state of buttons from a list of buttons which state depends on whether the row is selected.
-        """
+        """Change the state of buttons from a list of buttons which state depends on whether the row is selected."""
         if self.lost_focus_listeners is not None:
             for listener in self.lost_focus_listeners:
                 if self.get_selected_row() is not None:
@@ -171,8 +172,7 @@ class Table( ttk.Frame ):
                     listener["state"] = "disabled"
 
     def delete_row(self):
-        """Delete the selected row from the table.
-        """
+        """Delete the selected row from the table."""
         for row in self.rows:
             if row.row_number == self.get_selected_row():
                 for row_cell in row.row_cells:
@@ -203,36 +203,48 @@ class Table( ttk.Frame ):
         self.add_new_table_content(rows, self.get_selected_row() or 0)
 
     def row_up_feature(self):
-        """Enable move row up in the table.
-        """
+        """Enable move row up in the table."""
         if self.get_selected_row() not in [1, None]:
-            top_row = [row for row in self.rows if row.row_number == self.get_selected_row() - 1][0]
-            current_row = [row for row in self.rows if row.row_number == self.get_selected_row()][0]
+            top_row = [
+                row
+                for row in self.rows
+                if row.row_number == self.get_selected_row() - 1
+            ][0]
+            current_row = [
+                row for row in self.rows if row.row_number == self.get_selected_row()
+            ][0]
             self.rows[top_row.row_number - 1] = current_row
             self.rows[current_row.row_number - 1] = top_row
             self._update_table(top_row.row_number - 1)
 
     def row_down_feature(self):
-        """Enable move row down in the table.
-        """
+        """Enable move row down in the table."""
         if self.get_selected_row() not in [len(self.rows), None]:
-            bottom_row = [row for row in self.rows if row.row_number == self.get_selected_row() + 1][0]
-            current_row = [row for row in self.rows if row.row_number == self.get_selected_row()][0]
+            bottom_row = [
+                row
+                for row in self.rows
+                if row.row_number == self.get_selected_row() + 1
+            ][0]
+            current_row = [
+                row for row in self.rows if row.row_number == self.get_selected_row()
+            ][0]
             self.rows[bottom_row.row_number - 1] = current_row
             self.rows[current_row.row_number - 1] = bottom_row
             self._update_table(bottom_row.row_number - 1)
 
     def add_row(self, frame_title):
         """Enable add a new row. The method creates an ArgumentWindow object what is associated with opening
-         a new window with add row sheet.
+        a new window with add row sheet.
 
-         Args:
-             frame_title (str): The frame title.
+        Args:
+            frame_title (str): The frame title.
         """
         new_window = ArgumentWindow(self)
         new_window.window.title(f"iWrap - Add new {frame_title}")
-        new_window.labelframe['text'] = f"Add new {frame_title}"
-        tk.Button(new_window.footer, text='Add', command=new_window.add_new_row, width=8).pack(side=tk.RIGHT, padx=10)
+        new_window.labelframe["text"] = f"Add new {frame_title}"
+        tk.Button(
+            new_window.footer, text="Add", command=new_window.add_new_row, width=8
+        ).pack(side=tk.RIGHT, padx=10)
 
     def edit_row(self, frame_title):
         """Enable edit selected row. The method creates an ArgumentWindow object what is associated with opening a new
@@ -253,9 +265,11 @@ class Table( ttk.Frame ):
 
             new_window = ArgumentWindow(self)
             new_window.window.title(f"iWrap - Edit {frame_title}")
-            new_window.labelframe['text'] = f"Edit {frame_title}"
+            new_window.labelframe["text"] = f"Edit {frame_title}"
             new_window.set_row_values(selected_row_data)
-            tk.Button(new_window.footer, text='Close', command=new_window.edit_row, width=8).pack(side=tk.RIGHT, padx=10)
+            tk.Button(
+                new_window.footer, text="Close", command=new_window.edit_row, width=8
+            ).pack(side=tk.RIGHT, padx=10)
 
     def filter_table(self, filter_value, data):
         """Filter table by filter_value.
@@ -284,6 +298,7 @@ class ArgumentWindow:
         master (Table): The master frame.
         new_cells (list): The list of column values from add/edit sheet.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -295,7 +310,7 @@ class ArgumentWindow:
         """
         self.window = tk.Toplevel(master)
         self.window.minsize(500, 100)
-        self.window.geometry('500x150')
+        self.window.geometry("500x150")
         self.window.resizable(width=False, height=True)
         self.window.focus_force()
         self.window.grab_set()
@@ -312,7 +327,9 @@ class ArgumentWindow:
         self.new_cells = []
         self._add_content()
 
-        tk.Button(self.footer, text='Cancel', command=self._close_add_window, width=8).pack(side=tk.RIGHT, padx=10)
+        tk.Button(
+            self.footer, text="Cancel", command=self._close_add_window, width=8
+        ).pack(side=tk.RIGHT, padx=10)
         content_frame.update()
         center_wnd(self.master, self.window)
 
@@ -334,8 +351,12 @@ class ArgumentWindow:
             elif column.column_type == Column.COMBOBOX:
                 self._set_label(idx, column.label_var.get())
                 combobox_cell_value = tk.StringVar()
-                new_cell = ttk.Combobox(self.labelframe, state='readonly', values=column.list_of_values,
-                                        textvariable=combobox_cell_value)
+                new_cell = ttk.Combobox(
+                    self.labelframe,
+                    state="readonly",
+                    values=column.list_of_values,
+                    textvariable=combobox_cell_value,
+                )
                 new_cell.current(0)
                 new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(combobox_cell_value)
@@ -343,17 +364,24 @@ class ArgumentWindow:
             elif column.column_type == Column.RADIOBUTTON:
                 if radiobutton_combobox_cell_value not in self.new_cells:
                     self._set_label(idx, column.data_label)
-                    combobox_values = [column.label_var.get() for column in self.master.columns
-                                       if column.column_type == Column.RADIOBUTTON]
-                    new_cell = ttk.Combobox(self.labelframe, state='readonly', values=combobox_values,
-                                            textvariable=radiobutton_combobox_cell_value)
+                    combobox_values = [
+                        column.label_var.get()
+                        for column in self.master.columns
+                        if column.column_type == Column.RADIOBUTTON
+                    ]
+                    new_cell = ttk.Combobox(
+                        self.labelframe,
+                        state="readonly",
+                        values=combobox_values,
+                        textvariable=radiobutton_combobox_cell_value,
+                    )
                     new_cell.current(0)
                     new_cell.grid(row=idx, column=1, sticky="ew", padx=10, pady=5)
                 self.new_cells.append(radiobutton_combobox_cell_value)
             if column.label_var.get() in ["Input", "Output"]:
-                ToolTip(new_cell, 'argument_window.Intent')
+                ToolTip(new_cell, "argument_window.Intent")
             else:
-                ToolTip(new_cell, 'argument_window.' + column.label_var.get())
+                ToolTip(new_cell, "argument_window." + column.label_var.get())
 
     def _set_label(self, row, label):
         """Set labels in the grid.
@@ -362,7 +390,9 @@ class ArgumentWindow:
             row (int): The row number to put Label in.
             label (string): The text to put to the Label.
         """
-        ttk.Label(self.labelframe, text=f"{label}:").grid(row=row, column=0, sticky="ew", padx=10, pady=5)
+        ttk.Label(self.labelframe, text=f"{label}:").grid(
+            row=row, column=0, sticky="ew", padx=10, pady=5
+        )
 
     def set_row_values(self, data):
         """Set row values in the edit sheet.
@@ -374,8 +404,7 @@ class ArgumentWindow:
             cell.set(data[idx])
 
     def add_new_row(self):
-        """Add new row to the table.
-        """
+        """Add new row to the table."""
         new_row_data = []
         for idx, cell in enumerate(self.new_cells):
             new_row_data.append(cell.get())
@@ -383,8 +412,7 @@ class ArgumentWindow:
         self._close_add_window()
 
     def edit_row(self):
-        """Edit selected row with values from the edit sheet.
-        """
+        """Edit selected row with values from the edit sheet."""
         for row in self.master.rows:
             if row.row_number == self.master.get_selected_row():
                 for idx, row_cell in enumerate(row.row_cells):
@@ -395,8 +423,7 @@ class ArgumentWindow:
         self._close_add_window()
 
     def _close_add_window(self):
-        """Close window.
-        """
+        """Close window."""
         self.window.destroy()
 
 
@@ -409,6 +436,7 @@ class Row:
         row_number (int): The row number to put cells in.
         row_cells (list): The list of cells related to row. A cell can be RowEntry or RowRadioButton object.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -425,7 +453,10 @@ class Row:
         self.row_number = row
         self.row_cells = []
         for idx, elem in enumerate(data):
-            if self.columns[idx].column_type == Column.COMBOBOX or self.columns[idx].column_type == Column.TEXT:
+            if (
+                self.columns[idx].column_type == Column.COMBOBOX
+                or self.columns[idx].column_type == Column.TEXT
+            ):
                 self.row_cells.append(RowEntry(row, idx, elem, master))
             if self.columns[idx].column_type == Column.RADIOBUTTON:
                 self.row_cells.append(RowRadioButton(row, idx, elem, master))
@@ -434,17 +465,22 @@ class Row:
             self._set_radiobuttons_values()
 
     def _set_radiobuttons_values(self):
-        """Set radio buttons values and makes them related to row.
-        """
-        checked_column_label_id = [idx for idx, cell in enumerate(self.row_cells)
-                                   if cell.get_cell_value() == self.columns[idx].label_var.get()][0]
+        """Set radio buttons values and makes them related to row."""
+        checked_column_label_id = [
+            idx
+            for idx, cell in enumerate(self.row_cells)
+            if cell.get_cell_value() == self.columns[idx].label_var.get()
+        ][0]
         checked_column_label = self.columns[checked_column_label_id].label_var.get()
 
         self.selected_column_label = tk.StringVar()
         self.selected_column_label.set(checked_column_label)
         for idx, row_cell in enumerate(self.row_cells):
             if isinstance(row_cell, RowRadioButton):
-                row_cell.cell.config(variable=self.selected_column_label, value=self.columns[idx].label_var.get())
+                row_cell.cell.config(
+                    variable=self.selected_column_label,
+                    value=self.columns[idx].label_var.get(),
+                )
 
     def get_row_values(self):
         """The method returns table row values.
@@ -473,6 +509,7 @@ class RowRadioButton:
         value (str): The cell data.
         cell (Entry): The cell Entry placed in the table grid.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -488,17 +525,17 @@ class RowRadioButton:
         self.row_number = row
         self.column_number = column
         self.value = value
-        self.cell = tk.Radiobutton(master, bg="white", state=tk.DISABLED, width=1, highlightthickness=1, bd=0)
+        self.cell = tk.Radiobutton(
+            master, bg="white", state=tk.DISABLED, width=1, highlightthickness=1, bd=0
+        )
         self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
-        """Change the Radiobutton color to lightgray.
-        """
+        """Change the Radiobutton color to lightgray."""
         self.cell.config(bg="lightgray")
 
     def change_color_to_white(self):
-        """Change the Radiobutton color to white.
-        """
+        """Change the Radiobutton color to white."""
         self.cell.config(bg="white")
 
     def get_cell_value(self):
@@ -518,6 +555,7 @@ class RowEntry:
         row_text (StringVar): The cell data.
         cell (Entry): The cell Entry placed in the table grid.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -534,18 +572,24 @@ class RowEntry:
         self.column_number = column
         self.row_text = tk.StringVar()
         self.row_text.set(text)
-        self.cell = tk.Entry(master, text=self.row_text, state='readonly', readonlybackground="white", width=15,
-                             relief=tk.FLAT, highlightthickness=1, justify='left')
+        self.cell = tk.Entry(
+            master,
+            text=self.row_text,
+            state="readonly",
+            readonlybackground="white",
+            width=15,
+            relief=tk.FLAT,
+            highlightthickness=1,
+            justify="left",
+        )
         self.cell.pack(side="left", fill="both", expand=True)
 
     def change_color_to_lightgray(self):
-        """Change the Entry color to light gray.
-        """
+        """Change the Entry color to light gray."""
         self.cell.config(readonlybackground="lightgray")
 
     def change_color_to_white(self):
-        """Change the Entry color to white.
-        """
+        """Change the Entry color to white."""
         self.cell.config(readonlybackground="white")
 
     def get_cell_value(self):
@@ -566,14 +610,15 @@ class Column:
          in the Add/Edit window.
         data_label (str): The data label.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    TEXT = 'text'
+    TEXT = "text"
     """TEXT (str): Defines text column type."""
-    RADIOBUTTON = 'radiobutton'
+    RADIOBUTTON = "radiobutton"
     """RADIOBUTTON (str): Defines radiobutton column type."""
-    COMBOBOX = 'combobox'
+    COMBOBOX = "combobox"
     """COMBOBOX (str): Defines combobox column type."""
 
     def __init__(self, column_type, table_label, data_label, list_of_values=None):
@@ -600,9 +645,15 @@ class Column:
         Args:
             master (ttk.Frame): The master frame where Entry will be placed.
         """
-        column_entry = tk.Entry(master, textvariable=self.label_var, state='readonly', width=13, justify='center')
+        column_entry = tk.Entry(
+            master,
+            textvariable=self.label_var,
+            state="readonly",
+            width=13,
+            justify="center",
+        )
         column_entry.pack(side="left", fill="both", expand=True)
         if self.column_type == Column.RADIOBUTTON:
             column_entry["width"] = 1
 
-        ToolTip(column_entry, f'argument_window.{self.data_label}')
+        ToolTip(column_entry, f"argument_window.{self.data_label}")

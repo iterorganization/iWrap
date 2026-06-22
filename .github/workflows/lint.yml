@@ -1,0 +1,33 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint:
+    name: Lint iWrap source
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install iwrap and dependencies
+        run: python3 -m pip install ".[all]"
+
+      - name: Install lint dependencies
+        run: python3 -m pip install ruff pylint
+
+      - name: ruff check
+        run: ruff check iwrap/
+
+      - name: ruff format check
+        run: ruff format --check iwrap/
+
+      - name: pylint (errors only)
+        run: pylint -E iwrap/

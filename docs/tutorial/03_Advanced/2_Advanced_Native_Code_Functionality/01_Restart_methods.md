@@ -404,7 +404,7 @@ code_description:
         code_path: examples/code_restart_cpp/native_code/libcode_restart_cpp.a
         include_path: examples/code_restart_cpp/native_code/code_restart.h
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
     arguments:
     -   name: equilibrium_in
         type: equilibrium
@@ -447,7 +447,7 @@ code_description:
             finalize:
             get_timestamp: get_timestamp_cpp
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: ./native_code/libtimestamps_cpp.a
         include_path: ./native_code/timestamps.h

@@ -52,6 +52,18 @@ iwrap-gui = "bin.run:gui"
 Homepage = "https://github.com/iterorganization/iWrap.git"
 
 
+[tool.ruff]
+line-length = 88
+exclude = [
+    ".eggs",
+    "docs",
+]
+
+[tool.ruff.lint]
+# W503 (line break before binary operator) is not enforced by ruff
+select = ["E", "F", "W"]
+ignore = ["E501"]
+
 [tool.setuptools_scm]
 version_file = "iwrap/_version.py"
 local_scheme = "no-local-version"

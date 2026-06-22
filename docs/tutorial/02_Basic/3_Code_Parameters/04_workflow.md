@@ -21,7 +21,7 @@ kernelspec:
 
 Official IMAS documentation for Code Parameters is [here](https://confluence.iter.org/display/IMP/Getting+Started#GettingStarted-Level2:Addanxmlfileforuser-definedcodeparameters)
 
-Official iWrap documentation of the [Actor API related to Code Parameters](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/IWRAP-doc/resources/actor_usage.html#physics-model-parameters) before continuing.
+Official iWrap documentation of the [Actor API related to Code Parameters](https://iwrap.readthedocs.io/en/latest/documentation/actor_usage.html#physics-model-parameters) before continuing.
 ```
 
 

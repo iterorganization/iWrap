@@ -3,7 +3,7 @@ set -e
 
 envs_dir=`pwd`/envs
 #chmod a+x $envs_dir/00_load_imas_env.sh
-source $envs_dir/set-env.sh iter gcc 5
+source $envs_dir/set-env.sh iter gcc
 
 
 echo "-----------Create Python Virtual ENV-------------"

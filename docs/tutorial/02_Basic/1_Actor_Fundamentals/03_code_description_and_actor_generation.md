@@ -14,7 +14,7 @@ kernelspec:
 
 # Actor and  code description
 
-Please [refer to the docs](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/IWRAP-doc/resources/project_description.html).
+Please [refer to the docs](https://iwrap.readthedocs.io/en/latest/documentation/project_description.html).
 
 ```{admonition} What will you learn in this section
 :class: note
@@ -152,7 +152,7 @@ These are parameters used in **implementation** part:
 
 - `implementation`:
     - `programming_language`: The language of your code, one of `Fortran` or `CPP`.
-    - `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
+    - `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `4.1.1`.
     - `subroutines`: The list of procedures your actor can perform.
         - `main`: The main task.
             - `name`: The subroutine actual name.  
@@ -322,7 +322,7 @@ code_description:
 The other information that has to be provided to describe the code include (mentioned already above))
 
 - `programming_language`: The language of your code, one of `Fortran` or `CPP`.
-- `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `3.37.0`.
+- `data_dictionary_compliant`: The oldest version of Data Directory your actor can work with, e.g., `4.1.1`.
 - `subroutines`: The list of procedures your actor can perform.
 - `code_path`: Where the main code file is located, e.g., `./iWrapped_codes/code1_fortran/libcode1.a`.
 - `include_path`: Where the header or module file is, like `./iWrapped_codes/code1_fortran/mod_code1.mod`.
@@ -338,7 +338,7 @@ code_description:
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
 ```
 
@@ -362,7 +362,7 @@ code_description:
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 3.39.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
 ```
 ````
@@ -480,7 +480,7 @@ code_description:
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
-        data_dictionary_compliant: 3.39.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
     settings:
         compiler_cmd: gfortran
@@ -510,7 +510,7 @@ code_description:
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 3.39.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
     settings:
         compiler_cmd: g++

@@ -9,6 +9,7 @@ class PkgConfigTools:
         system_lib_dict (dict): The dictionary with all pkg configs. Keys are pkg configs names, dictionary values are
         info and descriptions.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -20,8 +21,7 @@ class PkgConfigTools:
     PKG_CONFIG_OPT_GET_CFLAGS = "--cflags"
 
     def __init__(self):
-        """Initialize the PkgConfigTools class object.
-        """
+        """Initialize the PkgConfigTools class object."""
         self.__pkg_config_list = None
         self.__system_lib_dict = None
 
@@ -35,11 +35,14 @@ class PkgConfigTools:
         return self.__system_lib_dict
 
     def initialize(self):
-        """Call subprocess and get a list of pkg configs"
-        """
+        """Call subprocess and get a list of pkg configs" """
         try:
-            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD, PkgConfigTools.PKG_CONFIG_OPT_LIST_ALL],
-                                       encoding='utf-8', text=True,  stdout=subprocess.PIPE)
+            process = subprocess.Popen(
+                [PkgConfigTools.PKG_CONFIG_CMD, PkgConfigTools.PKG_CONFIG_OPT_LIST_ALL],
+                encoding="utf-8",
+                text=True,
+                stdout=subprocess.PIPE,
+            )
             self.__pkg_config_list = process.stdout.readlines()
         except (FileNotFoundError, subprocess.CalledProcessError):
             self.__pkg_config_list = []
@@ -48,15 +51,15 @@ class PkgConfigTools:
     def __to_dict(self):
         pkg_config_dict = {}
         for pkg_config in self.__pkg_config_list:
-            split_config = pkg_config.split(' ', 1)
+            split_config = pkg_config.split(" ", 1)
             name = split_config[0]
-            full_description = split_config[1].strip().split(' - ')
+            full_description = split_config[1].strip().split(" - ")
             info = full_description[0]
-            desc = ''
+            desc = ""
             if len(full_description) > 1:
                 desc = full_description[1]
 
-            pkg_config_dict[name] = {'info': info, 'description': desc}
+            pkg_config_dict[name] = {"info": info, "description": desc}
 
         return pkg_config_dict
 
@@ -76,24 +79,36 @@ class PkgConfigTools:
 
     def get_linker_flags(self, system_library):
         try:
-            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
-                                        PkgConfigTools.PKG_CONFIG_OPT_GET_LINKER_FLAGS,
-                                        system_library],
-                                       encoding='utf-8', text=True,  stdout=subprocess.PIPE)
+            process = subprocess.Popen(
+                [
+                    PkgConfigTools.PKG_CONFIG_CMD,
+                    PkgConfigTools.PKG_CONFIG_OPT_GET_LINKER_FLAGS,
+                    system_library,
+                ],
+                encoding="utf-8",
+                text=True,
+                stdout=subprocess.PIPE,
+            )
             linker_flags = "".join(process.stdout.readlines())
         except (FileNotFoundError, subprocess.CalledProcessError):
-            linker_flags = ''
+            linker_flags = ""
 
         return linker_flags
 
     def get_c_flags(self, system_library):
         try:
-            process = subprocess.Popen([PkgConfigTools.PKG_CONFIG_CMD,
-                                        PkgConfigTools.PKG_CONFIG_OPT_GET_CFLAGS,
-                                        system_library],
-                                       encoding='utf-8', text=True,  stdout=subprocess.PIPE)
+            process = subprocess.Popen(
+                [
+                    PkgConfigTools.PKG_CONFIG_CMD,
+                    PkgConfigTools.PKG_CONFIG_OPT_GET_CFLAGS,
+                    system_library,
+                ],
+                encoding="utf-8",
+                text=True,
+                stdout=subprocess.PIPE,
+            )
             cflags_flags = "".join(process.stdout.readlines())
         except (FileNotFoundError, subprocess.CalledProcessError):
-            cflags_flags = ''
+            cflags_flags = ""
 
         return cflags_flags

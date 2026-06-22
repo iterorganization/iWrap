@@ -14,10 +14,10 @@ class ActorDescription(SettingsBaseClass):
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self.actor_name: str = ''
-        self.data_type: str = ''
-        self.actor_type: str = ''
-        self._install_dir: str = ''
+        self.actor_name: str = ""
+        self.data_type: str = ""
+        self.actor_type: str = ""
+        self._install_dir: str = ""
 
     def get_install_dir(self):
         if not self._install_dir:
@@ -32,13 +32,14 @@ class ActorDescription(SettingsBaseClass):
 
         # actor_name
         if not self.actor_name:
-            raise ValueError('Actor name is not set!')
+            raise ValueError("Actor name is not set!")
 
         # actor_type
         if not self.actor_type:
             self.actor_type = engine.active_generator.name
             self.__logger.warning(
-                f'Type of the actor to be generated is not set! Using default one: "{self.actor_type}".')
+                f'Type of the actor to be generated is not set! Using default one: "{self.actor_type}".'
+            )
         else:
             engine.validate_actor_type(self.actor_type)
 
@@ -46,7 +47,8 @@ class ActorDescription(SettingsBaseClass):
         if not self.data_type:
             self.data_type = engine.active_generator.actor_data_types[0]
             ActorDescription.__logger.warning(
-                f'Data type handled by actor is not set!! Using default one: "{self.data_type}".')
+                f'Data type handled by actor is not set!! Using default one: "{self.data_type}".'
+            )
         else:
             engine.validate_actor_data_type(self.data_type)
 
@@ -54,7 +56,8 @@ class ActorDescription(SettingsBaseClass):
         if not self._install_dir:
             self._install_dir = PlatformSettings().directories.actor_install_dir
             ActorDescription.__logger.warning(
-                f'Actor installation directory is not set! Using default one: "{self._install_dir}".')
+                f'Actor installation directory is not set! Using default one: "{self._install_dir}".'
+            )
 
         try:
             __path = os.path.expandvars(self._install_dir)
@@ -62,17 +65,25 @@ class ActorDescription(SettingsBaseClass):
             Path(__path).mkdir(parents=True, exist_ok=True)
         except Exception as exc:
             raise ValueError(
-                'Installation directory path is incorrect or dir cannot be created ["' + __path or self._install_dir + "]" + exc)
+                'Installation directory path is incorrect or dir cannot be created ["'
+                + __path
+                or self._install_dir + "]" + exc
+            )
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str, Any]): Data to be used to restore object
-           """
+        Args:
+            dictionary (Dict[str, Any]): Data to be used to restore object
+        """
         super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative=False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -82,13 +93,12 @@ class ActorDescription(SettingsBaseClass):
         if resolve_path:
             # install_dir
             __path = utils.resolve_path(self._install_dir)
-            ret_dict.update({'install_dir': __path})
+            ret_dict.update({"install_dir": __path})
         return ret_dict
 
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
-        self.actor_name = ''
-        self.data_type = ''
-        self.actor_type = ''
-        self._install_dir = ''
+        """Clears class content, setting default values of class attributes"""
+        self.actor_name = ""
+        self.data_type = ""
+        self.actor_type = ""
+        self._install_dir = ""

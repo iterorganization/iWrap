@@ -33,6 +33,7 @@ Runtime dependencies
   * `f90nml`
   * `jsonschema`
   * `jPype1`
+  * `imas-python`
 
 * System libraries:
 
@@ -42,7 +43,7 @@ Runtime dependencies
 
 * IMAS:
 
-  * `IMAS Data Dictionary` (or `IMAS AL`)
+  * `IMAS Data Dictionary` (or `IMAS Python`)
 
 Integration tests dependencies
 ################################################

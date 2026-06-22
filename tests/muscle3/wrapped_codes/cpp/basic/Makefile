@@ -1,15 +1,6 @@
-AL_VERSION ?= $(UAL_VERSION)
-AL_MAJOR := $(firstword $(subst ., ,$(AL_VERSION)))
+IMAS_LIB_NAME = al-cpp
 
-CFLAGS = -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC -DAL_MAJOR=$(AL_MAJOR)
-
-ifeq ($(AL_MAJOR),)
-    $(error Could not extract major AL version from UAL_VERSION/AL_VERSION system variable. Is your IMAS module loaded?)
-else ifeq ($(AL_MAJOR), 5)
-	IMAS_LIB_NAME=al-cpp
-else ifeq ($(AL_MAJOR), 4)
-	IMAS_LIB_NAME=imas-cpp
-endif
+CFLAGS = -pthread -g -O0 -D__USE_XOPEN2K8 -fPIC
 
 LIBS =   `pkg-config --libs $(IMAS_LIB_NAME)`
 INCLUDES = `pkg-config --cflags $(IMAS_LIB_NAME)`
@@ -28,17 +19,3 @@ lib%.a: %.o
 # CLEAN DIRECTORY
 clean:
 	$(RM) *.o *.a
-
-
-
-
-
-
-
-
-
-
-
-
-
-

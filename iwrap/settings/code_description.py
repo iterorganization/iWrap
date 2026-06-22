@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import List, Dict, Any
+from typing import Dict, Any
 import yaml
 
 from pathlib import Path
@@ -11,17 +11,20 @@ from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.settings.language_settings_mgmt import LanguageSettingsManager
 from iwrap.settings.code_parameters_handlers.handler_factory import HandlerFactory
-from iwrap.settings.code_parameters_handlers.parameters_handler_interface import ParametersHandlerInterface
+from iwrap.settings.code_parameters_handlers.parameters_handler_interface import (
+    ParametersHandlerInterface,
+)
 
-class Intent( Enum ):
+
+class Intent(Enum):
     # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    IN = 'IN'  # input type of argument
-    OUT = 'OUT'  # output type of an argument
+    IN = "IN"  # input type of argument
+    OUT = "OUT"  # output type of an argument
 
 
-class Argument( SettingsBaseClass ):
+class Argument(SettingsBaseClass):
     """The data class containing information about the arguments of the code's API to be wrapped
 
     Attributes:
@@ -29,8 +32,9 @@ class Argument( SettingsBaseClass ):
         type (`str`): type of the IDS (e.g. 'equilibrium')
         _intent : determines if the argument is IN or OUT
     """
+
     # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
     def intent(self):
@@ -41,10 +45,10 @@ class Argument( SettingsBaseClass ):
         self._intent = Intent[value.upper()]
 
     def __init__(self, dictionary: dict):
-        self.name = dictionary['name']
-        self.type = dictionary['type']
+        self.name = dictionary["name"]
+        self.type = dictionary["type"]
         self._intent = None
-        self.intent = dictionary['intent']
+        self.intent = dictionary["intent"]
 
     def clear(self):
         # The whole list is cleared, so no need to clear particular elements
@@ -52,29 +56,34 @@ class Argument( SettingsBaseClass ):
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         if not self.name:
-            raise ValueError( 'Argument name is not set!' )
+            raise ValueError("Argument name is not set!")
 
         if not self.type:
-            raise ValueError( 'Argument IDS type is not set!' )
+            raise ValueError("Argument IDS type is not set!")
 
-        data_type = kwargs['data_type']
-        ids_list = Engine.get_ids_types( data_type )
+        data_type = kwargs["data_type"]
+        ids_list = Engine.get_ids_types(data_type)
         if self.type not in ids_list:
-            raise ValueError( f'Incorrect IDS type {self.type} of argument {self.name}!' )
+            raise ValueError(f"Incorrect IDS type {self.type} of argument {self.name}!")
 
         if not self._intent:
-            raise ValueError( 'Argument intent is not set!' )
+            raise ValueError("Argument intent is not set!")
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
         """
 
-        super().from_dict( dictionary )
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative=False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -83,13 +92,21 @@ class Argument( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
     def __str__(self):
-        str_ = 'Name : ' + self.name + '\n' \
-               + 'Type : ' + self.type + '\n' \
-               + 'Intent : ' + self.intent + '\n'
+        str_ = (
+            "Name : "
+            + self.name
+            + "\n"
+            + "Type : "
+            + self.type
+            + "\n"
+            + "Intent : "
+            + self.intent
+            + "\n"
+        )
         return str_
 
 
-class Subroutines( SettingsBaseClass ):
+class Subroutines(SettingsBaseClass):
     """The data class containing information about the subroutines to be called from the code's library.
 
     Attributes:
@@ -104,21 +121,21 @@ class Subroutines( SettingsBaseClass ):
     def __init__(self):
         # A name of subroutine that could be used to initialise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.init = Subroutine('init')
+        self.init = Subroutine("init")
 
         # A name of the main subroutine that will be called from actor (mandatory)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.main = Subroutine('main', True)
+        self.main = Subroutine("main", True)
 
         # A name of subroutine that could be used to finalise the code (optional)
         # (Please note: must be *exactly the same* as name of called method / subroutine!)
-        self.finalize = Subroutine('finalize')
+        self.finalize = Subroutine("finalize")
 
-        self.get_state = ''
+        self.get_state = ""
 
-        self.set_state = ''
+        self.set_state = ""
 
-        self.get_timestamp = ''
+        self.get_timestamp = ""
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
 
@@ -126,26 +143,29 @@ class Subroutines( SettingsBaseClass ):
         self.main.validate(engine, project_root_dir, **kwargs)
         self.finalize.validate(engine, project_root_dir, **kwargs)
 
-
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
-        self.init = Subroutine('init')
-        self.main = Subroutine('main', True)
-        self.finalize = Subroutine('finalize')
-        self.get_state = ''
-        self.set_state = ''
-        self.get_timestamp = ''
+        """Clears class content, setting default values of class attributes"""
+        self.init = Subroutine("init")
+        self.main = Subroutine("main", True)
+        self.finalize = Subroutine("finalize")
+        self.get_state = ""
+        self.set_state = ""
+        self.get_timestamp = ""
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative=False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -154,7 +174,7 @@ class Subroutines( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
 
-class Implementation( SettingsBaseClass ):
+class Implementation(SettingsBaseClass):
     """The data class containing information about the code implementation.
 
     Attributes:
@@ -168,19 +188,20 @@ class Implementation( SettingsBaseClass ):
         code_parameters (:obj:CodeParameters): code specific parameters
         subroutines (:obj:Subroutines): name of the method/subroutine defined in the code's API
     """
+
     @property
     def programming_language(self):
         return self._programming_language
 
     @programming_language.setter
     def programming_language(self, value: str):
-        value = None if str( value ).lower() == 'none' or value == '' else value
-        self._programming_language =  value.lower() if value else value
+        value = None if str(value).lower() == "none" or value == "" else value
+        self._programming_language = value.lower() if value else value
         self._master.change_language_specific()
 
     def __init__(self, master):
-        self.root_dir = '.'
-        self._programming_language  = None
+        self.root_dir = "."
+        self._programming_language = None
         self.data_type: str = None
         self.code_path: str = None
         self.include_path = None
@@ -195,49 +216,54 @@ class Implementation( SettingsBaseClass ):
 
         # programming_language
         if is_dummy_actor:
-            engine.validate_programming_language( self.programming_language )
+            engine.validate_programming_language(self.programming_language)
 
         # data_type
         if not self.data_type:
-            raise ValueError( 'Type of data handled by the code is not set!' )
+            raise ValueError("Type of data handled by the code is not set!")
         else:
-            engine.validate_code_data_type( self.data_type )
+            engine.validate_code_data_type(self.data_type)
 
         # code path
         if not is_dummy_actor:
             if not self.code_path:
-                raise ValueError( 'Path to the code is not set!' )
+                raise ValueError("Path to the code is not set!")
 
-            __path = utils.resolve_path( self.code_path, project_root_dir )
+            __path = utils.resolve_path(self.code_path, project_root_dir)
             if not Path(__path).exists():
-                raise ValueError( 'Path to the code points to not existing location ["' + str( __path ) + '"]' )
+                raise ValueError(
+                    'Path to the code points to not existing location ["'
+                    + str(__path)
+                    + '"]'
+                )
 
         # code parameters
-        self.code_parameters.validate( engine, project_root_dir )
+        self.code_parameters.validate(engine, project_root_dir)
 
         # include path
         if not is_dummy_actor:
             if not self.include_path:
-                raise ValueError( 'Path to the include/module file is not set!' )
+                raise ValueError("Path to the include/module file is not set!")
 
         if not self.data_dictionary_compliant:
-            raise ValueError('Data Dictionary compliant version is not set!')
+            raise ValueError("Data Dictionary compliant version is not set!")
 
         # subroutines
-        self.subroutines.validate( engine, project_root_dir, **kwargs, data_type = self.data_type )
+        self.subroutines.validate(
+            engine, project_root_dir, **kwargs, data_type=self.data_type
+        )
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
-        self.root_dir = '.'
+        """Clears class content, setting default values of class attributes"""
+        self.root_dir = "."
         self.programming_language = None
         self.data_type = None
         self.code_path = None
@@ -245,7 +271,12 @@ class Implementation( SettingsBaseClass ):
         self.subroutines.clear()
         self.code_parameters.clear()
 
-    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative=False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -255,71 +286,84 @@ class Implementation( SettingsBaseClass ):
 
         if resolve_path:
             # include_path
-            __path = utils.resolve_path( self.include_path, project_root_dir )
-            ret_dict.update( {'include_path': __path} )
+            __path = utils.resolve_path(self.include_path, project_root_dir)
+            ret_dict.update({"include_path": __path})
 
             # code_path
             code_path = self.code_path
-            __path = utils.resolve_path( code_path, project_root_dir )
-            ret_dict.update( {'code_path': __path} )
+            __path = utils.resolve_path(code_path, project_root_dir)
+            ret_dict.update({"code_path": __path})
 
         return ret_dict
 
 
-class CodeParameters( SettingsBaseClass ):
+class CodeParameters(SettingsBaseClass):
     """The data class containing information about files defining code parameters."""
+
     # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
         #: A path to file containing the code specific parameters
-        self.parameters: str = ''
+        self.parameters: str = ""
 
         #: A path to file containing schema that allows to validate code parameters XML description
-        self.schema: str = ''
+        self.schema: str = ""
 
         #: A format of code parameters (legacy-xml, json, fortran_namelist, xml , ...)
-        self.format: str = 'legacy-xml'
+        self.format: str = "legacy-xml"
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
         if self.parameters and not self.schema:
-            raise ValueError( 'Parameters schema must be set if parameters file is specified!' )
+            raise ValueError(
+                "Parameters schema must be set if parameters file is specified!"
+            )
 
         # parameters
         if self.parameters:
-            __path = utils.resolve_path( self.parameters, project_root_dir )
+            __path = utils.resolve_path(self.parameters, project_root_dir)
             if not Path(__path).exists():
-                raise ValueError( f'Path to parameters file is invalid! {str( __path )}' )
+                raise ValueError(f"Path to parameters file is invalid! {str(__path)}")
 
         # schema
         if self.schema:
-            __path = utils.resolve_path( self.schema, project_root_dir )
+            __path = utils.resolve_path(self.schema, project_root_dir)
             if not Path(__path).exists():
-                raise ValueError( f'Path to parameters schema file is invalid! {str( __path )}' )
+                raise ValueError(
+                    f"Path to parameters schema file is invalid! {str(__path)}"
+                )
 
         if self.parameters:
             __format = utils.resolve_variable(self.format)
-            parameters_handler : ParametersHandlerInterface = HandlerFactory.get_handler(__format)
-            parameters_handler.initialize(utils.resolve_path(self.parameters, project_root_dir), utils.resolve_path(self.schema, project_root_dir))
+            parameters_handler: ParametersHandlerInterface = HandlerFactory.get_handler(
+                __format
+            )
+            parameters_handler.initialize(
+                utils.resolve_path(self.parameters, project_root_dir),
+                utils.resolve_path(self.schema, project_root_dir),
+            )
             parameters_handler.validate()
 
-
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
-        self.parameters = ''
-        self.schema = ''
-        self.format = 'legacy-xml'
+        """Clears class content, setting default values of class attributes"""
+        self.parameters = ""
+        self.schema = ""
+        self.format = "legacy-xml"
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative=False, project_root_dir: str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative=False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -330,23 +374,23 @@ class CodeParameters( SettingsBaseClass ):
         if resolve_path:
             # parameters
             if self.parameters:
-                __path = utils.resolve_path( self.parameters, project_root_dir )
-                ret_dict.update( {'parameters': __path} )
+                __path = utils.resolve_path(self.parameters, project_root_dir)
+                ret_dict.update({"parameters": __path})
 
             # schema
             if self.schema:
-                __path = utils.resolve_path( self.schema, project_root_dir )
-                ret_dict.update( {'schema': __path} )
+                __path = utils.resolve_path(self.schema, project_root_dir)
+                ret_dict.update({"schema": __path})
 
             # format
             if self.format:
                 __format = utils.resolve_variable(self.format)
-                ret_dict.update( {'format': __format} )
+                ret_dict.update({"format": __format})
 
         return ret_dict
 
 
-class CodeDescription( SettingsBaseClass ):
+class CodeDescription(SettingsBaseClass):
     """Description of the code used for wrapping the code within an actor.
 
     Attributes:
@@ -354,8 +398,9 @@ class CodeDescription( SettingsBaseClass ):
         _settings (dict): code settings
         implementation(:obj:`Implementation`): details on the implementation of the code
     """
+
     # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
     def settings(self):
@@ -365,7 +410,9 @@ class CodeDescription( SettingsBaseClass ):
     def settings(self, values):
         # language specific settings depends on language chosen
         # if language was not set yet, language specific settings will be set in language property handler
-        self._settings = LanguageSettingsManager.get_settings_handler( self.implementation.programming_language, values )
+        self._settings = LanguageSettingsManager.get_settings_handler(
+            self.implementation.programming_language, values
+        )
 
     def __init__(self):
         self.implementation: Implementation = Implementation(self)
@@ -373,19 +420,19 @@ class CodeDescription( SettingsBaseClass ):
         self._settings: dict = {}
 
     def change_language_specific(self):
-        """ Update settings when programming language changed.
-        """
+        """Update settings when programming language changed."""
         if self._settings is not None and isinstance(self._settings, dict):
-            self._settings = LanguageSettingsManager.get_settings_handler(self.implementation.programming_language,
-                                                                                          self._settings)
+            self._settings = LanguageSettingsManager.get_settings_handler(
+                self.implementation.programming_language, self._settings
+            )
 
     def validate(self, engine: Engine, project_root_dir: str, **kwargs) -> None:
         # implementation
         self.implementation.validate(engine, project_root_dir)
 
         # documentation
-        if self.documentation and not isinstance( self.documentation, str ):
-            raise ValueError( 'Documentation must be a string (and it is not)!' )
+        if self.documentation and not isinstance(self.documentation, str):
+            raise ValueError("Documentation must be a string (and it is not)!")
 
         # settings
         if isinstance(self.settings, SettingsBaseClass):
@@ -394,21 +441,23 @@ class CodeDescription( SettingsBaseClass ):
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
+        """Clears class content, setting default values of class attributes"""
         self.documentation = None
         self.implementation.clear()
         self.settings = {}
 
-    def to_dict(self, resolve_path: bool = False,
-                make_relative: bool = False,
-                project_root_dir: str = None) -> Dict[ str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative: bool = False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -425,8 +474,15 @@ class CodeDescription( SettingsBaseClass ):
             file: an object responsible for storing dictionary from file of given format
         """
         code_description_dict = self.to_dict()
-        yaml.dump( {'code_description': code_description_dict}, stream=file, default_flow_style=False, sort_keys=False,
-                   indent=4, explicit_start=True, explicit_end=True )
+        yaml.dump(
+            {"code_description": code_description_dict},
+            stream=file,
+            default_flow_style=False,
+            sort_keys=False,
+            indent=4,
+            explicit_start=True,
+            explicit_end=True,
+        )
 
     def load(self, file):
         """Loads code description from a file
@@ -435,19 +491,21 @@ class CodeDescription( SettingsBaseClass ):
             file: an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        dict_read = yaml.load( file, Loader=yaml.Loader )
+        dict_read = yaml.load(file, Loader=yaml.Loader)
         if not dict_read:
-            raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
+            raise Exception("The file being loaded doesn't seem to be a valid YAML")
 
-        code_description_dict = dict_read.get( 'code_description' )
+        code_description_dict = dict_read.get("code_description")
         if not code_description_dict:
-            raise Exception( "The YAML file being loaded doesn't seem to contain valid description of the code" )
+            raise Exception(
+                "The YAML file being loaded doesn't seem to contain valid description of the code"
+            )
 
-        self.from_dict( code_description_dict )
+        self.from_dict(code_description_dict)
 
-        file_real_path = os.path.realpath( file.name )
+        file_real_path = os.path.realpath(file.name)
         if not self.implementation.root_dir:
-            self.implementation.root_dir = os.path.dirname( file_real_path )
+            self.implementation.root_dir = os.path.dirname(file_real_path)
 
 
 class Subroutine(SettingsBaseClass):
@@ -479,7 +537,6 @@ class Subroutine(SettingsBaseClass):
         self.__method_type: str = method_type
         self.__mandatory: bool = mandatory
 
-
     def clear(self):
         """
         Clears class content, setting default values of class attributes.
@@ -492,7 +549,11 @@ class Subroutine(SettingsBaseClass):
 
         # validate correctness of XML
         if not self.name and self.__mandatory:
-            raise ValueError( 'Mandatory method name for "' + self.__method_type.upper() + '" is not set!' )
+            raise ValueError(
+                'Mandatory method name for "'
+                + self.__method_type.upper()
+                + '" is not set!'
+            )
 
         for argument in self.arguments or []:
             argument.validate(engine, project_root_dir, **kwargs)

@@ -14,62 +14,62 @@ class BinderGenerator(AbstractGenerator):
         return self.name
 
     @abstractmethod
-    def type(self) -> str:
-        ...
+    def type(self) -> str: ...
 
     @property
     @abstractmethod
-    def name(self) -> str:
-        ...
+    def name(self) -> str: ...
 
     @property
     @abstractmethod
-    def description(self) -> str:
-        ...
+    def description(self) -> str: ...
 
     @property
     @abstractmethod
-    def actor_language(self) -> str:
-        ...
+    def actor_language(self) -> str: ...
 
     @property
     @abstractmethod
-    def actor_data_types(self) -> Set[str]:
-        ...
+    def actor_data_types(self) -> Set[str]: ...
 
     @property
     @abstractmethod
-    def code_data_types(self) -> Set[str]:
-        ...
+    def code_data_types(self) -> Set[str]: ...
 
     @property
     @abstractmethod
-    def code_languages(self) -> Set[str]:
-        ...
+    def code_languages(self) -> Set[str]: ...
 
 
 class BinderGeneratorRegistry:
-    __builtin_pkg_name: str = 'iwrap.generators.binder_generators'
-    __plugin_pkg_name: str = 'iwrap_binder_generator'
+    __builtin_pkg_name: str = "iwrap.generators.binder_generators"
+    __plugin_pkg_name: str = "iwrap_binder_generator"
     __generators: List[BinderGenerator] = []
 
     @classmethod
     def initialize(cls):
-        cls.__generators  = utils.discover_generators(cls.__builtin_pkg_name, cls.__plugin_pkg_name, BinderGenerator)
+        cls.__generators = utils.discover_generators(
+            cls.__builtin_pkg_name, cls.__plugin_pkg_name, BinderGenerator
+        )
 
         # raises exception if no generator was found
-        if len( cls.__generators ) < 1:
-            raise RuntimeError( 'ERROR! No valid binder generator can be found!' )
+        if len(cls.__generators) < 1:
+            raise RuntimeError("ERROR! No valid binder generator can be found!")
 
     @classmethod
-    def generators(cls): # TODO set as a class property (available since Python 3.9)
+    def generators(cls):  # TODO set as a class property (available since Python 3.9)
         return cls.__generators
 
     @classmethod
-    def get_generator(cls, type:str, actor_language: str, code_language: str) -> BinderGenerator:
+    def get_generator(
+        cls, type: str, actor_language: str, code_language: str
+    ) -> BinderGenerator:
 
         # No binder actually needed
-        if str(actor_language).lower() == 'none' or str(code_language).lower() == 'none':
+        if (
+            str(actor_language).lower() == "none"
+            or str(code_language).lower() == "none"
+        ):
             return None
 
         # No binder actually needed
@@ -77,11 +77,18 @@ class BinderGeneratorRegistry:
             return None
 
         for generator in cls.__generators:
-            if actor_language == generator.actor_language \
-                    and code_language in generator.code_languages \
-                    and type.lower() == generator.type.lower():
+            if (
+                actor_language == generator.actor_language
+                and code_language in generator.code_languages
+                and type.lower() == generator.type.lower()
+            ):
                 return generator
 
-        types = [(generator.actor_language, generator.code_languages) for generator in cls.__generators]
-        raise ValueError(f'ERROR: No generator found to bind  actor language "{actor_language}" to "{code_language}" '
-                         f'! Registered binders: "{types}".' )
+        types = [
+            (generator.actor_language, generator.code_languages)
+            for generator in cls.__generators
+        ]
+        raise ValueError(
+            f'ERROR: No generator found to bind  actor language "{actor_language}" to "{code_language}" '
+            f'! Registered binders: "{types}".'
+        )

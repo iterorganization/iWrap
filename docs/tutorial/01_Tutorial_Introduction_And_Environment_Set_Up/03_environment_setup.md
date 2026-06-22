@@ -41,10 +41,10 @@ These scripts are designed to automatically change **username** to `system $USER
 ```
 
 
-```{admonition} Check if you have **IMAS AL5** installed 
+```{admonition} Check if you have **IMAS** installed 
 :class: tip
 
-To check if we can use IMAS AL5 run:
+To check if we can use IMAS run:
 ```
 
 ```{code-cell}
@@ -52,29 +52,29 @@ To check if we can use IMAS AL5 run:
 ```
 
 
-```{admonition} imasdbs 
+```{admonition} dblist 
 :class: tip
 
-To check if we have properly created our IDS we can use `imasdbs -u <username>` command:
+To check if we have properly created our IDS we can use `dblist -u <username>` command:
 ```
 
 ```{code-cell}
-!imasdbs -u $USER
+!dblist -u $USER
 ```
 
-```{admonition} idsdump
+```{admonition} idsprint
 :class: tip
 
-To list the content (all data) of an IDS,  use `idsdump`  script
+To list the content (all data) of an IDS,  use `idsprint`  script
 
-Usage: `idsdump <USER> <TOKAMAK> <VERSION> <SHOT> <RUN> <IDS>`
+Usage: `idsprint -u <URI>`
 
 ```
 
 ```{code-cell}
 :tags: [output_scroll, hide-output]
 
-!idsdump $USER tutorial_db 3 1 1 core_profiles
+!idsprint -u "imas:hdf5?user=$USER;pulse=1;run=1;database=tutorial_db;version=3#core_profiles"
 ```
 
 ```{admonition} Ready to go!

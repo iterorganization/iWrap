@@ -7,19 +7,21 @@ from typing import Any, Dict
 import yaml
 from iwrap.settings.compatibility.converter import Converter
 
-from iwrap.common.misc import Dictionarizable, CustomDumper
+from iwrap.common.misc import CustomDumper
 from iwrap.settings import SettingsBaseClass
 from iwrap.settings.actor_description import ActorDescription
 from iwrap.settings.code_description import CodeDescription
 from iwrap import __version__
 
-class ProjectSettings( SettingsBaseClass ):
+
+class ProjectSettings(SettingsBaseClass):
     """Data class describing iWrap project settings.
 
     Attributes:
 
         code_description (:obj:`CodeDescription`): description of the code and its wrapper.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -42,43 +44,51 @@ class ProjectSettings( SettingsBaseClass ):
     @property
     def root_dir_path(self):
         if self.code_description.implementation.root_dir:
-            return str( Path( self.project_dir, self.code_description.implementation.root_dir ) )
+            return str(
+                Path(self.project_dir, self.code_description.implementation.root_dir)
+            )
         else:
             return self.project_dir
 
     def __init__(self):
         self.project_dir = os.getcwd()
-        self.project_file = ''
+        self.project_file = ""
         self.actor_description = ActorDescription()
         self.code_description = CodeDescription()
 
     """Checks settings, field by field, if they are valid to be used to generate actor
-    
+
        Args:
            engine (Engine): generation engine used to validate particular settings
        """
-    #def validate(self, engine: Engine) -> None:
-    def validate(self, engine ) -> None:
+
+    # def validate(self, engine: Engine) -> None:
+    def validate(self, engine) -> None:
 
         if not self.code_description:
-            raise ValueError( 'Code description structure cannot be empty!')
+            raise ValueError("Code description structure cannot be empty!")
 
-        self.code_description.validate(engine, self.root_dir_path )
+        self.code_description.validate(engine, self.root_dir_path)
 
         if not self.actor_description:
-            raise ValueError( 'Actor description structure cannot be empty!' )
+            raise ValueError("Actor description structure cannot be empty!")
 
         self.actor_description.validate(engine, None)
 
     def from_dict(self, dictionary: Dict[str, Any]) -> None:
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str, Any]): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str, Any]): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative: str = False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -87,10 +97,9 @@ class ProjectSettings( SettingsBaseClass ):
         return super().to_dict(resolve_path, make_relative, project_root_dir)
 
     def clear(self):
-        """Clears class content, setting default values of class attributes
-        """
+        """Clears class content, setting default values of class attributes"""
         self.project_dir = os.getcwd()
-        self.project_file = ''
+        self.project_file = ""
         self.actor_description.clear()
         self.code_description.clear()
 
@@ -103,13 +112,25 @@ class ProjectSettings( SettingsBaseClass ):
 
         actor_description_dict = self.actor_description.to_dict()
         code_description_dict = self.code_description.to_dict()
-        dumped = {'actor_description': actor_description_dict, 'code_description': code_description_dict}
+        dumped = {
+            "actor_description": actor_description_dict,
+            "code_description": code_description_dict,
+        }
 
-        file.write(f'# Saved with iWrap {__version__}\n')
-        yaml.dump( dumped, stream=file,  default_flow_style=False, sort_keys=False, indent=4, explicit_start=True, explicit_end=True, Dumper=CustomDumper)
+        file.write(f"# Saved with iWrap {__version__}\n")
+        yaml.dump(
+            dumped,
+            stream=file,
+            default_flow_style=False,
+            sort_keys=False,
+            indent=4,
+            explicit_start=True,
+            explicit_end=True,
+            Dumper=CustomDumper,
+        )
 
-        file_real_path = os.path.realpath( file.name )
-        self.project_dir = os.path.dirname( file_real_path )
+        file_real_path = os.path.realpath(file.name)
+        self.project_dir = os.path.dirname(file_real_path)
         self.project_file = file.name
 
     def load(self, file):
@@ -119,26 +140,25 @@ class ProjectSettings( SettingsBaseClass ):
             file: an object responsible for reading dictionary from file of given format
         """
         self.clear()
-        dict_read = yaml.load( file, Loader=yaml.Loader )
+        dict_read = yaml.load(file, Loader=yaml.Loader)
         if not dict_read:
-            raise Exception( "The file being loaded doesn't seem to be a valid YAML" )
+            raise Exception("The file being loaded doesn't seem to be a valid YAML")
 
         dict_updated = Converter.convert(dict_read)
 
-        actor_description_dict = dict_updated.get('actor_description')
+        actor_description_dict = dict_updated.get("actor_description")
         if actor_description_dict:
             self.actor_description.from_dict(actor_description_dict)
 
-        code_descritption_dict = dict_updated.get('code_description')
+        code_descritption_dict = dict_updated.get("code_description")
         if code_descritption_dict:
-            self.code_description.from_dict( code_descritption_dict )
+            self.code_description.from_dict(code_descritption_dict)
         else:
             # YAML file MUST contain at least code description document
             raise Exception(
-                "The YAML file being loaded doesn't seem to contain a valid description of the code" )
+                "The YAML file being loaded doesn't seem to contain a valid description of the code"
+            )
 
-        file_real_path = os.path.realpath( file.name )
-        self.project_dir = os.path.dirname( file_real_path )
+        file_real_path = os.path.realpath(file.name)
+        self.project_dir = os.path.dirname(file_real_path)
         self.project_file = file.name
-
-
