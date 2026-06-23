@@ -31,3 +31,4 @@ failed_tests.log
 iwrap/_version.py
 doc_venv/*
 myenv/*
+.venv/*
