@@ -95,6 +95,12 @@ Run only MUSCLE3 tests (requires MUSCLE3 installation):
 ./tests/run-muscle3-tests.sh
 ```
 
+The MUSCLE3 workflow tests can also be run through pytest. Set
+`GCC_MODULES` or `INTEL_MODULES` first, then run:
+```bash
+pytest tests/muscle3/test_ci_workflows.py -v
+```
+
 #### IMAS Integration Tests
 Run legacy IMAS integration tests (slow, requires IMAS):
 ```bash
