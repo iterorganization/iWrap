@@ -71,7 +71,7 @@ class TestMuscle3PythonGenerator:
         generator_types = [g.type for g in generators]
         
         assert 'MUSCLE3-Python' in generator_types
-        assert 'MUSCLE3-CPP' in generator_types
+        assert 'MUSCLE3-Cpp' in generator_types
         assert 'MUSCLE3-Fortran' in generator_types
 
 

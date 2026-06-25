@@ -13,7 +13,7 @@ iWrap includes the following built-in actor generators:
 - **Python Actor**: Standard Python actors for straightforward Python integrations
 - **MUSCLE3 Actors** (optional): High-performance multiscale coupling framework
   - MUSCLE3-Python: Python code with MUSCLE3 coupling
-  - MUSCLE3-CPP: C++ code with MUSCLE3 coupling
+  - MUSCLE3-Cpp: C++ code with MUSCLE3 coupling
   - MUSCLE3-Fortran: Fortran code with MUSCLE3 coupling
 
 For user conveniency it provides two kinds of interfaces: 
@@ -40,7 +40,7 @@ This installs iWrap with the standard Python actor generator.
 ```bash
 pip install iwrap[muscle3]
 ```
-This enables MUSCLE3 actor generators (MUSCLE3-Python, MUSCLE3-CPP, MUSCLE3-Fortran).
+This enables MUSCLE3 actor generators (MUSCLE3-Python, MUSCLE3-Cpp, MUSCLE3-Fortran).
 
 ### Development Installation
 ```bash

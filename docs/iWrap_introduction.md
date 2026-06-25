@@ -83,7 +83,7 @@ iWrap is engineered with modularity in mind, enabling it to generate a variety o
 - **Python Actor**: Standard Python actors for straightforward Python integrations
 - **MUSCLE3 Actors**: High-performance coupling framework actors (requires `pip install iwrap[muscle3]`)
   - MUSCLE3-Python: Python code with MUSCLE3 coupling
-  - MUSCLE3-CPP: C++ code with MUSCLE3 coupling  
+  - MUSCLE3-Cpp: C++ code with MUSCLE3 coupling  
   - MUSCLE3-Fortran: Fortran code with MUSCLE3 coupling
 
 ```

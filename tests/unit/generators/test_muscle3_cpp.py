@@ -33,7 +33,7 @@ class TestMuscle3CppGenerator:
         from iwrap.generators.actor_generators.muscle3_cpp.m3_cpp_actor import CppActorGenerator
         generator = CppActorGenerator()
         assert generator is not None
-        assert generator.type == 'MUSCLE3-CPP'
+        assert generator.type == 'MUSCLE3-Cpp'
         assert generator.name == 'MUSCLE3 (C++)'
         assert generator.actor_language == 'python'
     
