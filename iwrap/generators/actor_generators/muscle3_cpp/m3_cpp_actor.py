@@ -30,7 +30,7 @@ class CppActorGenerator(ActorGenerator):
 
     @property
     def type(self) -> str:
-        return "MUSCLE3-CPP"
+        return "MUSCLE3-Cpp"
 
     @property
     def name(self) -> str:

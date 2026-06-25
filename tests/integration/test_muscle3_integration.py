@@ -43,11 +43,11 @@ class TestMuscle3Integration:
         
         # Check all MUSCLE3 generators are present
         assert 'MUSCLE3-Python' in generators
-        assert 'MUSCLE3-CPP' in generators
+        assert 'MUSCLE3-Cpp' in generators
         assert 'MUSCLE3-Fortran' in generators
         
         # Check they have correct API version
-        for gen_type in ['MUSCLE3-Python', 'MUSCLE3-CPP', 'MUSCLE3-Fortran']:
+        for gen_type in ['MUSCLE3-Python', 'MUSCLE3-Cpp', 'MUSCLE3-Fortran']:
             assert generators[gen_type].COMPLIANT_API == '2.1'
     
     @pytest.mark.muscle3
@@ -60,7 +60,7 @@ class TestMuscle3Integration:
         engine.startup()
         
         # Test getting each generator type
-        for gen_type in ['MUSCLE3-Python', 'MUSCLE3-CPP', 'MUSCLE3-Fortran']:
+        for gen_type in ['MUSCLE3-Python', 'MUSCLE3-Cpp', 'MUSCLE3-Fortran']:
             generator = Engine.get_generator(gen_type)
             assert generator is not None
             assert generator.type == gen_type
