@@ -331,10 +331,8 @@ std::string receive_code_state(libmuscle::Instance* m3_instance)
 
     if (!m3_data.is_nil()) {
         state_str = m3_data.as<std::string>();
-
-    return state_str;
-
     }
+    return state_str;
 } // receive_code_state
 
 
