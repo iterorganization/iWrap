@@ -306,9 +306,9 @@ void handle_status_info(int status_code, std::string status_message, const std::
     }
 
     if(status_code !=0) {
-      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
+      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name.c_str());
       printf("-------Status code    : %d\n", status_code);
-      printf("-------Status message : %s\n", message);
+      printf("-------Status message : %s\n", message.c_str());
       printf("---------------------------------------------------------\n");
       }
 }
