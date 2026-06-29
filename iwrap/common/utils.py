@@ -1,7 +1,6 @@
 import os
 import subprocess
 from pathlib import Path
-from typing import List
 
 
 def resolve_path(in_path: str, root_dir: str = None):
@@ -84,8 +83,18 @@ def exec_system_cmd(
     return output_value
 
 
-def get_all_ids_names() -> List[str]:
-    import imas
+def get_all_ids_names() -> list[str]:
+    """Return IDS namea available across bundled Data Dictionary versions"""
+    import xml.etree.ElementTree as ET
 
-    factory = imas.ids_factory.IDSFactory()
-    return factory.ids_names()
+    from imas_data_dictionaries import dd_xml_versions, get_dd_xml
+
+    ids_names: set[str] = set()
+
+    for dd_version in dd_xml_versions():
+        root = ET.fromstring(get_dd_xml(dd_version))
+        ids_names.update(
+            ids_element.attrib["name"] for ids_element in root.findall("IDS")
+        )
+
+    return sorted(ids_names)
