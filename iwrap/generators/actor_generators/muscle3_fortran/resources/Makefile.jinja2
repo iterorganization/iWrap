@@ -91,4 +91,4 @@ build/%.o: src/%.f90
 	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
 
 clean:
-	-rm -f *.o build/* ../bin/*
+	-rm -f *.o build/* ./bin/*
