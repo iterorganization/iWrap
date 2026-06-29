@@ -96,7 +96,7 @@ def send_output_idses(m3_instance: libmuscle.Instance, timestamp,
     timestamp = -1.0 # resetting value
     time_size = len({{ argument.name }}.time)
     if time_size > 0:
-        time_stamp = {{ argument.name }}.time[time_size - 1]
+        timestamp = {{ argument.name }}.time[time_size - 1]
 
     {% endif %}
     send_ids(m3_instance, "{{ argument.name }}", {{ argument.name }},  timestamp)
