@@ -205,7 +205,7 @@ class MpiCombo:
             sticky=(tk.W, tk.N),
         )
         self.value.set(self.settings)
-        self.value.trace("w", self.change_current_value)
+        self.value.trace_add("write", self.change_current_value)
         self.current_value.set(self.value.get())
         self.combobox = ttk.Combobox(self.frame, textvar=self.value, width=15)
         self.combobox["values"] = [None]

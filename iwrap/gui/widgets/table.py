@@ -50,7 +50,7 @@ class Table(ttk.Frame):
         self.columns = []
         self.rows = []
         self.selected_row = tk.IntVar()
-        self.selected_row.trace("w", self.change_listeners_state)
+        self.selected_row.trace_add("write", self.change_listeners_state)
         self.lost_focus_listeners = lost_focus_listeners
         self._row_frames = []
 
