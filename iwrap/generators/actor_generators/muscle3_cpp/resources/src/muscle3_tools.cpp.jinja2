@@ -300,15 +300,15 @@ std::string read_file(std::string file_path)
 void handle_status_info(int status_code, std::string status_message, const std::string actor_name)
 {
     std::string message = "<No diagnostic message>";
-    if(status_message.empty())
+    if(!status_message.empty())
     {
         message = status_message;
     }
 
     if(status_code !=0) {
-      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name);
+      printf("---Diagnostic information returned from *** %s ***:---\n", actor_name.c_str());
       printf("-------Status code    : %d\n", status_code);
-      printf("-------Status message : %s\n", message);
+      printf("-------Status message : %s\n", message.c_str());
       printf("---------------------------------------------------------\n");
       }
 }
@@ -331,10 +331,8 @@ std::string receive_code_state(libmuscle::Instance* m3_instance)
 
     if (!m3_data.is_nil()) {
         state_str = m3_data.as<std::string>();
-
-    return state_str;
-
     }
+    return state_str;
 } // receive_code_state
 
 
