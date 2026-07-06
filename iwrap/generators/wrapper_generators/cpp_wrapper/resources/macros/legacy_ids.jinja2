@@ -10,9 +10,7 @@
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
-    open_db(db_entry_{{ ids_var_name }}, {{ ids_var_name }}_desc);
 	{{ ids_var_name }}->get({{ ids_var_name }}_desc->occurrence);
-    close_db(db_entry_{{ ids_var_name }});
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
@@ -22,13 +20,12 @@
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
-    open_db(db_entry_{{ ids_var_name }}, {{ ids_var_name }}_desc);
 	{{ ids_var_name }}->put({{ ids_var_name }}_desc->occurrence);
-    close_db(db_entry_{{ ids_var_name }});
 {%- endmacro -%}
 
 {% macro deallocate(ids_var_name) -%}
    // Should not be called until IMAS-3937 will be resolved
    // {{ ids_var_name }}->clear();
+    close_db(db_entry_{{ ids_var_name }});
     delete db_entry_{{ ids_var_name }};
 {%- endmacro -%}

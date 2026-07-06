@@ -55,6 +55,12 @@ SUBROUTINE {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(&
 	 nullify(status_msg)
 	 status_code = 0
 
+{% if sbrt_data.arguments %}
+    !--------- Open DB (once for all IDSes) --------
+    call open_db({{ sbrt_data.arguments[0].name }}_desc, idx, status_code)
+    if (status_code /= 0) RETURN
+{% endif %}
+
     {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
     !--------- Get IDS : {{ argument.name }} ------------------------
     {{ ids_macro.get( argument.name) }}
@@ -113,6 +119,11 @@ SUBROUTINE {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(&
     {% for argument in sbrt_data.arguments %}
      {{ ids_macro.deallocate( argument.name) }}
     {% endfor %}
+
+{% if sbrt_data.arguments %}
+    !--------- Close DB (once for all IDSes) --------
+    call close_db({{ sbrt_data.arguments[0].name }}_desc, idx)
+{% endif %}
 
     {% if code_parameters.parameters and sbrt_data.need_code_parameters and ('legacy' in code_parameters.format)%}
     ! ------Deallocating code parameters ----------------------------

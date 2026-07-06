@@ -9,10 +9,8 @@
 {%- endmacro -%}
 
 {% macro get(ids_var_name) -%}
-    call open_db( {{ ids_var_name }}_desc, idx, status_code)
     ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
     call ids_get(idx, ids_full_name, {{ ids_var_name }})
-    call close_db( {{ ids_var_name }}_desc, idx)
 {%- endmacro -%}
 
 {%- macro provenance(ids_var_name, sbrt_data, code_parameters) -%}
@@ -27,10 +25,8 @@
 {%- endmacro -%}
 
 {% macro put(ids_var_name) -%}
-    call open_db( {{ ids_var_name }}_desc, idx, status_code)
     ids_full_name = create_ids_full_name({{ ids_var_name }}_desc)
     call ids_put(idx, ids_full_name, {{ ids_var_name }})
-    call close_db( {{ ids_var_name }}_desc, idx)
 {%- endmacro -%}
 
 {% macro deallocate(ids_var_name) -%}

@@ -70,7 +70,7 @@ class IdsStorageSettings:
 
     Attributes:
         backend (int, default=imas.ids_defs.MEMORY_BACKEND): backend to be used
-        persistent_backend (int, default=imas.ids_defs.MDSPLUS_BACKEND): backend to be used when
+        persistent_backend (int, default=imas.ids_defs.HDF5_BACKEND): backend to be used when
             temporary data cannot be stored in memory (e.g. while running actor in a standalone
             mode, when the code is run as separate process, so it doesn't share memory with other
             actors). The sandbox directory is used as the data path via an IMAS URI.
@@ -81,7 +81,7 @@ class IdsStorageSettings:
 
     def __init__(self):
         self.backend = imas.ids_defs.MEMORY_BACKEND
-        self.persistent_backend = imas.ids_defs.MDSPLUS_BACKEND
+        self.persistent_backend = imas.ids_defs.HDF5_BACKEND
 
 
 class RuntimeSettings:

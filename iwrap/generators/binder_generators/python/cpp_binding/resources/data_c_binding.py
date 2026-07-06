@@ -18,8 +18,8 @@ class IDSCType(ctypes.Structure, IDSDescription):
 
     @ids_type.setter
     def ids_type(self, ids_type_):
-        self.ids_type_[:] = len(self.ids_type_) * [ord(" ")]
-        self.ids_type_[: len(ids_type_)] = [ord(x) for x in ids_type_]
+        ctypes.memset(self.ids_type_, ord(' '), ctypes.sizeof(self.ids_type_))
+        ctypes.memmove(self.ids_type_, ids_type_.encode('ascii'), len(ids_type_))
 
     @property
     def base_uri(self):
@@ -27,8 +27,8 @@ class IDSCType(ctypes.Structure, IDSDescription):
 
     @base_uri.setter
     def base_uri(self, uri_):
-        self.uri_[:] = len(self.uri_) * [ord(" ")]
-        self.uri_[: len(uri_)] = [ord(x) for x in uri_]
+        ctypes.memset(self.uri_, ord(' '), ctypes.sizeof(self.uri_))
+        ctypes.memmove(self.uri_, uri_.encode('ascii'), len(uri_))
 
     def __init__(self, ids_description: IDSDescription):
         self.ids_type = ids_description.ids_type
