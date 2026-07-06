@@ -69,18 +69,17 @@ class IdsStorageSettings:
     """Settings of temporary storage being used while passing IDSes between the actor and the code.
 
     Attributes:
-        db_name (str, default='tmp'): name of the database to be used
-        backend (str, default=imas.ids_defs.MEMORY_BACKEND): backend to be used
-        persistent_backend  (str, default=imas.ids_defs.MDSPLUS_BACKEND): backend to be used when temporary data
-            cannot be stored in memory (e.g. while running actor in a standalone mode,
-            when the code is run as separate process, so it doesn’t share memory with other actors.
+        backend (int, default=imas.ids_defs.MEMORY_BACKEND): backend to be used
+        persistent_backend (int, default=imas.ids_defs.MDSPLUS_BACKEND): backend to be used when
+            temporary data cannot be stored in memory (e.g. while running actor in a standalone
+            mode, when the code is run as separate process, so it doesn't share memory with other
+            actors). The sandbox directory is used as the data path via an IMAS URI.
     """
 
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self.db_name = "tmp"
         self.backend = imas.ids_defs.MEMORY_BACKEND
         self.persistent_backend = imas.ids_defs.MDSPLUS_BACKEND
 

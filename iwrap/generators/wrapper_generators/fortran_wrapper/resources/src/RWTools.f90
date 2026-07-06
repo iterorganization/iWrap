@@ -24,20 +24,30 @@ module rwtool
 
         read(10,*) ! skip line " ----- IDS ----- "
         call read_chars( ids_description%ids_name)
-        read(10,*) ids_description%pulse
-        read(10,*) ids_description%run
         read(10,*) ids_description%occurrence
-        read(10,*) ids_description%backend_id
-        read(10,*) ids_description%idx
-        call read_chars( ids_description%db_name)
-        call read_chars( ids_description%user)
-        call read_chars( ids_description%version)
+        call read_uri( ids_description%uri)
    end subroutine
 
 
    subroutine readint(var)
      integer, intent(inout) :: var
      read(10,*) var
+   end subroutine
+
+   !---------------------------------------------------
+   subroutine read_uri(var)
+        implicit none
+        character(kind=c_char), dimension(:), intent(inout) :: var
+        integer                :: i
+        character(AL_URI_SIZE) :: line
+
+        var(:) = char(0)
+        read(10,"(a)") line
+
+        do i = 1, AL_URI_SIZE
+            var(i) = line(i : i)
+        enddo
+
    end subroutine
 
    !---------------------------------------------------
@@ -154,14 +164,8 @@ module rwtool
     implicit none
     type(ids_description_t), intent(in) :: ids_description
     write(10,*) ids_description%ids_name
-    write(10,*) ids_description%pulse
-    write(10,*) ids_description%run
     write(10,*) ids_description%occurrence
-    write(10,*) ids_description%backend_id
-    write(10,*) ids_description%idx
-    write(10,*) ids_description%db_name
-    write(10,*) ids_description%user
-    write(10,*) ids_description%version
+    write(10,"(a)") convert_array2string(ids_description%uri)
    end subroutine
    
    !---------------------------------------------------

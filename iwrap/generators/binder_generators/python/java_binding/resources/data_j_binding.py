@@ -10,27 +10,15 @@ class JavaIDSDescription(IDSDescription):
     def __init__(self, ids_description: IDSDescription):
         self.ids_description_class = JClass("IDSDescription")
         self.ids_type = ids_description.ids_type
-        self.pulse = ids_description.pulse
-        self.run = ids_description.run
         self.occurrence = ids_description.occurrence
-        self.backend_id = ids_description.backend_id
-        self.idx = ids_description.idx
-        self.database = ids_description.database
-        self.user = ids_description.user
-        self.version = ids_description.version
+        self.base_uri = ids_description.base_uri
 
     def convert_to_native_type(self):
         java_ids_description = self.ids_description_class()
 
         java_ids_description.ids_type = self.ids_type
-        java_ids_description.pulse = self.pulse
-        java_ids_description.run = self.run
         java_ids_description.occurrence = self.occurrence
-        java_ids_description.backend_id = self.backend_id
-        java_ids_description.idx = self.idx
-        java_ids_description.database = self.database
-        java_ids_description.user = self.user
-        java_ids_description.version = self.version
+        java_ids_description.uri = self.base_uri
 
         return java_ids_description
 

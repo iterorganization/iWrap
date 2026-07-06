@@ -6,33 +6,6 @@
 #include "iwrap_tools.h"
 #include "serialization_tools.h"
 
-
-char* iwrap_trim(char* text, int text_size = -1)
-{
-
-    int size = -1;
-
-    if (*text == '\0')
-        return text;
-
-    char* last_char_ptr = text + strlen(text) -1;
-
-    if (text_size > 0)
-        size = text_size;
-    else
-        size = strlen(text);
-
-    last_char_ptr = text + size -1;
-
-    while(last_char_ptr >= text && isspace(*last_char_ptr))
-    {
-        *last_char_ptr = '\0';
-        last_char_ptr--;
-    }
-
-    return text;
-}
-
 int read_input(const char* file_name, ids_description_t db_entry_desc_array[], int array_expected_size)
 {
     ifstream fin;
@@ -136,46 +109,18 @@ void convert_status_info(std::string in_status_msg, char** out_status_msg)
 
 IdsNs::IDS* init_db(ids_description_t* db_entry_desc)
 {
-    IdsNs::IDS* db_entry = NULL;
-
-    if ( db_entry_desc->backend_id == MEMORY_BACKEND){
-        db_entry = new IdsNs::IDS(db_entry_desc->idx);
-    } else {
-        db_entry = new IdsNs::IDS(db_entry_desc->pulse,  db_entry_desc->run, 0, 0);
-   }
-
+    IdsNs::IDS* db_entry = new IdsNs::IDS(db_entry_desc->uri, "r");
     return db_entry;
- }
+}
 
 int open_db(IdsNs::IDS* db_entry, ids_description_t* db_entry_desc)
 {
-    char* user = NULL;
-    char* db_name = NULL;
-    char* version = NULL;
-
-
-    if ( db_entry_desc->backend_id == MEMORY_BACKEND){
-        db_entry->setPulseCtx(db_entry_desc->idx);
-        }else{
-            user = iwrap_trim(db_entry_desc->user, sizeof db_entry_desc->user);
-            db_name = iwrap_trim(db_entry_desc->db_name, sizeof db_entry_desc->db_name);
-            version = iwrap_trim(db_entry_desc->version, sizeof db_entry_desc->version);
-
-            db_entry->setBackend(static_cast<BACKEND>(db_entry_desc->backend_id));
-            db_entry->openEnv(user, db_name, version);
-           }
-
     return 0;
- }
+}
 
 
 
 void close_db(IdsNs::IDS* db_entry)
 {
-    if ( db_entry->getBackend() == MEMORY_BACKEND)
-    {
-        return;
-    }
-
     db_entry->close();
 }

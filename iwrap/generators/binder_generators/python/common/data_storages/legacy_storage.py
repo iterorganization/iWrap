@@ -1,20 +1,21 @@
-from pathlib import Path
-
 import imas
 
 from .data_descriptions import IDSDescription
 from .generic_storage import GenericIDSStorage
+
+_BACKEND_NAMES = {
+    imas.ids_defs.MEMORY_BACKEND: "memory",
+    imas.ids_defs.HDF5_BACKEND: "hdf5",
+    imas.ids_defs.MDSPLUS_BACKEND: "mdsplus",
+    imas.ids_defs.ASCII_BACKEND: "ascii",
+}
 
 
 class LegacyIDSStorage(GenericIDSStorage):
     def __init__(self):
         self.__occ_dict = {}
         self.__db_entry = None
-        self.__backend_id: int = -1
-        self.__db_name: str = ""
-        self.__pulse: int = -1
-        self.__run: int = -1
-        self.__sandbox_dir: str = ""
+        self.__uri: str = ""
 
     def __get_occurrence(self, ids_name):
         occ = 1 + self.__occ_dict.get(ids_name, -1)
@@ -25,86 +26,40 @@ class LegacyIDSStorage(GenericIDSStorage):
         occ = self.__occ_dict.get(ids_name, 1)
         self.__occ_dict[ids_name] = occ - 1
 
-    def __open_db(self):
-        if self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
-            return
+    def initialize(self, sandbox_dir: str, backend_id: int):
+        backend_name = _BACKEND_NAMES.get(backend_id)
+        if backend_name is None:
+            raise ValueError(
+                f"Unsupported backend_id {backend_id}. "
+                f"Supported backends: {list(_BACKEND_NAMES.keys())}"
+            )
+
+        self.__uri = f"imas:{backend_name}?path={sandbox_dir}"
 
         try:
-            self.__db_entry.open()
-        except Exception as e:
-            raise RuntimeError(
-                f"Error opening the temporary DB:\n"
-                f"  backend = {self.__backend_id}\n"
-                f"  name    = {self.__db_name}\n"
-                f"  pulse   = {self.__pulse}\n"
-                f"  run     = {self.__run}\n"
-                f"  dir     = {self.__sandbox_dir}\n"
-                f"Original exception: {e}"
-            ) from e
-
-    def __close_db(self):
-        if self.__backend_id == imas.ids_defs.MEMORY_BACKEND:
-            return
-        self.__db_entry.close()
-
-    def initialize(self, sandbox_dir: str, db_name: str, backend_id):
-
-        self.__pulse = 1
-        self.__run = 1
-        self.__backend_id = backend_id
-        self.__db_name = db_name
-        self.__sandbox_dir = sandbox_dir
-
-        Path(sandbox_dir, "tmp", "3", "0").mkdir(parents=True, exist_ok=True)
-
-        self.__db_entry = imas.DBEntry(  # pylint: disable=no-member
-            backend_id=self.__backend_id,  # backend_id
-            db_name=self.__db_name,  # db_name
-            pulse=self.__pulse,  # shot / pulse
-            run=self.__run,  # run
-            user_name=self.__sandbox_dir,  # AL hack to use sandbox dir
-        )
-        try:
-            self.__db_entry.create()
+            self.__db_entry = imas.DBEntry(self.__uri, "w")
         except Exception as e:
             raise RuntimeError(
                 f"Error creating the temporary DB:\n"
-                f"  backend = {self.__backend_id}\n"
-                f"  name    = {self.__db_name}\n"
-                f"  pulse   = {self.__pulse}\n"
-                f"  run     = {self.__run}\n"
-                f"  dir     = {self.__sandbox_dir}\n"
+                f"  uri = {self.__uri}\n"
                 f"Original exception: {e}"
             ) from e
 
-        self.__close_db()
-
     def prepare_data(self, ids_name):
         occurrence = self.__get_occurrence(ids_name)
-        self.__open_db()
-        ids_description = IDSDescription(self.__db_entry, ids_name, occurrence)
-        self.__close_db()
-        return ids_description
+        return IDSDescription(self.__uri, ids_name, occurrence)
 
     def save_data(self, ids_description: IDSDescription, legacy_ids):
-        self.__open_db()
         self.__db_entry.put(legacy_ids, ids_description.occurrence)
-        self.__close_db()
 
     def read_data(self, ids_description: IDSDescription):
-        self.__open_db()
-        legacy_ids = self.__db_entry.get(
-            ids_description.ids_type, ids_description.occurrence
-        )
-        self.__close_db()
-
-        return legacy_ids
+        return self.__db_entry.get(ids_description.ids_type, ids_description.occurrence)
 
     def release_data(self, ids_name):
         self.__release_occurrence(ids_name)
 
     def finalize(self):
         try:
-            self.__db_entry.close(erase=True)
-        except Exception:
             self.__db_entry.close()
+        except Exception:
+            pass

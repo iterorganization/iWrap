@@ -8,15 +8,9 @@
 void read_data(std::ifstream *stream, ids_description_t *ids_description) {
     stream->ignore(INT_MAX, '\n');
     *stream >> ids_description->ids_name;
-    *stream >> ids_description->pulse;
-    *stream >> ids_description->run;
     *stream >> ids_description->occurrence;
-    *stream >> ids_description->backend_id;
-    *stream >> ids_description->idx;
-    *stream >> ids_description->db_name;
-    *stream >> ids_description->user;
-    *stream >> ids_description->version;
     stream->ignore(INT_MAX, '\n');
+    stream->getline(ids_description->uri, sizeof(ids_description->uri));
 }
 
 void read_data(std::ifstream *stream, int *var) {
