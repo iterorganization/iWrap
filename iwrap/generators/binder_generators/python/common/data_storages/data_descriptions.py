@@ -1,6 +1,5 @@
 class IDSDescription:
-    """Identifies a single IDS inside an IMAS data entry using URI.
-    """
+    """Identifies a single IDS inside an IMAS data entry using URI."""
 
     def __init__(self, base_uri: str, ids_name: str, occurrence: int):
         self.base_uri = base_uri
