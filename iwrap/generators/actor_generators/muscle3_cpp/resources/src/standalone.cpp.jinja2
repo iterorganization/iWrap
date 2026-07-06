@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
     {% if flags.code_parameters_provided %}
     //----  Code parameters  ----
-     read_code_parameters(m3_instance, argv[0], "{{code_description.implementation.code_parameters.parameters | basename }}", imas_code_params);
+     read_code_parameters(m3_instance, argv[0], imas_code_params);
     {% endif %}
 
     /* * * * - - - MUSCLE3 LOOP  - - - * * * */
