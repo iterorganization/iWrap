@@ -80,6 +80,8 @@ build/%.o: src/%.f90
 	@mkdir -p ./build
 	$(FC) $(FFLAGS) -O0 -c -w $^ -o $@  $(INCLUDES)
 
+build/RWTools.o: build/defs.o build/iwrap_converters.o
+
 ../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/iwrap_converters.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib

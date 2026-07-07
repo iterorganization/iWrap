@@ -109,6 +109,9 @@ public class iWrapTools{
 
     static public void close_db(IDSDescription idsDescription) {
 
+            if (idsDescription.uri != null && idsDescription.uri.startsWith("imas:memory?"))
+                return;
+
             try{
                 imas.close(idsDescription.idx);
             } catch (Exception ex){

@@ -14,21 +14,27 @@ class IDSCType(ctypes.Structure, IDSDescription):
 
     @property
     def ids_type(self):
-        return "".join((chr(x) for x in self.ids_type_[:])).strip()
+        return bytes(self.ids_type_).split(b"\0", 1)[0].decode("ascii")
 
     @ids_type.setter
     def ids_type(self, ids_type_):
-        ctypes.memset(self.ids_type_, ord(" "), ctypes.sizeof(self.ids_type_))
-        ctypes.memmove(self.ids_type_, ids_type_.encode("ascii"), len(ids_type_))
+        encoded = ids_type_.encode("ascii")
+        if len(encoded) >= ctypes.sizeof(self.ids_type_):
+            raise ValueError(f"IDS type is too long for C buffer: {ids_type_}")
+        ctypes.memset(self.ids_type_, 0, ctypes.sizeof(self.ids_type_))
+        ctypes.memmove(self.ids_type_, encoded, len(encoded))
 
     @property
     def base_uri(self):
-        return "".join((chr(x) for x in self.uri_[:])).strip()
+        return bytes(self.uri_).split(b"\0", 1)[0].decode("ascii")
 
     @base_uri.setter
     def base_uri(self, uri_):
-        ctypes.memset(self.uri_, ord(" "), ctypes.sizeof(self.uri_))
-        ctypes.memmove(self.uri_, uri_.encode("ascii"), len(uri_))
+        encoded = uri_.encode("ascii")
+        if len(encoded) >= ctypes.sizeof(self.uri_):
+            raise ValueError(f"URI is too long for C buffer: {uri_}")
+        ctypes.memset(self.uri_, 0, ctypes.sizeof(self.uri_))
+        ctypes.memmove(self.uri_, encoded, len(encoded))
 
     def __init__(self, ids_description: IDSDescription):
         self.ids_type = ids_description.ids_type

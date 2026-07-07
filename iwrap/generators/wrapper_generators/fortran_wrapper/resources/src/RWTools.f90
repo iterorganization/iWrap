@@ -1,5 +1,6 @@
 module rwtool
        use iwrap_defs
+       use iwrap_converters
 
    interface readfile
        module procedure &

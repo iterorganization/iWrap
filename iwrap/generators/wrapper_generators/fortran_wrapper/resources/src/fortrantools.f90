@@ -145,10 +145,12 @@ module iwrap_tools
 
         type(ids_description_t), intent(IN) :: db_entry_desc
         INTEGER, INTENT(OUT)  :: idx
+        character (STRMAXLEN) :: uri
 
+        uri = convert_array2string(db_entry_desc%uri)
+        if (index(uri, "imas:memory?") == 1) return
         call imas_close(idx)
     END SUBROUTINE close_db
 
 end module iwrap_tools
-
 

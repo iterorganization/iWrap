@@ -26,6 +26,9 @@
 {% macro deallocate(ids_var_name) -%}
    // Should not be called until IMAS-3937 will be resolved
    // {{ ids_var_name }}->clear();
-    close_db(db_entry_{{ ids_var_name }});
-    delete db_entry_{{ ids_var_name }};
+    if (std::string({{ ids_var_name }}_desc->uri).rfind("imas:memory?", 0) != 0)
+    {
+        close_db(db_entry_{{ ids_var_name }});
+        delete db_entry_{{ ids_var_name }};
+    }
 {%- endmacro -%}
