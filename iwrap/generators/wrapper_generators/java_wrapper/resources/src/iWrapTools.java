@@ -103,7 +103,7 @@ public class iWrapTools{
 
     static public void open_db(IDSDescription idsDescription) throws Exception {
 
-        int idx = imas.open(idsDescription.uri, LowLevel.OPEN_PULSE);
+        int idx = imas.open(idsDescription.uri, LowLevel.FORCE_OPEN_PULSE);
         idsDescription.idx = idx;
     }
 

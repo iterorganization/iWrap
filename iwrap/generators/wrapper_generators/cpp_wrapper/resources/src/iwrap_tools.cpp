@@ -109,7 +109,8 @@ void convert_status_info(std::string in_status_msg, char** out_status_msg)
 
 IdsNs::IDS* init_db(ids_description_t* db_entry_desc)
 {
-    IdsNs::IDS* db_entry = new IdsNs::IDS(db_entry_desc->uri, "r");
+    IdsNs::IDS* db_entry = new IdsNs::IDS();
+    db_entry->open(db_entry_desc->uri, FORCE_OPEN_PULSE);
     return db_entry;
 }
 
