@@ -5,7 +5,7 @@ import sys
 from . import actor_info
 from .code_parameters import CodeParameters
 from .definitions import Argument
-from .runtime_settings import RuntimeSettings, DebugMode, RunMode
+from .runtime_settings import RuntimeSettings, DebugMode, RunMode, SandboxLifeTime
 from .definitions import Actor
 from .sandbox import Sandbox
 from .runners import Runner
@@ -39,6 +39,9 @@ class ActorBaseClass(Actor):
                 self.__runtime_settings = runtime_settings
 
             self.is_standalone = self.is_standalone_run()
+            # Standalone actors use persistent IDS storage in the sandbox between calls.
+            if self.is_standalone and self.__runtime_settings.sandbox.life_time == SandboxLifeTime.ACTOR_RUN:
+                self.__runtime_settings.sandbox.life_time = SandboxLifeTime.WORKFLOW_RUN
             self.sandbox.initialize()
             self.__initialized = True
             value = func(self,  *args, **kwargs )

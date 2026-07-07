@@ -23,9 +23,25 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {
     std:string status_msg = "OK";
 
+{% if mpi_compiler_cmd %}
+    //----  MPI  ----
+    int mpi_rank;
+    int was_mpi_initialized, was_mpi_finalized;
+
+    MPI_Initialized(&was_mpi_initialized);
+    if (!was_mpi_initialized)
+        MPI_Init(NULL, NULL);
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+
+{% endif %}
+
 {% for argument in sbrt_data.arguments %}
     // IDS : {{ argument.name }} ------------------------
+{% if mpi_compiler_cmd %}
+    {{ ids_macro.declare_local(argument.type, argument.name ) }}
+{% else %}
     {{ ids_macro.declare(argument.type, argument.name ) }}
+{% endif %}
 {% endfor %}
 
 {% if code_parameters.parameters and sbrt_data.need_code_parameters %}
@@ -38,17 +54,17 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
 {% endif %}
 
 
-    {% if mpi_compiler_cmd %}
-    //----  MPI  ----
-    int mpi_rank;
-    int was_mpi_initialized, was_mpi_finalized;
-
-    MPI_Initialized(&was_mpi_initialized);
-    if (!was_mpi_initialized)
-        MPI_Init(NULL, NULL);
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+{% if mpi_compiler_cmd %}
+    {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
+    {{ ids_macro.attach_db(argument.type, argument.name ) }}
+    {% endfor %}
+    {% for argument in sbrt_data.arguments if argument.intent == 'OUT' %}
+    if (mpi_rank == 0)
+    {
+        {{ ids_macro.attach_db(argument.type, argument.name ) }}
+    }
+    {% endfor %}
 {% endif %}
-
 
     {% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
     //--------- Get IDS : {{ argument.name }} ------------------------
@@ -102,10 +118,12 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
     } //The end of section called only for RANK 0 process
 {% endif %}
 
+{% if not mpi_compiler_cmd %}
 {% for argument in sbrt_data.arguments %}
     //--------- PUT IDS : {{ argument.name }} ------------------------
     {{ ids_macro.deallocate( argument.name) }}
 {% endfor %}
+{% endif %}
 
 
 {% if mpi_compiler_cmd %}

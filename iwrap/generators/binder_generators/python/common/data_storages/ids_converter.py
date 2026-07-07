@@ -70,5 +70,8 @@ class LegacyIDSConverter(IDSConverter):
         ids = self.__data_storage.read_data(ids_description)
         return ids
 
+    def sync_for_external_access(self):
+        self.__data_storage.sync_for_external_access()
+
     def release(self, ids_description: IDSDescription):
         self.__data_storage.release_data(ids_description.ids_type)

@@ -16,6 +16,7 @@ class LegacyIDSStorage(GenericIDSStorage):
         self.__occ_dict = {}
         self.__db_entry = None
         self.__uri: str = ""
+        self.__backend_name: str = ""
 
     def __get_occurrence(self, ids_name):
         occ = 1 + self.__occ_dict.get(ids_name, -1)
@@ -35,6 +36,7 @@ class LegacyIDSStorage(GenericIDSStorage):
             )
 
         self.__uri = f"imas:{backend_name}?path={sandbox_dir}"
+        self.__backend_name = backend_name
 
         try:
             self.__db_entry = imas.DBEntry(self.__uri, "w")
@@ -52,7 +54,15 @@ class LegacyIDSStorage(GenericIDSStorage):
     def save_data(self, ids_description: IDSDescription, legacy_ids):
         self.__db_entry.put(legacy_ids, ids_description.occurrence)
 
+    def sync_for_external_access(self):
+        # External standalone processes must own persistent backends while they run.
+        if self.__backend_name != "memory" and self.__db_entry is not None:
+            self.__db_entry.close()
+            self.__db_entry = None
+
     def read_data(self, ids_description: IDSDescription):
+        if self.__db_entry is None:
+            self.__db_entry = imas.DBEntry(self.__uri, "a")
         return self.__db_entry.get(ids_description.ids_type, ids_description.occurrence)
 
     def release_data(self, ids_name):

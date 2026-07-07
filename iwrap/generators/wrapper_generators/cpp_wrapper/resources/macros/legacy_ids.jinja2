@@ -9,6 +9,17 @@
     IdsNs::IDS::{{ ids_name }}* {{ ids_var_name }} = &db_entry_{{ ids_var_name }}->_{{ ids_name }};
 {%- endmacro -%}
 
+{% macro declare_local(ids_name, ids_var_name) -%}
+    IdsNs::IDS::{{ ids_name }} {{ ids_var_name }}_local;
+    IdsNs::IDS::{{ ids_name }}* {{ ids_var_name }} = &{{ ids_var_name }}_local;
+    IdsNs::IDS *db_entry_{{ ids_var_name }} = nullptr;
+{%- endmacro -%}
+
+{% macro attach_db(ids_name, ids_var_name) -%}
+    db_entry_{{ ids_var_name }} = init_db({{ ids_var_name }}_desc);
+    {{ ids_var_name }} = &db_entry_{{ ids_var_name }}->_{{ ids_name }};
+{%- endmacro -%}
+
 {% macro get(ids_var_name) -%}
 	{{ ids_var_name }}->get({{ ids_var_name }}_desc->occurrence);
 {%- endmacro -%}
@@ -26,7 +37,7 @@
 {% macro deallocate(ids_var_name) -%}
    // Should not be called until IMAS-3937 will be resolved
    // {{ ids_var_name }}->clear();
-    if (std::string({{ ids_var_name }}_desc->uri).rfind("imas:memory?", 0) != 0)
+    if (db_entry_{{ ids_var_name }} != nullptr && std::string({{ ids_var_name }}_desc->uri).rfind("imas:memory?", 0) != 0)
     {
         close_db(db_entry_{{ ids_var_name }});
         delete db_entry_{{ ids_var_name }};
