@@ -41,6 +41,9 @@ class ActorBaseClass(Actor):
             self.is_standalone = self.is_standalone_run()
             # Standalone actors use persistent IDS storage in the sandbox between calls.
             if self.is_standalone and self.__runtime_settings.sandbox.life_time == SandboxLifeTime.ACTOR_RUN:
+                self.__logger.debug(
+                    "Promoting sandbox lifetime from ACTOR_RUN to WORKFLOW_RUN for standalone actor storage."
+                )
                 self.__runtime_settings.sandbox.life_time = SandboxLifeTime.WORKFLOW_RUN
             self.sandbox.initialize()
             self.__initialized = True

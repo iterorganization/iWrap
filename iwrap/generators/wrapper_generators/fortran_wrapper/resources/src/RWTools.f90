@@ -40,12 +40,14 @@ module rwtool
         implicit none
         character(kind=c_char), dimension(:), intent(inout) :: var
         integer                :: i
+        integer                :: line_size
         character(AL_URI_SIZE) :: line
 
         var(:) = char(0)
         read(10,"(a)") line
 
-        do i = 1, AL_URI_SIZE
+        line_size = min(len_trim(line), size(var) - 1, AL_URI_SIZE)
+        do i = 1, line_size
             var(i) = line(i : i)
         enddo
 

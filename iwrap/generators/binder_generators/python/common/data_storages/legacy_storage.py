@@ -69,7 +69,6 @@ class LegacyIDSStorage(GenericIDSStorage):
         self.__release_occurrence(ids_name)
 
     def finalize(self):
-        try:
+        if self.__db_entry is not None:
             self.__db_entry.close()
-        except Exception:
-            pass
+            self.__db_entry = None

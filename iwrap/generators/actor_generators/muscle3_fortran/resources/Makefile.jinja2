@@ -43,8 +43,8 @@ MUSCLE3_PKG=libmuscle_fortran
 
 # main IMAS libs to be used
 IMAS_LIB_NAME=al-fortran
-CORE_LIBS_FLAGS:= $(shell pkg-config --cflags "$(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG)")
-CORE_LIBS:=$(shell pkg-config --libs "$(IMAS_LIB_NAME)" ymmsl $(MUSCLE3_PKG))
+CORE_LIBS_FLAGS:= $(shell pkg-config --cflags $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
+CORE_LIBS:=$(shell pkg-config --libs $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
 
 # required libs published using pkg-config mechanism
 {% if code_description.settings and code_description.settings.extra_libraries.pkg_config_defined %}
