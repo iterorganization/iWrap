@@ -196,6 +196,7 @@ class LanguageBinder(Binder):
 
         # prepares input files
         Binder.save_input(method_name, ids_ctypes_list, param_ctype, sandbox_dir)
+        self.ids_converter.sync_for_external_access()
         self.__logger.debug("EXECUTING command: " + str(exec_command))
         exec_system_cmd(exec_command, output_stream=output_stream)
 

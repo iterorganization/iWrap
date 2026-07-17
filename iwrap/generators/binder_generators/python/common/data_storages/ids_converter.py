@@ -23,12 +23,11 @@ class LegacyIDSConverter(IDSConverter):
         storage_settings: IdsStorageSettings,
     ) -> None:
 
-        db_name = storage_settings.db_name
         if is_standalone:
             backend_id = storage_settings.persistent_backend
         else:
             backend_id = storage_settings.backend
-        self.__data_storage.initialize(sandbox_dir, db_name, backend_id)
+        self.__data_storage.initialize(sandbox_dir, backend_id)
 
     def finalize(self) -> None:
         self.__data_storage.finalize()
@@ -70,6 +69,9 @@ class LegacyIDSConverter(IDSConverter):
     def convert_to_actor_type(self, ids_description: IDSDescription):
         ids = self.__data_storage.read_data(ids_description)
         return ids
+
+    def sync_for_external_access(self):
+        self.__data_storage.sync_for_external_access()
 
     def release(self, ids_description: IDSDescription):
         self.__data_storage.release_data(ids_description.ids_type)
