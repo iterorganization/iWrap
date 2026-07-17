@@ -1,10 +1,5 @@
 {% macro imports(al_version) -%}
-
-{% if al_version.startswith('4.')   %}
-#include "UALClasses.h"
-{% else %}
 #include "ALClasses.h"
-{% endif %}
 {%- endmacro -%}
 
 {% macro declare(ids_name, ids_var_name) -%}

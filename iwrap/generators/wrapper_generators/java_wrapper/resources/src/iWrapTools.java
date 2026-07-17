@@ -103,24 +103,13 @@ public class iWrapTools{
 
     static public void open_db(IDSDescription idsDescription) throws Exception {
 
-        int idx = -1;
-
-        if (idsDescription.backend_id == LowLevel.MEMORY_BACKEND)
-            return;
-
-        idx = imas.openEnv(idsDescription.pulse,
-                idsDescription.run,
-                idsDescription.user,
-                idsDescription.database,
-                idsDescription.version,
-                idsDescription.backend_id);
-
+        int idx = imas.open(idsDescription.uri, LowLevel.FORCE_OPEN_PULSE);
         idsDescription.idx = idx;
     }
 
     static public void close_db(IDSDescription idsDescription) {
 
-            if (idsDescription.backend_id == LowLevel.MEMORY_BACKEND)
+            if (idsDescription.uri != null && idsDescription.uri.startsWith("imas:memory?"))
                 return;
 
             try{

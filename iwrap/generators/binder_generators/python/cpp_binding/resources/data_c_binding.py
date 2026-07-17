@@ -8,62 +8,38 @@ from .data_storages.data_descriptions import IDSDescription
 class IDSCType(ctypes.Structure, IDSDescription):
     _fields_ = (
         ("ids_type_", ctypes.c_byte * 132),
-        ("pulse", ctypes.c_int),
-        ("run", ctypes.c_int),
         ("occurrence", ctypes.c_int),
-        ("backend_id", ctypes.c_int),
-        ("idx", ctypes.c_int),
-        ("database_", ctypes.c_byte * 132),
-        ("user_", ctypes.c_byte * 132),
-        ("version_", ctypes.c_byte * 132),
+        ("uri_", ctypes.c_byte * 4096),
     )
 
     @property
     def ids_type(self):
-        return "".join((chr(x) for x in self.ids_type_[:])).strip()
+        return bytes(self.ids_type_).split(b"\0", 1)[0].decode("ascii")
 
     @ids_type.setter
     def ids_type(self, ids_type_):
-        self.ids_type_[:] = len(self.ids_type_) * [ord(" ")]
-        self.ids_type_[: len(ids_type_)] = [ord(x) for x in ids_type_]
+        encoded = ids_type_.encode("ascii")
+        if len(encoded) >= ctypes.sizeof(self.ids_type_):
+            raise ValueError(f"IDS type is too long for C buffer: {ids_type_}")
+        ctypes.memset(self.ids_type_, 0, ctypes.sizeof(self.ids_type_))
+        ctypes.memmove(self.ids_type_, encoded, len(encoded))
 
     @property
-    def database(self):
-        return "".join((chr(x) for x in self.database_[:])).strip()
+    def base_uri(self):
+        return bytes(self.uri_).split(b"\0", 1)[0].decode("ascii")
 
-    @database.setter
-    def database(self, database_):
-        self.database_[:] = len(self.database_) * [ord(" ")]
-        self.database_[: len(database_)] = [ord(x) for x in database_]
-
-    @property
-    def user(self):
-        return "".join((chr(x) for x in self.user_[:])).strip()
-
-    @user.setter
-    def user(self, user_):
-        self.user_[:] = len(self.user_) * [ord(" ")]
-        self.user_[: len(user_)] = [ord(x) for x in user_]
-
-    @property
-    def version(self):
-        return "".join((chr(x) for x in self.version_[:])).strip()
-
-    @version.setter
-    def version(self, version_):
-        self.version_[:] = len(self.version_) * [ord(" ")]
-        self.version_[: len(version_)] = [ord(x) for x in version_]
+    @base_uri.setter
+    def base_uri(self, uri_):
+        encoded = uri_.encode("ascii")
+        if len(encoded) >= ctypes.sizeof(self.uri_):
+            raise ValueError(f"URI is too long for C buffer: {uri_}")
+        ctypes.memset(self.uri_, 0, ctypes.sizeof(self.uri_))
+        ctypes.memmove(self.uri_, encoded, len(encoded))
 
     def __init__(self, ids_description: IDSDescription):
         self.ids_type = ids_description.ids_type
-        self.pulse = ids_description.pulse
-        self.run = ids_description.run
         self.occurrence = ids_description.occurrence
-        self.backend_id = ids_description.backend_id
-        self.idx = ids_description.idx
-        self.database = ids_description.database
-        self.user = ids_description.user
-        self.version = ids_description.version
+        self.base_uri = ids_description.base_uri
 
     def convert_to_native_type(self):
         return ctypes.byref(self)

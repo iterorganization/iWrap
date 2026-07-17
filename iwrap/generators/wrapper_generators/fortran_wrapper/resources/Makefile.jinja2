@@ -26,11 +26,7 @@ CODE_LIB_FILE=$(notdir {{code_description.implementation.code_path}})
 CODE_LIB_DEF=./lib/$(CODE_LIB_FILE)
 
 # main IMAS libs to be used
-{% if build_info.al_version.startswith('4.')   %}
-IMAS_LIB_NAME=imas-$(FC)
-{% else %}
 IMAS_LIB_NAME=al-fortran
-{% endif %}
 
 CORE_LIBS_FLAGS:= $(shell pkg-config --cflags "$(IMAS_LIB_NAME)")
 CORE_LIBS:=$(shell pkg-config --libs "$(IMAS_LIB_NAME)")
@@ -83,6 +79,8 @@ build/%.o: src/%.f90
 	@echo "  * $< -> $@"
 	@mkdir -p ./build
 	$(FC) $(FFLAGS) -O0 -c -w $^ -o $@  $(INCLUDES)
+
+build/RWTools.o: build/defs.o build/iwrap_converters.o
 
 ../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/iwrap_converters.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
