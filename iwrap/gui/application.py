@@ -2,8 +2,7 @@ import logging
 import tkinter as tk
 from tkinter import ttk
 import importlib
-from importlib import resources
-from typing import cast, Tuple
+from typing import Tuple
 import threading
 
 from iwrap.generation_engine.engine import Engine
@@ -28,31 +27,39 @@ class ButtonPane(ttk.Frame):
         self.update_method = update_method
         self.install_dir = tk.StringVar()
 
-        close_button = ttk.Button(self, text='Close', command=self.winfo_toplevel().destroy)
+        close_button = ttk.Button(
+            self, text="Close", command=self.winfo_toplevel().destroy
+        )
         close_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
-        generate_button = ttk.Button(self, text='Generate', command=self.generate_action)
+        generate_button = ttk.Button(
+            self, text="Generate", command=self.generate_action
+        )
         generate_button.pack(side=tk.RIGHT, padx=5, pady=5)
 
         ttk.Label(self, text="install dir:").pack(side=tk.LEFT, padx=5, pady=5)
 
         self.install_dir_entry = ttk.Entry(self, textvariable=self.install_dir)
-        self.install_dir_entry.pack(side=tk.LEFT, pady=5, padx=5, expand=True, fill=tk.X)
-        ToolTip(self.install_dir_entry, 'install_dir')
+        self.install_dir_entry.pack(
+            side=tk.LEFT, pady=5, padx=5, expand=True, fill=tk.X
+        )
+        ToolTip(self.install_dir_entry, "install_dir")
 
     def generate_action(self):
         from iwrap.gui.widgets.progress_monitor_window import ProgressMonitorWindow
 
         progress_window = ProgressMonitorWindow()
-        
+
         self.update_method()
 
         # Use a thread, otherwise the GUI freezes during generation:
-        gen_thread = threading.Thread(target=Engine().generate_actor,
-                                      kwargs={'info_output_stream':progress_window})
+        gen_thread = threading.Thread(
+            target=Engine().generate_actor,
+            kwargs={"info_output_stream": progress_window},
+        )
         gen_thread.start()
-        
-        #progress_window.destroy()
+
+        # progress_window.destroy()
 
 
 class MainWindow(tk.Tk, IWrapPane):
@@ -63,9 +70,10 @@ class MainWindow(tk.Tk, IWrapPane):
         super().__init__()
 
         import iwrap
-        self.title(f'iWrap : {iwrap.__version__}')
+
+        self.title(f"iWrap : {iwrap.__version__}")
         self.minsize(600, 300)
-        self.geometry('600x700')
+        self.geometry("600x700")
 
         # Sets application icon
         _icon = self._load_image(resource="imas_logo_round.gif")
@@ -81,16 +89,24 @@ class MainWindow(tk.Tk, IWrapPane):
         top_pane.pack(fill=tk.X, expand=False, side=tk.TOP)
 
         self.actor_description = ActorDescriptionPane(top_pane)
-        self.actor_description.pack(fill=tk.BOTH, side=tk.LEFT, padx=5, pady=5, expand=True)
+        self.actor_description.pack(
+            fill=tk.BOTH, side=tk.LEFT, padx=5, pady=5, expand=True
+        )
 
         # Load the IMAS logo next to the ActorDescriptionPane, use the themed Label for transparency
-        self._logo_img: tk.PhotoImage = self._load_image(resource="imas_transparent_logo.gif", resize=(True, (6, 6)))
-        ttk.Label(top_pane, image=self._logo_img).pack(side=tk.RIGHT, padx=(15, 20), pady=(10, 0))
+        self._logo_img: tk.PhotoImage = self._load_image(
+            resource="imas_transparent_logo.gif", resize=(True, (6, 6))
+        )
+        ttk.Label(top_pane, image=self._logo_img).pack(
+            side=tk.RIGHT, padx=(15, 20), pady=(10, 0)
+        )
 
         self.button_pane = ButtonPane(main_pane, self.update_settings)
         self.button_pane.pack(fill=tk.X, side=tk.BOTTOM)
 
-        ttk.Label(main_pane, text="* - mandatory field").pack(fill=tk.X, side=tk.BOTTOM, padx=10, pady=5)
+        ttk.Label(main_pane, text="* - mandatory field").pack(
+            fill=tk.X, side=tk.BOTTOM, padx=10, pady=5
+        )
 
         self.settings_pane = SettingsMainPane(main_pane)
         self.settings_pane.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
@@ -98,11 +114,12 @@ class MainWindow(tk.Tk, IWrapPane):
         self.update_idletasks()
         center_wnd(self, self)
 
-
-    def _load_image(self,
-                     package: str = "iwrap.resources",
-                     resource: str = "",
-                     resize: Tuple[bool, Tuple[int, int]] = (False,)) -> tk.PhotoImage:
+    def _load_image(
+        self,
+        package: str = "iwrap.resources",
+        resource: str = "",
+        resize: Tuple[bool, Tuple[int, int]] = (False,),
+    ) -> tk.PhotoImage:
         # Try to access image path using importlib.resource module
         try:
             with importlib.resources.path(package, resource) as img_path:
@@ -115,14 +132,19 @@ class MainWindow(tk.Tk, IWrapPane):
             pass
 
     def update_settings(self):
-        ProjectSettings.get_settings().actor_description.set_install_dir(self.button_pane.install_dir.get())
+        ProjectSettings.get_settings().actor_description.set_install_dir(
+            self.button_pane.install_dir.get()
+        )
         self.actor_description.update_settings()
         self.settings_pane.update_settings()
 
     def reload(self):
-        self.button_pane.install_dir.set(ProjectSettings.get_settings().actor_description.get_install_dir())
+        self.button_pane.install_dir.set(
+            ProjectSettings.get_settings().actor_description.get_install_dir()
+        )
         self.actor_description.reload()
         self.settings_pane.reload()
+
 
 def launch_gui():
     window = MainWindow()
@@ -130,5 +152,5 @@ def launch_gui():
     window.mainloop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     launch_gui()

@@ -4,16 +4,16 @@ from tkinter import ttk
 
 from typing import Union
 
-from iwrap.generation_engine.engine import Engine
 from iwrap.gui.generics import IWrapPane
 
 
 class SignaturePane(ttk.Frame, IWrapPane):
     """Pane composed of a multiline, read-only and two axis scrollable text field with ButtonsBarPane above to control.
 
-        Attributes:
-            text_box (tk.Text): Text widget that displays multiline text in read-only mode.
+    Attributes:
+        text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -55,9 +55,10 @@ class SignaturePane(ttk.Frame, IWrapPane):
 class TextBox(ttk.LabelFrame):
     """Widget consisting of a text field with read-only mode and two scroll bars (X and Y).
 
-        Attributes:
-            text_box (tk.Text): Text widget that displays multiline text in read-only mode.
+    Attributes:
+        text_box (tk.Text): Text widget that displays multiline text in read-only mode.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -83,19 +84,19 @@ class TextBox(ttk.LabelFrame):
         # Configure to none wrapping text & disable editing.
         self.text_box.config(wrap=tk.NONE, state=tk.DISABLED)
         # Configure selection color
-        self.text_box.config(selectbackground="#D3E2FC", inactiveselectbackground="#E6EFFD")
+        self.text_box.config(
+            selectbackground="#D3E2FC", inactiveselectbackground="#E6EFFD"
+        )
         # Pack text box
         self.text_box.pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=(5, 2), padx=5)
 
         # Configure Scrollbars for text box scrolling
-        vertical_scroll.config(orient=tk.VERTICAL,
-                               command=self.text_box.yview)
-        horizontal_scroll.config(orient=tk.HORIZONTAL,
-                                 command=self.text_box.xview)
+        vertical_scroll.config(orient=tk.VERTICAL, command=self.text_box.yview)
+        horizontal_scroll.config(orient=tk.HORIZONTAL, command=self.text_box.xview)
 
         # Configure callback from text box for Scrollbars widgets
-        self.text_box['yscrollcommand'] = vertical_scroll.set
-        self.text_box['xscrollcommand'] = horizontal_scroll.set
+        self.text_box["yscrollcommand"] = vertical_scroll.set
+        self.text_box["xscrollcommand"] = horizontal_scroll.set
 
         # Pop-up menu:
         popup_menu = self.PopUpPane(self.text_box)
@@ -163,11 +164,11 @@ class TextBox(ttk.LabelFrame):
     @staticmethod
     def data_load() -> str:
         """Loads text data from an external generator."""
-        return 'TBD'
+        return "TBD"
 
     def clear(self) -> None:
         """Removes text from a text box."""
-        self.text_box.delete('1.0', tk.END)
+        self.text_box.delete("1.0", tk.END)
 
     def get_text(self) -> str:
         """Returns text from a text box."""
@@ -176,18 +177,21 @@ class TextBox(ttk.LabelFrame):
 
 class ButtonsBarPane(ttk.Frame):
     """Widget which is a bar of control buttons."""
+
     def __init__(self, master: ttk.Widget = None) -> None:
         """Initialize the ttk.Button widgets.
-    # Class logger
-    __logger = logging.getLogger(__name__ + "." + __qualname__)
+        # Class logger
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-        Args:
-            master (ttk.Frame, optional): A parent widget.
+            Args:
+                master (ttk.Frame, optional): A parent widget.
         """
         super().__init__(master)
 
         # First button to execute copy to clipboard action.
-        ttk.Button(self, text="Copy to clipboard", command=self.copy_to_clipboard).pack(side=tk.LEFT)
+        ttk.Button(self, text="Copy to clipboard", command=self.copy_to_clipboard).pack(
+            side=tk.LEFT
+        )
 
         # ButtonBarPane object pack configuration.
         self.pack(expand=False, fill=tk.X, padx=5, pady=(10, 5))

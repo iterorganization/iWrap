@@ -8,34 +8,51 @@ from iwrap.settings.project import ProjectSettings
 from iwrap.gui.settings.tooltip import ToolTip
 
 
-class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
+class ActorDescriptionPane(ttk.LabelFrame, IWrapPane):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master: ttk.Widget):
-        super().__init__( master, text='Actor description:', borderwidth=2, relief="groove", height=100 )
+        super().__init__(
+            master,
+            text="Actor description:",
+            borderwidth=2,
+            relief="groove",
+            height=100,
+        )
 
-        self.grid( column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W) )
-        ttk.Label( self, text="*Actor name:" ).grid( column=0, row=0, padx=10, pady=5, sticky=tk.W )
-        self.actor_name = ttk.Entry( self )
-        self.actor_name.grid( column=1, columnspan=10, row=0, padx=10, pady=5, sticky=(tk.W, tk.E) )
-        ToolTip(self.actor_name, 'actor_name')
+        self.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        ttk.Label(self, text="*Actor name:").grid(
+            column=0, row=0, padx=10, pady=5, sticky=tk.W
+        )
+        self.actor_name = ttk.Entry(self)
+        self.actor_name.grid(
+            column=1, columnspan=10, row=0, padx=10, pady=5, sticky=(tk.W, tk.E)
+        )
+        ToolTip(self.actor_name, "actor_name")
 
+        ttk.Label(self, text="*Actor type:").grid(
+            column=0, row=1, padx=10, pady=5, sticky=tk.W
+        )
 
-        ttk.Label( self, text="*Actor type:" ).grid( column=0, row=1, padx=10, pady=5, sticky=tk.W )
+        self.actor_type_combo = ttk.Combobox(self, width=15, state="readonly")
+        self.actor_type_combo.grid(
+            column=1, columnspan=10, row=1, padx=10, pady=5, sticky=(tk.E, tk.W)
+        )
+        self.actor_type_combo.bind("<<ComboboxSelected>>", self.actor_type_combo_action)
+        ToolTip(self.actor_type_combo, "actor_type")
 
-        self.actor_type_combo = ttk.Combobox( self, width=15, state='readonly' )
-        self.actor_type_combo.grid( column=1, columnspan=10, row=1, padx=10, pady=5, sticky=(tk.E, tk.W) )
-        self.actor_type_combo.bind( "<<ComboboxSelected>>", self.actor_type_combo_action )
-        ToolTip(self.actor_type_combo, 'actor_type')
+        ttk.Label(self, text="*Data type:").grid(
+            column=0, row=2, padx=10, pady=5, sticky=tk.W
+        )
 
-        ttk.Label( self, text="*Data type:" ).grid( column=0, row=2, padx=10, pady=5, sticky=tk.W )
+        self.data_type_combo = ttk.Combobox(self, width=15, state="readonly")
+        self.data_type_combo.grid(
+            column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W)
+        )
+        ToolTip(self.data_type_combo, "data_type")
 
-        self.data_type_combo = ttk.Combobox( self, width=15, state='readonly' )
-        self.data_type_combo.grid( column=1, columnspan=10, row=2, padx=10, pady=5, sticky=(tk.E, tk.W) )
-        ToolTip(self.data_type_combo, 'data_type')
-
-        self.columnconfigure( 1, weight=3 )
+        self.columnconfigure(1, weight=3)
 
     def actor_type_combo_action(self, event):
         current_generator = Engine().active_generator
@@ -66,23 +83,23 @@ class ActorDescriptionPane( ttk.LabelFrame, IWrapPane ):
     def reload(self):
         # set values of actor types combo
         actor_types = Engine().registered_generators
-        self.actor_type_combo.configure( values=actor_types )
+        self.actor_type_combo.configure(values=actor_types)
 
         # set active generator in combo
         active_generator = Engine().active_generator
-        self.actor_type_combo.set( active_generator )
+        self.actor_type_combo.set(active_generator)
 
         # set values of actor data type combo
         data_types = active_generator.actor_data_types
-        self.data_type_combo.configure( values=data_types )
+        self.data_type_combo.configure(values=data_types)
 
         # set actor data type in combo
         data_type = ProjectSettings.get_settings().actor_description.data_type
-        if data_type is not None and data_type != '':
-            self.data_type_combo.set( data_type )
+        if data_type is not None and data_type != "":
+            self.data_type_combo.set(data_type)
         else:
-            self.data_type_combo.current( 0 )
+            self.data_type_combo.current(0)
 
-        self.actor_name.delete( 0, tk.END )
+        self.actor_name.delete(0, tk.END)
         actor_name = ProjectSettings.get_settings().actor_description.actor_name
-        self.actor_name.insert( 0, actor_name or '' )
+        self.actor_name.insert(0, actor_name or "")

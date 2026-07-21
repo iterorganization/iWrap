@@ -44,8 +44,12 @@ iWrap knowledge is not required. However, some level of expertise in the followi
 - Basic `Makefile` creation skills - [Makefile tutorial](https://makefiletutorial.com/)
 - Elementary `Python` programming skills - [Python tutorial](https://edube.org/study/pe1)
 - Basic `Fortran` (or `C++`) knowledge -  [Fortran tutorial](https://fortran-lang.org/learn/quickstart/)   |   [C++ Tutorial](https://www.w3schools.com/cpp/)
-- Knowledge concerning `IMAS` essentials - [Official IMAS AL5 docs](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/cpp/dev/index.html)
 - Knowledge of `XSD` & `XML` file formats - [XML vs. XSD comparison](https://www.geeksforgeeks.org/difference-between-document-type-definition-dtd-and-xml-schema-definition-xsd/)
+- `IMAS-Core`  - [Official IMAS Core docs](https://imas-core.readthedocs.io/en/latest/)
+- `IMAS-Data-Dictionary`  - [Official IMAS Core docs](https://imas-data-dictionary.readthedocs.io/en/latest/)
+- `IMAS-Cpp`  - [Official IMAS Cpp docs](https://imas-cpp.readthedocs.io/en/latest/)
+- `IMAS-Fortran`  - [Official IMAS Fortran docs](https://imas-fortran.readthedocs.io/en/latest/)
+- `IMAS-Python`  - [Official IMAS Python docs](https://imas-python.readthedocs.io/en/latest/)
 
 
 

@@ -181,15 +181,9 @@ Code restarting methods
    actor_object.set_state(code_state)
 
 
-The actor ``get_state`` and  ``set_state`` methods enable restart stateful, sometimes compute demanding,
-codes without losing intermediate results that are not captured in the code's outputs. The code may be asked periodically
-about its internal state using the ``get_state`` method. After a restart, the code state can be restored
-using the ``set_state`` method.
-
-The internal state of the code has to be passed as a string, however iWrap gives full flexibility
-to the code developer concerning the format and content of state description.
-It is a kind of a ‘black box’ returned from ``get_state`` and passed to ``set_state`` method during restart,
-so the only requirement is that information returned by ``get_state`` is understandable by ``set_state``.
+The actor ``get_state`` and ``set_state`` methods enable restarting stateful codes without losing
+intermediate results. For a full description of the GET_STATE/SET_STATE contract, see
+:doc:`../code_standardization`.
 
 - Example of usage:
 
@@ -586,14 +580,14 @@ This attribute defines settings of temporary storage being used while passing ID
    -   backend:
 
        -  Meaning - backend to be used
-       -  Default value -   ``imas.imasdef.MEMORY_BACKEND``
+       -  Default value -   ``imas.ids_defs.MEMORY_BACKEND``
 
    -    persistent_backend
 
         -  Meaning - backend to be used when temporary data cannot be stored in memory (e.g. while running
            the actor in standalone mode, when the code is run in a separate process, so it doesn't share
            memory with the workflow).
-        -  Default value -  ``imas.imasdef.MDSPLUS_BACKEND``
+        -  Default value -  ``imas.ids_defs.MDSPLUS_BACKEND``
 
 .. note::
    Please note: for most of the purposes it is fine to not set this property and leave default values unchanged.
@@ -662,7 +656,7 @@ For list of available code description information see: :ref:`yaml_code_descript
          'schema': '/gss_efgw_work/work/username/iwrap/examples/level2/input/input_physics.xsd'
         },
         'code_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/libphysics_ii.a',
-        'data_dictionary_compliant': '3.37.0',
+        'data_dictionary_compliant': '4.1.1',
         'data_type': 'legacy',
         'include_path': '/gss_efgw_work/work/username/iwrap/examples/level2/native_code/mod_physics_ii.mod',
         'programming_language': 'fortran',
@@ -792,12 +786,12 @@ The workflow example
 
             # OPEN INPUT DATAFILE TO GET DATA FROM IMAS SCENARIO DATABASE
             print('=> Open input datafile')
-            self.input_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
+            self.input_entry = imas.DBEntry(imas.ids_defs.MDSPLUS_BACKEND,input_database,shot,run_in,input_user_or_path)
             self.input_entry.open()
 
             # CREATE OUTPUT DATAFILE
             print('=> Create output datafile')
-            self.output_entry = imas.DBEntry(imas.imasdef.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
+            self.output_entry = imas.DBEntry(imas.ids_defs.MDSPLUS_BACKEND,output_database,shot,run_out,output_user_or_path)
             self.output_entry.create()
 
             runtime_settings = None

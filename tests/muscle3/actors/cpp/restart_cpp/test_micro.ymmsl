@@ -1,0 +1,16 @@
+ymmsl_version: v0.1
+
+model:
+  name: restart_cpp
+
+checkpoints:
+    at_end: true
+
+implementations:
+  micro:
+    executable: ${ACTOR_DIR}/restart_cpp/bin/restart_cpp.exe
+
+
+resources:
+  micro:
+    threads: 1

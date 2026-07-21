@@ -4,36 +4,35 @@ from enum import Enum, auto
 import imas
 
 
-class DebugMode( Enum ):
-    """Provides enumerated values describing run mode
-    """
+class DebugMode(Enum):
+    """Provides enumerated values describing run mode"""
 
     NONE = auto()
     """Debug turned off"""
 
     STANDALONE = auto()
-    """The actor runs the code as an executable in a separate process, under debugger control. Debugged code 
-    can be run several times. To continue the workflow execution it is enough to close the debugger. 
+    """The actor runs the code as an executable in a separate process, under debugger control. Debugged code
+    can be run several times. To continue the workflow execution it is enough to close the debugger.
     This debugging mode is suitable for most purposes."""
 
     ATTACH = auto()
-    """The actor runs a debugger as a parallel process, attaching it to a running workflow and setting breakpoint 
-    on the wrapped code of the the debugged actor. Because debugger attaches to a workflow (and not a particular actor) 
-    killing debugged process kills the whole workflow. 
-    This mode has to be chosen if the issue within the wrapper or the code cannot be reproduced in STANDALONE mode or 
+    """The actor runs a debugger as a parallel process, attaching it to a running workflow and setting breakpoint
+    on the wrapped code of the the debugged actor. Because debugger attaches to a workflow (and not a particular actor)
+    killing debugged process kills the whole workflow.
+    This mode has to be chosen if the issue within the wrapper or the code cannot be reproduced in STANDALONE mode or
     if the issue results from actor interdependencies (e.g. one actor overwrites memory of others)."""
 
-class RunMode( Enum ):
-    """Provides enumerated values describing run mode
-    """
+
+class RunMode(Enum):
+    """Provides enumerated values describing run mode"""
 
     NORMAL = auto()
-    """The code is loaded from a library and called directly from Python, 
-    within the same process (and environment). Usually system resources, shared with other Python 
+    """The code is loaded from a library and called directly from Python,
+    within the same process (and environment). Usually system resources, shared with other Python
     threads are limited, however this mode is suitable for most of the actors."""
 
     STANDALONE = auto()
-    """The actor runs the code as an executable in a separate system process, having its own environment 
+    """The actor runs the code as an executable in a separate system process, having its own environment
     and (usually) bigger system resources available. This mode is set automatically for MPI applications,
     however it can be set also for memory demanding code."""
 
@@ -41,9 +40,8 @@ class RunMode( Enum ):
     """The actor standalone executable is submitted to a batch queue. (WIP)"""
 
 
-class SandboxMode( Enum ):
-    """Provides enumerated values describing sandbox mode
-    """
+class SandboxMode(Enum):
+    """Provides enumerated values describing sandbox mode"""
 
     AUTOMATIC = auto()
     """iWrap generated actor manages the sandbox creation, clean up, etc"""
@@ -53,53 +51,52 @@ class SandboxMode( Enum ):
      Requires :obj:`SandboxSettings` path attribute to be set."""
 
 
-class SandboxLifeTime( Enum ):
-    """Provides enumerated values describing the life time of the sandbox
-    """
+class SandboxLifeTime(Enum):
+    """Provides enumerated values describing the life time of the sandbox"""
 
     ACTOR_RUN = auto()
     """Content of the sandbox directory is cleaned before and after every call to the actor main method"""
 
     WORKFLOW_RUN = auto()
-    """Content of the sandbox directory is cleaned, during initialising stage of an actor and after 
+    """Content of the sandbox directory is cleaned, during initialising stage of an actor and after
     other finalization actions of the actor (so, sandbox should be available during the whole workflow run)"""
 
     PERSISTENT = auto()
     """Content of the sandbox directory is preserved and never cleaned up"""
 
+
 class IdsStorageSettings:
     """Settings of temporary storage being used while passing IDSes between the actor and the code.
 
     Attributes:
-        db_name (str, default='tmp'): name of the database to be used
-        backend (str, default=imas.imasdef.MEMORY_BACKEND): backend to be used
-        persistent_backend  (str, default=imas.imasdef.MDSPLUS_BACKEND): backend to be used when temporary data
-            cannot be stored in memory (e.g. while running actor in a standalone mode,
-            when the code is run as separate process, so it doesn’t share memory with other actors.
+        backend (int, default=imas.ids_defs.MEMORY_BACKEND): backend to be used
+        persistent_backend (int, default=imas.ids_defs.HDF5_BACKEND): backend to be used when
+            temporary data cannot be stored in memory (e.g. while running actor in a standalone
+            mode, when the code is run as separate process, so it doesn't share memory with other
+            actors). The sandbox directory is used as the data path via an IMAS URI.
     """
 
     # Class logger
-    __logger = logging.getLogger( __name__ + "." + __qualname__ )
+    __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self):
-        self.db_name = 'tmp'
-        self.backend = imas.imasdef.MEMORY_BACKEND
-        self.persistent_backend = imas.imasdef.MDSPLUS_BACKEND
+        self.backend = imas.ids_defs.MEMORY_BACKEND
+        self.persistent_backend = imas.ids_defs.HDF5_BACKEND
 
 
 class RuntimeSettings:
     """The runtime settings determines how the code should be run.
 
-   Attributes:
-        run_mode (:obj:`RunMode`): Defined by setting one of predefined :obj:`RunMode` enumeration class values
-        debug_mode (:obj:`DebugMode`, default=DebugMode.NONE): debugging mode
-        ids_storage (:obj:`IdsStorageSettings`): temporary data cache settings
-        mpi (:obj:`MPISettings`): MPI job settings
-        sandbox (:obj:`SandboxSettings`): sandbox settings
-        batch (:obj:`BatchSettings`): batch job settings
-        debugger (:obj:`DebuggerSettings`): debugger settings
-        commandline_cmd (`str`): user provided commandline string that replaces the automatically generated one
-        exec_options(`str`): additional user options to be appended to the automatically generated commandline
+    Attributes:
+         run_mode (:obj:`RunMode`): Defined by setting one of predefined :obj:`RunMode` enumeration class values
+         debug_mode (:obj:`DebugMode`, default=DebugMode.NONE): debugging mode
+         ids_storage (:obj:`IdsStorageSettings`): temporary data cache settings
+         mpi (:obj:`MPISettings`): MPI job settings
+         sandbox (:obj:`SandboxSettings`): sandbox settings
+         batch (:obj:`BatchSettings`): batch job settings
+         debugger (:obj:`DebuggerSettings`): debugger settings
+         commandline_cmd (`str`): user provided commandline string that replaces the automatically generated one
+         exec_options(`str`): additional user options to be appended to the automatically generated commandline
 
     """
 
@@ -125,21 +122,20 @@ class RuntimeSettings:
 
         self._debug_mode = value
 
-
     def __init__(self):
         # handled/implemented
         self._run_mode = RunMode.NORMAL
         self._debug_mode = DebugMode.NONE
         self.ids_storage = IdsStorageSettings()
-        self.commandline_cmd = ''
-        self.exec_options = ''
+        self.commandline_cmd = ""
+        self.exec_options = ""
         self.mpi = None
         self.sandbox = self.SandboxSettings()
         self.batch = self.BatchSettings()
         self.debugger = self.DebuggerSettings()
         # not implemented yet
 
-        self.compiler_flags = ''
+        self.compiler_flags = ""
 
         self.TBD = None  # any other info needed?
 
@@ -153,6 +149,7 @@ class RuntimeSettings:
             batch queue (`str`): batch queue to be used
             batch_options (`str`): user defined options for batch runner
         """
+
         @property
         def batch_default_runner(self):
             """Default batch runner (sbatch, srun, etc) to be used. Its value is platform dependent, read from iWrap configuration. Read only attribute
@@ -169,20 +166,17 @@ class RuntimeSettings:
             """
             return self._default_options
 
-
         def __init__(self):
-            self._default_runner = ''
-            self.batch_runner = ''
-            self.batch_queue = ''
+            self._default_runner = ""
+            self.batch_runner = ""
+            self.batch_queue = ""
             self.batch_nodes = 1
-            self._default_options = ''
-            self.batch_options = ''
+            self._default_options = ""
+            self.batch_options = ""
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class DebuggerSettings:
-        """ Keeps information about command needed to run debugging session
-
-        """
+        """Keeps information about command needed to run debugging session"""
 
         @property
         def debugger_default_cmd(self):
@@ -193,10 +187,10 @@ class RuntimeSettings:
             return self._default_attach_cmd
 
         def __init__(self):
-            self._default_cmd = ''  # TotalView/gdb
-            self.debugger_cmd = ''
-            self._default_attach_cmd = ''
-            self.debugger_attach_cmd = ''
+            self._default_cmd = ""  # TotalView/gdb
+            self.debugger_cmd = ""
+            self._default_attach_cmd = ""
+            self.debugger_attach_cmd = ""
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class MPISettings:
@@ -225,30 +219,30 @@ class RuntimeSettings:
             """
             return self._default_options
 
-
         @property
         def mpi_nodes(self):
-            raise AttributeError( '"mpi_nodes" attribute has been removed please use "mpi_processes" instead')
+            raise AttributeError(
+                '"mpi_nodes" attribute has been removed please use "mpi_processes" instead'
+            )
 
         @mpi_nodes.setter
         def mpi_nodes(self, value):
-            raise AttributeError( '"mpi_nodes" attribute has been removed please use "mpi_processes" instead')
+            raise AttributeError(
+                '"mpi_nodes" attribute has been removed please use "mpi_processes" instead'
+            )
 
         def __init__(self):
-            """
-
-            """
+            """ """
             self.mpi_processes: int = 1
             self.mpi_runner: str = None
             self._default_runner: str = None
-            self._default_options: str=None
+            self._default_options: str = None
             self.mpi_options: str = None
-
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     class OpenMPSettings:
         # Class logger
-        __logger = logging.getLogger( __name__ + "." + __qualname__ )
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         def __init__(self):
             self.TBD = None
@@ -270,8 +264,9 @@ class RuntimeSettings:
             life_time (:obj:`SandboxLifeTime`, default=SandboxLifeTime.ACTOR_RUN): defines when the sandbox
                 will be cleaned up and removed. One of the predefined values of the class :obj:`SandboxLifeTime`
         """
+
         # Class logger
-        __logger = logging.getLogger( __name__ + "." + __qualname__ )
+        __logger = logging.getLogger(__name__ + "." + __qualname__)
 
         @property
         def life_time(self):
@@ -296,6 +291,6 @@ class RuntimeSettings:
             self._mode = value
 
         def __init__(self):
-            self.path: str = ''
+            self.path: str = ""
             self._life_time: SandboxLifeTime = SandboxLifeTime.ACTOR_RUN
             self._mode: SandboxMode = SandboxMode.AUTOMATIC

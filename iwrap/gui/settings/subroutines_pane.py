@@ -6,8 +6,6 @@ from iwrap.gui.generics import IWrapPane
 from iwrap.gui.settings.subroutine_pane import SubroutinePane
 from iwrap.gui.settings.other_pane import OtherPane
 
-from iwrap.gui.settings.tooltip import ToolTip
-
 
 class SubroutinesPane(ttk.Frame, IWrapPane):
     """Subroutines pane contains main, init and finalize values.
@@ -47,26 +45,24 @@ class SubroutinesPane(ttk.Frame, IWrapPane):
         tab_control.add(finalize_tab, text="Finalize:")
         tab_control.add(other_tab, text="Other:")
         tab_control.pack(fill=tk.BOTH, expand=1, anchor=tk.SW, pady=5)
-        self.init_pane = SubroutinePane('init', init_tab)
+        self.init_pane = SubroutinePane("init", init_tab)
         self.init_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
-        self.main_pane = SubroutinePane('main', main_tab)
+        self.main_pane = SubroutinePane("main", main_tab)
         self.main_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
-        self.finalize_pane = SubroutinePane('finalize', finalize_tab)
+        self.finalize_pane = SubroutinePane("finalize", finalize_tab)
         self.finalize_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
         self.other_pane = OtherPane(other_tab)
         self.other_pane.pack(fill=tk.BOTH, expand=1, anchor=tk.SW)
 
     def update_settings(self, *args):
-        """Update settings in the ProjectSettings.
-        """
+        """Update settings in the ProjectSettings."""
         self.init_pane.update_settings()
         self.main_pane.update_settings()
         self.finalize_pane.update_settings()
         self.other_pane.update_settings()
 
     def reload(self):
-        """Reload init, main, and finalize values then the project settings are changed".
-        """
+        """Reload init, main, and finalize values then the project settings are changed"."""
         self.init_pane.reload()
         self.main_pane.reload()
         self.finalize_pane.reload()

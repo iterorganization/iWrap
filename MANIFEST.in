@@ -1,7 +1,0 @@
-recursive-include bin *
-recursive-include iwrap *
-include requirements*
-include README.md
-include LICENSE.md
-include versioneer.py
-include iwrap/_version.py

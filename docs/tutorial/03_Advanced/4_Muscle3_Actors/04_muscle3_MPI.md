@@ -249,7 +249,7 @@ code_description:
             finalize: clean_up
             get_timestamp: get_timestamp_cpp
         programming_language: cpp
-        data_dictionary_compliant: 3.39.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: ./libparallel_mpi.a
         include_path: ./parallel_mpi.h

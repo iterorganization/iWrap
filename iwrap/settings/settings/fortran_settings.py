@@ -8,17 +8,18 @@ from iwrap.generation_engine.engine import Engine
 from iwrap.settings import SettingsBaseClass
 
 
-class AbstractLanguageSpecificSettings( SettingsBaseClass, ABC ):
+class AbstractLanguageSpecificSettings(SettingsBaseClass, ABC):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
 
-class ExtraLibraries( SettingsBaseClass ):
-    """ Class for libraries from path and libraries defines by pkg config.
-        Attributes:
-            pkg_config_defined (list [`str`]): list of pkg config defined libraries.
-            path_defined (list [`str`]): list of path defined libraries.
+class ExtraLibraries(SettingsBaseClass):
+    """Class for libraries from path and libraries defines by pkg config.
+    Attributes:
+        pkg_config_defined (list [`str`]): list of pkg config defined libraries.
+        path_defined (list [`str`]): list of path defined libraries.
     """
+
     def __init__(self):
         self.pkg_config_defined = []
         self.path_defined = []
@@ -32,7 +33,7 @@ class ExtraLibraries( SettingsBaseClass ):
         for library in self.path_defined or []:
             __path = utils.resolve_path(library, project_root_dir)
             if not Path(__path).exists():
-                raise ValueError( f'Path to library file is not valid! {str( __path )}' )
+                raise ValueError(f"Path to library file is not valid! {str(__path)}")
 
     def clear(self):
         """Clears class content."""
@@ -41,12 +42,17 @@ class ExtraLibraries( SettingsBaseClass ):
     def from_dict(self, dictionary: dict):
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative: str = False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -57,21 +63,22 @@ class ExtraLibraries( SettingsBaseClass ):
         if resolve_path:
             resolved_libs = []
             for library in self.path_defined or []:
-                __path = utils.resolve_path( library, project_root_dir )
+                __path = utils.resolve_path(library, project_root_dir)
                 resolved_libs.append(__path)
-            ret_dict.update( {'path_defined': resolved_libs} )
+            ret_dict.update({"path_defined": resolved_libs})
 
         return ret_dict
 
 
-class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
-    """ The fortran language specific settings.
+class FortranSpecificSettings(AbstractLanguageSpecificSettings):
+    """The fortran language specific settings.
     Attributes:
         compiler_cmd (str): the compiler command used to compile the code and which will be used to compile the wrapper.
         _compiler_flags (str): the compiler flags string used during code compilation.
         _mpi_compiler_cmd (str): the MPI compiler command
         extra_libraries (:obj:`ExtraLibraries`): extra libraries defined by paths or pkg configs.
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -92,16 +99,16 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         self._mpi_compiler_cmd = value if value != "None" else None
 
     def __init__(self):
-        self.compiler_cmd = ''
-        self._compiler_flags = ''
-        self._mpi_compiler_cmd = ''
+        self.compiler_cmd = ""
+        self._compiler_flags = ""
+        self._mpi_compiler_cmd = ""
         self.extra_libraries = ExtraLibraries()
 
     def validate(self, engine: Engine, project_root_dir: str) -> None:
 
         # compiler_cmd
         if not self.compiler_cmd:
-            raise ValueError( 'Compiler to be used is not set!' )
+            raise ValueError("Compiler to be used is not set!")
         # TODO Validate compiler against platform settings
 
         # open_mp
@@ -111,19 +118,23 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
         self.extra_libraries.validate(engine, project_root_dir)
 
     def clear(self):
-        """Clears class content
-        """
+        """Clears class content"""
         self.__init__()
 
     def from_dict(self, dictionary: dict):
         """Restores given object from dictionary.
 
-           Args:
-               dictionary (Dict[str], Any): Data to be used to restore object
-           """
-        super().from_dict( dictionary )
+        Args:
+            dictionary (Dict[str], Any): Data to be used to restore object
+        """
+        super().from_dict(dictionary)
 
-    def to_dict(self, resolve_path: bool = False, make_relative:str = False, project_root_dir:str = None) -> Dict[str, Any]:
+    def to_dict(
+        self,
+        resolve_path: bool = False,
+        make_relative: str = False,
+        project_root_dir: str = None,
+    ) -> Dict[str, Any]:
         """Serializes given object to dictionary
 
         Returns
@@ -132,11 +143,10 @@ class FortranSpecificSettings( AbstractLanguageSpecificSettings ):
 
         ret_dict = super().to_dict(resolve_path, make_relative, project_root_dir)
         if resolve_path:
-            compiler_cmd = utils.resolve_variable( self.compiler_cmd )
-            ret_dict.update( {'compiler_cmd': compiler_cmd} )
+            compiler_cmd = utils.resolve_variable(self.compiler_cmd)
+            ret_dict.update({"compiler_cmd": compiler_cmd})
 
-            mpi_compiler_cmd = utils.resolve_variable( self.mpi_compiler_cmd )
-            ret_dict.update( {'mpi_compiler_cmd': mpi_compiler_cmd} )
+            mpi_compiler_cmd = utils.resolve_variable(self.mpi_compiler_cmd)
+            ret_dict.update({"mpi_compiler_cmd": mpi_compiler_cmd})
 
         return ret_dict
-

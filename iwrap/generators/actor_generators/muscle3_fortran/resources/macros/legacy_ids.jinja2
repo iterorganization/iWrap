@@ -1,0 +1,13 @@
+{% macro imports() -%}
+    use ids_schemas
+    use ids_routines
+{%- endmacro -%}
+
+{% macro declare(ids_name, ids_var_name) -%}
+    ! {{ ids_var_name }}
+    type (ids_{{ ids_name }}) :: {{ ids_var_name }}
+{%- endmacro -%}
+
+{% macro deallocate(ids_var_name) -%}
+  call ids_deallocate({{ ids_var_name }})
+{%- endmacro -%}

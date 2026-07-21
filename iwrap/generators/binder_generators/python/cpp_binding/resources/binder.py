@@ -10,15 +10,23 @@ from ..common.definitions import Argument
 from ..common.binder import Binder
 
 from .data_c_binding import ParametersCType, StatusCType, IDSCType
-from ..common.runtime_settings import RuntimeSettings, RunMode, DebugMode
+from ..common.runtime_settings import RuntimeSettings, DebugMode
 from ..common import exec_system_cmd
+
 
 class LanguageBinder(Binder):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
-    def standalone_cmd(self, method_name:str) -> str:
-        exec_cmd = self.actor.actor_dir + '/bin/' + self.actor.name + '_' + method_name + '.exe'
+    def standalone_cmd(self, method_name: str) -> str:
+        exec_cmd = (
+            self.actor.actor_dir
+            + "/bin/"
+            + self.actor.name
+            + "_"
+            + method_name
+            + ".exe"
+        )
         return exec_cmd
 
     def __init__(self):
@@ -34,19 +42,20 @@ class LanguageBinder(Binder):
         self.actor = actor
 
         IDSConvertersRegistry.initialize()
-        data_type = self.actor.code_description['implementation']['data_type']
-        self.ids_converter = IDSConvertersRegistry.get_converter(data_type, 'cpp')
+        data_type = self.actor.code_description["implementation"]["data_type"]
+        self.ids_converter = IDSConvertersRegistry.get_converter(data_type, "cpp")
 
         self.runtime_settings = actor.get_runtime_settings()
         self.ids_ctype_list = None
         self.actor_dir = actor.actor_dir
 
         sandbox_dir = self.actor.sandbox.path
-        self.ids_converter.initialize(sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage)
+        self.ids_converter.initialize(
+            sandbox_dir, actor.is_standalone_run(), self.runtime_settings.ids_storage
+        )
 
         if self.runtime_settings.debug_mode == DebugMode.ATTACH:
             self.__attach_debugger()
-
 
     def finalize(self):
         self.ids_converter.finalize()
@@ -63,21 +72,21 @@ class LanguageBinder(Binder):
 
         process_id = os.getpid()
 
-        debugger_attach_cmd = string.Template( debugger_attach_cmd ).substitute( process_id=f'{process_id}',
-                                                                                 init_sbrt_name=f'{actor_name}_wrapper_init',
-                                                                                 main_sbrt_name=f'{actor_name}_wrapper_main',
-                                                                                 finish_sbrt_name=f'{actor_name}_wrapper_finish',
-                                                                                 set_state_sbrt_name=f'{actor_name}_wrapper_set_state',
-                                                                                 get_state_sbrt_name=f'{actor_name}_wrapper_get_state',
-                                                                                 get_timestamp_sbrt_name=f'{actor_name}_wrapper_get_timestamp'
-
-                                                                                 )
+        debugger_attach_cmd = string.Template(debugger_attach_cmd).substitute(
+            process_id=f"{process_id}",
+            init_sbrt_name=f"{actor_name}_wrapper_init",
+            main_sbrt_name=f"{actor_name}_wrapper_main",
+            finish_sbrt_name=f"{actor_name}_wrapper_finish",
+            set_state_sbrt_name=f"{actor_name}_wrapper_set_state",
+            get_state_sbrt_name=f"{actor_name}_wrapper_get_state",
+            get_timestamp_sbrt_name=f"{actor_name}_wrapper_get_timestamp",
+        )
 
         def start_debugger(debugger_attach_cmd):
-            self.__logger.debug( 'EXECUTING command: ' + str( debugger_attach_cmd ) )
-            exec_system_cmd( debugger_attach_cmd, output_stream=self.actor.output_stream )
+            self.__logger.debug("EXECUTING command: " + str(debugger_attach_cmd))
+            exec_system_cmd(debugger_attach_cmd, output_stream=self.actor.output_stream)
 
-        t = Thread( target=start_debugger, args=(debugger_attach_cmd,) )
+        t = Thread(target=start_debugger, args=(debugger_attach_cmd,))
         t.daemon = True  # thread dies with the program
         t.start()
         input()  # just to wait until debugger starts
@@ -85,28 +94,33 @@ class LanguageBinder(Binder):
     def __check_inputs(self, ids_arguments_list, arg_metadata_list):
         import functools
 
-        inputs_number = functools.reduce(lambda nbr, arg: nbr + 1 if arg['intent'] == Argument.IN else nbr,
-                                         arg_metadata_list, 0 )
+        inputs_number = functools.reduce(
+            lambda nbr, arg: nbr + 1 if arg["intent"] == Argument.IN else nbr,
+            arg_metadata_list,
+            0,
+        )
 
         # check if a number of provided arguments is correct
         if inputs_number != len(ids_arguments_list):
-            raise RuntimeError(f'Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})')
+            raise RuntimeError(
+                f"Wrong number of arguments (received: {len(ids_arguments_list)}, expected: {inputs_number})"
+            )
 
     def __get_wrapper_function(self, method_role: str):
 
         actor_name: str = self.actor.name
-        lib_path = self.actor_dir + '/lib/lib' + actor_name + '.so'
+        lib_path = self.actor_dir + "/lib/lib" + actor_name + ".so"
 
-        wrapper_lib = ctypes.CDLL( lib_path )
+        wrapper_lib = ctypes.CDLL(lib_path)
 
-        subroutines = self.actor.code_description['implementation']['subroutines']
+        subroutines = self.actor.code_description["implementation"]["subroutines"]
 
         if not subroutines.get(method_role):
             return None
 
         sbrt_name = actor_name.lower() + "_wrapper_" + method_role
 
-        wrapper_fun = getattr( wrapper_lib, sbrt_name )
+        wrapper_fun = getattr(wrapper_lib, sbrt_name)
         return wrapper_fun
 
     def __status_check(self, status_info: StatusCType, method_name: str):
@@ -114,15 +128,28 @@ class LanguageBinder(Binder):
         actor_name = self.actor.name
         if status_info.code < 0:
             raise Exception(
-                "Actor *** '" + actor_name + " / " + method_name.upper()
-                + "' *** returned an error (" + str( status_info.code ) + "): '"
-                + status_info.message + "'" )
+                "Actor *** '"
+                + actor_name
+                + " / "
+                + method_name.upper()
+                + "' *** returned an error ("
+                + str(status_info.code)
+                + "): '"
+                + status_info.message
+                + "'"
+            )
 
         if status_info.code > 0:
             self.__logger.warning(
-                "Actor * '" + actor_name + " / " + method_name.upper()
+                "Actor * '"
+                + actor_name
+                + " / "
+                + method_name.upper()
                 + "' * returned diagnostic info: \n     Output flag:      "
-                + str(status_info.code) + "\n     Diagnostic info: " + status_info.message )
+                + str(status_info.code)
+                + "\n     Diagnostic info: "
+                + status_info.message
+            )
 
     def __get_ids_ctypes(self, arg_metadata_list):
 
@@ -130,15 +157,26 @@ class LanguageBinder(Binder):
 
         # LOOP over ids
         for arg_meta_data in arg_metadata_list:
-            ids_ctype = self.ids_converter.prepare_native_type(IDSCType, arg_meta_data['type'] )
-            ids_ctype.intent = arg_meta_data['intent']
-            ids_ctype_list.append( ids_ctype )
+            ids_ctype = self.ids_converter.prepare_native_type(
+                IDSCType, arg_meta_data["type"]
+            )
+            ids_ctype.intent = arg_meta_data["intent"]
+            ids_ctype_list.append(ids_ctype)
 
         return ids_ctype_list
 
-    def run_standalone(self, *input_idses, method_name, arg_metadata_list, code_parameters, exec_command, sandbox_dir:str, output_stream):
+    def run_standalone(
+        self,
+        *input_idses,
+        method_name,
+        arg_metadata_list,
+        code_parameters,
+        exec_command,
+        sandbox_dir: str,
+        output_stream,
+    ):
 
-        self.__logger.debug( "RUNNING STDL" )
+        self.__logger.debug("RUNNING STDL")
         # if arg_metadata_list:
         # check if a number of provided arguments is correct
         self.__check_inputs(input_idses, arg_metadata_list)
@@ -149,20 +187,22 @@ class LanguageBinder(Binder):
         for ids_ctype in ids_ctypes_list:
             if ids_ctype.intent == Argument.IN:
                 ids_object = tmp_ids_list.pop(0)
-                self.ids_converter.convert_to_native_type(ids_ctype, ids_ctype.intent, ids_object)
+                self.ids_converter.convert_to_native_type(
+                    ids_ctype, ids_ctype.intent, ids_object
+                )
 
-
-        param_ctype = ParametersCType(code_parameters) if code_parameters  else  None
+        param_ctype = ParametersCType(code_parameters) if code_parameters else None
         status_info_ctype = StatusCType()
 
         # prepares input files
-        Binder.save_input( method_name, ids_ctypes_list, param_ctype, sandbox_dir )
-        self.__logger.debug( 'EXECUTING command: ' + str(exec_command) )
+        Binder.save_input(method_name, ids_ctypes_list, param_ctype, sandbox_dir)
+        self.ids_converter.sync_for_external_access()
+        self.__logger.debug("EXECUTING command: " + str(exec_command))
         exec_system_cmd(exec_command, output_stream=output_stream)
 
         # Checking returned DIAGNOSTIC INFO
         Binder.read_output(method_name, status_info_ctype, sandbox_dir)
-        self.__status_check( status_info_ctype, method_name )
+        self.__status_check(status_info_ctype, method_name)
 
         # get output data
         results = []
@@ -174,74 +214,75 @@ class LanguageBinder(Binder):
         # final output
         if not results:
             return None
-        elif len( results ) == 1:
+        elif len(results) == 1:
             return results[0]
         else:
-            return tuple( results )
+            return tuple(results)
 
     def call_init(self, *input_idses, code_parameters: str):
 
-        output = self.call_basic_method(*input_idses,
-                                        method_role="init",
-                                        code_parameters=code_parameters )
+        output = self.call_basic_method(
+            *input_idses, method_role="init", code_parameters=code_parameters
+        )
         return output
 
     # only input arguments, outputs are returned (as a list if more than 1)
-    def call_main(self, *input_idses, code_parameters:str):
-        """
-        """
-        output = self.call_basic_method(*input_idses,
-                                        method_role="main",
-                                        code_parameters=code_parameters)
+    def call_main(self, *input_idses, code_parameters: str):
+        """ """
+        output = self.call_basic_method(
+            *input_idses, method_role="main", code_parameters=code_parameters
+        )
         return output
 
-    def call_finish(self, *input_idses, code_parameters:str):
+    def call_finish(self, *input_idses, code_parameters: str):
 
-        output = self.call_basic_method( *input_idses,
-                                         method_role="finalize",
-                                         code_parameters=code_parameters)
+        output = self.call_basic_method(
+            *input_idses, method_role="finalize", code_parameters=code_parameters
+        )
 
         return output
 
-    def call_basic_method(self, *input_idses, method_role, code_parameters = None):
-        """
-        """
+    def call_basic_method(self, *input_idses, method_role, code_parameters=None):
+        """ """
 
         method_implementation = self.__get_wrapper_function(method_role)
 
         if not method_implementation:
             return
 
-        method_description = self.actor.code_description['implementation']['subroutines'][method_role]
-        arg_metadata_list = method_description.get('arguments')
-        need_code_parameters = method_description.get('need_code_parameters')
+        method_description = self.actor.code_description["implementation"][
+            "subroutines"
+        ][method_role]
+        arg_metadata_list = method_description.get("arguments")
+        need_code_parameters = method_description.get("need_code_parameters")
 
         c_arglist = []
         ids_ctypes_list = []
-        self.__logger.debug( 'RUN MODE: ' + str( self.runtime_settings.run_mode ) )
+        self.__logger.debug("RUN MODE: " + str(self.runtime_settings.run_mode))
 
         if arg_metadata_list:
-            ids_ctypes_list = self.__get_ids_ctypes( arg_metadata_list )
+            ids_ctypes_list = self.__get_ids_ctypes(arg_metadata_list)
 
             if input_idses:
-            # check if a number of provided arguments is correct
-                self.__check_inputs( input_idses, arg_metadata_list )
+                # check if a number of provided arguments is correct
+                self.__check_inputs(input_idses, arg_metadata_list)
 
-            tmp_ids_list = list( input_idses )
+            tmp_ids_list = list(input_idses)
             for ids_ctype in ids_ctypes_list:
                 ids_object = None
                 if ids_ctype.intent == Argument.IN:
-                    ids_object = tmp_ids_list.pop( 0 )
+                    ids_object = tmp_ids_list.pop(0)
 
-                c_ids = self.ids_converter.convert_to_native_type( ids_ctype, ids_ctype.intent, ids_object )
-                c_arglist.append( c_ids )
+                c_ids = self.ids_converter.convert_to_native_type(
+                    ids_ctype, ids_ctype.intent, ids_object
+                )
+                c_arglist.append(c_ids)
 
         # Code Parameters
         if code_parameters and need_code_parameters:
-            param_ctype = ParametersCType( code_parameters )
+            param_ctype = ParametersCType(code_parameters)
             c_params = param_ctype.convert_to_native_type()
             c_arglist += c_params
-
 
         # Add status info to argument list
         status_info_ctype = StatusCType()
@@ -249,29 +290,29 @@ class LanguageBinder(Binder):
         c_arglist += c_status_info
 
         # call native MAIN method of wrapper
-        method_implementation( *c_arglist )
+        method_implementation(*c_arglist)
 
         # Checking returned DIAGNOSTIC INFO
-        status_info_ctype.convert_to_actor_type( c_arglist[-2], c_arglist[-1] )
-        self.__status_check( status_info_ctype, method_role )
+        status_info_ctype.convert_to_actor_type(c_arglist[-2], c_arglist[-1])
+        self.__status_check(status_info_ctype, method_role)
 
         # get output data
         results = []
         for ids_ctype in ids_ctypes_list:
             if ids_ctype.intent == Argument.OUT:
-                results.append( self.ids_converter.convert_to_actor_type( ids_ctype ) )
-            self.ids_converter.release( ids_ctype )
+                results.append(self.ids_converter.convert_to_actor_type(ids_ctype))
+            self.ids_converter.release(ids_ctype)
 
         # final output
         if not results:
             return None
-        elif len( results ) == 1:
+        elif len(results) == 1:
             return results[0]
         else:
-            return tuple( results )
+            return tuple(results)
 
-    def call_set_state(self, state:str):
-        method_implementation = self.__get_wrapper_function( "set_state")
+    def call_set_state(self, state: str):
+        method_implementation = self.__get_wrapper_function("set_state")
 
         if not method_implementation:
             return
@@ -279,7 +320,7 @@ class LanguageBinder(Binder):
         if not state:
             return
 
-        encoded_state = state.encode('utf-8')
+        encoded_state = state.encode("utf-8")
 
         cref_state = ctypes.c_char_p(encoded_state)
         state_size = len(encoded_state)
@@ -290,10 +331,10 @@ class LanguageBinder(Binder):
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call FINISH
-        method_implementation(cref_state, cref_state_size,  cref_code, cref_msg)
+        method_implementation(cref_state, cref_state_size, cref_code, cref_msg)
 
         # Checking returned DIAGNOSTIC INFO
-        self.__status_check( status_info_ctype, "set_state" )
+        self.__status_check(status_info_ctype, "set_state")
 
     def call_get_state(self) -> str:
         method_implementation = self.__get_wrapper_function("get_state")
@@ -304,22 +345,22 @@ class LanguageBinder(Binder):
         state = None
 
         c_ptr_state = ctypes.c_char_p()
-        cref_state = ctypes.pointer( c_ptr_state )
+        cref_state = ctypes.pointer(c_ptr_state)
 
         # Add status info to argument list
         status_info_ctype = StatusCType()
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call native MAIN method of wrapper
-        method_implementation( cref_state, cref_code, cref_msg )
+        method_implementation(cref_state, cref_code, cref_msg)
 
         # Checking returned DIAGNOSTIC INFO
-        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype, "get_state" )
+        status_info_ctype.convert_to_actor_type(cref_code, cref_msg)
+        self.__status_check(status_info_ctype, "get_state")
 
         state_raw = cref_state.contents.value
         if state_raw:
-            state = state_raw.decode('utf-8','replace')
+            state = state_raw.decode("utf-8", "replace")
 
         return state
 
@@ -329,21 +370,20 @@ class LanguageBinder(Binder):
         if not method_implementation:
             return
 
-        c_double_timestamp = ctypes.c_double( 0.0 )
-        cref_timestamp = ctypes.pointer( c_double_timestamp )
+        c_double_timestamp = ctypes.c_double(0.0)
+        cref_timestamp = ctypes.pointer(c_double_timestamp)
 
         # Add status info to argument list
         status_info_ctype = StatusCType()
         cref_code, cref_msg = status_info_ctype.convert_to_native_type()
 
         # call native MAIN method of wrapper
-        method_implementation( cref_timestamp, cref_code, cref_msg )
+        method_implementation(cref_timestamp, cref_code, cref_msg)
 
         # Checking returned DIAGNOSTIC INFO
-        status_info_ctype.convert_to_actor_type( cref_code, cref_msg )
-        self.__status_check( status_info_ctype, "get_timestamp")
+        status_info_ctype.convert_to_actor_type(cref_code, cref_msg)
+        self.__status_check(status_info_ctype, "get_timestamp")
 
         timestamp = cref_timestamp.contents.value
 
         return timestamp
-

@@ -3,7 +3,7 @@ set -e
 
 envs_dir=`pwd`/envs
 #chmod a+x $envs_dir/00_load_imas_env.sh
-source $envs_dir/set-env.sh iter gcc 5
+source $envs_dir/set-env.sh iter gcc
 
 
 echo "-----------Create Python Virtual ENV-------------"
@@ -13,6 +13,10 @@ python -m venv --system-site-packages venv
 
 echo "-----------Activate Python Virtual ENV-------------"
 . `pwd`/venv/bin/activate
+
+echo "--------------PIP install iWrap (editable, no-deps)----------"
+python -m pip install --quiet setuptools setuptools_scm
+python -m pip install -e . --no-deps -q
 
 echo "-----------------PIP pylint-junit------------"
 python -m pip install pylint

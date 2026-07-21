@@ -5,11 +5,11 @@ from .parameters_handler_interface import ParametersHandlerInterface
 
 from typing import Set
 
+
 class HandlerFactory:
     _handlers = {XMLHandler, JsonHandler, FortranNamelistHandler}
 
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
     @staticmethod
     def _get_handler_class(handler_name):
@@ -19,11 +19,12 @@ class HandlerFactory:
                 return handler
 
         raise ValueError(
-            f'{handler_name} is not valid format of code parameters. Currently loaded parameters handlers formats are: {HandlerFactory.get_formats()}')
+            f"{handler_name} is not valid format of code parameters. Currently loaded parameters handlers formats are: {HandlerFactory.get_formats()}"
+        )
 
     @staticmethod
     def get_handler(handler_name) -> ParametersHandlerInterface:
-        handler_class = HandlerFactory._get_handler_class(handler_name or 'xml')
+        handler_class = HandlerFactory._get_handler_class(handler_name or "xml")
         handler_instance = handler_class()
         return handler_instance
 

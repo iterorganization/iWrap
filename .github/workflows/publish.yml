@@ -1,0 +1,74 @@
+name: build-wheel-and-publish-test-pypi
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0 
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.x"
+    - name: Install packaging tools
+      run: >-
+        python3 -m pip install pip setuptools wheel build twine
+    - name: Build a binary wheel and a source tarball
+      run: python3 -m build .
+    - name: Check package metadata
+      run: python3 -m twine check dist/*
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v7
+      with:
+        name: python-package-distributions
+        path: dist/
+        
+  publish-to-pypi:
+    name: Publish iWrap distribution to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    needs:
+    - build
+    runs-on: ubuntu-22.04
+    environment:
+      name: pypi
+      url: https://pypi.org/p/iwrap
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v8
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      
+  publish-to-testpypi:
+    name: Publish iWrap distribution to TestPyPI
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    needs:
+    - build
+    runs-on: ubuntu-22.04
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/iwrap
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v8
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to TestPyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
+        verbose: true

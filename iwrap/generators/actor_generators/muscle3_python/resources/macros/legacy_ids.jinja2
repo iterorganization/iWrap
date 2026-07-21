@@ -1,0 +1,8 @@
+{% macro imports() -%}
+    import imas
+{%- endmacro -%}
+
+{% macro declare(ids_name, ids_var_name) -%}
+    _factory = imas.IDSFactory()
+    {{ ids_var_name }} = _factory.{{ ids_name }}()
+{%- endmacro -%}

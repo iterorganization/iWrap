@@ -1,0 +1,13 @@
+ymmsl_version: v0.1
+
+model:
+  name: code_lifecycle
+
+implementations:
+  micro:
+    executable: ${ACTOR_DIR}/code_lifecycle/bin/code_lifecycle.exe
+
+
+resources:
+  micro:
+    threads: 1

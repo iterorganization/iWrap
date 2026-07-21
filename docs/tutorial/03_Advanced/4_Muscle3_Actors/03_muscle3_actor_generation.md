@@ -114,7 +114,7 @@ code_description:
             get_state: get_code_state
             set_state: restore_code_state
         programming_language: Python
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_path: basic.py
         include_path: basic.py

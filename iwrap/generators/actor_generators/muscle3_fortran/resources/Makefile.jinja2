@@ -1,0 +1,90 @@
+# actor name
+ACTOR_NAME={{actor_description.actor_name}}
+
+{% if  code_description.settings.compiler_cmd %}
+# Fortran compiler name
+FC={{ code_description.settings.compiler_cmd }}
+{% endif %}
+
+{% if  code_description.settings.mpi_compiler_cmd %}
+# MPI Fortran compiler - can be empty for non-MPI code
+MPIFC={{ code_description.settings.mpi_compiler_cmd or '' }}
+{% endif %}
+
+WRAPPER_DIR=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# Open MP Flag if the code requires it
+COMPILER_FLAGS={{ code_description.settings.compiler_flags or '' }}
+
+MOD_DIR=./build/
+
+#TO DO - any clever way to do this?
+ifeq ($(FC),$(filter $(FC),ifort ifx))
+# INTEL
+  FLAGS=-g -fPIC -module $(MOD_DIR)
+else
+# GFORTRAN
+ FLAGS=-g -fPIC -J$(MOD_DIR)
+endif
+
+FCLAGS=$(FLAGS) $(COMPILER_FLAGS)
+
+# the name of static library file containing wrapped code
+CODE_LIB_DEF=
+{%- if code_description.implementation.code_path -%}
+./lib/{{code_description.implementation.code_path | basename}}
+{% endif %}
+
+{% if code_description.settings.mpi_compiler_cmd   %}
+MUSCLE3_PKG=libmuscle_mpi_fortran
+{% else %}
+MUSCLE3_PKG=libmuscle_fortran
+{% endif %}
+
+# main IMAS libs to be used
+IMAS_LIB_NAME=al-fortran
+CORE_LIBS_FLAGS:= $(shell pkg-config --cflags $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
+CORE_LIBS:=$(shell pkg-config --libs $(IMAS_LIB_NAME) ymmsl $(MUSCLE3_PKG))
+
+# required libs published using pkg-config mechanism
+{% if code_description.settings and code_description.settings.extra_libraries.pkg_config_defined %}
+LIBS_PKGCONFIG_DEFINED_NAMES={{ (code_description.settings.extra_libraries.pkg_config_defined or []) | join(' ')}}
+LIBS_PKGCONFIG_DEFINED_FLAGS=$(shell pkg-config --cflags $(LIBS_PKGCONFIG_DEFINED_NAMES))
+LIBS_PKGCONFIG_DEFINED=$(shell pkg-config --libs $(LIBS_PKGCONFIG_DEFINED_NAMES))
+{% else %}
+LIBS_PKGCONFIG_DEFINED_NAMES=
+LIBS_PKGCONFIG_DEFINED_FLAGS=
+LIBS_PKGCONFIG_DEFINED=
+{% endif %}
+
+# required libs provided by user as a path
+LIBS_PATH_DEFINED=
+{%- if code_description.settings %}
+{%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
+ ./extra-libs/{{ lib_path | basename }}
+{%- endfor %}
+{% endif %}
+
+INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
+LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(CODE_LIB_DEF)
+
+{% if code_description.settings.mpi_compiler_cmd   %}
+# MPI compilation wrapper will be used
+FC=$(MPIFC)
+
+{% endif %}
+all: ./bin/$(ACTOR_NAME).exe
+
+./bin/$(ACTOR_NAME).exe: src/standalone.f90 build/fortrantools.o build/muscle3_tools.o
+	@echo " * $^ -> $@"
+	@mkdir -p ./bin
+	$(FC) $(FCLAGS) -o $@ -Wl,--start-group $^ $(INCLUDES) -I$(MOD_DIR) $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
+
+build/%.o: src/%.f90
+	@echo $(PWD)
+	@echo " * $< -> $@"
+	@mkdir -p ./build
+	$(FC) $(FCLAGS) -c -w $^ -o $@  $(INCLUDES)
+
+clean:
+	-rm -f *.o build/* ./bin/*

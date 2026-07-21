@@ -1,0 +1,217 @@
+{% import './macros/%s_ids.jinja2' % code_description.implementation.data_type as ids_macro -%}
+
+{%- import './macros/flags.jinja2' as flags with context -%}
+{%- if flags.skeleton_only %}
+    {% set comment_out = '//'  -%}
+{%  endif %}
+
+{%- macro skeleton_call(method_name) -%}
+    // >>> Subroutine {{ method_name }} should be called here <<<
+{%- endmacro -%}
+
+#include <libmuscle/libmuscle.hpp>
+{% if flags.mpi_code %}
+
+#include <mpi.h>
+{% endif %}
+#include "muscle3_tools.h"
+{{ ids_macro.imports(build_info.al_version) }}
+{%if code_description.implementation.include_path %}
+#include  "{{code_description.implementation.include_path | basename }}"
+{% else %}
+// Put '#include  "<provided header name>.h"' here
+{% endif %}
+
+
+int main(int argc, char **argv) 
+{
+    libmuscle::Instance* m3_instance;
+    double timestamp = -1.0;
+
+    int mpi_rank = 0;
+    //----  Status info  ----
+    int status_code = 0;
+    std::string status_message;
+	//----  Code parameters ----
+    IdsNs::codeparam_t imas_code_params;
+{% if flags.checkpointable %}
+    std::string state_str;
+{% endif %}
+
+{% if code_description.implementation.subroutines.init.name or flags.skeleton_only %}
+    bool initial_run = true;
+{% endif %}
+
+    //----  IN/OUT IDSes  ----
+{% for argument in code_description.implementation.subroutines.main.arguments %}
+    {{ ids_macro.declare(argument.type,  argument.name) }}
+{% endfor %}
+
+    /* * * * - - - INITIALISATION - - - * * * */
+{% if flags.mpi_code %}
+    mpi_rank = init_mpi();
+{% endif %}
+    m3_instance = init_muscle3();
+
+    {% if flags.code_parameters_provided %}
+    //----  Code parameters  ----
+     read_code_parameters(m3_instance, argv[0], imas_code_params);
+    {% endif %}
+
+    /* * * * - - - MUSCLE3 LOOP  - - - * * * */
+    while (m3_instance->reuse_instance()) {
+
+        //  - - - WRAPPED CODE INITIALIZATION - - -
+{% if flags.checkpointable %}
+        // > > >  RESTART : the code is restored from the saved snapshot  < < <
+        if (m3_instance->resuming()) {
+            if (mpi_rank == MPI_ROOT_RANK){
+                state_str = receive_code_state(m3_instance);
+                // Calling SET_STATE
+                {%  if flags.skeleton_only %}
+                //
+                // >>> Subroutine "SET_STATE" should be called here <<<
+                //
+                {% endif %}
+                {{ comment_out }} {{code_description.implementation.subroutines.set_state}}(state_str, status_code, status_message);
+
+            }
+        }
+{% endif %}
+
+{%- if code_description.implementation.subroutines.init.name %}
+     {% if flags.checkpointable %}
+     else  // m3_instance is not resuming
+     {   // > > >  INITIALIZATION by calling INIT method  of the code < < <
+     {% endif %}
+
+    /* * * * - - - WRAPPED CODE CALL - INIT SBRT - - -  * * * */
+    if (initial_run) {
+        {%  if flags.skeleton_only %}
+        //
+        // >>> Subroutine "INIT" should be called here <<<
+        //
+        {% endif %}
+        {{ comment_out }} {{code_description.implementation.subroutines.init.name}} (
+            {% if flags.code_parameters_provided %}
+              {{ comment_out }} imas_code_params,
+            {% endif %}
+              {{ comment_out }} status_code, status_message);
+    }
+          {% if flags.checkpointable %}
+          } //  m3_instance->resuming()
+         {% endif %}
+    initial_run = false;
+    {% endif %}
+
+{% if flags.checkpointable %}
+        if(m3_instance->should_init()) {
+{% endif %}
+
+         /* * * * - - - RECEIVING INPUT IDSes - - - * * * */
+        receive_input_idses(
+        {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'IN' %}
+                    {{ argument.name }},
+        {% endfor %}
+                    m3_instance );
+
+{% if flags.checkpointable %}
+        } // m3_instance->should_init()
+{% endif %}
+
+        /* * * * - - - WRAPPED CODE CALL - MAIN SBRT - - - * * * */
+        {%  if flags.skeleton_only %}
+        //
+        // >>> Subroutine "MAIN" should be called here <<<
+        //
+        {% endif %}
+        {{ comment_out }} {{code_description.implementation.subroutines.main.name}}(
+    {% for argument in code_description.implementation.subroutines.main.arguments %}
+              {{ comment_out }} {{ argument.name }},
+    {% endfor %}
+    {% if flags.code_parameters_provided %}
+              {{ comment_out }} imas_code_params,
+    {% endif %}
+              {{ comment_out }} status_code, status_message );
+
+        handle_status_info(status_code, status_message, "{{actor_description.actor_name}}");
+
+
+   {% if flags.mpi_code %}
+    if (mpi_rank == MPI_ROOT_RANK)
+    {
+       // --- called only for RANK 0 process
+{% endif %}
+
+    /* * * * - - - SENDING OUTPUT IDSes - - - * * * */
+    {% if code_description.implementation.subroutines.get_timestamp %}
+    // > > >  GET TIMESTAMP < < <
+    {%  if flags.skeleton_only %}
+    //
+    // >>> Subroutine "GET_TIMESTAMP" should be called here <<<
+    //
+    {% endif %}
+    {{ comment_out }} {{code_description.implementation.subroutines.get_timestamp}}(timestamp, status_code, status_message);
+    handle_status_info(status_code, status_message, "{{actor_description.actor_name}}");
+
+    {% endif %}
+    send_output_idses(timestamp,
+    {% for argument in code_description.implementation.subroutines.main.arguments if argument.intent == 'OUT' %}
+                {{ argument.name }},
+    {% endfor %}
+                m3_instance);
+
+{% if flags.mpi_code %}
+    } //The end of section called only for RANK 0 process
+{% endif %}
+
+
+
+{% if flags.checkpointable %}
+     // > > >  SAVE SNAPSHOT < < <
+     if (m3_instance->should_save_final_snapshot()) {
+        if (mpi_rank == MPI_ROOT_RANK ) {
+            // Calling GET_STATE
+        {%  if flags.skeleton_only %}
+            //
+            // >>> Subroutine "GET_STATE" should be called here <<<
+            //
+        {% endif %}
+            {{ comment_out }} {{code_description.implementation.subroutines.get_state}}(state_str, status_code, status_message);
+
+            save_code_state(m3_instance, state_str);
+        }
+    }
+{% endif %}
+
+        /* * * * - - - CLEAN UP - - - * * * */
+        {% for argument in code_description.implementation.subroutines.main.arguments %}
+         {{ ids_macro.deallocate( argument.name) }}
+        {% endfor %}
+
+    }  // > > > > THE END OF MUSCLE3 LOOP
+
+    /* * * * - - - FINALIZATION - - - * * * */
+    {% if code_description.implementation.subroutines.finalize.name %}
+
+     /* * * * - - - WRAPPED CODE CALL - FINISH SBRT - - -  * * * */
+    {%  if flags.skeleton_only %}
+    //
+    // >>> Subroutine "FINALIZE" should be called here <<<
+    //
+    {% endif %}
+    {{ comment_out }} {{code_description.implementation.subroutines.finalize.name}} (status_code, status_message);
+
+    handle_status_info(status_code, status_message, "{{actor_description.actor_name}}");
+    {% endif %}
+
+    {% if flags.code_parameters_provided %}
+    // ------Deallocating code parameters ----------------------------
+    {% endif %}
+
+    {% if flags.mpi_code %}
+    finish_mpi();
+    {% endif %}
+
+    finish_muscle3(m3_instance);
+}

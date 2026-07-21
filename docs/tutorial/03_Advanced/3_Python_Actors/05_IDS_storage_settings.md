@@ -38,8 +38,8 @@ The main IDS storage settings you can configure are:
 ### Default Values
 
 - **db_name:** `'tmp'`
-- **backend:** `imas.imasdef.MEMORY_BACKEND`
-- **persistent_backend:** `imas.imasdef.MDSPLUS_BACKEND`
+- **backend:** `imas.ids_defs.MEMORY_BACKEND`
+- **persistent_backend:** `imas.ids_defs.MDSPLUS_BACKEND`
 
 ### Example Usage of IDS storage settings
 
@@ -47,13 +47,12 @@ Below is an example of how to configure and use IDS storage settings in your act
 
 ```python
 import imas
-from imas import imasdef
 
 from cp2ds_mpi.actor import cp2ds_mpi
 from cp2ds_mpi.common.runtime_settings import SandboxMode, SandboxLifeTime
 
 # Reading of input data
-db_entry_in = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_in = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                            db_name="tutorial_db",
                            shot=1, run=1)
 db_entry_in.open()
@@ -61,7 +60,7 @@ input_ids = db_entry_in.get('core_profiles')
 db_entry_in.close()
 
 # Creating output datafile
-db_entry_out = imas.DBEntry(backend_id=imasdef.MDSPLUS_BACKEND,
+db_entry_out = imas.DBEntry(backend_id=imas.ids_defs.MDSPLUS_BACKEND,
                            db_name="tutorial_db",
                            shot=2, run=2)
 db_entry_out.create()
@@ -80,7 +79,7 @@ runtime_settings.sandbox.path = '/pfs/work/g2bpogo/iwrap-sandbox/my_sandbox_dir'
 runtime_settings.sandbox.life_time = SandboxLifeTime.PERSISTENT
 
 # configures IDS storage settings
-runtime_settings.ids_storage.persistent_backend = imas.imasdef.HDF5_BACKEND
+runtime_settings.ids_storage.persistent_backend = imas.ids_defs.HDF5_BACKEND
 
 # updates runtime settings
 actor.initialize(runtime_settings=runtime_settings)

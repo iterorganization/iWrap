@@ -72,7 +72,11 @@ contains
         integer :: i
         integer(C_SIZE_T) :: str_length
 
-        str_length = SIZE(in_array)
+        str_length = 0
+        DO i = 1, SIZE(in_array)
+           if (in_array(i) == C_NULL_CHAR) exit
+           str_length = str_length + 1
+        END DO
         allocate(character(str_length)::out_string)
 
         DO i = 1, str_length
@@ -203,5 +207,4 @@ contains
     END FUNCTION convert_array2al_str
 
 end module iwrap_converters
-
 

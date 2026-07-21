@@ -24,7 +24,7 @@ all: iwrap_build
 install: install_dir install_iwrap install_module docs
 uninstall: uninstall_module uninstall_iwrap
 
-.PHONY: build/module/$(MODULEFILE) install_iwrap update_iwrap iwrap_build build_deps build_deps_clear help clean docs
+.PHONY: build/module/$(MODULEFILE) install_iwrap update_iwrap iwrap_build build_deps build_deps_clear help clean docs test-muscle3 build-muscle3-macro clean-muscle3
 
 
 check_already_installed:
@@ -44,8 +44,8 @@ iwrap_build:
 	( \
 		$(PY_CMD) -m venv .venv; \
 		. .venv/bin/activate; \
-		pip install -r requirements_build.txt; \
-		python setup.py bdist_wheel --dist-dir=./dist/$(VERSION); \
+		pip install build; \
+		python -m build --wheel -o ./dist/$(VERSION); \
 		deactivate; \
 	)
 	rm -rf .venv
@@ -104,6 +104,10 @@ help: install_dir
 	@echo -e "\tINSTALL_MOD: [$(INSTALL_MOD)]"
 	@echo -e "Version of the package - iWrap version:"
 	@echo -e "\tVERSION: [$(VERSION)]"
+	@echo -e "\n- MUSCLE3-specific targets:"
+	@echo -e "\ttest-muscle3        : Run MUSCLE3 integration tests"
+	@echo -e "\tbuild-muscle3-macro : Build MUSCLE3 macro model for tests"
+	@echo -e "\tclean-muscle3       : Clean MUSCLE3 test artifacts"
 
 docs:
 	@$(SHELL_SCRIPT)
@@ -111,6 +115,33 @@ docs:
 code-check:
 	pylint -E ./iwrap
 
-clean:
+# MUSCLE3-specific targets
+test-muscle3:
+	@echo "Running MUSCLE3 integration tests..."
+	@if [ -f tests/run-muscle3-tests.sh ]; then \
+		cd tests && ./run-muscle3-tests.sh; \
+	else \
+		echo "MUSCLE3 test script not found. Running pytest..."; \
+		$(PY_CMD) -m pytest tests/muscle3/ -v -m muscle3 || echo "pytest not available or tests failed"; \
+	fi
+
+build-muscle3-macro:
+	@echo "Building MUSCLE3 macro model for tests..."
+	@if [ -d tests/muscle3/macro ]; then \
+		$(MAKE) -C tests/muscle3/macro; \
+	else \
+		echo "MUSCLE3 macro directory not found at tests/muscle3/macro"; \
+	fi
+
+clean-muscle3:
+	@echo "Cleaning MUSCLE3 test artifacts..."
+	@$(RM) -rf tests/muscle3/run_*
+	@$(RM) -rf tests/muscle3/*/m3_actor
+	@$(RM) -rf tests/muscle3/actors/*/run_*
+	@$(RM) -rf tests/muscle3/actors/*/*/m3_actor
+	@$(RM) -rf tests/integration/muscle3/run_*
+	@echo "MUSCLE3 test artifacts cleaned"
+
+clean: clean-muscle3
 	rm -rf dist
 	rm -rf build

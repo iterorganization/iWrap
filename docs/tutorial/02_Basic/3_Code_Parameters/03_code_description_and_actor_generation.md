@@ -60,7 +60,7 @@ code_description:
         code_path:      ./iWrapped_codes/code1_fortran/libcode_fortran.a
         include_path:   ./iWrapped_codes/code1_fortran/mod_code1.mod
         programming_language: fortran
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_parameters:
             parameters: ./code_parameters/input.xml   # ADDED
@@ -100,7 +100,7 @@ code_description:
         code_path:      ./iWrapped_codes/code2_cpp/libcode_cpp.a
         include_path:   ./iWrapped_codes/code2_cpp/code2.h
         programming_language: cpp
-        data_dictionary_compliant: 3.37.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         code_parameters:
             parameters: ./code_parameters/input.xml   # ADDED

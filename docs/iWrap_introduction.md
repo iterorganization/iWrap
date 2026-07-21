@@ -74,11 +74,17 @@ Source: https://en.wikipedia.org/wiki/Actor_model
 iWrap is built around a plug-in based modular design, making it very flexible and versatile.   
 It enables you to generate various types of actors and switch between different data representation and access methods. 
 
-```{admonition} MUSCLE3 Integration
+```{admonition} Available Actor Types
 :class: important
 
 iWrap is engineered with modularity in mind, enabling it to generate a variety of actor types to suit your specific needs.  
-Currently, it supports the creation of `Python` actors for straightforward Python integrations and `Muscle3` actors for more complex, high-performance computing scenarios.
+
+**Built-in Actor Generators:**
+- **Python Actor**: Standard Python actors for straightforward Python integrations
+- **MUSCLE3 Actors**: High-performance coupling framework actors (requires `pip install iwrap[muscle3]`)
+  - MUSCLE3-Python: Python code with MUSCLE3 coupling
+  - MUSCLE3-Cpp: C++ code with MUSCLE3 coupling  
+  - MUSCLE3-Fortran: Fortran code with MUSCLE3 coupling
 
 ```
 

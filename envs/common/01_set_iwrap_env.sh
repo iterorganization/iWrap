@@ -1,11 +1,11 @@
 #!/bin/sh
 
-export PATH=${IWRAP_HOME}/bin:${PATH}
-
-if [[ ! -n $AL_VERSION ]]; then
-    export AL_VERSION=$UAL_VERSION
+# Ensure we are inside a virtual env before pip installing
+if [ -z "$VIRTUAL_ENV" ]; then
+    python -m venv --system-site-packages ${IWRAP_HOME}/.venv
+    . ${IWRAP_HOME}/.venv/bin/activate
 fi
-
-export PYTHONPATH=${IWRAP_HOME}:${PYTHONPATH}
+pip install --quiet setuptools setuptools_scm
+pip install -e ${IWRAP_HOME} --no-deps -q
 export TESTS_DIR="${IWRAP_HOME}/tests"
 

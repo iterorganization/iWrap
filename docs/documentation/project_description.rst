@@ -346,7 +346,7 @@ Example - description of an actor wrapping a Fortran code
           parameters: ./input/input_physics.xml
           schema: ./input/input_physics.xsd
         code_path: ./native_code/libcode_lifecycle.a
-        data_dictionary_compliant: 3.39.0
+        data_dictionary_compliant: 4.1.1
         data_type: legacy
         include_path: ./native_code/mod_code_lifecycle.mod
         programming_language: Fortran

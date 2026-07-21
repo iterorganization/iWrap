@@ -1,0 +1,13 @@
+ymmsl_version: v0.1
+
+model:
+  name: basic_python
+
+implementations:
+  micro:
+    executable: python
+    args: ${ACTOR_DIR}/basic_python/standalone.py
+
+resources:
+  micro:
+    threads: 1

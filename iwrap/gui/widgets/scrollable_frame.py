@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 
-class ScrollableFrame( ttk.Frame ):
+class ScrollableFrame(ttk.Frame):
     """Scrollable frame widget.
 
     Attributes:
@@ -19,11 +19,12 @@ class ScrollableFrame( ttk.Frame ):
         your_scrollable_frame = your_scrollable_frame.update()
 
     """
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     def __init__(self, master):
-        """ Initialize the scrollable frame.
+        """Initialize the scrollable frame.
 
         Args:
             master: Parent widget from Tkinter class. Default to None.
@@ -34,7 +35,7 @@ class ScrollableFrame( ttk.Frame ):
         self.canvas = tk.Canvas(master, yscrollcommand=scrollbar.set)
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         scrollbar.config(command=self.canvas.yview)
-        self.canvas.bind('<Configure>', self._fill_canvas)
+        self.canvas.bind("<Configure>", self._fill_canvas)
 
         ttk.Frame.__init__(self, master)
         self.windows_item = self.canvas.create_window(0, 0, window=self, anchor=tk.NW)

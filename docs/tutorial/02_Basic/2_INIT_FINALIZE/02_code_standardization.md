@@ -23,7 +23,7 @@ kernelspec:
 ```
   
 ```{admonition} Documentation link
-Docs is available [here](https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/IWRAP-doc/resources/native_code.html) 
+Docs is available [here](https://iwrap.readthedocs.io/en/latest/documentation/code_standardization.html) 
 ```
 
 

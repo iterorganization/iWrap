@@ -2,23 +2,26 @@ from .dict_based_handler import DictBasedHandler
 import logging
 from typing import Set
 
+
 class JsonHandler(DictBasedHandler):
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
     def formats(self) -> Set[str]:
-        return {'json'}
+        return {"json"}
 
     def __init__(self):
         super(JsonHandler, self).__init__()
 
     def from_dict(self, dict):
         import json
+
         self._parameters_str = json.dumps(dict, indent=4)
 
     def to_dict(self):
         import json
+
         return json.loads(self._parameters_str)
 
     def validate(self):

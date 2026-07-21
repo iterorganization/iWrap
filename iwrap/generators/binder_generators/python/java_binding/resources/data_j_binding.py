@@ -7,38 +7,26 @@ from .data_storages.data_descriptions import IDSDescription
 
 
 class JavaIDSDescription(IDSDescription):
-
-    def __init__(self, ids_description:IDSDescription):
-        self.ids_description_class = JClass( 'IDSDescription' )
+    def __init__(self, ids_description: IDSDescription):
+        self.ids_description_class = JClass("IDSDescription")
         self.ids_type = ids_description.ids_type
-        self.pulse = ids_description.pulse
-        self.run = ids_description.run
         self.occurrence = ids_description.occurrence
-        self.backend_id = ids_description.backend_id
-        self.idx = ids_description.idx
-        self.database = ids_description.database
-        self.user = ids_description.user
-        self.version = ids_description.version
+        self.base_uri = ids_description.base_uri
 
     def convert_to_native_type(self):
         java_ids_description = self.ids_description_class()
 
         java_ids_description.ids_type = self.ids_type
-        java_ids_description.pulse = self.pulse
-        java_ids_description.run = self.run
         java_ids_description.occurrence = self.occurrence
-        java_ids_description.backend_id = self.backend_id
-        java_ids_description.idx= self.idx
-        java_ids_description.database = self.database
-        java_ids_description.user = self.user
-        java_ids_description.version = self.version
+        java_ids_description.uri = self.base_uri
 
         return java_ids_description
 
 
 # # # # # # # #
-class JavaCodeStatus( ):
-    '''IDSRef reference structure'''
+class JavaCodeStatus:
+    """IDSRef reference structure"""
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
@@ -52,12 +40,12 @@ class JavaCodeStatus( ):
 
     @code.setter
     def code(self, code):
-        self._code =  code
+        self._code = code
 
     @property
     def message(self):
         if self._message is None:
-            return ''
+            return ""
         return self._message
 
     @message.setter
@@ -74,13 +62,14 @@ class JavaCodeStatus( ):
         message_raw = c_ptr_msg.contents
         if message_raw:
             try:
-                self._message = message_raw.value.decode('utf-8','replace')
+                self._message = message_raw.value.decode("utf-8", "replace")
             except ValueError as ve:
-                self.__logger.warning('An error while encoding status message' + str(ve))
-                self._message = ''
+                self.__logger.warning(
+                    "An error while encoding status message" + str(ve)
+                )
+                self._message = ""
 
-
-    def read(self, stream ):
+    def read(self, stream):
         # read returned code
         ret_code = stream.readline()
         ret_code = int(ret_code)
@@ -88,23 +77,25 @@ class JavaCodeStatus( ):
 
         # read size of message
         msg_size = stream.readline()
-        msg_size = int( msg_size )
+        msg_size = int(msg_size)
 
         msg = stream.readlines()
-        msg = ''.join(msg)
+        msg = "".join(msg)
 
         self.message = msg.strip()
 
+
 # # # # # # # #
-class JavaCodeParameters(  ):
-    '''IDSRef reference structure'''
+class JavaCodeParameters:
+    """IDSRef reference structure"""
+
     # Class logger
     __logger = logging.getLogger(__name__ + "." + __qualname__)
 
     @property
     def params(self):
         if self.params_ is None:
-            return ''
+            return ""
         return self.params_
 
     @params.setter
@@ -122,7 +113,6 @@ class JavaCodeParameters(  ):
         if not self.params:
             return
 
-        file_path = Path(sandbox_dir, 'code_parameters.xml')
-        with open( file_path, "wt" ) as file:
-            file.write( self.params )
-
+        file_path = Path(sandbox_dir, "code_parameters.xml")
+        with open(file_path, "wt") as file:
+            file.write(self.params)
