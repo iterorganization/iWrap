@@ -21,6 +21,19 @@ def suffix(path):
     return Path(path).suffix[1:]
 
 
+def libname(path):
+    """Derive the linker '-l' name from a library path"""
+    name = os.path.basename(path)
+    so_marker = name.find(".so.")
+    if so_marker != -1:
+        name = name[:so_marker]
+    elif name.endswith(".so") or name.endswith(".a"):
+        name = Path(name).stem
+    if name.startswith("lib"):
+        name = name[3:]
+    return name
+
+
 def process_template_dir(
     template_pkg: str,
     template_dir: str,
@@ -56,6 +69,7 @@ def process_template_dir(
     jinja_env.filters["dirname"] = dirname
     jinja_env.filters["stemname"] = stemname
     jinja_env.filters["suffix"] = suffix
+    jinja_env.filters["libname"] = libname
 
     templates = jinja_env.list_templates(filter_func=filter_func)
 
