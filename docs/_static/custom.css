@@ -1,0 +1,16 @@
+/* Disable font ligatures in code blocks and inline code.
+ *
+ * The theme's monospace font stack includes "Cascadia Code", which has
+ * built-in contextual ligatures (the OpenType "calt" feature) that can
+ * visually merge adjacent punctuation - e.g. the Fortran list-directed I/O
+ * specifier "write(*,*)" can render as something that looks like
+ * "write(:,*" even though the underlying characters are correct (copy/paste
+ * is unaffected, since ligatures are a purely visual glyph substitution).
+ * Disabling ligatures ensures code samples always render as literal,
+ * unambiguous characters regardless of which monospace font the browser
+ * resolves. See: https://github.com/iterorganization/iWrap/issues/27
+ */
+pre, code, .highlight {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0, "dlig" 0;
+}
