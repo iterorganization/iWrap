@@ -345,9 +345,8 @@ contains
         if (status .eq. LIBMUSCLE_success .and. &
                 copy_xml_parameters .eqv. .true. .and. &
                 associated(imas_code_params%parameters_value)) then
-            OPEN(UNIT=1, FILE=default_file_name, STATUS="REPLACE")
-            write(1, *) imas_code_params%parameters_value
-            CLOSE(UNIT=1)
+            status = copy_xml_file(file_path, default_file_name)
+            if (status /= 0) return
         else
             !copy_xml_parameters setting is not mandatory so don't propagate error
             status = 0
