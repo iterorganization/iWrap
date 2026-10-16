@@ -43,9 +43,13 @@ LIBS_PKGCONFIG_DEFINED=
 {% endif %}
 
 # required libs provided by user as a path
-LIBS_PATH_DEFINED=
+LIBS_PATH_DEFINED=-L./extra-libs
 {%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
+{%- if lib_path.endswith('.so') or '.so.' in lib_path %}
+ -l{{ lib_path | libname }}
+{%- else %}
  ./extra-libs/{{ lib_path | basename }}
+{%- endif %}
 {%- endfor %}
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
