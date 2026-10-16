@@ -38,8 +38,11 @@ class LegacyIDSStorage(GenericIDSStorage):
         self.__uri = f"imas:{backend_name}?path={sandbox_dir}"
         self.__backend_name = backend_name
 
+    def __open_for_write(self, dd_version: str = None):
         try:
-            self.__db_entry = imas.DBEntry(self.__uri, "w")
+            if dd_version:
+                return imas.DBEntry(self.__uri, "w", dd_version=dd_version)
+            return imas.DBEntry(self.__uri, "w")
         except Exception as e:
             raise RuntimeError(
                 f"Error creating the temporary DB:\n"
@@ -52,6 +55,10 @@ class LegacyIDSStorage(GenericIDSStorage):
         return IDSDescription(self.__uri, ids_name, occurrence)
 
     def save_data(self, ids_description: IDSDescription, legacy_ids):
+        if self.__db_entry is None:
+            self.__db_entry = self.__open_for_write(
+                getattr(legacy_ids, "_version", None)
+            )
         self.__db_entry.put(legacy_ids, ids_description.occurrence)
 
     def sync_for_external_access(self):
