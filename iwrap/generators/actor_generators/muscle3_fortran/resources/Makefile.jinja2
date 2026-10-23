@@ -62,7 +62,7 @@ LIBS_PATH_DEFINED=-L./extra-libs
 {%- if code_description.settings %}
 {%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
 {%- if lib_path.endswith('.so') or '.so.' in lib_path %}
- -l{{ lib_path | libname }}
+ -l:{{ lib_path | basename }}
 {%- else %}
  ./extra-libs/{{ lib_path | basename }}
 {%- endif %}
@@ -70,7 +70,7 @@ LIBS_PATH_DEFINED=-L./extra-libs
 {% endif %}
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
-LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(CODE_LIB_DEF)
+LIBS=$(LIBS_PATH_DEFINED) $(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(CODE_LIB_DEF)
 
 {% if code_description.settings.mpi_compiler_cmd   %}
 # MPI compilation wrapper will be used
