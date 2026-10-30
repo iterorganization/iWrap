@@ -1,0 +1,6 @@
+/* Disable font ligatures in code blocks and inline code.
+ */
+pre, code, .highlight {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0, "dlig" 0;
+}
