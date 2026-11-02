@@ -1,5 +1,34 @@
 # Release notes
 
+
+## Version 2.0.1
+* Fix actors makefile when linking with local .so libs ( #26 ) 
+* Fix code parameters copy in Fortran M3 actors ( #33 )
+* Use correct DD version (from actor) for creating the temporary DBEntry ( #32 )
+* Fix Fortran code formatting issues in docs ( #27 )
+
+
+## Version 2.0.0
+
+### Compatibility note
+This release can re-use actor YAML descriptions developed for 1.x version, but the **generated Python actors
+are not compatible with workflows developed for iWrap 1.x**. This is due to the move from the legacy closed
+AL-Python access layer to the more modern, open-source and Data-Dictionary agnostic **IMAS-Python**.
+Related to the move to IMAS-Python, this release drops completely support for ancient Access-Layer 4 API.
+
+### License
+* Released under LGPLv3
+
+### Breaking changes
+* Replace AL-Python by IMAS-Python for Python actors
+* Integrate MUSCLE3 plugin as part of the iWrap's core
+
+### Improvements
+* Documentation on readthedocs covers both iWrap core and MUSCLE3 "extension"
+* Build and packaging as wheel, available on PyPI
+* Internal code cleaning (deprecated AL4 API, replace use of legacy pulse/run with systematic use of URIs)
+
+
 ## Version 1.0.0
 
 ### New features
