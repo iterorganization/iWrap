@@ -6,7 +6,7 @@
 * Fix code parameters copy in Fortran M3 actors ( #33 )
 * Use correct DD version (from actor) for creating the temporary DBEntry ( #32 )
 * Fix Fortran code formatting issues in docs ( #27 )
-
+* Fix race conditions in MPI parallel codes ( #37 #37 )
 
 ## Version 2.0.0
 
