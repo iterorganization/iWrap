@@ -90,6 +90,11 @@ SUBROUTINE {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(&
     ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {% if mpi_compiler_cmd %}
+{% if sbrt_data.arguments %}
+    if (process_rank /= 0) call close_db({{ sbrt_data.arguments[0].name }}_desc, idx)
+{% endif %}
+    call MPI_Barrier(MPI_COMM_WORLD, ierr)
+
     if (process_rank == 0) then
        ! --- called only for RANK 0 process
 {% endif %}
@@ -122,7 +127,11 @@ SUBROUTINE {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(&
 
 {% if sbrt_data.arguments %}
     !--------- Close DB (once for all IDSes) --------
+{% if mpi_compiler_cmd %}
+    if (process_rank == 0) call close_db({{ sbrt_data.arguments[0].name }}_desc, idx)
+{% else %}
     call close_db({{ sbrt_data.arguments[0].name }}_desc, idx)
+{% endif %}
 {% endif %}
 
     {% if code_parameters.parameters and sbrt_data.need_code_parameters and ('legacy' in code_parameters.format)%}
