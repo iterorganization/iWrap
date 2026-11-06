@@ -92,6 +92,24 @@ contains
 
     END FUNCTION read_code_parameters_file
 
+    FUNCTION copy_xml_file(source, destination) RESULT(status)
+        character(len=*), intent(in) :: source, destination
+        character(len=:), allocatable :: contents
+        integer :: status, unit, close_status
+
+        ! Copy the original bytes without formatting or parameter-array padding.
+        status = read_file(source, contents)
+        if (status /= 0) return
+
+        open(newunit=unit, file=destination, status='replace', &
+                access='stream', form='unformatted', action='write', iostat=status)
+        if (status /= 0) return
+
+        write(unit, iostat=status) contents
+        close(unit, iostat=close_status)
+        if (status == 0) status = close_status
+    END FUNCTION copy_xml_file
+
    !---------------------------------------------------
     FUNCTION read_file(filename, str) RESULT(status)
         implicit none

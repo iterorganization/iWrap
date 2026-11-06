@@ -30,6 +30,8 @@ sphinx:
     autosummary_generate: True
     autoclass_content: "both"
     add_module_names: False
+    html_static_path: ["_static"]
+    html_css_files: ["custom.css"]
     html_theme_options:
       show_navbar_depth: 3      #left sidebar
       show_toc_level: 3         #rigth sidebar

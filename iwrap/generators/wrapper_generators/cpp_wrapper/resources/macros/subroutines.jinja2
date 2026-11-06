@@ -97,6 +97,17 @@ extern "C" void {{actor_name | lower}}_wrapper_{{  sbrt_role | lower }}(
         // converting status info
     convert_status_info(status_msg, out_status_message);
 
+{% if mpi_compiler_cmd %}
+    if (mpi_rank != 0)
+    {
+{% for argument in sbrt_data.arguments if argument.intent == 'IN' %}
+        {{ ids_macro.deallocate( argument.name) }}
+        db_entry_{{ argument.name }} = nullptr;
+{% endfor %}
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+{% endif %}
+
 	if(*out_status_code < 0)
 		return;
    {% if mpi_compiler_cmd %}

@@ -318,6 +318,9 @@ contains
         type(ids_parameters_input), intent(OUT)  :: imas_code_params
         integer :: status
         logical :: copy_xml_parameters
+{% if flags.mpi_code %}
+        integer :: process_rank, ierr
+{% endif %}
         copy_xml_parameters = .false.
 
         default_file_name = "{{ (code_description.implementation.code_parameters.parameters or "") | basename }}"
@@ -345,9 +348,19 @@ contains
         if (status .eq. LIBMUSCLE_success .and. &
                 copy_xml_parameters .eqv. .true. .and. &
                 associated(imas_code_params%parameters_value)) then
-            OPEN(UNIT=1, FILE=default_file_name, STATUS="REPLACE")
-            write(1, *) imas_code_params%parameters_value
-            CLOSE(UNIT=1)
+{% if flags.mpi_code %}
+            ! Only theroot rank copies
+            call MPI_Comm_rank(MPI_COMM_WORLD, process_rank, ierr)
+            if (process_rank /= MPI_ROOT_RANK) then
+                status = 0
+                return
+            end if
+{% endif %}
+            status = copy_xml_file(file_path, default_file_name)
+            if (status /= 0) then
+                write(*,*) "WARNING: copying XML parameters to ", default_file_name, " failed, iostat=", status
+                status = 0
+            end if
         else
             !copy_xml_parameters setting is not mandatory so don't propagate error
             status = 0

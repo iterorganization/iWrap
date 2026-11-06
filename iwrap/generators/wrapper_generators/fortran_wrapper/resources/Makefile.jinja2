@@ -43,13 +43,17 @@ LIBS_PKGCONFIG_DEFINED=
 {% endif %}
 
 # required libs provided by user as a path
-LIBS_PATH_DEFINED=
+LIBS_PATH_DEFINED=-L./extra-libs
 {%- for lib_path in code_description.settings.extra_libraries.path_defined or [] %}
+{%- if lib_path.endswith('.so') or '.so.' in lib_path %}
+ -l:{{ lib_path | basename }}
+{%- else %}
  ./extra-libs/{{ lib_path | basename }}
+{%- endif %}
 {%- endfor %}
 
 INCLUDES=-I./include $(CORE_LIBS_FLAGS) $(LIBS_PKGCONFIG_DEFINED_FLAGS)
-LIBS=$(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(LIBS_PATH_DEFINED) $(CODE_LIB_DEF)
+LIBS=$(LIBS_PATH_DEFINED) $(CORE_LIBS) $(LIBS_PKGCONFIG_DEFINED) $(CODE_LIB_DEF)
 
 {% if code_description.settings.mpi_compiler_cmd   %}
 
@@ -85,7 +89,7 @@ build/RWTools.o: build/defs.o build/iwrap_converters.o
 ../lib/lib$(ACTOR_NAME).so: build/defs.o build/RWTools.o build/iwrap_converters.o build/fortrantools.o build/fortran_wrapper.o
 	@echo "   * $^ -> $@"
 	@mkdir -p ../lib
-	$(FC) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/
+	$(FC) $(FFLAGS) -shared -o $@ -Wl,--start-group $^ $(LIBS) -Wl,--end-group -Wl,-rpath,$(WRAPPER_DIR)/lib_ext/def/ -Wl,-rpath,$(WRAPPER_DIR)/extra-libs/
 
 
 
